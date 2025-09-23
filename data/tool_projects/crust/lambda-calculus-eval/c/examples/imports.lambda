@@ -1,0 +1,2 @@
+type Bool
+def a = (@x : Bool.(x))

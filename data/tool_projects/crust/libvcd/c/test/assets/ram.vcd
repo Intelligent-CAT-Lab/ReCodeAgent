@@ -1,0 +1,103 @@
+$date
+	Fri Jul 15 15:17:36 2022
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module testbench $end
+$var wire 9 ! matched [8:0] $end
+$var reg 4 " address [3:0] $end
+$var reg 1 # clock $end
+$var reg 8 $ mask [7:0] $end
+$var reg 1 % reset $end
+$var reg 8 & word [7:0] $end
+$var reg 1 ' write $end
+$scope module tcam $end
+$var wire 4 ( address [3:0] $end
+$var wire 1 # clock $end
+$var wire 8 ) mask [7:0] $end
+$var wire 1 % reset $end
+$var wire 8 * word [7:0] $end
+$var wire 1 ' write $end
+$var reg 1 + flag $end
+$var reg 9 , i [8:0] $end
+$var reg 8 - j [7:0] $end
+$var reg 9 . matched [8:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx .
+bx -
+bx ,
+x+
+bx *
+bx )
+bx (
+0'
+bx &
+x%
+bx $
+0#
+bx "
+bx !
+$end
+#1
+b0 !
+b0 .
+b10000 ,
+1%
+#2
+b1 "
+b1 (
+b10010111 &
+b10010111 *
+1'
+0%
+#5
+1#
+#10
+0#
+#12
+b100 "
+b100 (
+b10110111 &
+b10110111 *
+#15
+1#
+#20
+0#
+#22
+b10010111 &
+b10010111 *
+0'
+b100000 $
+b100000 )
+#25
+b10010 !
+b10010 .
+b1000 -
+0+
+b10000 ,
+1#
+#30
+0#
+#32
+b10110111 &
+b10110111 *
+b0 $
+b0 )
+#35
+b10000 !
+b10000 .
+b1000 -
+0+
+b10000 ,
+1#
+#40
+0#
+#42

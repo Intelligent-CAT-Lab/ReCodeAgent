@@ -1,0 +1,2 @@
+/usr/bin/ar qc libfnv.a CMakeFiles/fnv.dir/fnv.c.o
+/usr/bin/ranlib libfnv.a

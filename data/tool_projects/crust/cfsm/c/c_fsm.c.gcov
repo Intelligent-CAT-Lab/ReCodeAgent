@@ -1,0 +1,112 @@
+        -:    0:Source:src/c_fsm.c
+        -:    1:/* MIT License
+        -:    2: *
+        -:    3: * Copyright (C) 2024  Haju Schulz <haju@schulznorbert.de>
+        -:    4: *
+        -:    5: * Permission is hereby granted, free of charge, to any person obtaining a copy
+        -:    6: * of this software and associated documentation files (the "Software"), to deal
+        -:    7: * in the Software without restriction, including without limitation the rights
+        -:    8: * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        -:    9: * copies of the Software, and to permit persons to whom the Software is
+        -:   10: * furnished to do so, subject to the following conditions:
+        -:   11: *
+        -:   12: * The above copyright notice and this permission notice shall be included in all
+        -:   13: * copies or substantial portions of the Software.
+        -:   14: *
+        -:   15: * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        -:   16: * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        -:   17: * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        -:   18: * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        -:   19: * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        -:   20: * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        -:   21: * SOFTWARE.
+        -:   22: */
+        -:   23:
+        -:   24:/*******************************************************************************
+        -:   25:    DESCRIPTION
+        -:   26:*******************************************************************************/
+        -:   27:
+        -:   28:/**
+        -:   29: * @brief  CFSM Header file
+        -:   30: *
+        -:   31: * This file contains the implementation for the cfsm
+        -:   32: * pattern for finite state machines in C-language.
+        -:   33: *
+        -:   34: * Repository: https://github.com/nhjschulz/cfsm
+        -:   35: *
+        -:   36: */
+        -:   37:
+        -:   38:/******************************************************************************
+        -:   39: * Includes
+        -:   40: *****************************************************************************/
+        -:   41:#include "c_fsm.h"
+        -:   42:
+        -:   43:/******************************************************************************
+        -:   44: * Macros
+        -:   45: *****************************************************************************/
+        -:   46:
+        -:   47:/******************************************************************************
+        -:   48: * Types and Classes
+        -:   49: *****************************************************************************/
+        -:   50:
+        -:   51:/******************************************************************************
+        -:   52: * Prototypes
+        -:   53: *****************************************************************************/
+        -:   54:
+        -:   55:/******************************************************************************
+        -:   56: * Variables
+        -:   57: *****************************************************************************/
+        -:   58:
+        -:   59:/******************************************************************************
+        -:   60: * External functions
+        -:   61: *****************************************************************************/
+        -:   62:
+        6:   63:void cfsm_init(struct cfsm_Ctx * fsm, cfsm_InstanceDataPtr instanceData)
+        -:   64:{
+        6:   65:    *fsm = (cfsm_Ctx) {instanceData, 0, 0, 0};
+        6:   66:}
+        -:   67:
+        4:   68:void cfsm_transition(struct cfsm_Ctx * fsm, cfsm_TransitionFunction enterFunc)
+        -:   69:{
+        -:   70:    /* Call former state leave operations if present. */
+        4:   71:    if ((cfsm_TransitionFunction)0 != fsm->onLeave)
+        -:   72:    {
+        2:   73:        fsm->onLeave(fsm);
+        -:   74:    }
+        -:   75:
+        -:   76:    /* Clear all handler. They get set by the enter function if needed.
+        -:   77:     */
+        4:   78:    fsm->onEvent  = (cfsm_EventFunction)0;
+        4:   79:    fsm->onLeave  = (cfsm_TransitionFunction)0;
+        4:   80:    fsm->onProcess= (cfsm_ProcessFunction)0;
+        -:   81:
+        -:   82:    /* Call enter function NULL checked. It might be NULL to "disable"
+        -:   83:     * all FSM operations.
+        -:   84:     */
+        4:   85:    if ((cfsm_TransitionFunction)0 != enterFunc)
+        -:   86:    {
+        4:   87:        enterFunc(fsm);
+        -:   88:    }
+        4:   89:}
+        -:   90:
+        1:   91:void cfsm_process(struct cfsm_Ctx * fsm)
+        -:   92:{
+        -:   93:    /* Delegate to state processing operation if handler is defined. */
+        1:   94:    if ((cfsm_ProcessFunction)0 != fsm->onProcess)
+        -:   95:    {
+    #####:   96:        fsm->onProcess(fsm);
+        -:   97:    }
+        1:   98:}
+        -:   99:
+        1:  100:void cfsm_event(struct cfsm_Ctx * fsm, int eventId)
+        -:  101:{
+        -:  102:    /* Delegate to state event processing if handler is defined. */
+        1:  103:    if ((cfsm_EventFunction)0 != fsm->onEvent)
+        -:  104:    {
+    #####:  105:        fsm->onEvent(fsm, eventId);
+        -:  106:    }
+        1:  107:}
+        -:  108:
+        -:  109:/******************************************************************************
+        -:  110: * Local functions
+        -:  111: *****************************************************************************/

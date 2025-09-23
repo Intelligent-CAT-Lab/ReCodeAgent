@@ -1,0 +1,134 @@
+        -:    0:Source:main.c
+        -:    1:/**
+        -:    2: * `main.c' - murmurhash
+        -:    3: *
+        -:    4: * copyright (c) 2014-2025 joseph werle <joseph.werle@gmail.com>
+        -:    5: */
+        -:    6:#include <stdio.h>
+        -:    7:#include <stdlib.h>
+        -:    8:#include <string.h>
+        -:    9:#include <unistd.h>
+        -:   10:#include <inttypes.h>
+        -:   11:
+        -:   12:#include "murmurhash.h"
+        -:   13:
+        -:   14:#define hash(key) murmurhash(key, (uint32_t) strlen(key), (uint32_t) atoi(seed));
+        -:   15:#define isopt(opt, str) (0 == strncmp(opt, str, strlen(str)))
+        -:   16:#define setopt(opt, key, var) {               \
+        -:   17:  size_t len = strlen(key) + 1;               \
+        -:   18:  for (int i = 0; i < len; ++i) { (*opt)++; } \
+        -:   19:  var = opt;                                  \
+        -:   20:}
+        -:   21:
+    #####:   22:static void usage () {
+    #####:   23:  fprintf(stderr, "usage: murmur [-hV] [options]\n");
+    #####:   24:}
+        -:   25:
+    #####:   26:static void help () {
+    #####:   27:  fprintf(stderr, "\noptions:\n");
+    #####:   28:  fprintf(stderr, "\n  --seed=[seed]  hash seed (optional)");
+    #####:   29:  fprintf(stderr, "\n");
+    #####:   30:}
+        -:   31:
+    #####:   32:static char* read_stdin () {
+    #####:   33:  size_t bsize = 1024;
+    #####:   34:  size_t size = 1;
+    #####:   35:  char buf[bsize];
+    #####:   36:  char *res = (char *) malloc(sizeof(char) * bsize);
+    #####:   37:  char *tmp = NULL;
+        -:   38:
+        -:   39:  // memory issue
+    #####:   40:  if (NULL == res) { return NULL; }
+        -:   41:
+        -:   42:  // cap
+    #####:   43:  res[0] = '\0';
+        -:   44:
+        -:   45:  // read
+    #####:   46:  if (NULL != fgets(buf, bsize, stdin)) {
+        -:   47:    // store
+    #####:   48:    tmp = res;
+        -:   49:    // resize
+    #####:   50:    size += (size_t) strlen(buf);
+        -:   51:    // realloc
+    #####:   52:    res = (char *) realloc(res, size);
+        -:   53:
+        -:   54:    // memory issues
+    #####:   55:    if (NULL == res) {
+    #####:   56:      free(tmp);
+    #####:   57:      return NULL;
+        -:   58:    }
+        -:   59:
+        -:   60:    // yield
+    #####:   61:    strcat(res, buf);
+        -:   62:
+    #####:   63:    return res;
+        -:   64:  }
+        -:   65:
+    #####:   66:  free(res);
+        -:   67:
+    #####:   68:  return NULL;
+        -:   69:}
+        -:   70:
+    #####:   71:int main (int argc, char** argv) {
+    #####:   72:  char* buf = NULL;
+    #####:   73:  char* key = NULL;
+    #####:   74:  char* seed = NULL;
+    #####:   75:  uint32_t h = 0;
+        -:   76:
+        -:   77:  // parse opts
+        -:   78:  do {
+    #####:   79:    char* opt = NULL;
+    #####:   80:    opt = *argv++; // unused
+        -:   81:
+    #####:   82:    while ((opt = *argv++)) {
+        -:   83:
+        -:   84:      // flags
+    #####:   85:      if ('-' == *opt++) {
+    #####:   86:        switch (*opt++) {
+    #####:   87:          case 'h':
+    #####:   88:            return usage(), help(), 0;
+        -:   89:
+    #####:   90:          case 'V':
+    #####:   91:            fprintf(stderr, "%s\n", MURMURHASH_VERSION);
+    #####:   92:            return 0;
+        -:   93:
+    #####:   94:          case '-':
+    #####:   95:            if (isopt(opt, "seed")) {
+    #####:   96:              setopt(opt, "seed", seed);
+        -:   97:            }
+    #####:   98:            break;
+        -:   99:
+    #####:  100:          default:
+    #####:  101:            (*opt)--;
+        -:  102:            // error
+    #####:  103:            fprintf(stderr, "unknown option: `%s'\n", opt);
+    #####:  104:            usage();
+    #####:  105:            return 1;
+        -:  106:        }
+        -:  107:      }
+        -:  108:    }
+        -:  109:  } while (0);
+        -:  110:
+    #####:  111:  if (NULL == seed) {
+    #####:  112:    seed = "0";
+        -:  113:  }
+        -:  114:
+    #####:  115:  if (1 == isatty(0)) { return 1; }
+    #####:  116:  else if (ferror(stdin)) { return 1; }
+        -:  117:  else {
+    #####:  118:    buf = read_stdin();
+    #####:  119:    if (NULL == buf) { return 1; }
+    #####:  120:    else if (0 == strlen(buf)) { buf = ""; }
+    #####:  121:    h = hash(buf);
+    #####:  122:    printf("%" PRIu32 "\n", h);
+        -:  123:    do {
+    #####:  124:      key = read_stdin();
+    #####:  125:      if (NULL == key) { break; }
+    #####:  126:      else if (0 == strlen(buf)) { buf = ""; }
+    #####:  127:      h = hash(buf);
+    #####:  128:      printf("%d" PRIu32 "\n", h);
+    #####:  129:    } while (NULL != key);
+        -:  130:  }
+        -:  131:
+    #####:  132:  return 0;
+        -:  133:}

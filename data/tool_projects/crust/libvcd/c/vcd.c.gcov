@@ -1,0 +1,191 @@
+        -:    0:Source:src/vcd.c
+        -:    1:#include <ctype.h>
+        -:    2:#include <stdbool.h>
+        -:    3:#include <stdio.h>
+        -:    4:#include <stdlib.h>
+        -:    5:#include <string.h>
+        -:    6:
+        -:    7:#include "vcd.h"
+        -:    8:
+        -:    9:#define isexpression(c) (strchr("-0123456789zZxXbU", (c)))
+        -:   10:
+        -:   11:#define BUFFER_LENGTH 512
+        -:   12:
+        -:   13:typedef enum { BEFORE_MODULE_DEFINITIONS, INSIDE_TOP_MODULE, INSIDE_INNER_MODULES } state_t;
+        -:   14:
+        -:   15:static vcd_t *new_vcd();
+        -:   16:static bool parse_instruction(FILE *file, vcd_t *vcd, state_t *state);
+        -:   17:static bool parse_timestamp(FILE *file, timestamp_t *timestamp);
+        -:   18:static bool parse_assignment(FILE *file, vcd_t *vcd, timestamp_t timestamp);
+        -:   19:static int get_signal_index(const char *string);
+        -:   20:
+        1:   21:vcd_t *vcd_read_from_path(char *path) {
+        1:   22:    FILE *file = fopen(path, "r");
+        1:   23:    if (file == NULL)
+        -:   24:        return NULL;
+        -:   25:
+        1:   26:    vcd_t *vcd = new_vcd();
+        1:   27:    timestamp_t current_timestamp = 0;
+        1:   28:    state_t state = BEFORE_MODULE_DEFINITIONS;
+        -:   29:
+        1:   30:    int character = 0;
+      203:   31:    while ((character = fgetc(file)) != EOF) {
+      202:   32:        if (character == '$') {
+       42:   33:            bool successful = parse_instruction(file, vcd, &state);
+       42:   34:            if (successful)
+       42:   35:                continue;
+        -:   36:        }
+        -:   37:
+      160:   38:        else if (character == '#') {
+       30:   39:            bool successful = parse_timestamp(file, &current_timestamp);
+       30:   40:            if (successful)
+       15:   41:                continue;
+        -:   42:        }
+        -:   43:
+      145:   44:        else if (isexpression(character)) {
+       55:   45:            ungetc(character, file);
+       55:   46:            bool successful = parse_assignment(file, vcd, current_timestamp);
+       55:   47:            if (successful)
+       55:   48:                continue;
+        -:   49:        }
+        -:   50:
+       90:   51:        else if (isspace(character))
+       90:   52:            continue;
+        -:   53:
+    #####:   54:        fclose(file);
+    #####:   55:        free(vcd);
+    #####:   56:        return NULL;
+        -:   57:    }
+        -:   58:
+        1:   59:    fclose(file);
+        1:   60:    return vcd;
+        -:   61:}
+        -:   62:
+    #####:   63:signal_t *vcd_get_signal_by_name(vcd_t *vcd, const char *signal_name) {
+    #####:   64:    for (int i = 0; i < vcd->signals_count; ++i) {
+    #####:   65:        if (strcmp(vcd->signals[i].name, signal_name) == 0)
+    #####:   66:            return &vcd->signals[i];
+        -:   67:    }
+        -:   68:
+        -:   69:    return NULL;
+        -:   70:}
+        -:   71:
+    #####:   72:char *vcd_signal_get_value_at_timestamp(signal_t *signal, timestamp_t timestamp) {
+    #####:   73:    char *previous_value = NULL;
+    #####:   74:    for (int i = 0; i < signal->changes_count; ++i) {
+    #####:   75:        value_change_t *value_change = &signal->value_changes[i];
+    #####:   76:        if (timestamp < value_change->timestamp)
+        -:   77:            break;
+    #####:   78:        previous_value = value_change->value;
+        -:   79:    }
+    #####:   80:    return previous_value;
+        -:   81:}
+        -:   82:
+        1:   83:vcd_t *new_vcd() { return (vcd_t *)calloc(1, sizeof(vcd_t)); }
+        -:   84:
+       42:   85:bool parse_instruction(FILE *file, vcd_t *vcd, state_t *state) {
+       42:   86:    char instruction[BUFFER_LENGTH];
+       42:   87:    if (fscanf(file, "%s", instruction) != 1)
+        -:   88:        return false;
+        -:   89:
+       42:   90:    if (strcmp(instruction, "end") == 0 || strcmp(instruction, "dumpvars") == 0 || strcmp(instruction, "dumpall") == 0)
+        -:   91:        return true;
+        -:   92:
+       25:   93:    if (strcmp(instruction, "scope") == 0) {
+        2:   94:        switch (*state) {
+        1:   95:        case BEFORE_MODULE_DEFINITIONS:
+        1:   96:            *state = INSIDE_TOP_MODULE;
+        1:   97:            break;
+        1:   98:        case INSIDE_TOP_MODULE:
+        1:   99:            *state = INSIDE_INNER_MODULES;
+        1:  100:            break;
+        -:  101:        default:
+        -:  102:            break;
+        -:  103:        }
+        2:  104:        fscanf(file, "\n%*[^$]");
+        2:  105:        return true;
+        -:  106:    }
+        -:  107:
+       23:  108:    if (strcmp(instruction, "scope") == 0 || strcmp(instruction, "upscope") == 0 ||
+       21:  109:        strcmp(instruction, "enddefinitions") == 0 || strcmp(instruction, "comment") == 0) {
+        3:  110:        fscanf(file, "\n%*[^$]");
+        3:  111:        return true;
+        -:  112:    }
+        -:  113:
+       20:  114:    if (strcmp(instruction, "var") == 0) {
+       17:  115:        if (*state == INSIDE_INNER_MODULES) {
+       10:  116:            fscanf(file, " %*[^\n]\n");
+       10:  117:            return true;
+        -:  118:        }
+        -:  119:
+        7:  120:        signal_t *signal = &vcd->signals[vcd->signals_count];
+        7:  121:        vcd->signals_count += 1;
+        -:  122:
+        7:  123:        char signal_id[VCD_NAME_SIZE];
+        7:  124:        fscanf(file, " %*s %zu %[^ ] %[^ $]%*[^$]", &signal->size, signal_id, signal->name);
+        7:  125:        int index = get_signal_index(signal_id);
+        -:  126:
+        -:  127:        /* This signal is an alias. */
+        7:  128:        if (vcd->signals[index].size != 0)
+        -:  129:            return true;
+        -:  130:
+        7:  131:        return true;
+        -:  132:    }
+        -:  133:
+        3:  134:    if (strcmp(instruction, "date") == 0) {
+        1:  135:        fscanf(file, "\n%[^$\n]", vcd->date);
+        1:  136:        return true;
+        -:  137:    }
+        -:  138:
+        2:  139:    if (strcmp(instruction, "version") == 0) {
+        1:  140:        fscanf(file, "\n%[^$\n]", vcd->version);
+        1:  141:        return true;
+        -:  142:    }
+        -:  143:
+        1:  144:    if (strcmp(instruction, "timescale") == 0) {
+        1:  145:        fscanf(file, "\n\t%zu%[^$\n]", &vcd->timescale.scale, vcd->timescale.unit);
+        1:  146:        return true;
+        -:  147:    }
+        -:  148:
+        -:  149:    return false;
+        -:  150:}
+        -:  151:
+       15:  152:bool parse_timestamp(FILE *file, timestamp_t *timestamp) {
+       15:  153:    bool successful = fscanf(file, "%u", timestamp) == 1;
+       15:  154:    return successful;
+        -:  155:}
+        -:  156:
+       55:  157:bool parse_assignment(FILE *file, vcd_t *vcd, timestamp_t timestamp) {
+       55:  158:    char buffer[BUFFER_LENGTH];
+       55:  159:    char value[VCD_SIGNAL_SIZE];
+       55:  160:    char signal_id[VCD_NAME_SIZE];
+       55:  161:    fscanf(file, "%[^\n]", buffer);
+        -:  162:
+       55:  163:    bool is_vector = strchr("01xXzZ", buffer[0]) == NULL;
+       55:  164:    char *assignment_format_string = is_vector ? "%[^ ] %[^\n]" : "%1s%[^\n]";
+       55:  165:    if (sscanf(buffer, assignment_format_string, value, signal_id) != 2)
+        -:  166:        return false;
+        -:  167:
+        -:  168:    /* For now, we ignore longer signal ids. */
+       55:  169:    if (strlen(signal_id) > 1)
+        -:  170:        return true;
+        -:  171:
+      110:  172:    size_t index = get_signal_index(signal_id);
+       55:  173:    if (index == -1 || index >= vcd->signals_count)
+        -:  174:        return true;
+        -:  175:
+       30:  176:    size_t changes_count = vcd->signals[index].changes_count;
+       30:  177:    vcd->signals[index].value_changes[changes_count].timestamp = timestamp;
+       30:  178:    strncpy(vcd->signals[index].value_changes[changes_count].value, value, VCD_SIGNAL_SIZE);
+       30:  179:    vcd->signals[index].changes_count += 1;
+        -:  180:
+       30:  181:    return true;
+        -:  182:}
+        -:  183:
+       55:  184:int get_signal_index(const char *string) {
+        7:  185:    int id = *string - '!';
+       55:  186:    if (id >= VCD_SIGNAL_COUNT)
+    #####:  187:        return -1;
+        -:  188:
+        -:  189:    return id;
+        -:  190:}

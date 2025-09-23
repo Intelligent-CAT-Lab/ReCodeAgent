@@ -1,0 +1,15 @@
+(= list '("1st" "2nd" "3rd"))
+(= list-length (length list))
+
+(= results nil)
+
+(= i 0)
+
+(while (< i list-length)
+  (progn
+    (push results (list-ref list i))
+    (= i (+ i 1))
+  )
+)
+
+(print results)

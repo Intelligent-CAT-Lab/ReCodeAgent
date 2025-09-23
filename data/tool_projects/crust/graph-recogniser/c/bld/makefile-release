@@ -1,0 +1,13 @@
+CFLAGS = $(FLAGS) -O3 -DNDEBUG -DNLOG
+LDFLAGS = $(FLAGS) -O3
+OBJDIR = robj
+
+CFILES =             \
+	main.c       \
+	openhash.c   \
+	cuckoohash.c
+
+EXES = $(EXEDIR)super
+
+include makefile-generic
+

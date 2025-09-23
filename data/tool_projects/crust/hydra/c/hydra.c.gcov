@@ -1,0 +1,241 @@
+        -:    0:Source:src/hydra.c
+        -:    1:#include "hydra.h"
+        -:    2:#include <stdbool.h>
+        -:    3:#include <stdio.h>
+        -:    4:#include <stdlib.h>
+        -:    5:#include <sys/ioctl.h>
+        -:    6:#include <termios.h>
+        -:    7:#include <unistd.h>
+        -:    8:#include <string.h>
+        -:    9:
+        5:   10:Command* NewCommand(char key, char* name, char* command) {
+        5:   11:  Command* cmd = (Command*) calloc(1, sizeof(Command));
+        5:   12:  cmd->key = key;
+        5:   13:  cmd->name = name;
+        5:   14:  cmd->command = command;
+        -:   15:
+        5:   16:  return cmd;
+        -:   17:}
+        -:   18:
+    #####:   19:int CommandRun(Command *c) {
+    #####:   20:  if (c != NULL && c->command != NULL)
+    #####:   21:    return fprintf(stdout, "%s", c->command);
+        -:   22:
+        -:   23:  return 0;
+        -:   24:}
+        -:   25:
+        3:   26:void CommandAddChild(Command *c, Command *child) {
+        3:   27:  if (c->children == NULL) {
+        1:   28:    c->children = child;
+        1:   29:    return;
+        -:   30:  }
+        -:   31:
+        2:   32:  if(c->children->key > child->key) {
+        1:   33:    child->next = c->children;
+        1:   34:    c->children = child;
+        1:   35:    return;
+        -:   36:  }
+        -:   37:
+        -:   38:  Command *lastChild = c->children;
+        1:   39:  while (lastChild->next != NULL && lastChild->next->key <= child->key){
+        -:   40:    lastChild = lastChild->next;
+        -:   41:  }
+        -:   42:
+        1:   43:  child->next = lastChild->next;
+        1:   44:  lastChild->next = child;
+        -:   45:}
+        -:   46:
+    #####:   47:Command *FindCommand(Command *c, char key) {
+    #####:   48:  Command *child = c->children;
+    #####:   49:  while (child != NULL && child->key != key)
+    #####:   50:    child = child->next;
+    #####:   51:  return child;
+        -:   52:}
+        -:   53:
+    #####:   54:void TreeAddCommand(Command *tree, char *keys, char *name, char *command) {
+    #####:   55:  Command *c = FindCommand(tree, *keys);
+        -:   56:
+    #####:   57:  if (*(keys + 1) == 0) {
+    #####:   58:    if( c == NULL ) {
+    #####:   59:      CommandAddChild(tree, NewCommand(*keys, name, command));
+        -:   60:    } else { // if command already exists update name and command fields
+    #####:   61:      c->name = name;
+    #####:   62:      c->command = command;
+        -:   63:    }
+        -:   64:    return;
+        -:   65:  }
+        -:   66:
+    #####:   67:  if (c == NULL) {
+    #####:   68:    c = NewCommand(*keys, DefaultName, 0);
+    #####:   69:    CommandAddChild(tree, c);
+        -:   70:  }
+        -:   71:
+    #####:   72:  TreeAddCommand(c, keys + 1, name, command);
+        -:   73:}
+        -:   74:
+        -:   75:// Returns number of printed lines
+    #####:   76:int PrintCommand(Command *c) {
+        -:   77:
+        -:   78:  struct winsize terminal;
+    #####:   79:  ioctl(STDERR_FILENO, TIOCGWINSZ, &terminal);
+    #####:   80:  int width = terminal.ws_col;
+        -:   81:
+        -:   82:  // Keep track of how many characters printed
+        -:   83:  int lines = 0;
+        -:   84:
+    #####:   85:  if (c->name) {
+    #####:   86:    fprintf(stderr, "%s%s:%s\n", Blue, c->name, ColorOff);
+        -:   87:    lines++;
+        -:   88:  }
+        -:   89:
+        -:   90:  // Find longest item
+        -:   91:  int maxLineWidth = 0;
+    #####:   92:  Command *child = c->children;
+    #####:   93:  while (child) {
+    #####:   94:    int lineWidth = strlen(child->name);
+        -:   95:    if (lineWidth > maxLineWidth)
+        -:   96:      maxLineWidth = lineWidth;
+        -:   97:
+    #####:   98:    child = child->next;
+        -:   99:  }
+        -:  100:
+    #####:  101:  maxLineWidth += RightMargin;
+        -:  102:  if (maxLineWidth > width)
+        -:  103:    maxLineWidth = width;
+        -:  104:
+    #####:  105:  int itemsPerRow =
+        -:  106:      width /
+    #####:  107:      (maxLineWidth + 5); // 5 is extra character printed before each item
+        -:  108:
+        -:  109:  child = c->children;
+        -:  110:  int currentItem = 0;
+    #####:  111:  while (child) {
+    #####:  112:    currentItem++;
+        -:  113:
+    #####:  114:    if (child->children != 0) {
+    #####:  115:      fprintf(stderr, "%s%c%s %s➔%s %s+%-*s%s", Yellow, child->key, ColorOff, Purple,
+        -:  116:             ColorOff, Blue, maxLineWidth, child->name, ColorOff);
+        -:  117:    } else {
+    #####:  118:      fprintf(stderr, "%s%c%s %s➔%s  %-*s", Yellow, child->key, ColorOff, Purple,
+        -:  119:             ColorOff, maxLineWidth, child->name);
+        -:  120:    }
+        -:  121:
+    #####:  122:    if (currentItem % itemsPerRow == 0) {
+    #####:  123:      fprintf(stderr, "\n");
+    #####:  124:      lines ++;
+        -:  125:    }
+        -:  126:
+    #####:  127:    child = child->next;
+        -:  128:  }
+        -:  129:
+    #####:  130:  fprintf(stderr, "\n");
+    #####:  131:  lines ++;
+        -:  132:
+    #####:  133:  return lines;
+        -:  134:}
+        -:  135:
+        -:  136:// Copied from: https://stackoverflow.com/a/912796/458436
+    #####:  137:char getch(void) {
+    #####:  138:  struct termios old = {0};
+        -:  139:
+    #####:  140:  if (tcgetattr(0, &old) < 0) perror("tcsetattr()");
+        -:  141:
+    #####:  142:  tcflag_t oldflags = old.c_lflag;
+        -:  143:
+    #####:  144:  old.c_lflag &= ~ICANON;
+    #####:  145:  old.c_lflag &= ~ECHO;
+    #####:  146:  old.c_cc[VMIN] = 1;
+    #####:  147:  old.c_cc[VTIME] = 0;
+        -:  148:
+    #####:  149:  if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");
+        -:  150:
+    #####:  151:  char buf = 0;
+    #####:  152:  if (read(0, &buf, 1) < 0) perror("read()");
+        -:  153:
+    #####:  154:  old.c_lflag = oldflags;
+        -:  155:
+    #####:  156:  if (tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ~ICANON");
+    #####:  157:  return (buf);
+        -:  158:}
+        -:  159:
+    #####:  160:char* ReadFile(char* file) {
+    #####:  161:  FILE* f = fopen(file, "r");
+    #####:  162:  if( f == NULL ) {
+    #####:  163:    perror("Failed to open file");
+    #####:  164:    exit(EXIT_FAILURE);
+        -:  165:  }
+        -:  166:
+    #####:  167:  fseek(f, 0, SEEK_END);
+    #####:  168:  long fileSize = ftell(f);
+    #####:  169:  rewind(f);
+        -:  170:
+    #####:  171:  char* content = (char*) calloc(fileSize+1, sizeof(char));
+    #####:  172:  fread(content, fileSize, 1, f);
+    #####:  173:  fclose(f);
+        -:  174:
+    #####:  175:  return content;
+        -:  176:}
+        -:  177:
+    #####:  178:char* ReadField(char** file, char *field) {
+    #####:  179:  char* key = *file;
+    #####:  180:  while(**file != ',' && **file != '\n' && **file != 0) (*file)++;
+        -:  181:
+    #####:  182:  if( **file != ',') {
+    #####:  183:    fprintf(stderr, "Found incorrect end after %s, found: %c", field, * *file);
+    #####:  184:    exit(EXIT_FAILURE);
+        -:  185:  }
+        -:  186:
+    #####:  187:  **file = 0;
+    #####:  188:  (*file)++;
+        -:  189:
+    #####:  190:  return key;
+        -:  191:}
+        -:  192:
+        -:  193:// Read until end of line character
+    #####:  194:char* ReadUntilEOL(char** file) {
+    #####:  195:  char* s = *file;
+    #####:  196:  while(**file != '\n' && **file != 0) (*file)++;
+        -:  197:
+    #####:  198:  if(**file == '\n') {
+    #####:  199:    **file = 0;
+    #####:  200:    (*file)++;
+        -:  201:  }
+        -:  202:
+    #####:  203:  return s;
+        -:  204:}
+        -:  205:
+    #####:  206:void ReadLine(Command* c, char** file) {
+    #####:  207:  char* key = ReadField(file, "key");
+    #####:  208:  char* name = ReadField(file, "name");
+    #####:  209:  char* command = ReadUntilEOL(file);
+        -:  210:
+    #####:  211:  TreeAddCommand(c, key, name, command);
+    #####:  212:}
+        -:  213:
+    #####:  214:void ClearLines(int count) {
+        -:  215:  // make sure we print directly to stdout without bufferring
+        -:  216:  // This allow us to clear lines without waiting for new line
+        -:  217:  // without it executing `system` will output lines then our output will go after
+    #####:  218:  setbuf(stdout, NULL);
+        -:  219:
+    #####:  220:  for (int i = 0; i < count; i++)
+    #####:  221:    fprintf(stderr, "\033[A\r\33[2K");
+    #####:  222:}
+        -:  223:
+    #####:  224:void LoadFile(Command *c, char *file) {
+    #####:  225:  char *content = ReadFile(file);
+    #####:  226:  while (*content != 0)
+    #####:  227:    ReadLine(c, &content);
+    #####:  228:}
+        -:  229:
+    #####:  230:void Start(Command *c) {
+    #####:  231:  while (c != NULL && c->children != NULL) {
+    #####:  232:    int lastPrintedLines = PrintCommand(c);
+        -:  233:
+    #####:  234:    c = FindCommand(c, getch());
+    #####:  235:    ClearLines(lastPrintedLines);
+    #####:  236:    if( CommandRun(c) > 0 ){
+        -:  237:      return;
+        -:  238:    };
+        -:  239:  }
+        -:  240:}

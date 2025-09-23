@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Authenticator</title>
+
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 0 auto;
+    padding: .5em; }
+  input { width: 100%; padding: .2em; box-sizing: border-box; }
+  #secret { font-size: large; }
+  #totp { font-size: xx-large; text-align: center; }
+  footer { font-size: small; margin-top: 2em; }
+</style>
+
+<h1>Authenticator</h1>
+
+<p id="loading">Loading&hellip;</p>
+
+<div id="app" style="display: none">
+  <p>
+    <label>
+      Secret (base32):<br>
+      <input id="secret" type="password">
+    </label>
+  </p>
+  
+  <p>
+    <label>Code:<br><input id="totp" readonly></label><br>
+    <progress id="progress" max="30"></progress>
+  </p>
+
+  <p id="message"></p>
+
+  <p>This is a <a
+  href="https://en.wikipedia.org/wiki/Time-based_one-time_password"
+  >TOTP</a> generator, the most commonly used algorithm for
+  authenticator apps.</p>
+
+  <p>Paste a seed ("shared secret") in the field above. For testing,
+  <em>AAAAAAAA</em> will work. Nothing is transmitted.</p>
+</div>
+
+<footer>
+  <p>
+    by <a href="https://sjmulder.nl/en">Sijmen Mulder</a> |
+    <a href="https://github.com/sjmulder/totp">source</a>
+  </p>
+</footer>
+  
+<script type="module">
+  class TotpGenerator {
+    static async load() {
+      const memory = new WebAssembly.Memory({initial: 2});
+      const {instance} = await WebAssembly.instantiateStreaming(
+        fetch("./totp.wasm"), {env: {memory}});
+      return new TotpGenerator(instance, memory);
+    }
+
+    constructor(lib, memory) {
+      this.lib = lib;
+      this.memory = memory;
+
+      this.strBuf = new Uint8Array(memory.buffer, 0, 64);
+      this.keyBuf = new Uint8Array(memory.buffer, 64, 64);
+    }
+
+    generate(secret) {
+      /* copy the string to module memory and 0-terminate */
+      const encoder = new TextEncoder();
+      const strLen = encoder.encodeInto(secret, this.strBuf).written;
+      if (strLen >= this.strBuf.length)
+        throw new Error("Secret too long");
+      this.strBuf[strLen] = 0;
+
+      this.keyBuf.fill(0);
+      const keyLen = this.lib.exports.from_base32(
+        this.strBuf.byteOffset,
+        this.keyBuf.byteOffset,
+        this.keyBuf.byteLength);
+
+      if (!keyLen)
+        throw new Error("Invalid secret");
+
+      const time = BigInt(Math.floor(Date.now() / 1000)); 
+      const code = this.lib.exports.totp(this.keyBuf.byteOffset, time);
+
+      return ("000000" + code).slice(-6);
+    }
+  }
+
+  async function init() {
+    try {
+      const input = document.getElementById("secret");
+      const output = document.getElementById("totp");
+      const progress = document.getElementById("progress");
+
+      var totp = await TotpGenerator.load();
+
+      function refresh() {
+        try {
+          progress.value = Date.now() / 1000 % 30;
+          output.value = input.value ?
+            totp.generate(input.value.trim()) : "";
+          message.innerText = "";
+        } catch (e) {
+          output.value = "";
+          message.innerText = e.message;
+        }
+      }
+
+      refresh();
+      input.addEventListener("keyup", refresh);
+      setInterval(refresh, 100);
+
+      document.getElementById("app").style.display = "";
+    } catch (e) {
+      alert(e.message);
+    }
+
+    document.getElementById("loading").style.display = "none";
+  }
+
+  init();
+</script>

@@ -1,0 +1,1 @@
+gcc test/main.c -I. -I../src -o clogtest && ./clogtest

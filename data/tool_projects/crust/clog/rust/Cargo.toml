@@ -1,0 +1,8 @@
+[package]
+name = "clog"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+frunk_core = "0.4.3"
+nix = "0.29.0"

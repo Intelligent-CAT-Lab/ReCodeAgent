@@ -1,0 +1,143 @@
+        -:    0:Source:src/dht.c
+        -:    1:
+        -:    2:#include <stddef.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <stdbool.h>
+        -:    5:#include <syslog.h>
+        -:    6:#include <assert.h>
+        -:    7:
+        -:    8:#include <stdio.h>
+        -:    9:
+        -:   10:#include "dht.h"
+        -:   11:
+        -:   12:void **hash_table;
+        -:   13:unsigned int lower_bound;
+        -:   14:unsigned int upper_bound;
+        -:   15:
+        -:   16:/* called on app start up */
+       29:   17:void dht_init() {
+       29:   18:	hash_table = NULL;
+       29:   19:	lower_bound = 0;
+       29:   20:	upper_bound = 0;
+       29:   21:}
+        -:   22:
+        -:   23://TODO: This must logically call back to the dispatcher to shift relocated items to other nodes ?
+       33:   24:bool dht_init_table(unsigned int new_lower_bound, unsigned int new_upper_bound, bool migrate) {
+        -:   25:
+        -:   26:	unsigned int i;
+        -:   27:	unsigned int old_hash_table_size;
+        -:   28:	unsigned int new_hash_table_size;
+        -:   29:	unsigned int absolute_position;
+        -:   30:	void **new_hash_table;
+        -:   31:	void *item;
+        -:   32:
+      33*:   33:	assert(new_upper_bound > new_lower_bound);
+        -:   34:
+        -:   35:	/* ensure we can get the space for the new table */
+       33:   36:	new_hash_table_size = new_upper_bound - new_lower_bound;
+        -:   37:
+       33:   38:	syslog(LOG_INFO, "dht_init_table called (new_lower_bound=%i, new_upper_bound=%i, new_hash_table_size=%i",
+        -:   39:		new_lower_bound,
+        -:   40:		new_upper_bound,
+        -:   41:		new_hash_table_size
+        -:   42:	);
+        -:   43:
+       33:   44:	new_hash_table = (void*) malloc(new_hash_table_size * sizeof(void*));
+        -:   45:
+       33:   46:	if (((size_t)new_hash_table) == -1) {
+        -:   47:		/* call to malloc failed. dht_intialise fails */
+    #####:   48:		syslog(LOG_WARNING, "call to malloc() failed in dht_init_table");
+    #####:   49:		return false;
+        -:   50:	}
+        -:   51:
+        -:   52:	/* intialise new array */
+     4506:   53:	for (i = 0; i < new_hash_table_size; i++) {
+     4473:   54:		new_hash_table[i] = NULL;
+        -:   55:	}
+        -:   56:
+       33:   57:	if (migrate)
+        4:   58:		syslog(LOG_INFO, "Migrating data during reinitialisation");
+        -:   59:
+        -:   60:	/* free the old table. Possible migrate data to new locations */
+        -:   61:
+       33:   62:	if (dht_is_initialised()) {
+        -:   63:
+        5:   64:		old_hash_table_size = dht_get_size();
+        -:   65:
+     1569:   66:		for (i = 0; i < old_hash_table_size; i++) {
+        -:   67:
+        -:   68:			/* there is overlap. move the item to the new location. */
+        -:   69:
+     1564:   70:			item = hash_table[i];
+        -:   71:
+     1564:   72:			if (item != NULL) {
+        -:   73:				
+        5:   74:				absolute_position = (i + lower_bound);
+        -:   75:				
+        5:   76:				if (migrate && absolute_position >= new_lower_bound &&
+        -:   77:								absolute_position < new_upper_bound) {
+        -:   78:
+        4:   79:					new_hash_table[(absolute_position - new_lower_bound)] = item;
+        -:   80:				} else {
+        -:   81:					//TODO: Return to higher level for remapping.
+        1:   82:					printf("forgotten... todo remap send to peer\n");
+        -:   83:				}
+        -:   84:			}
+        -:   85:
+        -:   86:		}
+        -:   87:
+        5:   88:		free(hash_table);
+        -:   89:	}
+        -:   90:
+        -:   91:	/* install new table */
+       33:   92:	hash_table = new_hash_table;
+       33:   93:	lower_bound = new_lower_bound;
+       33:   94:	upper_bound = new_upper_bound;
+        -:   95:
+       33:   96:	syslog(LOG_INFO, "dht_init_table complete");
+       33:   97:	return true;
+        -:   98:}
+        -:   99:
+       75:  100:bool dht_is_initialised() {
+       75:  101:	return (hash_table != NULL);
+        -:  102:}
+        -:  103:
+        3:  104:unsigned int dht_get_lower_bound() {
+       3*:  105:	assert(dht_is_initialised());
+        3:  106:	return lower_bound;
+        -:  107:}
+        -:  108:
+        2:  109:unsigned int dht_get_upper_bound() {
+       2*:  110:	assert(dht_is_initialised());
+        2:  111:	return upper_bound;
+        -:  112:}
+        -:  113:
+       10:  114:unsigned int dht_get_size() {
+      10*:  115:	assert(dht_is_initialised());
+       10:  116:	return (upper_bound - lower_bound);
+        -:  117:}
+        -:  118:
+       17:  119:void *dht_read(unsigned int location) {
+        -:  120:	unsigned int absolute_position;
+        -:  121:
+      17*:  122:	assert(dht_is_initialised());
+      17*:  123:	assert(location >= lower_bound);
+      17*:  124:	assert(location < upper_bound);
+        -:  125:	
+       17:  126:	absolute_position = location - lower_bound;
+       17:  127:	return hash_table[absolute_position];
+        -:  128:}
+        -:  129:
+        8:  130:void dht_write(unsigned int location, void* data) {
+        -:  131:	unsigned int absolute_position;
+        -:  132:	
+       8*:  133:	assert(dht_is_initialised());
+        -:  134:
+       8*:  135:	assert(location >= lower_bound);
+       8*:  136:	assert(location < upper_bound);
+        -:  137:
+        8:  138:	absolute_position = location - lower_bound;
+        8:  139:	syslog(LOG_DEBUG, "dht_write into %i", absolute_position);
+        8:  140:	hash_table[absolute_position] = data;
+        8:  141:}
+        -:  142:

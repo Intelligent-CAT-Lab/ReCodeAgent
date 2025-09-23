@@ -1,0 +1,377 @@
+        -:    0:Source:test.c
+        -:    1:/*
+        -:    2: * Copyright (C) 2005-2015 Christoph Rupp (chris@crupp.de).
+        -:    3: *
+        -:    4: * Licensed under the Apache License, Version 2.0 (the "License");
+        -:    5: * you may not use this file except in compliance with the License.
+        -:    6: * You may obtain a copy of the License at
+        -:    7: *
+        -:    8: *     http://www.apache.org/licenses/LICENSE-2.0
+        -:    9: *
+        -:   10: * Unless required by applicable law or agreed to in writing, software
+        -:   11: * distributed under the License is distributed on an "AS IS" BASIS,
+        -:   12: * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        -:   13: * See the License for the specific language governing permissions and
+        -:   14: * limitations under the License.
+        -:   15: */
+        -:   16:#include <stdio.h>
+        -:   17:#include <stdlib.h>
+        -:   18:
+        -:   19:#include "for.h"
+        -:   20:
+        -:   21:typedef uint32_t (*for_unpackfunc_t) (uint32_t, const uint8_t *, uint32_t *);
+        -:   22:typedef uint32_t (*for_packfunc_t)   (uint32_t, const uint32_t *, uint8_t *);
+        -:   23:typedef uint32_t (*for_unpackxfunc_t)(uint32_t, const uint8_t *, uint32_t *,
+        -:   24:                        uint32_t);
+        -:   25:typedef uint32_t (*for_packxfunc_t)  (uint32_t, const uint32_t *, uint8_t *,
+        -:   26:                        uint32_t);
+        -:   27:
+        -:   28:extern for_packfunc_t for_pack32[33];
+        -:   29:extern for_unpackfunc_t for_unpack32[33];
+        -:   30:extern for_packfunc_t for_pack16[33];
+        -:   31:extern for_unpackfunc_t for_unpack16[33];
+        -:   32:extern for_packfunc_t for_pack8[33];
+        -:   33:extern for_unpackfunc_t for_unpack8[33];
+        -:   34:extern for_packxfunc_t for_packx[33];
+        -:   35:extern for_unpackxfunc_t for_unpackx[33];
+        -:   36:
+        -:   37:#define VERIFY(c)     while (!(c)) {                                        \
+        -:   38:                        printf("%s:%d: expression failed\n",                \
+        -:   39:                                        __FILE__, __LINE__);                \
+        -:   40:                        abort();                                            \
+        -:   41:                      }
+        -:   42:
+        -:   43:#define VERIFY_ARRAY(a1, a2, len)                                           \
+        -:   44:                      do {                                                  \
+        -:   45:                        uint32_t __i;                                       \
+        -:   46:                        for (__i = 0; __i < len; __i++) {                   \
+        -:   47:                          if (a1[__i] != a2[__i]) {                         \
+        -:   48:                            printf("data mismatch at %u\n", __i);           \
+        -:   49:                            abort();                                        \
+        -:   50:                          }                                                 \
+        -:   51:                        }                                                   \
+        -:   52:                      } while (0)
+        -:   53:
+        -:   54:static uint32_t inbuf[1024];
+        -:   55:
+        -:   56:static uint32_t *
+        -:   57:generate_input(uint32_t base, uint32_t length, uint32_t bits)
+        -:   58:{
+        -:   59:  uint32_t i;
+      355:   60:  uint32_t max = (1 << bits) - 1;
+        -:   61:
+     4251:   62:  for (i = 0; i < length; i++) {
+     3896:   63:    if (bits == 0)
+      120:   64:      inbuf[i] = base;
+     3776:   65:    else if (bits == 32)
+      56*:   66:      inbuf[i] = base + i;
+        -:   67:    else
+     3720:   68:      inbuf[i] = base + (i % max);
+        -:   69:  }
+        -:   70:
+        -:   71:  return &inbuf[0];
+        -:   72:}
+        -:   73:
+        -:   74:static void
+       17:   75:highlevel_sorted(uint32_t length)
+        -:   76:{
+        -:   77:  uint32_t i, s1, s2, s3;
+        -:   78:  uint8_t out[1024 * 10];
+        -:   79:  uint32_t in[1024 * 10];
+        -:   80:  uint32_t tmp[1024 * 10];
+        -:   81:
+        -:   82:  printf("highlevel sorted %u ints\n", length);
+        -:   83:
+     4402:   84:  for (i = 0; i < length; i++)
+     4385:   85:    in[i] = 33 + i;
+        -:   86:
+       17:   87:  s3 = for_compressed_size_sorted(in, length);
+       17:   88:  tmp[s3] = 'x';
+       17:   89:  s1 = for_compress_sorted(in, out, length);
+      17*:   90:  VERIFY(tmp[s3] == 'x');
+       17:   91:  s2 = for_uncompress(out, tmp, length);
+      17*:   92:  VERIFY(s1 == s2);
+      17*:   93:  VERIFY(s2 == s3);
+    4402*:   94:  VERIFY_ARRAY(in, tmp, length);
+        -:   95:
+     4402:   96:  for (i = 0; i < length; i++)
+    4385*:   97:    VERIFY(in[i] == for_select(out, i));
+        -:   98:
+     4402:   99:  for (i = 0; i < length; i++)
+    4385*:  100:    VERIFY(i == for_linear_search(out, length, in[i]));
+        -:  101:
+     4402:  102:  for (i = 0; i < length; i++) {
+        -:  103:    uint32_t actual;
+     4385:  104:    uint32_t index = for_lower_bound_search(out, length, in[i], &actual);
+    4385*:  105:    VERIFY(in[i] == in[index]);
+    4385*:  106:    VERIFY(actual == in[i]);
+        -:  107:  }
+       17:  108:}
+        -:  109:
+        -:  110:static uint32_t
+        -:  111:rnd()
+        -:  112:{
+        -:  113:  static uint32_t a = 3;
+    14385:  114:  a = (((a * 214013L + 2531011L) >> 16) & 32767);
+        -:  115:  return (a);
+        -:  116:}
+        -:  117:
+        -:  118:static void
+       17:  119:highlevel_unsorted(uint32_t length)
+        -:  120:{
+        -:  121:  uint32_t i, s1, s2, s3;
+        -:  122:  uint8_t out[1024 * 10];
+        -:  123:  uint32_t in[1024 * 10];
+        -:  124:  uint32_t tmp[1024 * 10];
+        -:  125:
+        -:  126:  printf("highlevel unsorted %u ints\n", length);
+        -:  127:
+     4402:  128:  for (i = 0; i < length; i++)
+     4385:  129:    in[i] = 7 + (rnd() - 7);
+        -:  130:
+       17:  131:  s3 = for_compressed_size_unsorted(in, length);
+       17:  132:  tmp[s3] = 'x';
+       17:  133:  s1 = for_compress_unsorted(in, out, length);
+       17:  134:  s2 = for_uncompress(out, tmp, length);
+      17*:  135:  VERIFY(s1 == s2);
+      17*:  136:  VERIFY(s2 == s3);
+      17*:  137:  VERIFY(tmp[s3] == 'x');
+    4402*:  138:  VERIFY_ARRAY(in, tmp, length);
+        -:  139:
+     4402:  140:  for (i = 0; i < length; i++)
+    4385*:  141:    VERIFY(in[i] == for_select(out, i));
+        -:  142:
+     4402:  143:  for (i = 0; i < length; i++) {
+     4385:  144:    uint32_t index = for_linear_search(out, length, in[i]);
+    4385*:  145:    VERIFY(in[i] == in[index]);
+        -:  146:  }
+       17:  147:}
+        -:  148:
+        -:  149:static void
+        1:  150:append_sorted()
+        -:  151:{
+        -:  152:#undef max
+        -:  153:#define max 10000
+        -:  154:  int i;
+        -:  155:  uint32_t s1, s2;
+        -:  156:
+        1:  157:  uint8_t out1[max * 8] = {0};
+        1:  158:  uint8_t out2[max * 8] = {0};
+        -:  159:  uint32_t in[max];
+        -:  160:
+        -:  161:  printf("append sorted, %d ints\n", max);
+        -:  162:
+    10001:  163:  for (i = 0; i < max; i++) {
+    10000:  164:    in[i] = i;
+        -:  165:
+        -:  166:    /* insert with "append" */
+    10000:  167:    s1 = for_append_sorted(&out1[0], i, in[i]);
+        -:  168:
+        -:  169:    /* compress the full sequence */
+    10000:  170:    s2 = for_compress_sorted(in, out2, i + 1);
+        -:  171:
+   10000*:  172:    VERIFY(s1 == s2);
+81979106*:  173:    VERIFY_ARRAY(out1, out2, s1);
+        -:  174:  }
+        1:  175:}
+        -:  176:
+        -:  177:static void
+        1:  178:append_unsorted()
+        -:  179:{
+        -:  180:#undef max
+        -:  181:#define max 10000
+        -:  182:  int i;
+        -:  183:  uint32_t s1, s2;
+        -:  184:
+        1:  185:  uint8_t out1[max * 8] = {0};
+        1:  186:  uint8_t out2[max * 8] = {0};
+        -:  187:  uint32_t in[max];
+        -:  188:
+        -:  189:  printf("append unsorted, %d ints\n", max);
+        -:  190:
+    10001:  191:  for (i = 0; i < max; i++) {
+    10000:  192:    in[i] = 7 + (rnd() - 7);
+        -:  193:
+        -:  194:    /* insert with "append" */
+    10000:  195:    s1 = for_append_unsorted(&out1[0], i, in[i]);
+        -:  196:
+        -:  197:    /* compress the full sequence */
+    10000:  198:    s2 = for_compress_unsorted(in, out2, i + 1);
+        -:  199:
+   10000*:  200:    VERIFY(s1 == s2);
+93823748*:  201:    VERIFY_ARRAY(out1, out2, s1);
+        -:  202:  }
+        1:  203:}
+        -:  204:
+        -:  205:static void
+        1:  206:append_sorted_bignum()
+        -:  207:{
+        -:  208:#undef max
+        -:  209:#define max 10
+        -:  210:  int i;
+        -:  211:  uint32_t s1, s2;
+        -:  212:
+        1:  213:  uint8_t out1[max * 8] = {0};
+        1:  214:  uint8_t out2[max * 8] = {0};
+        -:  215:  uint32_t in[max];
+        -:  216:
+        -:  217:  printf("append sorted bignum, %d ints\n", max);
+        -:  218:
+       11:  219:  for (i = 0; i < max; i++) {
+       10:  220:    in[i] = 1 << (17 + i);
+        -:  221:
+        -:  222:    /* insert with "append" */
+       10:  223:    s1 = for_append_sorted(&out1[0], i, in[i]);
+        -:  224:
+        -:  225:    /* compress the full sequence */
+       10:  226:    s2 = for_compress_sorted(in, out2, i + 1);
+        -:  227:
+      10*:  228:    VERIFY(s1 == s2);
+     221*:  229:    VERIFY_ARRAY(out1, out2, s1);
+        -:  230:  }
+        1:  231:}
+        -:  232:
+        -:  233:static void
+       99:  234:lowlevel_block_func(uint32_t bits, for_packfunc_t pack, for_unpackfunc_t unpack,
+        -:  235:                uint32_t *in, uint32_t base, uint32_t length)
+        -:  236:{
+        -:  237:  uint32_t i;
+        -:  238:  uint8_t out[1024];
+        -:  239:  uint32_t tmp[1024];
+        -:  240:
+       99:  241:  uint32_t s1 = pack(base, in, out);
+       99:  242:  uint32_t s2 = unpack(base, out, tmp);
+      99*:  243:  VERIFY(s1 == s2);
+    1947*:  244:  VERIFY_ARRAY(in, tmp, length);
+        -:  245:
+     1947:  246:  for (i = 0; i < length; i++)
+    1848*:  247:    VERIFY(in[i] == for_select_bits(out, base, bits, i));
+        -:  248:
+     1947:  249:  for (i = 0; i < length; i++) {
+     1848:  250:    uint32_t index = for_linear_search_bits(out, length, base, bits, in[i]);
+    1848*:  251:    VERIFY(in[i] == in[index]);
+        -:  252:  }
+       99:  253:}
+        -:  254:
+        -:  255:static void
+      256:  256:lowlevel_blockx_func(uint32_t bits, for_packxfunc_t pack,
+        -:  257:                for_unpackxfunc_t unpack, uint32_t *in, uint32_t base,
+        -:  258:                uint32_t length)
+        -:  259:{
+        -:  260:  uint32_t i;
+        -:  261:  uint8_t out[1024];
+        -:  262:  uint32_t tmp[1024];
+        -:  263:
+      256:  264:  uint32_t s1 = pack(base, in, out, length);
+      256:  265:  uint32_t s2 = unpack(base, out, tmp, length);
+     256*:  266:  VERIFY(s1 == s2);
+    1152*:  267:  VERIFY_ARRAY(in, tmp, length);
+        -:  268:
+     1152:  269:  for (i = 0; i < length; i++)
+     896*:  270:    VERIFY(in[i] == for_select_bits(out, base, bits, i));
+        -:  271:
+     1152:  272:  for (i = 0; i < length; i++) {
+      896:  273:    uint32_t index = for_linear_search_bits(out, length, base, bits, in[i]);
+     896*:  274:    VERIFY(in[i] == in[index]);
+        -:  275:  }
+      256:  276:}
+        -:  277:
+        -:  278:static void
+       33:  279:lowlevel_block32(uint32_t bits)
+        -:  280:{
+        -:  281:  uint32_t *in = generate_input(10, 32, bits);
+        -:  282:
+        -:  283:  printf("lowlevel pack/unpack 32 ints, %2d bits\n", bits);
+       33:  284:  lowlevel_block_func(bits, for_pack32[bits], for_unpack32[bits], in, 10, 32);
+       33:  285:}
+        -:  286:
+        -:  287:static void
+       33:  288:lowlevel_block16(uint32_t bits)
+        -:  289:{
+        -:  290:  uint32_t *in = generate_input(10, 16, bits);
+        -:  291:
+        -:  292:  printf("lowlevel pack/unpack 16 ints, %2d bits\n", bits);
+       33:  293:  lowlevel_block_func(bits, for_pack16[bits], for_unpack16[bits], in, 10, 16);
+       33:  294:}
+        -:  295:
+        -:  296:static void
+       33:  297:lowlevel_block8(uint32_t bits)
+        -:  298:{
+        -:  299:  uint32_t *in = generate_input(10, 8, bits);
+        -:  300:
+        -:  301:  printf("lowlevel pack/unpack  8 ints, %2d bits\n", bits);
+       33:  302:  lowlevel_block_func(bits, for_pack8[bits], for_unpack8[bits], in, 10, 8);
+       33:  303:}
+        -:  304:
+        -:  305:static void
+      256:  306:lowlevel_blockx(int length, uint32_t bits)
+        -:  307:{
+        -:  308:  uint32_t *in = generate_input(10, 8, bits);
+        -:  309:
+        -:  310:  printf("lowlevel pack/unpack  %d ints, %2d bits\n", length, bits);
+      256:  311:  lowlevel_blockx_func(bits, for_packx[bits],
+        -:  312:                  for_unpackx[bits], in, 10, length);
+      256:  313:}
+        -:  314:
+        -:  315:int
+        1:  316:main()
+        -:  317:{
+        -:  318:  int i, b;
+        -:  319:
+       34:  320:  for (i = 0; i <= 32; i++)
+       33:  321:    lowlevel_block32(i);
+        -:  322:
+       34:  323:  for (i = 0; i <= 32; i++)
+       33:  324:    lowlevel_block16(i);
+        -:  325:
+       34:  326:  for (i = 0; i <= 32; i++)
+       33:  327:    lowlevel_block8(i);
+        -:  328:
+       33:  329:  for (i = 0; i < 32; i++) {
+      288:  330:    for (b = 0; b < 8; b++)
+      256:  331:      lowlevel_blockx(b, i);
+        -:  332:  }
+        -:  333:
+        1:  334:  highlevel_sorted(0);
+        1:  335:  highlevel_sorted(1);
+        1:  336:  highlevel_sorted(2);
+        1:  337:  highlevel_sorted(3);
+        1:  338:  highlevel_sorted(16);
+        1:  339:  highlevel_sorted(17);
+        1:  340:  highlevel_sorted(32);
+        1:  341:  highlevel_sorted(33);
+        1:  342:  highlevel_sorted(64);
+        1:  343:  highlevel_sorted(65);
+        1:  344:  highlevel_sorted(128);
+        1:  345:  highlevel_sorted(129);
+        1:  346:  highlevel_sorted(256);
+        1:  347:  highlevel_sorted(257);
+        1:  348:  highlevel_sorted(1024);
+        1:  349:  highlevel_sorted(1025);
+        1:  350:  highlevel_sorted(1333);
+        -:  351:
+        1:  352:  highlevel_unsorted(0);
+        1:  353:  highlevel_unsorted(1);
+        1:  354:  highlevel_unsorted(2);
+        1:  355:  highlevel_unsorted(3);
+        1:  356:  highlevel_unsorted(16);
+        1:  357:  highlevel_unsorted(17);
+        1:  358:  highlevel_unsorted(32);
+        1:  359:  highlevel_unsorted(33);
+        1:  360:  highlevel_unsorted(64);
+        1:  361:  highlevel_unsorted(65);
+        1:  362:  highlevel_unsorted(128);
+        1:  363:  highlevel_unsorted(129);
+        1:  364:  highlevel_unsorted(256);
+        1:  365:  highlevel_unsorted(257);
+        1:  366:  highlevel_unsorted(1024);
+        1:  367:  highlevel_unsorted(1025);
+        1:  368:  highlevel_unsorted(1333);
+        -:  369:
+        1:  370:  append_sorted();
+        1:  371:  append_sorted_bignum();
+        1:  372:  append_unsorted();
+        -:  373:
+        -:  374:  printf("\nsuccess!\n");
+        -:  375:  return 0;
+        -:  376:}

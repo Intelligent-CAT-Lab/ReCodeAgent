@@ -1,0 +1,35 @@
+Start testing: Feb 27 07:59 CST
+----------------------------------------------------------
+Unable to find executable: test_build
+1/2 Testing: build
+1/2 Test: build
+Command: ""
+Directory: /mnt/nas/anirudh/exps/CBench/libtinyfseq/build
+"build" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"build" end time: Feb 27 07:59 CST
+"build" time elapsed: 00:00:00
+----------------------------------------------------------
+
+Unable to find executable: test_TFError_string
+2/2 Testing: TFError_string
+2/2 Test: TFError_string
+Command: ""
+Directory: /mnt/nas/anirudh/exps/CBench/libtinyfseq/build
+"TFError_string" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"TFError_string" end time: Feb 27 07:59 CST
+"TFError_string" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Feb 27 07:59 CST

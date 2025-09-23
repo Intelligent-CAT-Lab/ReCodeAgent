@@ -1,0 +1,16 @@
+time=1
+dt=0.00025
+
+x_particles=6
+y_particles=6
+x_squares=7
+y_squares=7
+square_in_grid_length=120
+
+radius=50
+kn=2474358.297
+ks=190335.254
+rho=0.00000078
+thickness=30
+v0=0
+r0=50

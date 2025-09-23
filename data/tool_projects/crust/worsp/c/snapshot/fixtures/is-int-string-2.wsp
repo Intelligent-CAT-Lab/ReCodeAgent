@@ -1,0 +1,2 @@
+(= foo "345")
+(print (is-int-string foo))

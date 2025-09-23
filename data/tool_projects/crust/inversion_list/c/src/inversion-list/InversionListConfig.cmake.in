@@ -1,0 +1,9 @@
+# see https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
+
+@PACKAGE_INIT@
+
+set_and_check(NUMERIC_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/include")
+set_and_check(NUMERIC_LIB_DIRS "${PACKAGE_PREFIX_DIR}/lib")
+set_and_check(NUMERIC_LIBRARIES inversion-list)
+
+check_required_components(Inversion-List)

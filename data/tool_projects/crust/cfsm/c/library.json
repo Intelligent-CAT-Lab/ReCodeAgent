@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+  "name": "CFSM",
+  "version": "0.3.0",
+  "description": "A State Design Pattern for State Machines in C-Language",
+  "keywords": "state design pattern, FSM, C-Language",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhjschulz/cfsm.git"
+  },
+  "authors": [
+    {
+      "name": "Haju Schulz ",
+      "email": "haju@schulznorbert.de",
+      "url": "https://github.com/nhjschulz/cfsm",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://nhjschulz.github.io/cfsm",
+  "dependencies": {},
+  "frameworks": "*",
+  "platforms": "*",
+  "export": {
+    "include": [
+      "src/*.[ch]",
+      "doc/*.puml",
+      "examples/UnoBlink"
+    ]
+  },
+  "examples": [
+    {
+      "name": "UnoBlink",
+      "base": "examples/UnoBlink",
+      "files": [
+          "platformio.ini",
+          "src/states/OffState.cpp",
+          "src/states/OffState.h",
+          "src/states/OnState.cpp",
+          "src/states/OnState.h",
+          "src/blinkdata.h",
+          "src/main.cpp",
+          "README.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+The library uses a lot of dynamic arrays, rewriting each is
+tedious and redundant. Maybe we can implement utils/array.c? I
+am honestly not a fan of making abstraction, I know it's a data
+structure that's being used dozens of time in libpgn, but
+working with `void *` is never a good experience.
+
+Or, we could use casting, like what sys/socket.h uses, see: bind(3p).
+
+Is returing `int` for something that couldn't be minus ok? I am
+thinking too much.
+
+Maybe create a function that takes filename, and read from there,
+we could save some time. Also, it's just nicer.
+
+https://news.ycombinator.com/item?id=41442029
+Show HN: libpgn – Tiny C library for parsing PGN files (Chess Game Records)

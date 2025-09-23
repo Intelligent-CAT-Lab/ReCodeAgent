@@ -1,0 +1,1 @@
+/usr/bin/cc -O2 -g -DNDEBUG CMakeFiles/fleurcli.dir/fleurcli.c.o -o fleurcli  ../fnv/libfnv.a ../fleur/libfleur.a ../myutils/libmyutils.a ../fnv/libfnv.a -lm 

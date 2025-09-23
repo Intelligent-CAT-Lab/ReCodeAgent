@@ -1,0 +1,16 @@
+(defun tokenize (exp)
+  (progn
+    (= i 0)
+    (= result '())
+    (while (< i (length exp))
+      (progn
+        (= char (string-ref exp i))
+        (push result char)
+        (= i (+ i 1))
+      )
+    )
+    (print result)
+  )
+)
+
+(tokenize (remove-whitespaces "2 + 1"))

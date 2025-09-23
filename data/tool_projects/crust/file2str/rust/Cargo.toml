@@ -1,0 +1,13 @@
+[package]
+name = "file2str"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test_file2str"
+path = "src/bin/test_file2str.rs"

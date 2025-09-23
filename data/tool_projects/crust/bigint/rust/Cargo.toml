@@ -1,0 +1,21 @@
+[package]
+name = "bigint"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test1"
+path = "src/bin/test1.rs"
+
+[[test]]
+name = "test2"
+path = "src/bin/test2.rs"
+
+[[test]]
+name = "test3"
+path = "src/bin/test3.rs"

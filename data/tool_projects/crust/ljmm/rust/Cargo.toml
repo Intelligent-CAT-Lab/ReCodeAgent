@@ -1,0 +1,17 @@
+[package]
+name = "ljmm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test_001"
+path = "src/bin/test_001.rs"
+
+[[test]]
+name = "test_002"
+path = "src/bin/test_002.rs"

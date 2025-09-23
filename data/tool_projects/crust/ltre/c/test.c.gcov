@@ -1,0 +1,529 @@
+        -:    0:Source:test.c
+        -:    1:#include "ltre.h"
+        -:    2:#include <stdio.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <string.h>
+        -:    5:
+        -:    6:struct test {
+        -:    7:  char *regex;
+        -:    8:  char *input;
+        -:    9:  bool matches;
+        -:   10:  bool errors;
+        -:   11:  bool partial;
+        -:   12:  bool ignorecase;
+        -:   13:  bool complement;
+        -:   14:  bool quick;
+        -:   15:};
+        -:   16:
+      368:   17:void test(struct test args) {
+        -:   18:#define test(...) test((struct test){__VA_ARGS__})
+        -:   19:  static struct test memo = {0};
+        -:   20:  static struct nfa nfa = {NULL};
+        -:   21:  static struct dstate *dfa = NULL, *ldfa = NULL;
+        -:   22:
+      368:   23:  if (dfa && strcmp(memo.regex, args.regex) == 0 &&
+      199:   24:      memcmp(&memo.errors, &args.errors, sizeof(bool[5])) == 0)
+      199:   25:    goto check_matches;
+      169:   26:  memo = args;
+        -:   27:
+      169:   28:  char *error = NULL, *loc = args.regex;
+      169:   29:  nfa_free(nfa), nfa = ltre_parse(&loc, &error);
+        -:   30:
+      169:   31:  if (!!error != args.errors)
+        -:   32:    printf("test failed: /%s/ parse\n", args.regex);
+        -:   33:  // if (error)
+        -:   34:  //   printf("note: /%s/ %s near '%.16s'\n", args.regex, error, loc);
+        -:   35:
+      169:   36:  if (error)
+       45:   37:    return;
+        -:   38:
+      124:   39:  if (args.partial)
+        5:   40:    ltre_partial(&nfa);
+      124:   41:  if (args.ignorecase)
+        3:   42:    ltre_ignorecase(&nfa);
+      124:   43:  if (args.complement)
+        2:   44:    ltre_complement(&nfa);
+        -:   45:
+        -:   46:  // NFA -> DFA
+      124:   47:  dfa_free(dfa), dfa = ltre_compile(nfa);
+        -:   48:
+        -:   49:  // DFA -> BUF -> DFA -> NFA -> DFA
+      124:   50:  uint8_t *buf = dfa_serialize(dfa, &(size_t){0});
+      124:   51:  dfa_free(dfa), dfa = dfa_deserialize(buf, &(size_t){0});
+      124:   52:  nfa_free(nfa), nfa = ltre_uncompile(dfa);
+      124:   53:  dfa_free(dfa), dfa = ltre_compile(nfa);
+      124:   54:  free(buf);
+        -:   55:
+      124:   56:  if (!args.quick) {
+        -:   57:    // DFA -> RE -> NFA -> DFA
+      122:   58:    char *re = ltre_decompile(dfa);
+      122:   59:    nfa_free(nfa), nfa = ltre_parse(&re, NULL);
+      122:   60:    dfa_free(dfa), dfa = ltre_compile(nfa);
+      122:   61:    free(re);
+        -:   62:  }
+        -:   63:
+      124:   64:  dfa_free(ldfa), ldfa = NULL;
+        -:   65:
+      323:   66:check_matches:
+      646:   67:  if (ltre_matches(dfa, (uint8_t *)args.input) != args.matches ||
+      323:   68:      ltre_matches_lazy(&ldfa, nfa, (uint8_t *)args.input) != args.matches)
+    #####:   69:    printf("test failed: /%s/ against '%s'\n", args.regex, args.input);
+        -:   70:}
+        -:   71:
+        1:   72:int main(void) {
+        -:   73:  // catastrophic backtracking
+        1:   74:  test("(a*)*c", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", false);
+        1:   75:  test("(x+x+)+y", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", false);
+        -:   76:
+        -:   77:  // determinization state blowout
+        1:   78:  test("[01]*1[01]{8}", "11011100011100", true, .quick = true);
+        1:   79:  test("[01]*1[01]{8}", "01010010010010", false, .quick = true);
+        -:   80:
+        -:   81:  // powerset construction state blowout
+        1:   82:  test(".*0.*|.*1.*|.*2.*|.*3.*|.*4.*|.*5.*", "", false);
+        1:   83:  test(".*0.*|.*1.*|.*2.*|.*3.*|.*4.*|.*5.*", "123", true);
+        -:   84:
+        -:   85:  // potential edge cases
+        1:   86:  test("abba", "abba", true);
+        1:   87:  test("[ab]+", "abba", true);
+        1:   88:  test("[ab]+", "abc", false);
+        1:   89:  test(".*", "abba", true);
+        1:   90:  test("(a|b+){3}", "abbba", true);
+        1:   91:  test("(a|b+){3}", "abbab", false);
+        1:   92:  test("\\x61\\+", "a+", true);
+        1:   93:  test("", "", true);
+        1:   94:  test("[]", "", false);
+        1:   95:  test("[]*", "", true);
+        1:   96:  test("[]+", "", false);
+        1:   97:  test("[]?", "", true);
+        1:   98:  test("()", "", true);
+        1:   99:  test("()*", "", true);
+        1:  100:  test("()+", "", true);
+        1:  101:  test("()?", "", true);
+        1:  102:  test(" ", " ", true);
+        1:  103:  test("", "\n", false);
+        1:  104:  test("\\n", "\n", true);
+        1:  105:  test(".", "\n", false);
+        1:  106:  test("\\\\n", "\n", false);
+        1:  107:  test("(|n)(\\n)", "\n", true);
+        1:  108:  test("\\r?\\n", "\n", true);
+        1:  109:  test("\\r?\\n", "\r\n", true);
+        1:  110:  test("(a*)*", "a", true);
+        1:  111:  test("(a+)+", "aa", true);
+        1:  112:  test("(a?)?", "", true);
+        1:  113:  test("a+", "aa", true);
+        1:  114:  test("a?", "aa", false);
+        1:  115:  test("(a+)?", "aa", true);
+        1:  116:  test("(ba+)?", "baa", true);
+        1:  117:  test("(ab+)?", "b", false);
+        1:  118:  test("(a+b)?", "a", false);
+        1:  119:  test("(a+a+)+", "a", false);
+        1:  120:  test("a+", "", false);
+        1:  121:  test("(a+|)+", "aa", true);
+        1:  122:  test("(a+|)+", "", true);
+        1:  123:  test("(a|b)?", "a", true);
+        1:  124:  test("(a|b)?", "b", true);
+        1:  125:  test("x*|", "xx", true);
+        1:  126:  test("x*|", "", true);
+        1:  127:  test("x+|", "xx", true);
+        1:  128:  test("x+|", "", true);
+        1:  129:  test("x?|", "x", true);
+        1:  130:  test("x?|", "", true);
+        1:  131:  test("x*y*", "yx", false);
+        1:  132:  test("x+y+", "yx", false);
+        1:  133:  test("x?y?", "yx", false);
+        1:  134:  test("x+y*", "xyx", false);
+        1:  135:  test("x*y+", "yxy", false);
+        1:  136:  test("x*|y*", "xy", false);
+        1:  137:  test("x+|y+", "xy", false);
+        1:  138:  test("x?|y?", "xy", false);
+        1:  139:  test("x+|y*", "xy", false);
+        1:  140:  test("x*|y+", "xy", false);
+        1:  141:  test("a{1,2}", "", false);
+        1:  142:  test("a{1,2}", "a", true);
+        1:  143:  test("a{1,2}", "aa", true);
+        1:  144:  test("a{1,2}", "aaa", false);
+        1:  145:  test("a{0,}", "", true);
+        1:  146:  test("a{0,}", "a", true);
+        1:  147:  test("a{0,}", "aa", true);
+        1:  148:  test("a{0,}", "aaa", true);
+        1:  149:  test("a{1,}", "", false);
+        1:  150:  test("a{1,}", "a", true);
+        1:  151:  test("a{1,}", "aa", true);
+        1:  152:  test("a{1,}", "aaa", true);
+        1:  153:  test("a{3,}", "aa", false);
+        1:  154:  test("a{3,}", "aaa", true);
+        1:  155:  test("a{3,}", "aaaa", true);
+        1:  156:  test("a{3,}", "aaaaa", true);
+        1:  157:  test("a{0,2}", "", true);
+        1:  158:  test("a{0,2}", "a", true);
+        1:  159:  test("a{0,2}", "aa", true);
+        1:  160:  test("a{0,2}", "aaa", false);
+        1:  161:  test("a{2}", "a", false);
+        1:  162:  test("a{2}", "aa", true);
+        1:  163:  test("a{2}", "aaa", false);
+        1:  164:  test("a{0}", "", true);
+        1:  165:  test("a{0}", "a", false);
+        -:  166:
+        -:  167:  // partial, ignorecase, complement
+        1:  168:  test("", "", true, .partial = true);
+        1:  169:  test("", "abc", true, .partial = true);
+        1:  170:  test("b", "abc", true, .partial = true);
+        1:  171:  test("ba", "abc", false, .partial = true);
+        1:  172:  test("abc", "abc", true, .partial = true);
+        1:  173:  test("[]", "", false, .partial = true);
+        1:  174:  test("", "", true, .ignorecase = true);
+        1:  175:  test("abCdEF", "aBCdEf", true, .ignorecase = true);
+        1:  176:  test("ab", "abc", false, .ignorecase = true);
+        1:  177:  test("a", "", true, .complement = true);
+        1:  178:  test("a", "aa", true, .complement = true);
+        1:  179:  test("a", "a", false, .complement = true);
+        1:  180:  test("ab*", "ac", true, .complement = true);
+        1:  181:  test("ab*", "abb", false, .complement = true);
+        -:  182:
+        -:  183:  // decompilation edge cases
+        1:  184:  test("^aa*", "ba", true);
+        1:  185:  test("a-zz*", "abc", false);
+        1:  186:  test("\\x0a(0a)*", "\x0a", true);
+        1:  187:  test("\\x0aa*", "\x0a\x0a", false);
+        -:  188:
+        -:  189:  // parse errors
+        1:  190:  test("abc]", .errors = true);
+        1:  191:  test("[abc", .errors = true);
+        1:  192:  test("abc)", .errors = true);
+        1:  193:  test("(abc", .errors = true);
+        1:  194:  test("+a", .errors = true);
+        1:  195:  test("a|*", .errors = true);
+        1:  196:  test("\\x0", .errors = true);
+        1:  197:  test("\\zzz", .errors = true);
+        1:  198:  test("[a\\x]", .errors = true);
+        1:  199:  test("\b", .errors = true);
+        1:  200:  test("\t", .errors = true);
+        1:  201:  test("^^a", .errors = true);
+        1:  202:  test("a**", .errors = true);
+        1:  203:  test("a*+", .errors = true);
+        1:  204:  test("a*?", .errors = true);
+        1:  205:  test("a+*", .errors = true);
+        1:  206:  test("a++", .errors = true);
+        1:  207:  test("a+?", .errors = true);
+        1:  208:  test("a?*", .errors = true);
+        1:  209:  test("a?+", .errors = true);
+        1:  210:  test("a??", .errors = true);
+        -:  211:#define NAT_OVF "9999999999999999999999999999999999999999"
+        1:  212:  test("a{" NAT_OVF "}", .errors = true);
+        1:  213:  test("a{" NAT_OVF ",}", .errors = true);
+        1:  214:  test("a{," NAT_OVF "}", .errors = true);
+        1:  215:  test("a{" NAT_OVF "," NAT_OVF "}", .errors = true);
+        -:  216:
+        -:  217:  // nonstandard features
+        1:  218:  test("^a", "z", true);
+        1:  219:  test("^a", "a", false);
+        1:  220:  test("^\\n", "\r", true);
+        1:  221:  test("^\\n", "\n", false);
+        1:  222:  test("^.", "\n", true);
+        1:  223:  test("^.", "a", false);
+        1:  224:  test("\\d+", "0123456789", true);
+        1:  225:  test("\\s+", " \f\n\r\t\v", true);
+        1:  226:  test("\\w+", "azAZ09_", true);
+        1:  227:  test("^a-z*", "1A!2$B", true);
+        1:  228:  test("^a-z*", "1aA", false);
+        1:  229:  test("a-z*", "abc", true);
+        1:  230:  test("^[\\d^\\w]+", "abcABC", true);
+        1:  231:  test("^[\\d^\\w]+", "abc123", false);
+        1:  232:  test("^[\\d\\W]+", "abcABC", true);
+        1:  233:  test("^[\\d^\\W]+", "abc123", false);
+        1:  234:  test("[[abc]]+", "abc", true);
+        1:  235:  test("[a[bc]]+", "abc", true);
+        1:  236:  test("[a[b]c]+", "abc", true);
+        1:  237:  test("[a][b][c]", "abc", true);
+        1:  238:  test("^[^a^b]", "a", false);
+        1:  239:  test("^[^a^b]", "b", false);
+        1:  240:  test("^[^a^b]", "", false);
+        1:  241:  test("<ab>", "a", false);
+        1:  242:  test("<ab>", "b", false);
+        1:  243:  test("<ab>", "", false);
+        1:  244:  test("\\^", "^", true);
+        1:  245:  test("^\\^", "^", false);
+        1:  246:  test("^[^\\^]", "^", true);
+        1:  247:  test("^[ ^[a b c]]+", "abc", true);
+        1:  248:  test("^[ ^[a b c]]+", "a c", false);
+        1:  249:  test("<[a b c]^ >+", "abc", true);
+        1:  250:  test("<[a b c]^ >+", "a c", false);
+        1:  251:  test("^[^0-74]+", "0123567", true);
+        1:  252:  test("^[^0-74]+", "89", false);
+        1:  253:  test("^[^0-74]+", "4", false);
+        1:  254:  test("<0-7^4>+", "0123567", true);
+        1:  255:  test("<0-7^4>+", "89", false);
+        1:  256:  test("<0-7^4>+", "4", false);
+        1:  257:  test("[]", " ", false);
+        1:  258:  test("^[]", " ", true);
+        1:  259:  test("<>", " ", true);
+        1:  260:  test("^<>", " ", false);
+        1:  261:  test("9-0*", "abc", true);
+        1:  262:  test("9-0*", "18", false);
+        1:  263:  test("9-0*", "09", true);
+        1:  264:  test("9-0*", "/:", true);
+        1:  265:  test("b-a*", "ab", true);
+        1:  266:  test("a-b*", "ab", true);
+        1:  267:  test("a-a*", "ab", false);
+        1:  268:  test("a-a*", "aa", true);
+        1:  269:  test("a{,2}", "", true);
+        1:  270:  test("a{,2}", "a", true);
+        1:  271:  test("a{,2}", "aa", true);
+        1:  272:  test("a{,2}", "aaa", false);
+        1:  273:  test("a{}", "", true);
+        1:  274:  test("a{}", "a", false);
+        1:  275:  test("a{,}", "", true);
+        1:  276:  test("a{,}", "a", true);
+        1:  277:  test("~0*", "", false);
+        1:  278:  test("~0*", "0", false);
+        1:  279:  test("~0*", "00", false);
+        1:  280:  test("~0*", "001", true);
+        1:  281:  test("ab&cd", "", false);
+        1:  282:  test("ab&cd", "ab", false);
+        1:  283:  test("ab&cd", "cd", false);
+        1:  284:  test("\\w+&~\\d+", "", false);
+        1:  285:  test("\\w+&~\\d+", "abc", true);
+        1:  286:  test("\\w+&~\\d+", "abc123", true);
+        1:  287:  test("\\w+&~\\d+", "1a2b3c", true);
+        1:  288:  test("\\w+&~\\d+", "123", false);
+        1:  289:  test("0x(~[0-9a-f]+)", "0yz", false);
+        1:  290:  test("0x(~[0-9a-f]+)", "0x12", false);
+        1:  291:  test("0x(~[0-9a-f]+)", "0x", true);
+        1:  292:  test("0x(~[0-9a-f]+)", "0xy", true);
+        1:  293:  test("0x(~[0-9a-f]+)", "0xyz", true);
+        1:  294:  test("b(~a*)", "", false);
+        1:  295:  test("b(~a*)", "b", false);
+        1:  296:  test("b(~a*)", "ba", false);
+        1:  297:  test("b(~a*)", "bbaa", true);
+        1:  298:  test("abc>", .errors = true);
+        1:  299:  test("<abc", .errors = true);
+        1:  300:  test("[a?b]", .errors = true);
+        1:  301:  test("[a-]", .errors = true);
+        1:  302:  test("[--]", .errors = true);
+        1:  303:  test("[-]", .errors = true);
+        1:  304:  test("-", .errors = true);
+        1:  305:  test("a-", .errors = true);
+        1:  306:  test("a*{}", .errors = true);
+        1:  307:  test("a+{}", .errors = true);
+        1:  308:  test("a?{}", .errors = true);
+        1:  309:  test("a{}*", .errors = true);
+        1:  310:  test("a{}+", .errors = true);
+        1:  311:  test("a{}?", .errors = true);
+        1:  312:  test("a{}{}", .errors = true);
+        1:  313:  test("a{2,1}", .errors = true);
+        1:  314:  test("a{1 2}", .errors = true);
+        1:  315:  test("a{1, 2}", .errors = true);
+        1:  316:  test("a{a}", .errors = true);
+        1:  317:  test("a~b", .errors = true);
+        -:  318:
+        -:  319:  // realistic regexes
+        -:  320:#define HEX_RGB "#([0-9a-fA-F]{3}){1,2}"
+        1:  321:  test(HEX_RGB, "000", false);
+        1:  322:  test(HEX_RGB, "#0aA", true);
+        1:  323:  test(HEX_RGB, "#00ff", false);
+        1:  324:  test(HEX_RGB, "#abcdef", true);
+        1:  325:  test(HEX_RGB, "#abcdeff", false);
+        -:  326:  // ISO/IEC 9899:TC3, $7.19.6.1 'The fprintf function'.
+        -:  327:  // see also gcc-14/gcc/c-family/c-format.cc:713 'print_char_table'
+        -:  328:  // and gcc-14/gcc/c-family/c-format.h:25 'enum format_lengths'
+        -:  329:#define FIELD_WIDTH "(\\*|1-90-9*)?"
+        -:  330:#define PRECISION "(\\.|\\.\\*|\\.1-90-9*)?"
+        -:  331:#define DI "[\\-\\+ 0]*" FIELD_WIDTH PRECISION "([hljzt]|hh|ll)?[di]"
+        -:  332:#define U "[\\-0]*" FIELD_WIDTH PRECISION "([hljzt]|hh|ll)?u"
+        -:  333:#define OX "[\\-#0]*" FIELD_WIDTH PRECISION "([hljzt]|hh|ll)?[oxX]"
+        -:  334:#define FEGA "[\\-\\+ #0]*" FIELD_WIDTH PRECISION "[lL]?[fFeEgGaA]"
+        -:  335:#define C "\\-*" FIELD_WIDTH "l?c"
+        -:  336:#define S "\\-*" FIELD_WIDTH PRECISION "l?s"
+        -:  337:#define P "\\-*" FIELD_WIDTH "p"
+        -:  338:#define N FIELD_WIDTH "([hljzt]|hh|ll)?n"
+        -:  339:#define CONV_SPEC "%(" DI "|" U "|" OX "|" FEGA "|" C "|" S "|" P "|" N "|%)"
+        1:  340:  test(CONV_SPEC, "%", false);
+        1:  341:  test(CONV_SPEC, "%*", false);
+        1:  342:  test(CONV_SPEC, "%%", true);
+        1:  343:  test(CONV_SPEC, "%5%", false);
+        1:  344:  test(CONV_SPEC, "%p", true);
+        1:  345:  test(CONV_SPEC, "%*p", true);
+        1:  346:  test(CONV_SPEC, "% *p", false);
+        1:  347:  test(CONV_SPEC, "%5p", true);
+        1:  348:  test(CONV_SPEC, "d", false);
+        1:  349:  test(CONV_SPEC, "%d", true);
+        1:  350:  test(CONV_SPEC, "%.16s", true);
+        1:  351:  test(CONV_SPEC, "% 5.3f", true);
+        1:  352:  test(CONV_SPEC, "%*32.4g", false);
+        1:  353:  test(CONV_SPEC, "%-#65.4g", true);
+        1:  354:  test(CONV_SPEC, "%03c", false);
+        1:  355:  test(CONV_SPEC, "%06i", true);
+        1:  356:  test(CONV_SPEC, "%lu", true);
+        1:  357:  test(CONV_SPEC, "%hhu", true);
+        1:  358:  test(CONV_SPEC, "%Lu", false);
+        1:  359:  test(CONV_SPEC, "%-*p", true);
+        1:  360:  test(CONV_SPEC, "%-.*p", false);
+        1:  361:  test(CONV_SPEC, "%id", false);
+        1:  362:  test(CONV_SPEC, "%%d", false);
+        1:  363:  test(CONV_SPEC, "i%d", false);
+        1:  364:  test(CONV_SPEC, "%c%s", false);
+        1:  365:  test(CONV_SPEC, "%0n", false);
+        1:  366:  test(CONV_SPEC, "% u", false);
+        1:  367:  test(CONV_SPEC, "%+c", false);
+        1:  368:  test(CONV_SPEC, "%0-++ 0i", true);
+        1:  369:  test(CONV_SPEC, "%30c", true);
+        1:  370:  test(CONV_SPEC, "%03c", false);
+        -:  371:#define PRINTF_FMT "(^%|" CONV_SPEC ")*"
+        1:  372:  test(PRINTF_FMT, "%", false, .quick = true);
+        1:  373:  test(PRINTF_FMT, "%*", false, .quick = true);
+        1:  374:  test(PRINTF_FMT, "%%", true, .quick = true);
+        1:  375:  test(PRINTF_FMT, "%5%", false, .quick = true);
+        1:  376:  test(PRINTF_FMT, "%id", true, .quick = true);
+        1:  377:  test(PRINTF_FMT, "%%d", true, .quick = true);
+        1:  378:  test(PRINTF_FMT, "i%d", true, .quick = true);
+        1:  379:  test(PRINTF_FMT, "%c%s", true, .quick = true);
+        1:  380:  test(PRINTF_FMT, "%u + %d", true, .quick = true);
+        1:  381:  test(PRINTF_FMT, "%d:", true, .quick = true);
+        -:  382:  // ISO/IEC 9899:TC3, $6.4.1 'Keywords', $6.4.2 'Identifiers' and $6.4.3
+        -:  383:  // 'Universal character names'. does not uphold $6.4.3 paragraph 2
+        -:  384:#define KEYWORD                                                                \
+        -:  385:  "(auto|break|case|char|const|continue|default|do|double|else|enum|extern|"   \
+        -:  386:  "float|for|goto|if|inline|int|long|register|restrict|return|short|signed|"   \
+        -:  387:  "sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|"    \
+        -:  388:  "_Bool|_Complex|_Imaginary)"
+        -:  389:#define HEX_QUAD "[0-9a-fA-F]{4}"
+        -:  390:#define IDENTIFIER                                                             \
+        -:  391:  "(\\w|\\\\u" HEX_QUAD "|\\\\U" HEX_QUAD HEX_QUAD ")*&~\\d.*&~" KEYWORD
+        1:  392:  test(IDENTIFIER, "_", true);
+        1:  393:  test(IDENTIFIER, "_foo", true);
+        1:  394:  test(IDENTIFIER, "_Bool", false);
+        1:  395:  test(IDENTIFIER, "a1", true);
+        1:  396:  test(IDENTIFIER, "5b", false);
+        1:  397:  test(IDENTIFIER, "if", false);
+        1:  398:  test(IDENTIFIER, "ifa", true);
+        1:  399:  test(IDENTIFIER, "bif", true);
+        1:  400:  test(IDENTIFIER, "if2", true);
+        1:  401:  test(IDENTIFIER, "1if", false);
+        1:  402:  test(IDENTIFIER, "\\u12", false);
+        1:  403:  test(IDENTIFIER, "\\u1A2b", true);
+        1:  404:  test(IDENTIFIER, "\\u1234", true);
+        1:  405:  test(IDENTIFIER, "\\u123x", false);
+        1:  406:  test(IDENTIFIER, "\\u1234x", true);
+        1:  407:  test(IDENTIFIER, "\\U12345678", true);
+        1:  408:  test(IDENTIFIER, "\\U1234567y", false);
+        1:  409:  test(IDENTIFIER, "\\U12345678y", true);
+        -:  410:  // RFC 8259, $7 'Strings'. the RFC requires that UTF-8 be used for open
+        -:  411:  // exchange of JSON; this regex lets through any byte outside 7-bit ASCII,
+        -:  412:  // and so really accepts a superset of UTF-8-encoded JSON strings. also, the
+        -:  413:  // RFC points out that the grammar would allow string values that are invalid
+        -:  414:  // Unicode, but doesn't elaborate, so I guess we can let those through too?
+        -:  415:#define HEX_QUAD "[0-9a-fA-F]{4}"
+        -:  416:#define JSON_STR                                                               \
+        -:  417:  "\"(^[\\x00-\\x1f\"\\\\]|\\\\[\"\\\\/bfnrt]|\\\\u" HEX_QUAD ")*\""
+        1:  418:  test(JSON_STR, "foo", false);
+        1:  419:  test(JSON_STR, "\"foo", false);
+        1:  420:  test(JSON_STR, "foo \"bar\"", false);
+        1:  421:  test(JSON_STR, "\"foo\\\"", false);
+        1:  422:  test(JSON_STR, "\"\\\"", false);
+        1:  423:  test(JSON_STR, "\"\"\"", false);
+        1:  424:  test(JSON_STR, "\"\"", true);
+        1:  425:  test(JSON_STR, "\"foo\"", true);
+        1:  426:  test(JSON_STR, "\"foo\\\"\"", true);
+        1:  427:  test(JSON_STR, "\"foo\\\\\"", true);
+        1:  428:  test(JSON_STR, "\"\\nbar\"", true);
+        1:  429:  test(JSON_STR, "\"\nbar\"", false);
+        1:  430:  test(JSON_STR, "\"\\abar\"", false);
+        1:  431:  test(JSON_STR, "\"foo\\v\"", false);
+        1:  432:  test(JSON_STR, "\"\\u1A2b\"", true);
+        1:  433:  test(JSON_STR, "\"\\uDEAD\"", true);
+        1:  434:  test(JSON_STR, "\"\\uF00\"", false);
+        1:  435:  test(JSON_STR, "\"\\uF00BAR\"", true);
+        1:  436:  test(JSON_STR, "\"foo\\/\"", true);
+        1:  437:  test(JSON_STR, "\"\xcf\x84\"", true);
+        1:  438:  test(JSON_STR, "\"\x80\"", true);
+        1:  439:  test(JSON_STR, "\"\x88x/\"", true);
+        -:  440:  // RFC 8259, $6 'Numbers'
+        -:  441:#define JSON_NUM "\\-?(0|1-90-9*)(\\.0-9+)?([eE][\\+\\-]?0-9+)?"
+        1:  442:  test(JSON_NUM, "e", false);
+        1:  443:  test(JSON_NUM, "1", true);
+        1:  444:  test(JSON_NUM, "10", true);
+        1:  445:  test(JSON_NUM, "01", false);
+        1:  446:  test(JSON_NUM, "-5", true);
+        1:  447:  test(JSON_NUM, "+5", false);
+        1:  448:  test(JSON_NUM, ".3", false);
+        1:  449:  test(JSON_NUM, "2.", false);
+        1:  450:  test(JSON_NUM, "2.3", true);
+        1:  451:  test(JSON_NUM, "1e", false);
+        1:  452:  test(JSON_NUM, "1e0", true);
+        1:  453:  test(JSON_NUM, "1E+0", true);
+        1:  454:  test(JSON_NUM, "1e-0", true);
+        1:  455:  test(JSON_NUM, "1E10", true);
+        1:  456:  test(JSON_NUM, "1e+00", true);
+        -:  457:#define JSON_BOOL "true|false"
+        -:  458:#define JSON_NULL "null"
+        -:  459:#define JSON_PRIM JSON_STR "|" JSON_NUM "|" JSON_BOOL "|" JSON_NULL
+        1:  460:  test(JSON_PRIM, "nul", false);
+        1:  461:  test(JSON_PRIM, "null", true);
+        1:  462:  test(JSON_PRIM, "nulll", false);
+        1:  463:  test(JSON_PRIM, "true", true);
+        1:  464:  test(JSON_PRIM, "false", true);
+        1:  465:  test(JSON_PRIM, "{}", false);
+        1:  466:  test(JSON_PRIM, "[]", false);
+        1:  467:  test(JSON_PRIM, "1,", false);
+        1:  468:  test(JSON_PRIM, "-5.6e2", true);
+        1:  469:  test(JSON_PRIM, "\"1a\\n\"", true);
+        1:  470:  test(JSON_PRIM, "\"1a\\n\" ", false);
+        -:  471:  // RFC 3629, $3 'UTF-8 definition'. derived from the plain English definition
+        -:  472:#define TAIL "\\x80-\\xbf"
+        -:  473:#define BYTE_PAT                                                               \
+        -:  474:  "(\\x00-\\x7f|\\xc0-\\xdf" TAIL "|\\xe0-\\xef" TAIL TAIL                     \
+        -:  475:  "|\\xf0-\\xf7" TAIL TAIL TAIL ")"
+        -:  476:#define OVERLONG "(\\xc0-\\xc1<>|\\xe0\\x80-\\x9f<>|\\xf0\\x80-\\x8f<><>)"
+        -:  477:#define SURROGATE "\\xed\\xa0-\\xbf<>"
+        -:  478:#define TOO_BIG "(\\xf4\\x90-\\xff" TAIL TAIL "|\\xf5-\\xff" TAIL TAIL TAIL ")"
+        -:  479:#define UTF8_CHAR_1 "(" BYTE_PAT "&~" OVERLONG "&~" SURROGATE "&~" TOO_BIG ")"
+        -:  480:  // RFC 3629, $4 'Syntax of UTF-8 Byte Sequences'. direct transcription of ABNF
+        -:  481:#define TAIL "\\x80-\\xbf"
+        -:  482:#define UTF8_1 "\\x00-\\x7f"
+        -:  483:#define UTF8_2 "\\xc2-\\xdf" TAIL
+        -:  484:#define UTF8_3                                                                 \
+        -:  485:  "\\xe0\\xa0-\\xbf" TAIL "|\\xe1-\\xec" TAIL TAIL "|\\xed\\x80-\\x9f" TAIL    \
+        -:  486:  "|\\xee-\\xef" TAIL TAIL
+        -:  487:#define UTF8_4                                                                 \
+        -:  488:  "\\xf0\\x90-\\xbf" TAIL TAIL "|\\xf1-\\xf3" TAIL TAIL TAIL                   \
+        -:  489:  "|\\xf4\\x80-\\x8f" TAIL TAIL
+        -:  490:#define UTF8_CHAR_2 "(" UTF8_1 "|" UTF8_2 "|" UTF8_3 "|" UTF8_4 ")"
+        -:  491:  // generated by `ltre_decompile` then tweaked manually to minimize length
+        -:  492:#define UTF8_CHAR_3                                                            \
+        -:  493:  "(\\x00-\\x7f|(\\xc2-\\xdf|\\xe0\\xa0-\\xbf|\\xed\\x80-\\x9f|"               \
+        -:  494:  "([\\xe1-\\xec\\xee\\xef]|\\xf0\\x90-\\xbf|\\xf4\\x80-\\x8f|"                \
+        -:  495:  "\\xf1-\\xf3\\x80-\\xbf)\\x80-\\xbf)\\x80-\\xbf)"
+        -:  496:  // all three regular expressions above should accept the same language
+        -:  497:#define UTF8_CHAR_ALL UTF8_CHAR_1 "&" UTF8_CHAR_2 "&" UTF8_CHAR_3
+        -:  498:#define UTF8_CHARS_ALL UTF8_CHAR_1 "*&" UTF8_CHAR_2 "*&" UTF8_CHAR_3 "*"
+        -:  499:#define UTF8_CHAR_SOME UTF8_CHAR_1 "|" UTF8_CHAR_2 "|" UTF8_CHAR_3
+        -:  500:#define UTF8_CHARS_SOME UTF8_CHAR_1 "*|" UTF8_CHAR_2 "*|" UTF8_CHAR_3 "*"
+        1:  501:  test(UTF8_CHAR_SOME, "ab", false);
+        1:  502:  test(UTF8_CHAR_SOME, "\x80x", false);
+        1:  503:  test(UTF8_CHAR_SOME, "\x80", false);
+        1:  504:  test(UTF8_CHAR_SOME, "\xbf", false);
+        1:  505:  test(UTF8_CHAR_SOME, "\xc0", false);
+        1:  506:  test(UTF8_CHAR_SOME, "\xc1", false);
+        1:  507:  test(UTF8_CHAR_SOME, "\xff", false);
+        1:  508:  test(UTF8_CHAR_SOME, "\xed\xa1\x8c", false); // RFC ex. (surrogate)
+        1:  509:  test(UTF8_CHAR_SOME, "\xed\xbe\xb4", false); // RFC ex. (surrogate)
+        1:  510:  test(UTF8_CHAR_SOME, "\xed\xa0\x80", false); // d800, first surrogate
+        1:  511:  test(UTF8_CHAR_SOME, "\xc0\x80", false);     // RFC ex. (overlong nul)
+        1:  512:  test(UTF8_CHAR_ALL, "\x7f", true);
+        1:  513:  test(UTF8_CHAR_ALL, "\xF0\x9E\x84\x93", true);
+        1:  514:  test(UTF8_CHAR_ALL, "\x2f", true);               // solidus
+        1:  515:  test(UTF8_CHAR_SOME, "\xc0\xaf", false);         // overlong solidus
+        1:  516:  test(UTF8_CHAR_SOME, "\xe0\x80\xaf", false);     // overlong solidus
+        1:  517:  test(UTF8_CHAR_SOME, "\xf0\x80\x80\xaf", false); // overlong solidus
+        1:  518:  test(UTF8_CHAR_SOME, "\xf7\xbf\xbf\xbf", false); // 1fffff, too big
+        1:  519:  test(UTF8_CHARS_ALL, "\x41\xe2\x89\xa2\xce\x91\x2e", true);         // RFC ex.
+        1:  520:  test(UTF8_CHARS_ALL, "\xed\x95\x9c\xea\xb5\xad\xec\x96\xb4", true); // RFC ex.
+        1:  521:  test(UTF8_CHARS_ALL, "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e", true); // RFC ex.
+        1:  522:  test(UTF8_CHARS_ALL, "\xef\xbb\xbf\xf0\xa3\x8e\xb4", true);         // RFC ex.
+        1:  523:  test(UTF8_CHARS_ALL, "abcABC123<=>", true);
+        1:  524:  test(UTF8_CHARS_ALL, "\xc2\x80", true);
+        1:  525:  test(UTF8_CHARS_SOME, "\xc2\x7f", false);     // bad tail
+        1:  526:  test(UTF8_CHARS_SOME, "\xe2\x28\xa1", false); // bad tail
+        1:  527:  test(UTF8_CHARS_SOME, "\x80x/", false);
+        -:  528:}

@@ -1,0 +1,99 @@
+        -:    0:Source:src/queue.c
+        -:    1:#include <stdlib.h>
+        -:    2:#include <stdio.h>
+        -:    3:
+        -:    4:#include <include/queue.h>
+        -:    5:
+        -:    6:void
+    #####:    7:queue_new(queue_t *queue)
+        -:    8:{
+    #####:    9:	queue->head = NULL;
+    #####:   10:	queue->tail = NULL;
+    #####:   11:	queue->size = 0;
+    #####:   12:}
+        -:   13:
+        -:   14:bool
+    #####:   15:queue_empty(queue_t *queue)
+        -:   16:{
+    #####:   17:	return queue->size == 0;
+        -:   18:}
+        -:   19:
+        -:   20:void
+    #####:   21:queue_push(queue_t *queue, void *value)
+        -:   22:{
+    #####:   23:	queue_node_t *new_node = malloc(sizeof(queue_node_t));
+    #####:   24:	new_node->value = value;
+    #####:   25:	new_node->next = NULL;
+        -:   26:
+    #####:   27:	if(queue_empty(queue)) {
+    #####:   28:		queue->tail = new_node;
+    #####:   29:		queue->head = new_node;
+        -:   30:	} else {
+    #####:   31:		queue->tail->next = new_node;
+    #####:   32:		queue->tail = new_node;
+        -:   33:	}
+        -:   34:
+    #####:   35:	queue->size++;
+    #####:   36:}
+        -:   37:
+        -:   38:void *
+    #####:   39:queue_pop(queue_t *queue)
+        -:   40:{
+    #####:   41:	if(!queue || queue_empty(queue)) {
+    #####:   42:		return NULL;
+        -:   43:	}
+        -:   44:
+    #####:   45:	queue_node_t *elem = queue->head;
+    #####:   46:	queue->head = queue->head->next;
+    #####:   47:	void *value = elem->value;
+        -:   48:
+    #####:   49:	if(queue->size == 1) {
+    #####:   50:		queue->tail = NULL;
+        -:   51:	}
+        -:   52:
+    #####:   53:	queue->size--;
+        -:   54:
+    #####:   55:	free(elem);
+        -:   56:
+    #####:   57:	return value;
+        -:   58:}
+        -:   59:
+        -:   60:void *
+    #####:   61:queue_front(queue_t *queue)
+        -:   62:{
+    #####:   63:	if(!queue) {
+        -:   64:		return NULL;
+        -:   65:	}
+        -:   66:
+    #####:   67:	if(queue_empty(queue)) {
+        -:   68:		return NULL;
+        -:   69:	}
+        -:   70:
+    #####:   71:	return queue->head->value;
+        -:   72:}
+        -:   73:
+        -:   74:void *
+    #####:   75:queue_back(queue_t *queue)
+        -:   76:{
+    #####:   77:	if(!queue) {
+        -:   78:		return NULL;
+        -:   79:	}
+        -:   80:
+    #####:   81:	if(queue_empty(queue)) {
+        -:   82:		return NULL;
+        -:   83:	}
+        -:   84:
+    #####:   85:	return queue->tail->value;
+        -:   86:}
+        -:   87:
+        -:   88:void
+    #####:   89:queue_free(queue_t *queue)
+        -:   90:{
+    #####:   91:	queue_node_t *temp = queue->head;
+        -:   92:	queue_node_t *temp2;
+    #####:   93:	while(temp) {
+        -:   94:		temp2 = temp;
+    #####:   95:		temp = temp->next;
+    #####:   96:		free(temp2);
+        -:   97:	}
+    #####:   98:}

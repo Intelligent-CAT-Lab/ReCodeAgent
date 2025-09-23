@@ -1,0 +1,102 @@
+# CC = gcc
+# RM = rm -rf
+
+# FLAGS = -Wall -Wextra -Werror -Wno-unused-variable -std=gnu99
+# #CFLAGS = $(FLAGS) -O0 -g Moved to derived
+# #LDFLAGS = $(FLAGS) -O0 Moved to derived
+# LD = $(CC)
+# LDLIBS =
+# #OBJDIR = obj Moved to derived
+# SRCDIR = ../src
+# EXEDIR = ..
+
+# SOURCES = $(patsubst %,$(SRCDIR)/%, $(CFILES))
+# OBJS = $(patsubst %,$(OBJDIR)/%, $(subst .c,.o, $(CFILES)))
+# DEPEND = $(patsubst %,$(OBJDIR)/%, $(subst .c,.d, $(CFILES)))
+
+# #Moved to derived
+# #CFILES =            \
+# 	main.c       \
+# 	log.c        \
+# 	openhash.c   \
+# 	cuckoohash.c
+
+# #Moved to derived
+# #EXES = super
+
+# all: $(EXES)
+
+# $(OBJDIR)/%.o: $(SRCDIR)/%.c
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
+# include $(DEPEND)
+
+# $(OBJDIR)/%.d: $(SRCDIR)/%.c
+# 	mkdir -p $(OBJDIR)
+# 	$(CC) -MM $(CFLAGS) $< > $@.$$$$;                              \
+# 	sed 's,\($*\)\.o[ :]*,$(OBJDIR)/\1.o $@ : ,g' < $@.$$$$ > $@;  \
+# 	rm -f $@.$$$$
+
+# $(EXES): $(OBJS)
+# 	$(LD) $(LDFLAGS) $(OBJS) -o $(EXES)
+
+# clean:
+# 	$(RM) $(OBJS) $(EXES) $(DEPEND)
+
+# .PHONY: all clean
+
+#############################################
+
+CC = gcc
+RM = rm -rf
+
+FLAGS = -Wall -Wextra -Werror -Wno-unused-variable -std=gnu99
+LD = $(CC)
+LDLIBS =
+OBJDIR ?= obj
+EXEDIR ?= ..
+CFILES ?= main.c       # Default if none given
+EXES   ?= super        # Default if none given
+
+# Turn each .c into an object under OBJDIR
+OBJS   = $(patsubst %.c,$(OBJDIR)/%.o,$(CFILES))
+# Turn each .c into a .d file under OBJDIR
+DEPEND = $(patsubst %.c,$(OBJDIR)/%.d,$(CFILES))
+
+all: $(EXES)
+
+#####################################################
+# Linking
+#####################################################
+$(EXES): $(OBJS)
+	$(LD) $(LDFLAGS) $(OBJS) -o $(EXES) $(LDLIBS)
+
+#####################################################
+# Object build rule
+#####################################################
+# Example: bin/main.c -> dobj/bin/main.o
+$(OBJDIR)/%.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+#####################################################
+# Dependency generation
+#####################################################
+# Example: bin/main.c -> dobj/bin/main.d
+$(OBJDIR)/%.d: %.c
+	mkdir -p $(dir $@)
+	$(CC) -MM $(CFLAGS) $< > $@.$$$$
+	# This sed ensures that 'bin/main.o:' becomes 'dobj/bin/main.o dobj/bin/main.d:'
+	sed 's,\($*\)\.o[ :]*,$(OBJDIR)/\1.o $@ : ,g' < $@.$$$$ > $@
+	rm -f $@.$$$$
+
+# Include auto-generated dependencies (if they exist)
+-include $(wildcard $(DEPEND))
+
+#####################################################
+# Cleaning
+#####################################################
+clean:
+	$(RM) $(OBJS) $(EXES) $(DEPEND)
+
+.PHONY: all clean

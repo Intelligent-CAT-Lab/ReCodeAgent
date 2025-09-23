@@ -1,0 +1,611 @@
+        -:    0:Source:bostree.c
+        -:    1:/*
+        -:    2:	Self-Balancing order statistic tree
+        -:    3:
+        -:    4:	Implements an AVL tree with two additional methods,
+        -:    5:	Select(i), which finds the i'th smallest element, and
+        -:    6:	Rank(x), which returns the rank of a given element,
+        -:    7:	which both run in O(log n).
+        -:    8:
+        -:    9:	The tree is implemented with map semantics, that is, there are separete key
+        -:   10:	and value pointers.
+        -:   11:
+        -:   12:	Copyright (c) 2017, Phillip Berndt
+        -:   13:
+        -:   14:	This program is free software: you can redistribute it and/or modify
+        -:   15:	it under the terms of the GNU General Public License as published by
+        -:   16:	the Free Software Foundation, either version 3 of the License, or
+        -:   17:	(at your option) any later version.
+        -:   18:
+        -:   19:	This program is distributed in the hope that it will be useful,
+        -:   20:	but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   21:	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   22:	GNU General Public License for more details.
+        -:   23:
+        -:   24:	You should have received a copy of the GNU General Public License
+        -:   25:	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+        -:   26: */
+        -:   27:
+        -:   28:#include "bostree.h"
+        -:   29:#include <assert.h>
+        -:   30:#include <stddef.h>
+        -:   31:#include <stdlib.h>
+        -:   32:#include <string.h>
+        -:   33:
+        -:   34:/* Tree structure */
+        -:   35:struct _BOSTree {
+        -:   36:	BOSNode *root_node;
+        -:   37:
+        -:   38:	BOSTree_cmp_function cmp_function;
+        -:   39:	BOSTree_free_function free_function;
+        -:   40:};
+        -:   41:
+        -:   42:/* Local helper functions */
+      98*:   43:static int _imax(const int i1, const int i2) {
+      98*:   44:	return i1 > i2 ? i1 : i2;
+        -:   45:}
+        -:   46:
+       23:   47:static int _bostree_balance(BOSNode *node) {
+       23:   48:	const int left_depth = node->left_child_node ? node->left_child_node->depth + 1 : 0;
+       23:   49:	const int right_depth = node->right_child_node ? node->right_child_node->depth + 1 : 0;
+       23:   50:	return right_depth - left_depth;
+        -:   51:}
+        -:   52:
+    #####:   53:static BOSNode *_bostree_rotate_right(BOSTree *tree, BOSNode *P) {
+        -:   54:	// Rotate right:
+        -:   55:	//
+        -:   56:	//      P                     L
+        -:   57:	//  L        R     -->    c1      P
+        -:   58:	//c1 c2                        c2     R
+        -:   59:	//
+    #####:   60:	BOSNode *L = P->left_child_node;
+        -:   61:
+    #####:   62:	if(P->parent_node) {
+    #####:   63:		if(P->parent_node->left_child_node == P) {
+    #####:   64:			P->parent_node->left_child_node = L;
+        -:   65:		}
+        -:   66:		else {
+    #####:   67:			P->parent_node->right_child_node = L;
+        -:   68:		}
+        -:   69:	}
+        -:   70:	else {
+    #####:   71:		tree->root_node = L;
+        -:   72:	}
+        -:   73:
+    #####:   74:	L->parent_node = P->parent_node;
+        -:   75:
+    #####:   76:	P->left_child_node = L->right_child_node;
+    #####:   77:	P->left_child_count = L->right_child_count;
+    #####:   78:	if(P->left_child_node) {
+    #####:   79:		P->left_child_node->parent_node = P;
+        -:   80:	}
+    #####:   81:	P->depth = _imax(P->left_child_node ? 1 + P->left_child_node->depth : 0, P->right_child_node ? 1 + P->right_child_node->depth : 0);
+    #####:   82:	P->parent_node = L;
+        -:   83:
+    #####:   84:	L->right_child_node = P;
+    #####:   85:	P->parent_node = L;
+    #####:   86:	L->right_child_count = P->left_child_count + P->right_child_count + 1;
+    #####:   87:	L->depth = _imax(L->left_child_node ? 1 + L->left_child_node->depth : 0, L->right_child_node ? 1 + L->right_child_node->depth : 0);
+        -:   88:
+    #####:   89:	return L;
+        -:   90:}
+        -:   91:
+       20:   92:static BOSNode *_bostree_rotate_left(BOSTree *tree, BOSNode *P) {
+        -:   93:	// Rotate left:
+        -:   94:	//
+        -:   95:	//      P                     R
+        -:   96:	//  L        R     -->    P      c2
+        -:   97:	//         c1 c2        L  c1
+        -:   98:	//
+       20:   99:	BOSNode *R = P->right_child_node;
+        -:  100:
+       20:  101:	if(P->parent_node) {
+       16:  102:		if(P->parent_node->left_child_node == P) {
+    #####:  103:			P->parent_node->left_child_node = R;
+        -:  104:		}
+        -:  105:		else {
+       16:  106:			P->parent_node->right_child_node = R;
+        -:  107:		}
+        -:  108:	}
+        -:  109:	else {
+        4:  110:		tree->root_node = R;
+        -:  111:	}
+        -:  112:
+       20:  113:	R->parent_node = P->parent_node;
+        -:  114:
+       20:  115:	P->right_child_node = R->left_child_node;
+       20:  116:	P->right_child_count = R->left_child_count;
+       20:  117:	if(P->right_child_node) {
+        8:  118:		P->right_child_node->parent_node = P;
+        -:  119:	}
+       20:  120:	P->depth = _imax(P->left_child_node ? 1 + P->left_child_node->depth : 0, P->right_child_node ? 1 + P->right_child_node->depth : 0);
+       20:  121:	P->parent_node = R;
+        -:  122:
+       20:  123:	R->left_child_node = P;
+       20:  124:	P->parent_node = R;
+       20:  125:	R->left_child_count = P->left_child_count + P->right_child_count + 1;
+       20:  126:	R->depth = _imax(R->left_child_node ? 1 + R->left_child_node->depth : 0, R->right_child_node ? 1 + R->right_child_node->depth : 0);
+        -:  127:
+       20:  128:	return R;
+        -:  129:}
+        -:  130:
+        -:  131:
+        -:  132:/* API implementation */
+        1:  133:BOSTree *bostree_new(BOSTree_cmp_function cmp_function, BOSTree_free_function free_function) {
+        1:  134:	BOSTree *new_tree = malloc(sizeof(BOSTree));
+        1:  135:	new_tree->root_node = NULL;
+        1:  136:	new_tree->cmp_function = cmp_function;
+        1:  137:	new_tree->free_function = free_function;
+        1:  138:	return new_tree;
+        -:  139:}
+        -:  140:
+    #####:  141:void bostree_destroy(BOSTree *tree) {
+        -:  142:	// Walk the tree and unref all nodes
+    #####:  143:	BOSNode *node = tree->root_node;
+    #####:  144:	while(node) {
+        -:  145:		// The order should not really matter, but use post-order traversal here.
+    #####:  146:		while(node->left_child_node) {
+        -:  147:			node = node->left_child_node;
+        -:  148:		}
+        -:  149:
+    #####:  150:		if(node->right_child_node) {
+    #####:  151:			node = node->right_child_node;
+    #####:  152:			continue;
+        -:  153:		}
+        -:  154:
+        -:  155:		// At this point, we can be sure that this node has no child nodes.
+        -:  156:		// So it is safe to remove it.
+    #####:  157:		BOSNode *next = node->parent_node;
+    #####:  158:		if(next) {
+    #####:  159:			if(next->left_child_node == node) {
+    #####:  160:				next->left_child_node = NULL;
+        -:  161:			}
+        -:  162:			else {
+    #####:  163:				next->right_child_node = NULL;
+        -:  164:			}
+        -:  165:		}
+    #####:  166:		bostree_node_weak_unref(tree, node);
+    #####:  167:		node = next;
+        -:  168:	}
+        -:  169:
+    #####:  170:	free(tree);
+    #####:  171:}
+        -:  172:
+       25:  173:unsigned int bostree_node_count(BOSTree *tree) {
+       25:  174:	return tree->root_node ? tree->root_node->left_child_count + tree->root_node->right_child_count + 1 : 0;
+        -:  175:}
+        -:  176:
+       25:  177:BOSNode *bostree_insert(BOSTree *tree, void *key, void *data) {
+       25:  178:	BOSNode **node = &tree->root_node;
+       25:  179:	BOSNode *parent_node = NULL;
+        -:  180:
+        -:  181:	// Find tree position to insert new node
+      119:  182:	while(*node) {
+       94:  183:		parent_node = *node;
+       94:  184:		int cmp = tree->cmp_function(key, (*node)->key);
+       94:  185:		if(cmp < 0) {
+    #####:  186:			(*node)->left_child_count++;
+    #####:  187:			node = &(*node)->left_child_node;
+        -:  188:		}
+        -:  189:		else {
+       94:  190:			(*node)->right_child_count++;
+       94:  191:			node = &(*node)->right_child_node;
+        -:  192:		}
+        -:  193:	}
+        -:  194:
+        -:  195:	// Create new node
+       25:  196:	BOSNode *new_node = malloc(sizeof(BOSNode));
+       25:  197:	memset(new_node, 0, sizeof(BOSNode));
+       25:  198:	new_node->key = key;
+       25:  199:	new_node->data = data;
+       25:  200:	new_node->weak_ref_count = 1;
+       25:  201:	new_node->weak_ref_node_valid = 1;
+       25:  202:	new_node->parent_node = parent_node;
+        -:  203:
+       25:  204:	*node = new_node;
+        -:  205:
+       25:  206:	if(!parent_node) {
+        -:  207:		// Simple case, this is the first node.
+        1:  208:		tree->root_node = new_node;
+        1:  209:		return new_node;
+        -:  210:	}
+        -:  211:
+        -:  212:	// Check if the depth changed with the new node:
+        -:  213:	// It does only change if this is the first child of the parent
+       24:  214:	if(!!parent_node->left_child_node ^ !!parent_node->right_child_node) {
+        -:  215:		// Bubble the information up the tree
+       24:  216:		parent_node->depth++;
+       62:  217:		while(parent_node->parent_node) {
+        -:  218:			// Assign new depth
+       54:  219:			parent_node = parent_node->parent_node;
+        -:  220:
+       54:  221:			unsigned int new_left_depth  = parent_node->left_child_node ? parent_node->left_child_node->depth + 1 : 0;
+       54:  222:			unsigned int new_right_depth = parent_node->right_child_node ? parent_node->right_child_node->depth + 1 : 0;
+        -:  223:
+       54:  224:			unsigned int max_depth = _imax(new_left_depth, new_right_depth);
+        -:  225:
+       54:  226:			if(parent_node->depth != max_depth) {
+       38:  227:				parent_node->depth = max_depth;
+        -:  228:			}
+        -:  229:			else {
+        -:  230:				// We can break here, because if the depth did not change
+        -:  231:				// at this level, it won't have further up either.
+        -:  232:				break;
+        -:  233:			}
+        -:  234:
+        -:  235:			// Check if this node violates the AVL property, that is, that the
+        -:  236:			// depths differ by no more than 1.
+       38:  237:			if(new_left_depth - 2 == new_right_depth) {
+        -:  238:				// Handle left-right case
+    #####:  239:				if(_bostree_balance(parent_node->left_child_node) > 0) {
+    #####:  240:					_bostree_rotate_left(tree, parent_node->left_child_node);
+        -:  241:				}
+        -:  242:
+        -:  243:				// Left is two levels deeper than right. Rotate right.
+    #####:  244:				parent_node = _bostree_rotate_right(tree, parent_node);
+        -:  245:			}
+       38:  246:			else if(new_left_depth + 2 == new_right_depth) {
+        -:  247:				// Handle right-left case
+       20:  248:				if(_bostree_balance(parent_node->right_child_node) < 0) {
+    #####:  249:					_bostree_rotate_right(tree, parent_node->right_child_node);
+        -:  250:				}
+        -:  251:
+        -:  252:				// Right is two levels deeper than left. Rotate left.
+       20:  253:				parent_node = _bostree_rotate_left(tree, parent_node);
+        -:  254:			}
+        -:  255:		}
+        -:  256:	}
+        -:  257:
+        -:  258:	return new_node;
+        -:  259:}
+        -:  260:
+        2:  261:void bostree_remove(BOSTree *tree, BOSNode *node) {
+        2:  262:	BOSNode *bubble_up = NULL;
+        -:  263:
+        -:  264:	// If this node has children on both sides, bubble one of it upwards
+        -:  265:	// and rotate within the subtrees.
+        2:  266:	if(node->left_child_node && node->right_child_node) {
+        1:  267:		BOSNode *candidate = NULL;
+        1:  268:		BOSNode *lost_child = NULL;
+        1:  269:		if(node->left_child_node->depth >= node->right_child_node->depth) {
+        -:  270:			// Left branch is deeper than right branch, might be a good idea to
+        -:  271:			// bubble from this side to maintain the AVL property with increased
+        -:  272:			// likelihood.
+        1:  273:			node->left_child_count--;
+        1:  274:			candidate = node->left_child_node;
+        2:  275:			while(candidate->right_child_node) {
+        1:  276:				candidate->right_child_count--;
+        1:  277:				candidate = candidate->right_child_node;
+        -:  278:			}
+        1:  279:			lost_child = candidate->left_child_node;
+        -:  280:		}
+        -:  281:		else {
+    #####:  282:			node->right_child_count--;
+    #####:  283:			candidate = node->right_child_node;
+    #####:  284:			while(candidate->left_child_node) {
+    #####:  285:				candidate->left_child_count--;
+    #####:  286:				candidate = candidate->left_child_node;
+        -:  287:			}
+    #####:  288:			lost_child = candidate->right_child_node;
+        -:  289:		}
+        -:  290:
+        1:  291:		BOSNode *bubble_start = candidate->parent_node;
+        1:  292:		if(bubble_start->left_child_node == candidate) {
+    #####:  293:			bubble_start->left_child_node = lost_child;
+        -:  294:		}
+        -:  295:		else {
+        1:  296:			bubble_start->right_child_node = lost_child;
+        -:  297:		}
+        1:  298:		if(lost_child) {
+        1:  299:			lost_child->parent_node = bubble_start;
+        -:  300:		}
+        -:  301:
+        -:  302:		// We will later rebalance upwards from bubble_start up to candidate.
+        -:  303:		// But first, anchor candidate into the place where "node" used to be.
+        -:  304:
+        1:  305:		if(node->parent_node) {
+        1:  306:			if(node->parent_node->left_child_node == node) {
+        1:  307:				node->parent_node->left_child_node = candidate;
+        -:  308:			}
+        -:  309:			else {
+    #####:  310:				node->parent_node->right_child_node = candidate;
+        -:  311:			}
+        -:  312:		}
+        -:  313:		else {
+    #####:  314:			tree->root_node = candidate;
+        -:  315:		}
+        1:  316:		candidate->parent_node = node->parent_node;
+        -:  317:
+        1:  318:		candidate->left_child_node = node->left_child_node;
+        1:  319:		candidate->left_child_count = node->left_child_count;
+        1:  320:		candidate->right_child_node = node->right_child_node;
+        1:  321:		candidate->right_child_count = node->right_child_count;
+        -:  322:
+        1:  323:		if(candidate->left_child_node) {
+        1:  324:			candidate->left_child_node->parent_node = candidate;
+        -:  325:		}
+        -:  326:
+        1:  327:		if(candidate->right_child_node) {
+        1:  328:			candidate->right_child_node->parent_node = candidate;
+        -:  329:		}
+        -:  330:
+        -:  331:		// From here on, node is out of the game.
+        -:  332:		// Rebalance up to candidate.
+        -:  333:
+        1:  334:		if(bubble_start != node) {
+        2:  335:			while(bubble_start != candidate) {
+        1:  336:				bubble_start->depth = _imax((bubble_start->left_child_node ? bubble_start->left_child_node->depth + 1 : 0),
+        1:  337:					(bubble_start->right_child_node ? bubble_start->right_child_node->depth + 1 : 0));
+        1:  338:				int balance = _bostree_balance(bubble_start);
+        1:  339:				if(balance > 1) {
+        -:  340:					// Rotate left. Check for right-left case before.
+    #####:  341:					if(_bostree_balance(bubble_start->right_child_node) < 0) {
+    #####:  342:						_bostree_rotate_right(tree, bubble_start->right_child_node);
+        -:  343:					}
+    #####:  344:					bubble_start = _bostree_rotate_left(tree, bubble_start);
+        -:  345:				}
+        1:  346:				else if(balance < -1) {
+        -:  347:					// Rotate right. Check for left-right case before.
+    #####:  348:					if(_bostree_balance(bubble_start->left_child_node) > 0) {
+    #####:  349:						_bostree_rotate_left(tree, bubble_start->left_child_node);
+        -:  350:					}
+    #####:  351:					bubble_start = _bostree_rotate_right(tree, bubble_start);
+        -:  352:				}
+        1:  353:				bubble_start = bubble_start->parent_node;
+        -:  354:			}
+        -:  355:		}
+        -:  356:
+        -:  357:		// Fixup candidate's depth
+        1:  358:		candidate->depth = _imax((candidate->left_child_node ? candidate->left_child_node->depth + 1 : 0),
+        1:  359:			(candidate->right_child_node ? candidate->right_child_node->depth + 1 : 0));
+        -:  360:
+        -:  361:		// We'll have to fixup child counts and depths up to the root, do that
+        -:  362:		// later.
+        1:  363:		bubble_up = candidate->parent_node;
+        -:  364:
+        -:  365:		// Fix immediate parent node child count here.
+        1:  366:		if(bubble_up) {
+        1:  367:			if(bubble_up->left_child_node == candidate) {
+        1:  368:				bubble_up->left_child_count--;
+        -:  369:			}
+        -:  370:			else {
+    #####:  371:				bubble_up->right_child_count--;
+        -:  372:			}
+        -:  373:		}
+        -:  374:	}
+        -:  375:	else {
+        -:  376:		// If this node has children on one side only, removing it is much simpler.
+        1:  377:		if(!node->parent_node) {
+        -:  378:			// Simple case: Node _was_ the old root.
+    #####:  379:			if(node->left_child_node) {
+    #####:  380:				tree->root_node = node->left_child_node;
+    #####:  381:				if(node->left_child_node) {
+    #####:  382:					node->left_child_node->parent_node = NULL;
+        -:  383:				}
+        -:  384:			}
+        -:  385:			else {
+    #####:  386:				tree->root_node = node->right_child_node;
+    #####:  387:				if(node->right_child_node) {
+    #####:  388:					node->right_child_node->parent_node = NULL;
+        -:  389:				}
+        -:  390:			}
+        -:  391:
+        -:  392:			// No rebalancing to do
+        -:  393:			bubble_up = NULL;
+        -:  394:		}
+        -:  395:		else {
+        1:  396:			BOSNode *candidate = node->left_child_node;
+        1:  397:			int candidate_count = node->left_child_count;
+        1:  398:			if(node->right_child_node) {
+    #####:  399:				candidate = node->right_child_node;
+    #####:  400:				candidate_count = node->right_child_count;
+        -:  401:			}
+        -:  402:
+        1:  403:			if(node->parent_node->left_child_node == node) {
+    #####:  404:				node->parent_node->left_child_node = candidate;
+    #####:  405:				node->parent_node->left_child_count = candidate_count;
+        -:  406:			}
+        -:  407:			else {
+        1:  408:				node->parent_node->right_child_node = candidate;
+        1:  409:				node->parent_node->right_child_count = candidate_count;
+        -:  410:			}
+        -:  411:
+        1:  412:			if(candidate) {
+    #####:  413:				candidate->parent_node = node->parent_node;
+        -:  414:			}
+        -:  415:
+        -:  416:			// Again, from here on, the original node is out of the game.
+        -:  417:			// Rebalance up to the root.
+        1:  418:			bubble_up = node->parent_node;
+        -:  419:		}
+        -:  420:	}
+        -:  421:
+        -:  422:	// At this point, everything below and including bubble_start is
+        -:  423:	// balanced, and we have to look further up.
+        -:  424:
+        -:  425:	char bubbling_finished = 0;
+        7:  426:	while(bubble_up) {
+        5:  427:		if(!bubbling_finished) {
+        -:  428:			// Calculate updated depth for bubble_up
+        2:  429:			unsigned int left_depth = bubble_up->left_child_node ? bubble_up->left_child_node->depth + 1 : 0;
+        2:  430:			unsigned int right_depth = bubble_up->right_child_node ? bubble_up->right_child_node->depth + 1 : 0;
+        2:  431:			unsigned int new_depth = _imax(left_depth, right_depth);
+        2:  432:			char depth_changed = (new_depth != bubble_up->depth);
+        2:  433:			bubble_up->depth = new_depth;
+        -:  434:
+        -:  435:			// Rebalance bubble_up
+        -:  436:			// Not necessary for the first node, but calling _bostree_balance once
+        -:  437:			// isn't that much overhead.
+        2:  438:			int balance = _bostree_balance(bubble_up);
+        2:  439:			if(balance < -1) {
+    #####:  440:				if(_bostree_balance(bubble_up->left_child_node) > 0) {
+    #####:  441:					_bostree_rotate_left(tree, bubble_up->left_child_node);
+        -:  442:				}
+    #####:  443:				bubble_up = _bostree_rotate_right(tree, bubble_up);
+        -:  444:			}
+        2:  445:			else if(balance > 1) {
+    #####:  446:				if(_bostree_balance(bubble_up->right_child_node) < 0) {
+    #####:  447:					_bostree_rotate_right(tree, bubble_up->right_child_node);
+        -:  448:				}
+    #####:  449:				bubble_up = _bostree_rotate_left(tree, bubble_up);
+        -:  450:			}
+        -:  451:			else {
+        2:  452:				if(!depth_changed) {
+        -:  453:					// If we neither had to rotate nor to change the depth,
+        -:  454:					// then we are obviously finished.  Only update child
+        -:  455:					// counts from here on.
+        2:  456:					bubbling_finished = 1;
+        -:  457:				}
+        -:  458:			}
+        -:  459:		}
+        -:  460:
+        5:  461:		if(bubble_up->parent_node) {
+        3:  462:			if(bubble_up->parent_node->left_child_node == bubble_up) {
+        2:  463:				bubble_up->parent_node->left_child_count--;
+        -:  464:			}
+        -:  465:			else {
+        1:  466:				bubble_up->parent_node->right_child_count--;
+        -:  467:			}
+        -:  468:		}
+        -:  469:		bubble_up = bubble_up->parent_node;
+        -:  470:	}
+        -:  471:
+        2:  472:	node->weak_ref_node_valid = 0;
+        2:  473:	bostree_node_weak_unref(tree, node);
+        2:  474:}
+        -:  475:
+    #####:  476:BOSNode *bostree_node_weak_ref(BOSNode *node) {
+    #####:  477:	assert(node->weak_ref_count < 127);
+    #####:  478:	assert(node->weak_ref_count > 0);
+    #####:  479:	node->weak_ref_count++;
+    #####:  480:	return node;
+        -:  481:}
+        -:  482:
+        2:  483:BOSNode *bostree_node_weak_unref(BOSTree *tree, BOSNode *node) {
+        2:  484:	node->weak_ref_count--;
+        2:  485:	if(node->weak_ref_count == 0) {
+        2:  486:		if(tree->free_function) {
+    #####:  487:			tree->free_function(node);
+        -:  488:		}
+        2:  489:		free(node);
+        -:  490:	}
+    #####:  491:	else if(node->weak_ref_node_valid) {
+    #####:  492:		return node;
+        -:  493:	}
+        -:  494:	return NULL;
+        -:  495:}
+        -:  496:
+       26:  497:BOSNode *bostree_lookup(BOSTree *tree, const void *key) {
+       26:  498:	BOSNode *node = tree->root_node;
+      100:  499:	while(node) {
+      100:  500:		int cmp = tree->cmp_function(key, node->key);
+      100:  501:		if(cmp == 0) {
+        -:  502:			break;
+        -:  503:		}
+       74:  504:		else if(cmp < 0) {
+       38:  505:			node = node->left_child_node;
+        -:  506:		}
+        -:  507:		else {
+       36:  508:			node = node->right_child_node;
+        -:  509:		}
+        -:  510:	}
+       26:  511:	return node;
+        -:  512:}
+        -:  513:
+       70:  514:BOSNode *bostree_select(BOSTree *tree, unsigned int index) {
+       70:  515:	BOSNode *node = tree->root_node;
+      274:  516:	while(node) {
+      272:  517:		if(node->left_child_count <= index) {
+      173:  518:			index -= node->left_child_count;
+      173:  519:			if(index == 0) {
+       68:  520:				return node;
+        -:  521:			}
+      105:  522:			index--;
+      105:  523:			node = node->right_child_node;
+        -:  524:		}
+        -:  525:		else {
+       99:  526:			node = node->left_child_node;
+        -:  527:		}
+        -:  528:	}
+        -:  529:	return node;
+        -:  530:}
+        -:  531:
+       46:  532:BOSNode *bostree_next_node(BOSNode *node) {
+       46:  533:	if(node->right_child_node) {
+        -:  534:		node = node->right_child_node;
+       36:  535:		while(node->left_child_node) {
+        -:  536:			node = node->left_child_node;
+        -:  537:		}
+       22:  538:		return node;
+        -:  539:	}
+       24:  540:	else if(node->parent_node) {
+       46:  541:		while(node->parent_node && node->parent_node->right_child_node == node) {
+        -:  542:			node = node->parent_node;
+        -:  543:		}
+       24:  544:		return node->parent_node;
+        -:  545:	}
+        -:  546:	return NULL;
+        -:  547:}
+        -:  548:
+       23:  549:BOSNode *bostree_previous_node(BOSNode *node) {
+       23:  550:	if(node->left_child_node) {
+        -:  551:		node = node->left_child_node;
+       18:  552:		while(node->right_child_node) {
+        -:  553:			node = node->right_child_node;
+        -:  554:		}
+       11:  555:		return node;
+        -:  556:	}
+       12:  557:	else if(node->parent_node) {
+       23:  558:		while(node->parent_node && node->parent_node->left_child_node == node) {
+        -:  559:			node = node->parent_node;
+        -:  560:		}
+       12:  561:		return node->parent_node;
+        -:  562:	}
+        -:  563:	return NULL;
+        -:  564:}
+        -:  565:
+       23:  566:unsigned int bostree_rank(BOSNode *node) {
+       23:  567:	unsigned int counter = node->left_child_count;
+      112:  568:	while(node) {
+       89:  569:		if(node->parent_node && node->parent_node->right_child_node == node) counter += 1 + node->parent_node->left_child_count;
+        -:  570:		node = node->parent_node;
+        -:  571:	}
+       23:  572:	return counter;
+        -:  573:}
+        -:  574:
+        -:  575:#if !defined(NDEBUG)
+        -:  576:#include <stdio.h>
+        -:  577:#include <unistd.h>
+        -:  578:
+        -:  579:/* Debug helpers:
+        -:  580:
+        -:  581:	Print the tree to stdout in dot format.
+        -:  582:*/
+        -:  583:
+    #####:  584:static void _bostree_print_helper(BOSNode *node) {
+    #####:  585:	printf("  %s [label=\"\\N (%d,%d,%d)\"];\n", (char *)node->key, node->left_child_count, node->right_child_count, node->depth);
+    #####:  586:	if(node->parent_node) {
+    #####:  587:		printf("  %s -> %s [color=green];\n", (char *)node->key, (char *)node->parent_node->key);
+        -:  588:	}
+        -:  589:
+    #####:  590:	if(node->left_child_node != NULL) {
+    #####:  591:		printf("  %s -> %s\n", (char *)node->key, (char *)node->left_child_node->key);
+    #####:  592:		_bostree_print_helper(node->left_child_node);
+        -:  593:	}
+    #####:  594:	if(node->right_child_node != NULL) {
+    #####:  595:		printf("  %s -> %s\n", (char *)node->key, (char *)node->right_child_node->key);
+    #####:  596:		_bostree_print_helper(node->right_child_node);
+        -:  597:	}
+    #####:  598:}
+        -:  599:
+    #####:  600:void bostree_print(BOSTree *tree) {
+    #####:  601:	if(tree->root_node == NULL) {
+        -:  602:		return;
+        -:  603:	}
+        -:  604:
+    #####:  605:	printf("digraph {\n  ordering = out;\n");
+    #####:  606:	_bostree_print_helper(tree->root_node);
+    #####:  607:	printf("}\n");
+    #####:  608:	fsync(0);
+        -:  609:}
+        -:  610:#endif

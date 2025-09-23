@@ -1,0 +1,51 @@
+        -:    0:Source:test/test.c
+        -:    1:#include "../src/queue.c"
+        -:    2:#include <assert.h>
+        -:    3:#include <stdio.h>
+        -:    4:
+        -:    5:void
+    #####:    6:crud_test()
+        -:    7:{
+        -:    8:	printf("\n!!--CRUD Test--!!\n");
+        -:    9:
+        -:   10:	queue_t q;
+    #####:   11:	queue_new(&q);
+        -:   12:
+        -:   13:	printf("✅ Queue initialization\n");
+        -:   14:
+    #####:   15:	assert(queue_empty(&q));
+        -:   16:
+        -:   17:	printf("✅ Queue Empty\n");
+        -:   18:
+    #####:   19:	int a = 10, b = 15;
+        -:   20:
+    #####:   21:	queue_push(&q, (void*) &a);
+    #####:   22:	assert(q.size == 1);
+    #####:   23:	assert(queue_front(&q) == queue_back(&q));
+        -:   24:
+        -:   25:	printf("✅ Queue Push\n");
+        -:   26:
+    #####:   27:	queue_push(&q, (void*) &b);
+    #####:   28:	assert(q.size == 2);
+        -:   29:
+    #####:   30:	assert(*((int*) queue_front(&q)) == a);
+        -:   31:
+        -:   32:	printf("✅ Queue Front\n");
+        -:   33:
+    #####:   34:	assert(*((int*) queue_back(&q)) == b);
+        -:   35:
+        -:   36:	printf("✅ Queue Back\n");
+        -:   37:
+    #####:   38:	assert(*((int*)queue_pop(&q)) == a);
+    #####:   39:	assert(q.size == 1);
+        -:   40:
+        -:   41:	printf("✅ Queue Pop\n");
+        -:   42:
+    #####:   43:	queue_free(&q);
+        -:   44:
+        -:   45:	printf("✅ Queue Free\n");
+    #####:   46:}
+        -:   47:
+    #####:   48:int main() {
+    #####:   49:	crud_test();
+        -:   50:}

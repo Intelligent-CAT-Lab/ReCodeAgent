@@ -1,0 +1,30 @@
+[
+    {
+        "lines": 80,
+        "coverage": 25.0
+    },
+    {
+        "lines": 66,
+        "coverage": 37.88
+    },
+    {
+        "lines": 33,
+        "coverage": 15.15
+    },
+    {
+        "lines": 358,
+        "coverage": 18.44
+    },
+    {
+        "lines": 129,
+        "coverage": 46.51
+    },
+    {
+        "lines": 86,
+        "coverage": 68.6
+    },
+    {
+        "lines": 752,
+        "coverage": 31.25
+    }
+]

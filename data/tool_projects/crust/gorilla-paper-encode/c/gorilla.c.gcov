@@ -1,0 +1,481 @@
+        -:    0:Source:gorilla.c
+        -:    1:/* Author: kun_tsai  GuangZhou 2019 */
+        -:    2:/* E-mail: jacicson1987@163.com  */
+        -:    3:
+        -:    4:#include <stdio.h>
+        -:    5:#include <assert.h>
+        -:    6:#include <string.h>
+        -:    7:
+        -:    8:#include "gorilla.h"
+        -:    9:
+        -:   10:const static u64 de_bruijn64 = 0x03f79d71b4ca8b09;
+        -:   11:
+        -:   12:const static u8 de_bruijn64_tab[64] = {
+        -:   13:	0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4,
+        -:   14:	62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5,
+        -:   15:	63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11,
+        -:   16:	54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6,
+        -:   17:};
+        -:   18:const static u8 len8_tab[256] = {
+        -:   19:	0x00, 0x01, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+        -:   20:	0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05,
+        -:   21:	0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+        -:   22:	0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+        -:   23:	0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+        -:   24:	0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+        -:   25:	0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+        -:   26:	0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
+        -:   27:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   28:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   29:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   30:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   31:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   32:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   33:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   34:	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+        -:   35:};
+        -:   36:const static u64 Nan = 0x7FF8000000000001;
+        -:   37:
+        1:   38:int bitwriter_init(bitwriter_t* w)
+        -:   39:{
+       1*:   40:    assert(w);
+        1:   41:    memset(w, 0, sizeof(*w));
+        1:   42:    w->bit_count = 8;
+        1:   43:    return 0;
+        -:   44:}
+        -:   45:
+       30:   46:static int append_to_cache(bitwriter_t* w)
+        -:   47:{
+       30:   48:    if (w->pos > 1024 - 1)
+    #####:   49:            return -1;
+       30:   50:    w->cache[w->pos] = w->byte;
+       30:   51:    w->pos++;
+       30:   52:    return 0;
+        -:   53:}
+        -:   54:
+       72:   55:int write_bit(bitwriter_t* w, bool bit)
+        -:   56:{
+       72:   57:    if (bit) {
+       36:   58:        w->byte |= 1 << (w->bit_count - 1);
+        -:   59:    }
+       72:   60:    w->bit_count--;
+        -:   61:
+       72:   62:    if (w->bit_count == 0) {
+        9:   63:        if (append_to_cache(w) != 0)
+    #####:   64:                return -1;
+        9:   65:        w->byte = 0;
+        9:   66:        w->bit_count = 8;
+        -:   67:    }
+       72:   68:    return 0;
+        -:   69:}
+        -:   70:
+       21:   71:int write_byte(bitwriter_t* w, u8 b) 
+        -:   72:{
+       21:   73:    w->byte |= b >> (8 - w->bit_count);
+       21:   74:    if (append_to_cache(w) != 0)
+    #####:   75:            return -1;
+       21:   76:    w->byte = b << w->bit_count;
+       21:   77:    return 0;
+        -:   78:}
+        -:   79:
+       15:   80:int write_bits(bitwriter_t* w, u64 u, int nbits)
+        -:   81:{
+       15:   82:    if (nbits > 64 || nbits < 0)
+    #####:   83:        return -1;
+        -:   84:
+       15:   85:    u8 byte = 0;
+       15:   86:    u <<= (64 - nbits);
+       35:   87:    while (nbits >= 8) {
+       20:   88:        byte = u >> 56;
+       20:   89:        if (write_byte(w, byte) != 0)
+    #####:   90:            return -1;
+       20:   91:        u <<= 8;
+       20:   92:        nbits -= 8;
+        -:   93:    }
+        -:   94:
+       68:   95:    while (nbits > 0) {
+       53:   96:        if (write_bit(w, u >> 63) != 0)
+    #####:   97:            return -2;
+       53:   98:        u <<= 1;
+       53:   99:        nbits--;
+        -:  100:    }
+       15:  101:    return 0;
+        -:  102:}
+        -:  103:
+        1:  104:int write_flush(bitwriter_t* w, bool bit)
+        -:  105:{
+        4:  106:    while (w->bit_count != 8) {
+        3:  107:        if (write_bit(w, bit) != 0)
+    #####:  108:            return -1;
+        -:  109:    }
+        1:  110:    return 0;
+        -:  111:}
+        1:  112:int float_encoder_init(float_encoder_t* s)
+        -:  113:{
+       1*:  114:    assert(s);
+        1:  115:    memset(s, 0, sizeof(*s));
+        -:  116:
+        1:  117:    bitwriter_init(&s->w);
+        1:  118:    s->first = true;
+        1:  119:    s->leading = ~0;
+        1:  120:    write_byte(&s->w, 0x10);
+        1:  121:    return 0;
+        -:  122:}
+        -:  123:
+        8:  124:int bitslen(u64 x) 
+        -:  125:{
+        8:  126:    int n = 0;
+        8:  127:    if (x >= ((u64)1<<32)) {
+        8:  128:        x >>= 32;
+        8:  129:        n = 32;
+        -:  130:    }
+        8:  131:    if (x >= 1<<16) {
+        7:  132:        x >>= 16;
+        7:  133:        n += 16;
+        -:  134:    }
+        8:  135:    if (x >= 1<<8) {
+        2:  136:        x >>= 8;
+        2:  137:        n += 8;
+        -:  138:    }
+        8:  139:    return n + len8_tab[x];   
+        -:  140:}
+        -:  141:
+        8:  142:int leading_zero64(u64 u)
+        -:  143:{
+        8:  144:    return 64 - bitslen(u);
+        -:  145:}
+        -:  146:
+        -:  147:
+        8:  148:int trailing_zero64(u64 u)
+        -:  149:{
+        8:  150:    if (u == 0)
+    #####:  151:        return 64;
+        -:  152:
+        8:  153:    return de_bruijn64_tab[(u&-u)*de_bruijn64 >> (64 - 6)];
+        -:  154:}
+        -:  155:
+        9:  156:int float_encode_write(float_encoder_t* s, f64 v)
+        -:  157:{
+        9:  158:    u64* vp = (u64*)&v;
+        9:  159:    if (s->first) {
+        1:  160:        s->val = *vp;
+        1:  161:        s->first = false;
+        1:  162:        write_bits(&s->w, *vp, 64);
+        1:  163:        return 0;
+        -:  164:    }
+        -:  165:
+        8:  166:    u64 vdelta = *vp ^ s->val;
+        -:  167:
+        8:  168:    if (vdelta == 0) {
+    #####:  169:        write_bit(&s->w, 0);
+        -:  170:    }
+        -:  171:    else {
+        8:  172:        write_bit(&s->w, 1);
+        -:  173:    }
+        -:  174:
+        8:  175:    u64 leading = leading_zero64(vdelta);
+        8:  176:    u64 trailing = trailing_zero64(vdelta);
+        -:  177:
+        8:  178:    leading &= 0x1F;
+        8:  179:    if (leading >= 32)
+    #####:  180:        leading = 31;
+        -:  181:
+        8:  182:    if (s->leading != ~0 && leading > s->leading &&
+        5:  183:        trailing >= s->trailing) {
+        5:  184:        write_bit(&s->w, 0);
+        5:  185:        write_bits(&s->w, vdelta >> s->trailing, 
+        5:  186:        64 - s->leading - s->trailing);
+        -:  187:    }
+        -:  188:    else {
+        3:  189:        s->leading = leading;
+        3:  190:        s->trailing = trailing;
+        3:  191:        write_bit(&s->w, 1);
+        3:  192:        write_bits(&s->w, leading, 5);
+        -:  193:
+        3:  194:        u64 sigbits = 64 -leading - trailing;
+        3:  195:        write_bits(&s->w, sigbits, 6);
+        3:  196:        write_bits(&s->w, vdelta >> trailing, sigbits);
+        -:  197:    }
+        -:  198:
+        8:  199:    s->val = *vp;
+        8:  200:    return 0;
+        -:  201:}
+        -:  202:
+        -:  203:
+        1:  204:int float_encode_flush(float_encoder_t* s, u8* dst, u32* length)
+        -:  205:{
+        1:  206:    f64* na = (f64*)&Nan;
+        -:  207:    
+        1:  208:    if (!s->finished) {
+        1:  209:        s->finished = true;
+        1:  210:        float_encode_write(s, *na);
+        1:  211:        write_flush(&s->w, 0);
+        -:  212:    }
+        -:  213:
+        1:  214:    *length = s->w.pos + 1;
+        1:  215:    memcpy(dst, s->w.cache, s->w.pos + 1);
+        1:  216:    return *length;
+        -:  217:}
+        -:  218:
+    #####:  219:int float_cache_print(float_encoder_t* s)
+        -:  220:{
+    #####:  221:    int i = 0;
+    #####:  222:    u8 *a = s->w.cache;
+        -:  223:    
+    #####:  224:    for (i = 0; i < s->w.pos + 1; i++) {
+    #####:  225:        printf("%02x ", a[i]);
+    #####:  226:        if ((i+1) % 16 == 0)
+    #####:  227:                printf("\n");
+    #####:  228:        else if ((i + 1) % 8 == 0)
+    #####:  229:                printf("  ");
+        -:  230:    }
+    #####:  231:    printf("\n");
+    #####:  232:}
+        -:  233:
+        4:  234:int bit_readbuf(bitreader_t* br)
+        -:  235:{
+        4:  236:    u32 i = 0;
+        4:  237:    u32 byte_n = 8 - (br->n / 8);
+        -:  238:
+        4:  239:    if (br->len && byte_n > br->len) {
+        1:  240:        byte_n = br->len;
+        -:  241:    }
+        -:  242:
+        4:  243:    if (byte_n == 8) {
+        3:  244:        br->v = (u64)(br->data[7]) | (u64)(br->data[6])<<8 |
+        3:  245:                (u64)(br->data[5])<<16 | (u64)(br->data[4])<<24 |
+        3:  246:                (u64)(br->data[3])<<32 | (u64)(br->data[2])<<40 |
+        3:  247:                (u64)(br->data[1])<<48 | (u64)(br->data[0])<<56;
+        3:  248:        br->n = 64;
+        3:  249:        br->data = br->data + 8;
+        3:  250:        br->len = br->len - 8;
+        3:  251:        return 0;
+        -:  252:    }
+        -:  253:
+        7:  254:    for (i = 0; i < byte_n; i++) {
+        6:  255:        br->n += 8;
+        6:  256:        br->v |= (u64)(br->data[i]) << (64 - br->n);
+        -:  257:    }
+        -:  258:
+        1:  259:    br->data = br->data + byte_n;
+        1:  260:    br->len = br->len - byte_n;
+        1:  261:    return 0;
+        -:  262:}
+        -:  263:
+        1:  264:int bitread_reset(bitreader_t* br, u8* data, u32 len) 
+        -:  265:{
+        1:  266:    br->data = data;
+        1:  267:    br->len = len;
+        1:  268:    br->n = 0;
+        1:  269:    br->v = 0;
+        1:  270:    bit_readbuf(br);
+        1:  271:    return 0;
+        -:  272:}
+        -:  273:
+       15:  274:u64 read_bits(bitreader_t* br, u32 nbits)
+        -:  275:{
+       15:  276:    u64 v = 0, n = 0;
+       15:  277:    if (br->n == 0) {
+    #####:  278:        return ~0;
+        -:  279:    }
+        -:  280:
+       15:  281:    if (nbits <= br->n) {
+       13:  282:        if (nbits == 64) {
+        1:  283:            v = br->v;
+        1:  284:            br->n = 0;
+        1:  285:            br->v = 0;
+        1:  286:            bit_readbuf(br);
+        1:  287:            return v;
+        -:  288:        }
+        -:  289:
+       12:  290:        v = br->v >> (64 - nbits);
+       12:  291:        br->v = br->v << nbits;
+       12:  292:        br->n = br->n - nbits;
+       12:  293:        if (br->n == 0) {
+    #####:  294:            bit_readbuf(br);
+        -:  295:        }
+       12:  296:        return v;
+        -:  297:    }
+        -:  298:
+        -:  299:    //read all available bits in current buffer.
+        2:  300:    v = br->v;
+        2:  301:    n = br->n;
+        -:  302:
+        2:  303:    br->v = 0;
+        2:  304:    br->n = 0;
+        2:  305:    bit_readbuf(br);
+        -:  306:
+        -:  307:    // Append new buffer to previous buffer and shift to remove unnecessary bits.
+        2:  308:    v |= (br->v >> n);
+        2:  309:    v >>= 64 - nbits;
+        -:  310:
+        -:  311:    // Remove used bits from new buffer.
+        2:  312:    u32 buf_n = nbits - n;
+        2:  313:    if (buf_n > br->n) {
+    #####:  314:        buf_n = br->n;
+        -:  315:    }
+        2:  316:    br->v <<= buf_n;
+        2:  317:    br->n -= buf_n;
+        -:  318:
+        2:  319:    if (br->n == 0) {
+    #####:  320:        bit_readbuf(br);
+        -:  321:    }
+        -:  322:
+        2:  323:    return v;
+        -:  324:}
+        -:  325:
+    #####:  326:u64  read_bit(bitreader_t* br)
+        -:  327:{
+    #####:  328:    return read_bits(br, 1);
+        -:  329:}
+        -:  330:
+       16:  331:bool can_read_bitfast(bitreader_t* br)
+        -:  332:{
+       16:  333:    if (br->n > 1)
+       16:  334:        return true;
+        -:  335:    else
+    #####:  336:        return false;
+        -:  337:}
+        -:  338:
+       16:  339:bool read_bitfast(bitreader_t* br)
+        -:  340:{
+       16:  341:    bool v = ((br->v & ((u64)1<<63)) != 0);
+       16:  342:    br->v <<= 1;
+       16:  343:    br->n -= 1;
+       16:  344:    return v;
+        -:  345:}
+        -:  346:
+        -:  347:// Next returns true if there are remaining values to read.
+        9:  348:bool read_next(float_decoder_t* s)
+        -:  349:{
+        9:  350:    u64 v = 0;
+        -:  351:    u64 bits, mbits, vbits;
+        9:  352:    if (s->finished || s->err) {
+    #####:  353:        return false;
+        -:  354:    }
+        -:  355:
+        9:  356:    if (s->first) {
+        1:  357:        s->first = false;
+        -:  358:        // mark as finished if there were no values.
+        1:  359:        if (s->val == Nan) { // IsNaN
+    #####:  360:            s->finished = true;
+    #####:  361:            return false;
+        -:  362:        }
+        1:  363:        return true;
+        -:  364:    }
+        -:  365:
+        -:  366:    // read compressed value
+        -:  367:    bool abit;
+        8:  368:    if (can_read_bitfast(&s->br)) {
+        8:  369:        abit = read_bitfast(&s->br);
+    #####:  370:    } else if (v = read_bit(&s->br) == ~0) {
+    #####:  371:        s->err = 1;
+    #####:  372:        return false;
+        -:  373:    } else {
+    #####:  374:        abit = v;
+        -:  375:    }
+        -:  376:
+        8:  377:    if (abit) {
+        -:  378:        bool bit;
+        8:  379:        if (can_read_bitfast(&s->br)) {
+        8:  380:            bit = read_bitfast(&s->br);
+    #####:  381:        } else if (v = read_bit(&s->br) == ~0) {
+    #####:  382:            s->err = 1;
+    #####:  383:            return false;
+        -:  384:        } else {
+    #####:  385:            bit = v;
+        -:  386:        }
+        -:  387:
+        8:  388:        if (!bit) {
+        -:  389:            // reuse leading/trailing zero bits
+        -:  390:            // it.leading, it.trailing = it.leading, it.trailing
+        -:  391:            ;
+        -:  392:        } else {
+        3:  393:            bits = read_bits(&s->br, 5);
+        3:  394:            if (bits == ~0) {
+    #####:  395:                s->err = 1;
+    #####:  396:                return false;
+        -:  397:            }
+        3:  398:            s->leading = bits;
+        -:  399:
+        3:  400:            bits = read_bits(&s->br, 6);
+        3:  401:            if (bits == ~0) {
+    #####:  402:                s->err = 1;
+    #####:  403:                return false;
+        -:  404:            }
+        3:  405:            mbits = bits;
+        -:  406:            // 0 significant bits here means we overflowed and we actually need 64;
+        -:  407:            //see comment in encoder
+        3:  408:            if (mbits == 0) {
+    #####:  409:                mbits = 64;
+        -:  410:            }
+        3:  411:            s->trailing = 64 - s->leading - mbits;
+        -:  412:        }
+        -:  413:
+        8:  414:        mbits = 64 - s->leading - s->trailing;
+        8:  415:        bits = read_bits(&s->br, mbits);
+        8:  416:        if (bits == ~0) {
+    #####:  417:            s->err = 1;
+    #####:  418:            return false;
+        -:  419:        }
+        -:  420:
+        8:  421:        vbits = s->val;
+        8:  422:        vbits ^= (bits << s->trailing);
+        -:  423:
+        8:  424:        if (vbits == Nan) { // IsNaN
+        1:  425:            s->finished = true;
+        1:  426:            return false;
+        -:  427:        }
+        7:  428:        s->val = vbits;
+        -:  429:    }
+        -:  430:
+        7:  431:    return true;
+        -:  432:}
+        -:  433:
+        1:  434:int float_decode_setbytes(float_decoder_t* s,u8* data, u32 data_len)
+        -:  435:{
+        1:  436:    memset(s->b, 0, sizeof(s->b));
+        1:  437:    memcpy(s->b, data, data_len);
+        -:  438:
+        1:  439:    bitread_reset(&s->br, s->b + 1, data_len - 1);
+        1:  440:    u64 v = read_bits(&s->br, 64);
+        1:  441:    if (v == ~0) {
+    #####:  442:        return -1;
+        -:  443:    }
+        1:  444:    s->val = v;
+        1:  445:    s->leading = 0;
+        1:  446:    s->trailing = 0;
+        1:  447:    s->first = true;
+        1:  448:    s->finished = false;
+        1:  449:    s->err = false;
+        -:  450:
+        1:  451:    return 0;
+        -:  452:}
+        -:  453:
+        1:  454:int float_decode_block(float_decoder_t* s, u8* data, u32 len, f64* res, u32* res_len)
+        -:  455:{
+        1:  456:    u32 cnt = 0;
+        1:  457:    f64 val = 0.0;
+        1:  458:    int ret = float_decode_setbytes(s, data, len);
+        1:  459:    if (ret != 0) {
+    #####:  460:        printf("Error\n");
+    #####:  461:        return ret;
+        -:  462:    }
+        -:  463:
+        9:  464:    while(read_next(s)) {
+        8:  465:        val = *(f64*)(&s->val);
+        -:  466:        //printf("%f\n", val);
+        8:  467:        res[cnt] = val;
+        8:  468:        cnt++;
+        8:  469:        if (cnt > 20) {
+    #####:  470:            break;
+        -:  471:        }
+        -:  472:    }
+        1:  473:    *res_len = cnt;
+        1:  474:    if (s->err) {
+    #####:  475:        printf("Error when decode\n");
+    #####:  476:        return -1;
+        -:  477:    }
+        -:  478:
+        1:  479:    return 0;
+        -:  480:}

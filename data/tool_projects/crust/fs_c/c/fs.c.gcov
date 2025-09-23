@@ -1,0 +1,258 @@
+        -:    0:Source:fs.c
+        -:    1:
+        -:    2:/**
+        -:    3: * fs.c
+        -:    4: *
+        -:    5: * copyright 2013 - joseph werle <joseph.werle@gmail.com>
+        -:    6: */
+        -:    7:
+        -:    8:#define _POSIX_C_SOURCE 200809L
+        -:    9:#include <stdlib.h>
+        -:   10:#include <stdio.h>
+        -:   11:#include <dirent.h>
+        -:   12:#include <string.h>
+        -:   13:#include <errno.h>
+        -:   14:#include <sys/types.h>
+        -:   15:#include <sys/stat.h>
+        -:   16:#include <unistd.h>
+        -:   17:#include <fcntl.h>
+        -:   18:#include "fs.h"
+        -:   19:
+        -:   20:void
+    #####:   21:fs_error (const char *prefix) {
+        -:   22:  char fmt[256];
+    #####:   23:  sprintf(fmt, "fs: %s: error", prefix);
+    #####:   24:  perror(fmt);
+    #####:   25:}
+        -:   26:
+        -:   27:
+        -:   28:FILE *
+       24:   29:fs_open (const char *path, const char *flags) {
+       24:   30:  return fopen(path, flags);
+        -:   31:}
+        -:   32:
+        -:   33:
+        -:   34:int
+        7:   35:fs_close (FILE *file) {
+        7:   36:  return fclose(file);
+        -:   37:}
+        -:   38:
+        -:   39:
+        -:   40:int
+        1:   41:fs_rename (const char *from, const char *to) {
+        1:   42:  return rename(from, to);
+        -:   43:}
+        -:   44:
+        -:   45:
+        -:   46:fs_stats *
+        2:   47:fs_stat (const char *path) {
+        2:   48:  fs_stats *stats = (fs_stats*) malloc(sizeof(fs_stats));
+        -:   49:  #ifndef _WIN32
+        2:   50:    int e = stat(path, stats);
+        -:   51:  #else
+        -:   52:    int e = _stat(path, stats);
+        -:   53:  #endif
+        2:   54:  if (-1 == e) {
+        1:   55:    free(stats);
+        1:   56:    return NULL;
+        -:   57:  }
+        1:   58:  return stats;
+        -:   59:}
+        -:   60:
+        -:   61:
+        -:   62:fs_stats *
+        2:   63:fs_fstat (FILE *file) {
+        2:   64:  if (NULL == file) return NULL;
+        1:   65:  fs_stats *stats = (fs_stats*) malloc(sizeof(fs_stats));
+        1:   66:  int fd = fileno(file);
+        1:   67:  int e = fstat(fd, stats);
+        1:   68:  if (-1 == e) {
+    #####:   69:    free(stats);
+    #####:   70:    return NULL;
+        -:   71:  }
+        1:   72:  return stats;
+        -:   73:}
+        -:   74:
+        -:   75:
+        -:   76:fs_stats *
+        1:   77:fs_lstat (const char *path) {
+        1:   78:  fs_stats *stats = (fs_stats*) malloc(sizeof(fs_stats));
+        -:   79:#ifdef _WIN32
+        -:   80:  int e = stat(path, stats);
+        -:   81:#else
+        1:   82:  int e = lstat(path, stats);
+        -:   83:#endif
+        1:   84:  if (-1 == e) {
+    #####:   85:    free(stats);
+    #####:   86:    return NULL;
+        -:   87:  }
+        1:   88:  return stats;
+        -:   89:}
+        -:   90:
+        -:   91:
+        -:   92:int
+    #####:   93:fs_ftruncate (FILE *file, int len) {
+    #####:   94:  int fd = fileno(file);
+    #####:   95:  return ftruncate(fd, (off_t) len);
+        -:   96:}
+        -:   97:
+        -:   98:
+        -:   99:int
+        1:  100:fs_truncate (const char *path, int len) {
+        -:  101:#ifdef _WIN32
+        -:  102:  int ret = -1;
+        -:  103:  int fd = open(path, O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+        -:  104:  if (fd != -1) {
+        -:  105:    ret = ftruncate(fd, (off_t) len);
+        -:  106:    close(fd);
+        -:  107:  }
+        -:  108:  return ret;
+        -:  109:#else
+        1:  110:  return truncate(path, (off_t) len);
+        -:  111:#endif
+        -:  112:}
+        -:  113:
+        -:  114:
+        -:  115:int
+    #####:  116:fs_chown (const char *path, int uid, int gid) {
+        -:  117:#ifdef _WIN32
+        -:  118:  errno = ENOSYS;
+        -:  119:  return -1;
+        -:  120:#else
+    #####:  121:  return chown(path, (uid_t) uid, (gid_t) gid);
+        -:  122:#endif
+        -:  123:}
+        -:  124:
+        -:  125:
+        -:  126:int
+    #####:  127:fs_fchown (FILE *file, int uid, int gid) {
+        -:  128:#ifdef _WIN32
+        -:  129:  errno = ENOSYS;
+        -:  130:  return -1;
+        -:  131:#else
+    #####:  132:  int fd = fileno(file);
+    #####:  133:  return fchown(fd, (uid_t) uid, (gid_t) gid);
+        -:  134:#endif
+        -:  135:}
+        -:  136:
+        -:  137:
+        -:  138:int
+    #####:  139:fs_lchown (const char *path, int uid, int gid) {
+        -:  140:#ifdef _WIN32
+        -:  141:  errno = ENOSYS;
+        -:  142:  return -1;
+        -:  143:#else
+    #####:  144:  return lchown(path, (uid_t) uid, (gid_t) gid);
+        -:  145:#endif
+        -:  146:}
+        -:  147:
+        -:  148:
+        -:  149:size_t
+    #####:  150:fs_size (const char *path) {
+        -:  151:  size_t size;
+    #####:  152:  FILE *file = fs_open(path, FS_OPEN_READ);
+    #####:  153:  if (NULL == file) return -1;
+    #####:  154:  fseek(file, 0, SEEK_END);
+    #####:  155:  size = ftell(file);
+    #####:  156:  fs_close(file);
+    #####:  157:  return size;
+        -:  158:}
+        -:  159:
+        -:  160:
+        -:  161:size_t
+       10:  162:fs_fsize (FILE *file) {
+        -:  163:  // store current position
+       10:  164:  unsigned long pos = ftell(file);
+       10:  165:  rewind(file);
+       10:  166:  fseek(file, 0, SEEK_END);
+       10:  167:  size_t size = ftell(file);
+       10:  168:  fseek(file, pos, SEEK_SET);
+       10:  169:  return size;
+        -:  170:}
+        -:  171:
+        -:  172:
+        -:  173:char *
+        9:  174:fs_read (const char *path) {
+        9:  175:  FILE *file = fs_open(path, FS_OPEN_READ);
+       9*:  176:  if (NULL == file) return NULL;
+        9:  177:  char *data = fs_fread(file);
+        9:  178:  fclose(file);
+        9:  179:  return data;
+        -:  180:}
+        -:  181:
+        -:  182:
+        -:  183:char *
+        1:  184:fs_nread (const char *path, int len) {
+        1:  185:  FILE *file = fs_open(path, FS_OPEN_READ);
+       1*:  186:  if (NULL == file) return NULL;
+        1:  187:  char *buffer = fs_fnread(file, len);
+        1:  188:  fs_close(file);
+        1:  189:  return buffer;
+        -:  190:}
+        -:  191:
+        -:  192:
+        -:  193:char *
+       10:  194:fs_fread (FILE *file) {
+       10:  195:  size_t fsize = fs_fsize(file);
+       10:  196:  return fs_fnread(file, fsize);
+        -:  197:}
+        -:  198:
+        -:  199:
+        -:  200:char *
+       11:  201:fs_fnread (FILE *file, int len) {
+       11:  202:  char *buffer = (char*) malloc(sizeof(char) * (len + 1));
+       11:  203:  size_t n = fread(buffer, 1, len, file);
+       11:  204:  buffer[n] = '\0';
+       11:  205:  return buffer;
+        -:  206:}
+        -:  207:
+        -:  208:
+        -:  209:int
+        6:  210:fs_write (const char *path, const char *buffer) {
+        6:  211:  return fs_nwrite(path, buffer, strlen(buffer));
+        -:  212:}
+        -:  213:
+        -:  214:
+        -:  215:int
+        7:  216:fs_nwrite (const char *path, const char *buffer, int len) {
+        7:  217:  FILE *file = fs_open(path, FS_OPEN_WRITE);
+       7*:  218:  if (NULL == file) return -1;
+        7:  219:  int result = fs_fnwrite(file, buffer, len);
+        7:  220:  fclose(file);
+        7:  221:  return result;
+        -:  222:}
+        -:  223:
+        -:  224:
+        -:  225:int
+        1:  226:fs_fwrite (FILE *file, const char *buffer) {
+        1:  227:  return fs_fnwrite(file, buffer, strlen(buffer));
+        -:  228:}
+        -:  229:
+        -:  230:
+        -:  231:int
+        9:  232:fs_fnwrite (FILE *file, const char *buffer, int len) {
+        9:  233:  return (int) fwrite(buffer, 1, len, file);
+        -:  234:}
+        -:  235:
+        -:  236:
+        -:  237:int
+        2:  238:fs_mkdir (const char *path, int mode) {
+        -:  239:#ifdef _WIN32
+        -:  240:  return mkdir(path);
+        -:  241:#else
+        2:  242:  return mkdir(path, (mode_t) mode);
+        -:  243:#endif
+        -:  244:}
+        -:  245:
+        -:  246:
+        -:  247:int
+        3:  248:fs_rmdir (const char *path) {
+        3:  249:  return rmdir(path);
+        -:  250:}
+        -:  251:
+        -:  252:
+        -:  253:int
+        6:  254:fs_exists (const char *path) {
+        -:  255:  struct stat b;
+        6:  256:  return stat(path, &b);
+        -:  257:}

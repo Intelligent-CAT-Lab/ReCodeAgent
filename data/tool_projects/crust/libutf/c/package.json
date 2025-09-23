@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "name": "libutf",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/libutf.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/libutf/issues"
+  },
+  "homepage": "https://github.com/holepunchto/libutf#readme"
+}

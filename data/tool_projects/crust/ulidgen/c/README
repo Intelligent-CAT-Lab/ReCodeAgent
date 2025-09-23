@@ -1,0 +1,46 @@
+ULIDGEN(1)                  General Commands Manual                 ULIDGEN(1)
+
+NAME
+     ulidgen – generate or tag lines with ULID
+
+SYNOPSIS
+     ulidgen [-n N] [-t]
+
+DESCRIPTION
+     ulidgen generates and prints one or multiple ULID (Universally Unique
+     Lexicographically Sortable Identifier).
+
+     The options are as follows:
+
+     -n N    Print N consecutive ULID.
+
+     -t      Read lines from standard input, and prefix each line with a ULID.
+
+EXIT STATUS
+     The ulidgen utility exits 0 on success, and >0 if an error occurs.
+
+EXAMPLES
+     Generating three ULID:
+
+           % ulidgen -n 3
+           01J970QT8Y3F9H32BHX76RRS7T
+           01J970QT8Y3F9H32BHX76RRS7V
+           01J970QT8Y3F9H32BHX76RRS7W
+
+SEE ALSO
+     https://github.com/ulid/spec#specification
+
+     uuidgen(1)
+
+AUTHORS
+     Leah Neukirchen <leah@vuxu.org>
+
+LICENSE
+     ulidgen is in the public domain.
+
+     To the extent possible under law, the creator of this work has waived all
+     copyright and related or neighboring rights to this work.
+
+     http://creativecommons.org/publicdomain/zero/1.0/
+
+Void Linux                      October 2, 2024                     Void Linux

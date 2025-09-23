@@ -1,0 +1,5 @@
+type Bool
+
+def true = (@t : Bool.(@f : Bool.(t)))
+
+def false = (@t : Bool.(@f : Bool.(f)))

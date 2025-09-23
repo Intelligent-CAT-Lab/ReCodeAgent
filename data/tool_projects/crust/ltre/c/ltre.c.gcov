@@ -1,0 +1,3580 @@
+        -:    0:Source:ltre.c
+        -:    1:#include "ltre.h"
+        -:    2:#include <ctype.h>
+        -:    3:#include <limits.h>
+        -:    4:#include <stddef.h>
+        -:    5:#include <stdio.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include <string.h>
+        -:    8:
+        -:    9:#define METACHARS "\\.-^$*+?{}[]<>()|&~"
+        -:   10:typedef uint8_t symset_t[256 / 8];
+        -:   11:
+        -:   12:// an NFA state. we can assume NFA states have at most two outgoing epsilon
+        -:   13:// transitions and at most one outgoing labeled transition without loss of
+        -:   14:// generality. so regexes like /./ and /\w/ don't blow out NFA size, we label
+        -:   15:// the labeled transition with a set of characters (using `symset_t`) instead
+        -:   16:// of with a single character
+        -:   17:struct nstate {
+        -:   18:  symset_t label;          // set of characters labeling the labeled transition
+        -:   19:  struct nstate *target;   // target state for the labeled transition
+        -:   20:  struct nstate *epsilon0; // primary epsilon transition, for concatenation
+        -:   21:  struct nstate *epsilon1; // secondary epsilon transition, for anything else
+        -:   22:  struct nstate *next;     // linked list to keep track of all states of an NFA
+        -:   23:  int id;                  // populated and used for various purposes throughout
+        -:   24:};
+        -:   25:
+        -:   26:// a DFA state, and maybe an actual DFA too, depending on context. when treated
+        -:   27:// as a DFA, the first element of the linked list of states formed by `next` is
+        -:   28:// the initial state and subsequent elements enumerate all remaining states
+        -:   29:struct dstate {
+        -:   30:  struct dstate *transitions[256]; // indexed by input characters
+        -:   31:  bool accepting;                  // match result
+        -:   32:  bool terminating;                // for early termination
+        -:   33:  int id;              // populated and used for various purposes throughout
+        -:   34:  struct dstate *next; // linked list to keep track of all states of a DFA
+        -:   35:  uint8_t bitset[];    // powerset representation during powerset construction
+        -:   36:};
+        -:   37:
+        -:   38:// do not switch out these `unsigned`s for `int`s without a benchmark. on
+        -:   39:// x86_64, `unsigned` saves us a `cdqe` instruction in the fragment `id / 8`
+        -:   40:// and speeds up the hot loop in `dfa_step` by 10%
+        -:   41:static bool bitset_get(uint8_t bitset[], unsigned id) {
+1578276240*:   42:  return bitset[id / 8] & 1 << id % 8;
+        -:   43:}
+        -:   44:
+        -:   45:static void bitset_set(uint8_t bitset[], unsigned id) {
+ 6921186*:   46:  bitset[id / 8] |= 1 << id % 8;
+  367513*:   47:}
+        -:   48:
+    1578*:   49:static char *symset_fmt(symset_t symset) {
+        -:   50:  // output shall be parsable by `parse_symset` and satisfy the invariant
+        -:   51:  // `parse_symset . symset_fmt == id`. in the general case, will not satisfy
+        -:   52:  // `symset_fmt . parse_symset == id`
+        -:   53:
+        -:   54:  static char buf[1024], nbuf[1024];
+        -:   55:  char *bufp = buf, *nbufp = nbuf;
+        -:   56:  // number of symsets in `buf` and `nbuf` character classes, respectively
+        -:   57:  int nsym = 0, nnsym = 0;
+        -:   58:
+    1578*:   59:  *nbufp++ = '^';
+    1578*:   60:  *bufp++ = *nbufp++ = '[';
+        -:   61:
+    9804*:   62:  for (int chr = 0; chr < 256; chr++) {
+    8226*:   63:  append_chr:
+   13948*:   64:    bitset_get(symset, chr) ? nsym++ : nnsym++;
+   13948*:   65:    char **p = bitset_get(symset, chr) ? &bufp : &nbufp;
+   13948*:   66:    bool is_metachar = chr && strchr(METACHARS, chr);
+   13948*:   67:    if (!isprint(chr) && !is_metachar)
+    3733*:   68:      *p += sprintf(*p, "\\x%02hhx", chr);
+        -:   69:    else {
+   10215*:   70:      if (is_metachar)
+    1616*:   71:        *(*p)++ = '\\';
+   10215*:   72:      *(*p)++ = chr;
+        -:   73:    }
+        -:   74:
+        -:   75:    // make character ranges
+        -:   76:    int start = chr;
+  409690*:   77:    while (chr < 255 && bitset_get(symset, chr) == bitset_get(symset, chr + 1))
+        -:   78:      chr++;
+   13948*:   79:    if (chr - start >= 2)
+    5378*:   80:      *(*p)++ = '-', bitset_get(symset, chr) ? nsym-- : nnsym--;
+   13948*:   81:    if (chr - start >= 1)
+    5722*:   82:      goto append_chr;
+        -:   83:  }
+        -:   84:
+    1578*:   85:  *bufp++ = *nbufp++ = ']';
+    1578*:   86:  *bufp++ = *nbufp++ = '\0';
+        -:   87:
+        -:   88:  // special casees for character classes containing zero or one symsets
+    1578*:   89:  if (nnsym == 0) {
+        -:   90:    return "<>";
+    1400*:   91:  } else if (nsym == 1) {
+     700*:   92:    bufp[-2] = '\0';
+     700*:   93:    return buf + 1;
+     700*:   94:  } else if (nnsym == 1) {
+     173*:   95:    nbufp[-2] = '\0', nbuf[1] = '^';
+     173*:   96:    return nbuf + 1;
+        -:   97:  }
+        -:   98:
+        -:   99:  // return a complemented character class if it is shorter
+     527*:  100:  return (bufp - buf < nbufp - nbuf) ? buf : nbuf;
+        -:  101:}
+------------------
+symset_fmt:
+    #####:   49:static char *symset_fmt(symset_t symset) {
+        -:   50:  // output shall be parsable by `parse_symset` and satisfy the invariant
+        -:   51:  // `parse_symset . symset_fmt == id`. in the general case, will not satisfy
+        -:   52:  // `symset_fmt . parse_symset == id`
+        -:   53:
+        -:   54:  static char buf[1024], nbuf[1024];
+        -:   55:  char *bufp = buf, *nbufp = nbuf;
+        -:   56:  // number of symsets in `buf` and `nbuf` character classes, respectively
+        -:   57:  int nsym = 0, nnsym = 0;
+        -:   58:
+    #####:   59:  *nbufp++ = '^';
+    #####:   60:  *bufp++ = *nbufp++ = '[';
+        -:   61:
+    #####:   62:  for (int chr = 0; chr < 256; chr++) {
+    #####:   63:  append_chr:
+    #####:   64:    bitset_get(symset, chr) ? nsym++ : nnsym++;
+    #####:   65:    char **p = bitset_get(symset, chr) ? &bufp : &nbufp;
+    #####:   66:    bool is_metachar = chr && strchr(METACHARS, chr);
+    #####:   67:    if (!isprint(chr) && !is_metachar)
+    #####:   68:      *p += sprintf(*p, "\\x%02hhx", chr);
+        -:   69:    else {
+    #####:   70:      if (is_metachar)
+    #####:   71:        *(*p)++ = '\\';
+    #####:   72:      *(*p)++ = chr;
+        -:   73:    }
+        -:   74:
+        -:   75:    // make character ranges
+        -:   76:    int start = chr;
+    #####:   77:    while (chr < 255 && bitset_get(symset, chr) == bitset_get(symset, chr + 1))
+        -:   78:      chr++;
+    #####:   79:    if (chr - start >= 2)
+    #####:   80:      *(*p)++ = '-', bitset_get(symset, chr) ? nsym-- : nnsym--;
+    #####:   81:    if (chr - start >= 1)
+    #####:   82:      goto append_chr;
+        -:   83:  }
+        -:   84:
+    #####:   85:  *bufp++ = *nbufp++ = ']';
+    #####:   86:  *bufp++ = *nbufp++ = '\0';
+        -:   87:
+        -:   88:  // special casees for character classes containing zero or one symsets
+    #####:   89:  if (nnsym == 0) {
+        -:   90:    return "<>";
+    #####:   91:  } else if (nsym == 1) {
+    #####:   92:    bufp[-2] = '\0';
+    #####:   93:    return buf + 1;
+    #####:   94:  } else if (nnsym == 1) {
+    #####:   95:    nbufp[-2] = '\0', nbuf[1] = '^';
+    #####:   96:    return nbuf + 1;
+        -:   97:  }
+        -:   98:
+        -:   99:  // return a complemented character class if it is shorter
+    #####:  100:  return (bufp - buf < nbufp - nbuf) ? buf : nbuf;
+        -:  101:}
+------------------
+symset_fmt:
+     1578:   49:static char *symset_fmt(symset_t symset) {
+        -:   50:  // output shall be parsable by `parse_symset` and satisfy the invariant
+        -:   51:  // `parse_symset . symset_fmt == id`. in the general case, will not satisfy
+        -:   52:  // `symset_fmt . parse_symset == id`
+        -:   53:
+        -:   54:  static char buf[1024], nbuf[1024];
+        -:   55:  char *bufp = buf, *nbufp = nbuf;
+        -:   56:  // number of symsets in `buf` and `nbuf` character classes, respectively
+        -:   57:  int nsym = 0, nnsym = 0;
+        -:   58:
+     1578:   59:  *nbufp++ = '^';
+     1578:   60:  *bufp++ = *nbufp++ = '[';
+        -:   61:
+     9804:   62:  for (int chr = 0; chr < 256; chr++) {
+     8226:   63:  append_chr:
+    13948:   64:    bitset_get(symset, chr) ? nsym++ : nnsym++;
+    13948:   65:    char **p = bitset_get(symset, chr) ? &bufp : &nbufp;
+    13948:   66:    bool is_metachar = chr && strchr(METACHARS, chr);
+    13948:   67:    if (!isprint(chr) && !is_metachar)
+     3733:   68:      *p += sprintf(*p, "\\x%02hhx", chr);
+        -:   69:    else {
+    10215:   70:      if (is_metachar)
+     1616:   71:        *(*p)++ = '\\';
+    10215:   72:      *(*p)++ = chr;
+        -:   73:    }
+        -:   74:
+        -:   75:    // make character ranges
+        -:   76:    int start = chr;
+   409690:   77:    while (chr < 255 && bitset_get(symset, chr) == bitset_get(symset, chr + 1))
+        -:   78:      chr++;
+    13948:   79:    if (chr - start >= 2)
+     5378:   80:      *(*p)++ = '-', bitset_get(symset, chr) ? nsym-- : nnsym--;
+    13948:   81:    if (chr - start >= 1)
+     5722:   82:      goto append_chr;
+        -:   83:  }
+        -:   84:
+     1578:   85:  *bufp++ = *nbufp++ = ']';
+     1578:   86:  *bufp++ = *nbufp++ = '\0';
+        -:   87:
+        -:   88:  // special casees for character classes containing zero or one symsets
+     1578:   89:  if (nnsym == 0) {
+        -:   90:    return "<>";
+     1400:   91:  } else if (nsym == 1) {
+      700:   92:    bufp[-2] = '\0';
+      700:   93:    return buf + 1;
+      700:   94:  } else if (nnsym == 1) {
+      173:   95:    nbufp[-2] = '\0', nbuf[1] = '^';
+      173:   96:    return nbuf + 1;
+        -:   97:  }
+        -:   98:
+        -:   99:  // return a complemented character class if it is shorter
+      527:  100:  return (bufp - buf < nbufp - nbuf) ? buf : nbuf;
+        -:  101:}
+------------------
+        -:  102:
+   20132*:  103:static struct nstate *nstate_alloc(void) {
+   20132*:  104:  struct nstate *nstate = malloc(sizeof(struct nstate));
+   20132*:  105:  *nstate = (struct nstate){.id = -1};
+   20132*:  106:  return nstate;
+        -:  107:}
+------------------
+nstate_alloc:
+    #####:  103:static struct nstate *nstate_alloc(void) {
+    #####:  104:  struct nstate *nstate = malloc(sizeof(struct nstate));
+    #####:  105:  *nstate = (struct nstate){.id = -1};
+    #####:  106:  return nstate;
+        -:  107:}
+------------------
+nstate_alloc:
+    20132:  103:static struct nstate *nstate_alloc(void) {
+    20132:  104:  struct nstate *nstate = malloc(sizeof(struct nstate));
+    20132:  105:  *nstate = (struct nstate){.id = -1};
+    20132:  106:  return nstate;
+        -:  107:}
+------------------
+        -:  108:
+    3018*:  109:void nfa_free(struct nfa nfa) {
+   20138*:  110:  for (struct nstate *next, *nstate = nfa.initial; nstate; nstate = next)
+   17120*:  111:    next = nstate->next, free(nstate);
+    3018*:  112:}
+------------------
+nfa_free:
+    #####:  109:void nfa_free(struct nfa nfa) {
+    #####:  110:  for (struct nstate *next, *nstate = nfa.initial; nstate; nstate = next)
+    #####:  111:    next = nstate->next, free(nstate);
+    #####:  112:}
+------------------
+nfa_free:
+     3018:  109:void nfa_free(struct nfa nfa) {
+    20138:  110:  for (struct nstate *next, *nstate = nfa.initial; nstate; nstate = next)
+    17120:  111:    next = nstate->next, free(nstate);
+     3018:  112:}
+------------------
+        -:  113:
+     767*:  114:static int nfa_get_size(struct nfa nfa) {
+        -:  115:  // also populates `nstate.id` with unique identifiers
+        -:  116:  int nfa_size = 0;
+  203424*:  117:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+  202657*:  118:    if ((nstate->id = nfa_size++) == INT_MAX)
+    #####:  119:      abort();
+     767*:  120:  return nfa_size;
+        -:  121:}
+------------------
+nfa_get_size:
+    #####:  114:static int nfa_get_size(struct nfa nfa) {
+        -:  115:  // also populates `nstate.id` with unique identifiers
+        -:  116:  int nfa_size = 0;
+    #####:  117:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+    #####:  118:    if ((nstate->id = nfa_size++) == INT_MAX)
+    #####:  119:      abort();
+    #####:  120:  return nfa_size;
+        -:  121:}
+------------------
+nfa_get_size:
+      767:  114:static int nfa_get_size(struct nfa nfa) {
+        -:  115:  // also populates `nstate.id` with unique identifiers
+        -:  116:  int nfa_size = 0;
+   203424:  117:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+   202657:  118:    if ((nstate->id = nfa_size++) == INT_MAX)
+    #####:  119:      abort();
+      767:  120:  return nfa_size;
+        -:  121:}
+------------------
+        -:  122:
+      52*:  123:static struct nfa nfa_clone(struct nfa nfa) {
+      52*:  124:  int nfa_size = nfa_get_size(nfa);
+        -:  125:
+      52*:  126:  struct nstate *nstates[nfa_size];
+     178*:  127:  for (int id = 0; id < nfa_size; id++)
+     126*:  128:    nstates[id] = nstate_alloc();
+        -:  129:
+        -:  130:#define MAYBE_COPY(FIELD)                                                      \
+        -:  131:  if (nstate->FIELD)                                                           \
+        -:  132:    nstates[nstate->id]->FIELD = nstates[nstate->FIELD->id];
+        -:  133:
+     178*:  134:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next) {
+     126*:  135:    memcpy(nstates[nstate->id]->label, nstate->label, sizeof(symset_t));
+     126*:  136:    MAYBE_COPY(target);
+     126*:  137:    MAYBE_COPY(epsilon0);
+     126*:  138:    MAYBE_COPY(epsilon1);
+     126*:  139:    MAYBE_COPY(next);
+        -:  140:  }
+        -:  141:
+        -:  142:#undef MAYBE_COPY
+        -:  143:
+      52*:  144:  return (struct nfa){
+      52*:  145:      .initial = nstates[nfa.initial->id],
+      52*:  146:      .final = nstates[nfa.final->id],
+      52*:  147:      .complemented = nfa.complemented,
+        -:  148:  };
+        -:  149:}
+------------------
+nfa_clone:
+    #####:  123:static struct nfa nfa_clone(struct nfa nfa) {
+    #####:  124:  int nfa_size = nfa_get_size(nfa);
+        -:  125:
+    #####:  126:  struct nstate *nstates[nfa_size];
+    #####:  127:  for (int id = 0; id < nfa_size; id++)
+    #####:  128:    nstates[id] = nstate_alloc();
+        -:  129:
+        -:  130:#define MAYBE_COPY(FIELD)                                                      \
+        -:  131:  if (nstate->FIELD)                                                           \
+        -:  132:    nstates[nstate->id]->FIELD = nstates[nstate->FIELD->id];
+        -:  133:
+    #####:  134:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next) {
+    #####:  135:    memcpy(nstates[nstate->id]->label, nstate->label, sizeof(symset_t));
+    #####:  136:    MAYBE_COPY(target);
+    #####:  137:    MAYBE_COPY(epsilon0);
+    #####:  138:    MAYBE_COPY(epsilon1);
+    #####:  139:    MAYBE_COPY(next);
+        -:  140:  }
+        -:  141:
+        -:  142:#undef MAYBE_COPY
+        -:  143:
+    #####:  144:  return (struct nfa){
+    #####:  145:      .initial = nstates[nfa.initial->id],
+    #####:  146:      .final = nstates[nfa.final->id],
+    #####:  147:      .complemented = nfa.complemented,
+        -:  148:  };
+        -:  149:}
+------------------
+nfa_clone:
+       52:  123:static struct nfa nfa_clone(struct nfa nfa) {
+       52:  124:  int nfa_size = nfa_get_size(nfa);
+        -:  125:
+       52:  126:  struct nstate *nstates[nfa_size];
+      178:  127:  for (int id = 0; id < nfa_size; id++)
+      126:  128:    nstates[id] = nstate_alloc();
+        -:  129:
+        -:  130:#define MAYBE_COPY(FIELD)                                                      \
+        -:  131:  if (nstate->FIELD)                                                           \
+        -:  132:    nstates[nstate->id]->FIELD = nstates[nstate->FIELD->id];
+        -:  133:
+      178:  134:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next) {
+      126:  135:    memcpy(nstates[nstate->id]->label, nstate->label, sizeof(symset_t));
+      126:  136:    MAYBE_COPY(target);
+      126:  137:    MAYBE_COPY(epsilon0);
+      126:  138:    MAYBE_COPY(epsilon1);
+      126:  139:    MAYBE_COPY(next);
+        -:  140:  }
+        -:  141:
+        -:  142:#undef MAYBE_COPY
+        -:  143:
+       52:  144:  return (struct nfa){
+       52:  145:      .initial = nstates[nfa.initial->id],
+       52:  146:      .final = nstates[nfa.final->id],
+       52:  147:      .complemented = nfa.complemented,
+        -:  148:  };
+        -:  149:}
+------------------
+        -:  150:
+    5441*:  151:static void nfa_concat(struct nfa *nfap, struct nfa nfa) {
+        -:  152:  // memcpys `nfa.initial` into `nfap->final` then frees `nfa.initial`; assumes
+        -:  153:  // nothing refers to `nfa.initial` and assumes `nfap->final` refers to
+        -:  154:  // nothing. performs a "visual" concatenation and therefore does not take into
+        -:  155:  // account the `nfa.complemented` flag. if `nfa` or `nfap` have it set, the
+        -:  156:  // result may not be what you expect
+    5441*:  157:  if (nfap->initial == nfap->final)
+    2468*:  158:    nfa_free(*nfap), *nfap = nfa;
+    2973*:  159:  else if (nfa.initial != nfa.final) {
+        -:  160:    memcpy(nfap->final, nfa.initial, sizeof(struct nstate));
+    2973*:  161:    nfap->final = nfa.final;
+    2973*:  162:    free(nfa.initial);
+        -:  163:  }
+    5441*:  164:}
+------------------
+nfa_concat:
+    #####:  151:static void nfa_concat(struct nfa *nfap, struct nfa nfa) {
+        -:  152:  // memcpys `nfa.initial` into `nfap->final` then frees `nfa.initial`; assumes
+        -:  153:  // nothing refers to `nfa.initial` and assumes `nfap->final` refers to
+        -:  154:  // nothing. performs a "visual" concatenation and therefore does not take into
+        -:  155:  // account the `nfa.complemented` flag. if `nfa` or `nfap` have it set, the
+        -:  156:  // result may not be what you expect
+    #####:  157:  if (nfap->initial == nfap->final)
+    #####:  158:    nfa_free(*nfap), *nfap = nfa;
+    #####:  159:  else if (nfa.initial != nfa.final) {
+        -:  160:    memcpy(nfap->final, nfa.initial, sizeof(struct nstate));
+    #####:  161:    nfap->final = nfa.final;
+    #####:  162:    free(nfa.initial);
+        -:  163:  }
+    #####:  164:}
+------------------
+nfa_concat:
+     5441:  151:static void nfa_concat(struct nfa *nfap, struct nfa nfa) {
+        -:  152:  // memcpys `nfa.initial` into `nfap->final` then frees `nfa.initial`; assumes
+        -:  153:  // nothing refers to `nfa.initial` and assumes `nfap->final` refers to
+        -:  154:  // nothing. performs a "visual" concatenation and therefore does not take into
+        -:  155:  // account the `nfa.complemented` flag. if `nfa` or `nfap` have it set, the
+        -:  156:  // result may not be what you expect
+     5441:  157:  if (nfap->initial == nfap->final)
+     2468:  158:    nfa_free(*nfap), *nfap = nfa;
+     2973:  159:  else if (nfa.initial != nfa.final) {
+        -:  160:    memcpy(nfap->final, nfa.initial, sizeof(struct nstate));
+     2973:  161:    nfap->final = nfa.final;
+     2973:  162:    free(nfa.initial);
+        -:  163:  }
+     5441:  164:}
+------------------
+        -:  165:
+        -:  166:static void nfa_pad_initial(struct nfa *nfa) {
+    1566*:  167:  struct nstate *initial = nstate_alloc();
+    1970*:  168:  initial->epsilon0 = nfa->initial;
+    1970*:  169:  initial->next = nfa->initial;
+    1966*:  170:  nfa->initial = initial;
+      37*:  171:}
+        -:  172:
+        -:  173:static void nfa_pad_final(struct nfa *nfa) {
+    1933*:  174:  struct nstate *final = nstate_alloc();
+    1933*:  175:  nfa->final->epsilon0 = final;
+    1933*:  176:  nfa->final->next = final;
+     405*:  177:  nfa->final = final;
+       4*:  178:}
+        -:  179:
+    8980*:  180:static void nfa_uncomplement(struct nfa *nfa) {
+        -:  181:  // ensures `!nfa->complemented`, a useful property when manipulating NFAs.
+        -:  182:  // if `nfa->complemented`, we have to go through the whole compile pipeline
+        -:  183:  // to uncomplement it
+    8980*:  184:  if (!nfa->complemented)
+    8958*:  185:    return;
+      22*:  186:  struct dstate *dfa = ltre_compile(*nfa);
+      22*:  187:  struct nfa uncomplemented = ltre_uncompile(dfa);
+      22*:  188:  dfa_free(dfa), nfa_free(*nfa);
+        -:  189:  memcpy(nfa, &uncomplemented, sizeof(struct nfa));
+        -:  190:}
+------------------
+nfa_uncomplement:
+    #####:  180:static void nfa_uncomplement(struct nfa *nfa) {
+        -:  181:  // ensures `!nfa->complemented`, a useful property when manipulating NFAs.
+        -:  182:  // if `nfa->complemented`, we have to go through the whole compile pipeline
+        -:  183:  // to uncomplement it
+    #####:  184:  if (!nfa->complemented)
+    #####:  185:    return;
+    #####:  186:  struct dstate *dfa = ltre_compile(*nfa);
+    #####:  187:  struct nfa uncomplemented = ltre_uncompile(dfa);
+    #####:  188:  dfa_free(dfa), nfa_free(*nfa);
+        -:  189:  memcpy(nfa, &uncomplemented, sizeof(struct nfa));
+        -:  190:}
+------------------
+nfa_uncomplement:
+     8980:  180:static void nfa_uncomplement(struct nfa *nfa) {
+        -:  181:  // ensures `!nfa->complemented`, a useful property when manipulating NFAs.
+        -:  182:  // if `nfa->complemented`, we have to go through the whole compile pipeline
+        -:  183:  // to uncomplement it
+     8980:  184:  if (!nfa->complemented)
+     8958:  185:    return;
+       22:  186:  struct dstate *dfa = ltre_compile(*nfa);
+       22:  187:  struct nfa uncomplemented = ltre_uncompile(dfa);
+       22:  188:  dfa_free(dfa), nfa_free(*nfa);
+        -:  189:  memcpy(nfa, &uncomplemented, sizeof(struct nfa));
+        -:  190:}
+------------------
+        -:  191:
+    #####:  192:void nfa_dump(struct nfa nfa) {
+    #####:  193:  (void)nfa_get_size(nfa);
+        -:  194:
+        -:  195:  printf("graph LR\n");
+    #####:  196:  printf("  I( ) --> %d\n", nfa.initial->id);
+    #####:  197:  printf("  %d --> F( )\n", nfa.final->id);
+        -:  198:
+    #####:  199:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next) {
+    #####:  200:    if (nstate->epsilon0)
+    #####:  201:      printf("  %d --> %d\n", nstate->id, nstate->epsilon0->id);
+    #####:  202:    if (nstate->epsilon1)
+    #####:  203:      printf("  %d --> %d\n", nstate->id, nstate->epsilon1->id);
+        -:  204:
+        -:  205:    bool empty = true;
+    #####:  206:    for (int i = 0; i < sizeof(symset_t); i++)
+    #####:  207:      empty &= !nstate->label[i];
+        -:  208:
+    #####:  209:    if (empty)
+    #####:  210:      continue;
+        -:  211:
+        -:  212:    // avoid breaking Mermaid
+    #####:  213:    printf("  %d --", nstate->id);
+    #####:  214:    for (char *fmt = symset_fmt(nstate->label); *fmt; fmt++)
+    #####:  215:      printf(strchr("\\\"#&{}()xo=- ", *fmt) ? "#%hhu;" : "%c", *fmt);
+    #####:  216:    printf("--> %d\n", nstate->target->id);
+        -:  217:  }
+    #####:  218:}
+------------------
+nfa_dump:
+    #####:  192:void nfa_dump(struct nfa nfa) {
+    #####:  193:  (void)nfa_get_size(nfa);
+        -:  194:
+        -:  195:  printf("graph LR\n");
+    #####:  196:  printf("  I( ) --> %d\n", nfa.initial->id);
+    #####:  197:  printf("  %d --> F( )\n", nfa.final->id);
+        -:  198:
+    #####:  199:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next) {
+    #####:  200:    if (nstate->epsilon0)
+    #####:  201:      printf("  %d --> %d\n", nstate->id, nstate->epsilon0->id);
+    #####:  202:    if (nstate->epsilon1)
+    #####:  203:      printf("  %d --> %d\n", nstate->id, nstate->epsilon1->id);
+        -:  204:
+        -:  205:    bool empty = true;
+    #####:  206:    for (int i = 0; i < sizeof(symset_t); i++)
+    #####:  207:      empty &= !nstate->label[i];
+        -:  208:
+    #####:  209:    if (empty)
+    #####:  210:      continue;
+        -:  211:
+        -:  212:    // avoid breaking Mermaid
+    #####:  213:    printf("  %d --", nstate->id);
+    #####:  214:    for (char *fmt = symset_fmt(nstate->label); *fmt; fmt++)
+    #####:  215:      printf(strchr("\\\"#&{}()xo=- ", *fmt) ? "#%hhu;" : "%c", *fmt);
+    #####:  216:    printf("--> %d\n", nstate->target->id);
+        -:  217:  }
+    #####:  218:}
+------------------
+nfa_dump:
+    #####:  192:void nfa_dump(struct nfa nfa) {
+    #####:  193:  (void)nfa_get_size(nfa);
+        -:  194:
+        -:  195:  printf("graph LR\n");
+    #####:  196:  printf("  I( ) --> %d\n", nfa.initial->id);
+    #####:  197:  printf("  %d --> F( )\n", nfa.final->id);
+        -:  198:
+    #####:  199:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next) {
+    #####:  200:    if (nstate->epsilon0)
+    #####:  201:      printf("  %d --> %d\n", nstate->id, nstate->epsilon0->id);
+    #####:  202:    if (nstate->epsilon1)
+    #####:  203:      printf("  %d --> %d\n", nstate->id, nstate->epsilon1->id);
+        -:  204:
+        -:  205:    bool empty = true;
+    #####:  206:    for (int i = 0; i < sizeof(symset_t); i++)
+    #####:  207:      empty &= !nstate->label[i];
+        -:  208:
+    #####:  209:    if (empty)
+    #####:  210:      continue;
+        -:  211:
+        -:  212:    // avoid breaking Mermaid
+    #####:  213:    printf("  %d --", nstate->id);
+    #####:  214:    for (char *fmt = symset_fmt(nstate->label); *fmt; fmt++)
+    #####:  215:      printf(strchr("\\\"#&{}()xo=- ", *fmt) ? "#%hhu;" : "%c", *fmt);
+    #####:  216:    printf("--> %d\n", nstate->target->id);
+        -:  217:  }
+    #####:  218:}
+------------------
+        -:  219:
+    7075*:  220:static struct dstate *dstate_alloc(int bitset_size) {
+    7075*:  221:  struct dstate *dstate = malloc(sizeof(struct dstate) + bitset_size);
+    7075*:  222:  *dstate = (struct dstate){.id = -1};
+    7075*:  223:  memset(dstate->bitset, 0x00, bitset_size);
+    7075*:  224:  return dstate;
+        -:  225:}
+------------------
+dstate_alloc:
+    #####:  220:static struct dstate *dstate_alloc(int bitset_size) {
+    #####:  221:  struct dstate *dstate = malloc(sizeof(struct dstate) + bitset_size);
+    #####:  222:  *dstate = (struct dstate){.id = -1};
+    #####:  223:  memset(dstate->bitset, 0x00, bitset_size);
+    #####:  224:  return dstate;
+        -:  225:}
+------------------
+dstate_alloc:
+     7075:  220:static struct dstate *dstate_alloc(int bitset_size) {
+     7075:  221:  struct dstate *dstate = malloc(sizeof(struct dstate) + bitset_size);
+     7075:  222:  *dstate = (struct dstate){.id = -1};
+     7075:  223:  memset(dstate->bitset, 0x00, bitset_size);
+     7075:  224:  return dstate;
+        -:  225:}
+------------------
+        -:  226:
+     640*:  227:void dfa_free(struct dstate *dstate) {
+    5399*:  228:  for (struct dstate *next; dstate; dstate = next)
+    4759*:  229:    next = dstate->next, free(dstate);
+     640*:  230:}
+------------------
+dfa_free:
+    #####:  227:void dfa_free(struct dstate *dstate) {
+    #####:  228:  for (struct dstate *next; dstate; dstate = next)
+    #####:  229:    next = dstate->next, free(dstate);
+    #####:  230:}
+------------------
+dfa_free:
+      640:  227:void dfa_free(struct dstate *dstate) {
+     5399:  228:  for (struct dstate *next; dstate; dstate = next)
+     4759:  229:    next = dstate->next, free(dstate);
+      640:  230:}
+------------------
+        -:  231:
+     784*:  232:static int dfa_get_size(struct dstate *dfa) {
+        -:  233:  // also populates `dstate.id` with unique identifiers
+        -:  234:  int dfa_size = 0;
+    9327*:  235:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    8543*:  236:    if ((dstate->id = dfa_size++) == INT_MAX)
+    #####:  237:      abort();
+     784*:  238:  return dfa_size;
+        -:  239:}
+------------------
+dfa_get_size:
+    #####:  232:static int dfa_get_size(struct dstate *dfa) {
+        -:  233:  // also populates `dstate.id` with unique identifiers
+        -:  234:  int dfa_size = 0;
+    #####:  235:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    #####:  236:    if ((dstate->id = dfa_size++) == INT_MAX)
+    #####:  237:      abort();
+    #####:  238:  return dfa_size;
+        -:  239:}
+------------------
+dfa_get_size:
+      784:  232:static int dfa_get_size(struct dstate *dfa) {
+        -:  233:  // also populates `dstate.id` with unique identifiers
+        -:  234:  int dfa_size = 0;
+     9327:  235:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+     8543:  236:    if ((dstate->id = dfa_size++) == INT_MAX)
+    #####:  237:      abort();
+      784:  238:  return dfa_size;
+        -:  239:}
+------------------
+        -:  240:
+    7235*:  241:static void leb128_put(uint8_t **p, int n) {
+    8006*:  242:  while (n >> 7)
+     771*:  243:    *(*p)++ = (n & 0x7f) | 0x80, n >>= 7;
+    7235*:  244:  *(*p)++ = n;
+    7235*:  245:}
+------------------
+leb128_put:
+    #####:  241:static void leb128_put(uint8_t **p, int n) {
+    #####:  242:  while (n >> 7)
+    #####:  243:    *(*p)++ = (n & 0x7f) | 0x80, n >>= 7;
+    #####:  244:  *(*p)++ = n;
+    #####:  245:}
+------------------
+leb128_put:
+     7235:  241:static void leb128_put(uint8_t **p, int n) {
+     8006:  242:  while (n >> 7)
+      771:  243:    *(*p)++ = (n & 0x7f) | 0x80, n >>= 7;
+     7235:  244:  *(*p)++ = n;
+     7235:  245:}
+------------------
+        -:  246:
+    7235*:  247:static int leb128_get(uint8_t **p) {
+        -:  248:  int n = 0, c = 0;
+        -:  249:  do
+    8006*:  250:    n |= (**p & 0x7f) << c++ * 7;
+    8006*:  251:  while (*(*p)++ & 0x80);
+        -:  252:
+    7235*:  253:  return n;
+        -:  254:}
+------------------
+leb128_get:
+    #####:  247:static int leb128_get(uint8_t **p) {
+        -:  248:  int n = 0, c = 0;
+        -:  249:  do
+    #####:  250:    n |= (**p & 0x7f) << c++ * 7;
+    #####:  251:  while (*(*p)++ & 0x80);
+        -:  252:
+    #####:  253:  return n;
+        -:  254:}
+------------------
+leb128_get:
+     7235:  247:static int leb128_get(uint8_t **p) {
+        -:  248:  int n = 0, c = 0;
+        -:  249:  do
+     8006:  250:    n |= (**p & 0x7f) << c++ * 7;
+     8006:  251:  while (*(*p)++ & 0x80);
+        -:  252:
+     7235:  253:  return n;
+        -:  254:}
+------------------
+        -:  255:
+     124*:  256:uint8_t *dfa_serialize(struct dstate *dfa, size_t *size) {
+        -:  257:  // serialize a DFA using a mix of RLE and LEB128. `size` is an out parameter
+        -:  258:
+     124*:  259:  int dfa_size = dfa_get_size(dfa);
+        -:  260:
+        -:  261:  // len(leb128(dfa_size)) == ceil(log128(dfa_size))
+        -:  262:  int ceil_log128 = 0;
+     125*:  263:  for (int s = dfa_size; s >>= 7;)
+       1*:  264:    ceil_log128++;
+     124*:  265:  ceil_log128++;
+        -:  266:
+     124*:  267:  uint8_t *buf = malloc(ceil_log128), *p = buf;
+     124*:  268:  leb128_put(&p, dfa_size);
+        -:  269:
+    1297*:  270:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next) {
+        -:  271:    // ensure buffer large enough for worst case. worst case is typically around
+        -:  272:    // 500 bytes larger than best case, so this is not too wasteful.
+    1173*:  273:    ptrdiff_t len = p - buf;
+        -:  274:    // len + <accepting_terminating> + 256 * (<run_length> + <leb128(dfa_size)>)
+    1173*:  275:    uint8_t *new = realloc(buf, len + 1 + 256 * (1 + ceil_log128));
+    1173*:  276:    buf = new, p = new + len;
+        -:  277:
+    1173*:  278:    *p++ = dstate->accepting << 1 | dstate->terminating;
+    8284*:  279:    for (int chr = 0; chr < 256;) {
+        -:  280:      int start = chr;
+  300288*:  281:      while (chr < 255 &&
+  299115*:  282:             dstate->transitions[chr] == dstate->transitions[chr + 1])
+        -:  283:        chr++;
+    7111*:  284:      *p++ = chr - start; // run length
+    7111*:  285:      leb128_put(&p, dstate->transitions[chr++]->id);
+        -:  286:    }
+        -:  287:  }
+        -:  288:
+     124*:  289:  *size = p - buf;
+     124*:  290:  return realloc(buf, p - buf); // don't be wasteful
+        -:  291:}
+------------------
+dfa_serialize:
+    #####:  256:uint8_t *dfa_serialize(struct dstate *dfa, size_t *size) {
+        -:  257:  // serialize a DFA using a mix of RLE and LEB128. `size` is an out parameter
+        -:  258:
+    #####:  259:  int dfa_size = dfa_get_size(dfa);
+        -:  260:
+        -:  261:  // len(leb128(dfa_size)) == ceil(log128(dfa_size))
+        -:  262:  int ceil_log128 = 0;
+    #####:  263:  for (int s = dfa_size; s >>= 7;)
+    #####:  264:    ceil_log128++;
+    #####:  265:  ceil_log128++;
+        -:  266:
+    #####:  267:  uint8_t *buf = malloc(ceil_log128), *p = buf;
+    #####:  268:  leb128_put(&p, dfa_size);
+        -:  269:
+    #####:  270:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next) {
+        -:  271:    // ensure buffer large enough for worst case. worst case is typically around
+        -:  272:    // 500 bytes larger than best case, so this is not too wasteful.
+    #####:  273:    ptrdiff_t len = p - buf;
+        -:  274:    // len + <accepting_terminating> + 256 * (<run_length> + <leb128(dfa_size)>)
+    #####:  275:    uint8_t *new = realloc(buf, len + 1 + 256 * (1 + ceil_log128));
+    #####:  276:    buf = new, p = new + len;
+        -:  277:
+    #####:  278:    *p++ = dstate->accepting << 1 | dstate->terminating;
+    #####:  279:    for (int chr = 0; chr < 256;) {
+        -:  280:      int start = chr;
+    #####:  281:      while (chr < 255 &&
+    #####:  282:             dstate->transitions[chr] == dstate->transitions[chr + 1])
+        -:  283:        chr++;
+    #####:  284:      *p++ = chr - start; // run length
+    #####:  285:      leb128_put(&p, dstate->transitions[chr++]->id);
+        -:  286:    }
+        -:  287:  }
+        -:  288:
+    #####:  289:  *size = p - buf;
+    #####:  290:  return realloc(buf, p - buf); // don't be wasteful
+        -:  291:}
+------------------
+dfa_serialize:
+      124:  256:uint8_t *dfa_serialize(struct dstate *dfa, size_t *size) {
+        -:  257:  // serialize a DFA using a mix of RLE and LEB128. `size` is an out parameter
+        -:  258:
+      124:  259:  int dfa_size = dfa_get_size(dfa);
+        -:  260:
+        -:  261:  // len(leb128(dfa_size)) == ceil(log128(dfa_size))
+        -:  262:  int ceil_log128 = 0;
+      125:  263:  for (int s = dfa_size; s >>= 7;)
+        1:  264:    ceil_log128++;
+      124:  265:  ceil_log128++;
+        -:  266:
+      124:  267:  uint8_t *buf = malloc(ceil_log128), *p = buf;
+      124:  268:  leb128_put(&p, dfa_size);
+        -:  269:
+     1297:  270:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next) {
+        -:  271:    // ensure buffer large enough for worst case. worst case is typically around
+        -:  272:    // 500 bytes larger than best case, so this is not too wasteful.
+     1173:  273:    ptrdiff_t len = p - buf;
+        -:  274:    // len + <accepting_terminating> + 256 * (<run_length> + <leb128(dfa_size)>)
+     1173:  275:    uint8_t *new = realloc(buf, len + 1 + 256 * (1 + ceil_log128));
+     1173:  276:    buf = new, p = new + len;
+        -:  277:
+     1173:  278:    *p++ = dstate->accepting << 1 | dstate->terminating;
+     8284:  279:    for (int chr = 0; chr < 256;) {
+        -:  280:      int start = chr;
+   300288:  281:      while (chr < 255 &&
+   299115:  282:             dstate->transitions[chr] == dstate->transitions[chr + 1])
+        -:  283:        chr++;
+     7111:  284:      *p++ = chr - start; // run length
+     7111:  285:      leb128_put(&p, dstate->transitions[chr++]->id);
+        -:  286:    }
+        -:  287:  }
+        -:  288:
+      124:  289:  *size = p - buf;
+      124:  290:  return realloc(buf, p - buf); // don't be wasteful
+        -:  291:}
+------------------
+        -:  292:
+     124*:  293:struct dstate *dfa_deserialize(uint8_t *buf, size_t *size) {
+        -:  294:  // deserialize a DFA from a **trusted** buffer. `size` is an out parameter
+        -:  295:
+     124*:  296:  uint8_t *p = buf;
+     124*:  297:  int dfa_size = leb128_get(&p);
+        -:  298:
+     124*:  299:  struct dstate *dstates[dfa_size];
+    1297*:  300:  for (int id = 0; id < dfa_size; id++)
+    1173*:  301:    dstates[id] = dstate_alloc(0);
+        -:  302:
+    1297*:  303:  for (int id = 0; id < dfa_size; id++) {
+    1173*:  304:    dstates[id]->accepting = *p >> 1 & 1;
+    1173*:  305:    dstates[id]->terminating = *p++ & 1;
+    8284*:  306:    for (int chr = 0; chr < 256;) {
+    7111*:  307:      int len = *p++;
+    7111*:  308:      struct dstate *target = dstates[leb128_get(&p)];
+        -:  309:      do // run length
+  300288*:  310:        dstates[id]->transitions[chr++] = target;
+  300288*:  311:      while (len--);
+        -:  312:    }
+        -:  313:
+    1173*:  314:    if (id != 0)
+    1049*:  315:      dstates[id - 1]->next = dstates[id];
+        -:  316:  }
+        -:  317:
+     124*:  318:  *size = p - buf;
+     124*:  319:  return *dstates;
+        -:  320:}
+------------------
+dfa_deserialize:
+    #####:  293:struct dstate *dfa_deserialize(uint8_t *buf, size_t *size) {
+        -:  294:  // deserialize a DFA from a **trusted** buffer. `size` is an out parameter
+        -:  295:
+    #####:  296:  uint8_t *p = buf;
+    #####:  297:  int dfa_size = leb128_get(&p);
+        -:  298:
+    #####:  299:  struct dstate *dstates[dfa_size];
+    #####:  300:  for (int id = 0; id < dfa_size; id++)
+    #####:  301:    dstates[id] = dstate_alloc(0);
+        -:  302:
+    #####:  303:  for (int id = 0; id < dfa_size; id++) {
+    #####:  304:    dstates[id]->accepting = *p >> 1 & 1;
+    #####:  305:    dstates[id]->terminating = *p++ & 1;
+    #####:  306:    for (int chr = 0; chr < 256;) {
+    #####:  307:      int len = *p++;
+    #####:  308:      struct dstate *target = dstates[leb128_get(&p)];
+        -:  309:      do // run length
+    #####:  310:        dstates[id]->transitions[chr++] = target;
+    #####:  311:      while (len--);
+        -:  312:    }
+        -:  313:
+    #####:  314:    if (id != 0)
+    #####:  315:      dstates[id - 1]->next = dstates[id];
+        -:  316:  }
+        -:  317:
+    #####:  318:  *size = p - buf;
+    #####:  319:  return *dstates;
+        -:  320:}
+------------------
+dfa_deserialize:
+      124:  293:struct dstate *dfa_deserialize(uint8_t *buf, size_t *size) {
+        -:  294:  // deserialize a DFA from a **trusted** buffer. `size` is an out parameter
+        -:  295:
+      124:  296:  uint8_t *p = buf;
+      124:  297:  int dfa_size = leb128_get(&p);
+        -:  298:
+      124:  299:  struct dstate *dstates[dfa_size];
+     1297:  300:  for (int id = 0; id < dfa_size; id++)
+     1173:  301:    dstates[id] = dstate_alloc(0);
+        -:  302:
+     1297:  303:  for (int id = 0; id < dfa_size; id++) {
+     1173:  304:    dstates[id]->accepting = *p >> 1 & 1;
+     1173:  305:    dstates[id]->terminating = *p++ & 1;
+     8284:  306:    for (int chr = 0; chr < 256;) {
+     7111:  307:      int len = *p++;
+     7111:  308:      struct dstate *target = dstates[leb128_get(&p)];
+        -:  309:      do // run length
+   300288:  310:        dstates[id]->transitions[chr++] = target;
+   300288:  311:      while (len--);
+        -:  312:    }
+        -:  313:
+     1173:  314:    if (id != 0)
+     1049:  315:      dstates[id - 1]->next = dstates[id];
+        -:  316:  }
+        -:  317:
+      124:  318:  *size = p - buf;
+      124:  319:  return *dstates;
+        -:  320:}
+------------------
+        -:  321:
+    #####:  322:void dfa_dump(struct dstate *dfa) {
+    #####:  323:  (void)dfa_get_size(dfa);
+        -:  324:
+        -:  325:  printf("graph LR\n");
+    #####:  326:  printf("  I( ) --> %d\n", dfa->id);
+        -:  327:
+    #####:  328:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+    #####:  329:    if (ds1->accepting)
+    #####:  330:      printf("  %d --> F( )\n", ds1->id);
+        -:  331:
+    #####:  332:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -:  333:      bool empty = true;
+    #####:  334:      symset_t transitions = {0};
+    #####:  335:      for (int chr = 0; chr < 256; chr++)
+    #####:  336:        if (ds1->transitions[chr] == ds2)
+    #####:  337:          bitset_set(transitions, chr), empty = false;
+        -:  338:
+    #####:  339:      if (empty)
+    #####:  340:        continue;
+        -:  341:
+        -:  342:      // avoid breaking Mermaid
+    #####:  343:      printf("  %d --", ds1->id);
+    #####:  344:      for (char *fmt = symset_fmt(transitions); *fmt; fmt++)
+    #####:  345:        printf(strchr("\\\"#&{}()xo=- ", *fmt) ? "#%hhu;" : "%c", *fmt);
+    #####:  346:      printf("--> %d\n", ds2->id);
+        -:  347:    }
+        -:  348:  }
+    #####:  349:}
+------------------
+dfa_dump:
+    #####:  322:void dfa_dump(struct dstate *dfa) {
+    #####:  323:  (void)dfa_get_size(dfa);
+        -:  324:
+        -:  325:  printf("graph LR\n");
+    #####:  326:  printf("  I( ) --> %d\n", dfa->id);
+        -:  327:
+    #####:  328:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+    #####:  329:    if (ds1->accepting)
+    #####:  330:      printf("  %d --> F( )\n", ds1->id);
+        -:  331:
+    #####:  332:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -:  333:      bool empty = true;
+    #####:  334:      symset_t transitions = {0};
+    #####:  335:      for (int chr = 0; chr < 256; chr++)
+    #####:  336:        if (ds1->transitions[chr] == ds2)
+    #####:  337:          bitset_set(transitions, chr), empty = false;
+        -:  338:
+    #####:  339:      if (empty)
+    #####:  340:        continue;
+        -:  341:
+        -:  342:      // avoid breaking Mermaid
+    #####:  343:      printf("  %d --", ds1->id);
+    #####:  344:      for (char *fmt = symset_fmt(transitions); *fmt; fmt++)
+    #####:  345:        printf(strchr("\\\"#&{}()xo=- ", *fmt) ? "#%hhu;" : "%c", *fmt);
+    #####:  346:      printf("--> %d\n", ds2->id);
+        -:  347:    }
+        -:  348:  }
+    #####:  349:}
+------------------
+dfa_dump:
+    #####:  322:void dfa_dump(struct dstate *dfa) {
+    #####:  323:  (void)dfa_get_size(dfa);
+        -:  324:
+        -:  325:  printf("graph LR\n");
+    #####:  326:  printf("  I( ) --> %d\n", dfa->id);
+        -:  327:
+    #####:  328:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+    #####:  329:    if (ds1->accepting)
+    #####:  330:      printf("  %d --> F( )\n", ds1->id);
+        -:  331:
+    #####:  332:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -:  333:      bool empty = true;
+    #####:  334:      symset_t transitions = {0};
+    #####:  335:      for (int chr = 0; chr < 256; chr++)
+    #####:  336:        if (ds1->transitions[chr] == ds2)
+    #####:  337:          bitset_set(transitions, chr), empty = false;
+        -:  338:
+    #####:  339:      if (empty)
+    #####:  340:        continue;
+        -:  341:
+        -:  342:      // avoid breaking Mermaid
+    #####:  343:      printf("  %d --", ds1->id);
+    #####:  344:      for (char *fmt = symset_fmt(transitions); *fmt; fmt++)
+    #####:  345:        printf(strchr("\\\"#&{}()xo=- ", *fmt) ? "#%hhu;" : "%c", *fmt);
+    #####:  346:      printf("--> %d\n", ds2->id);
+        -:  347:    }
+        -:  348:  }
+    #####:  349:}
+------------------
+        -:  350:
+        -:  351:// some invariants for parsers on parse error:
+        -:  352:// - `error` shall be set to a non-`NULL` error message
+        -:  353:// - `regex` shall point to the error location
+        -:  354:// - the returned NFA shall be the null NFA
+        -:  355:// - the caller is responsible for backtracking
+        -:  356:
+      42*:  357:static unsigned parse_natural(char **regex, char **error) {
+      42*:  358:  if (!isdigit(**regex)) {
+      14*:  359:    *error = "expected natural number";
+      14*:  360:    return 0;
+        -:  361:  }
+        -:  362:
+        -:  363:  unsigned natural = 0;
+      88*:  364:  for (; isdigit(**regex); ++*regex) {
+      64*:  365:    int digit = **regex - '0';
+        -:  366:
+      64*:  367:    if (natural > UINT_MAX / 10 || natural * 10 > UINT_MAX - digit) {
+       4*:  368:      *error = "natural number overflow";
+       4*:  369:      return UINT_MAX; // indicate overflow condition
+        -:  370:    }
+        -:  371:
+      60*:  372:    natural *= 10, natural += digit;
+        -:  373:  }
+        -:  374:  return natural;
+        -:  375:}
+------------------
+parse_natural:
+    #####:  357:static unsigned parse_natural(char **regex, char **error) {
+    #####:  358:  if (!isdigit(**regex)) {
+    #####:  359:    *error = "expected natural number";
+    #####:  360:    return 0;
+        -:  361:  }
+        -:  362:
+        -:  363:  unsigned natural = 0;
+    #####:  364:  for (; isdigit(**regex); ++*regex) {
+    #####:  365:    int digit = **regex - '0';
+        -:  366:
+    #####:  367:    if (natural > UINT_MAX / 10 || natural * 10 > UINT_MAX - digit) {
+    #####:  368:      *error = "natural number overflow";
+    #####:  369:      return UINT_MAX; // indicate overflow condition
+        -:  370:    }
+        -:  371:
+    #####:  372:    natural *= 10, natural += digit;
+        -:  373:  }
+        -:  374:  return natural;
+        -:  375:}
+------------------
+parse_natural:
+       42:  357:static unsigned parse_natural(char **regex, char **error) {
+       42:  358:  if (!isdigit(**regex)) {
+       14:  359:    *error = "expected natural number";
+       14:  360:    return 0;
+        -:  361:  }
+        -:  362:
+        -:  363:  unsigned natural = 0;
+       88:  364:  for (; isdigit(**regex); ++*regex) {
+       64:  365:    int digit = **regex - '0';
+        -:  366:
+       64:  367:    if (natural > UINT_MAX / 10 || natural * 10 > UINT_MAX - digit) {
+        4:  368:      *error = "natural number overflow";
+        4:  369:      return UINT_MAX; // indicate overflow condition
+        -:  370:    }
+        -:  371:
+       60:  372:    natural *= 10, natural += digit;
+        -:  373:  }
+        -:  374:  return natural;
+        -:  375:}
+------------------
+        -:  376:
+     808*:  377:static uint8_t parse_hexbyte(char **regex, char **error) {
+        -:  378:  uint8_t byte = 0;
+    2421*:  379:  for (int i = 0; i < 2; i++) {
+    1615*:  380:    byte <<= 4;
+    1615*:  381:    char chr = **regex;
+    1615*:  382:    if (isdigit(chr))
+     758*:  383:      byte |= chr - '0';
+     857*:  384:    else if (isxdigit(chr))
+     855*:  385:      byte |= tolower(chr) - 'a' + 10;
+        -:  386:    else {
+       2*:  387:      *error = "expected hex digit";
+       2*:  388:      return 0;
+        -:  389:    }
+    1613*:  390:    ++*regex;
+        -:  391:  }
+        -:  392:  return byte;
+        -:  393:}
+------------------
+parse_hexbyte:
+    #####:  377:static uint8_t parse_hexbyte(char **regex, char **error) {
+        -:  378:  uint8_t byte = 0;
+    #####:  379:  for (int i = 0; i < 2; i++) {
+    #####:  380:    byte <<= 4;
+    #####:  381:    char chr = **regex;
+    #####:  382:    if (isdigit(chr))
+    #####:  383:      byte |= chr - '0';
+    #####:  384:    else if (isxdigit(chr))
+    #####:  385:      byte |= tolower(chr) - 'a' + 10;
+        -:  386:    else {
+    #####:  387:      *error = "expected hex digit";
+    #####:  388:      return 0;
+        -:  389:    }
+    #####:  390:    ++*regex;
+        -:  391:  }
+        -:  392:  return byte;
+        -:  393:}
+------------------
+parse_hexbyte:
+      808:  377:static uint8_t parse_hexbyte(char **regex, char **error) {
+        -:  378:  uint8_t byte = 0;
+     2421:  379:  for (int i = 0; i < 2; i++) {
+     1615:  380:    byte <<= 4;
+     1615:  381:    char chr = **regex;
+     1615:  382:    if (isdigit(chr))
+      758:  383:      byte |= chr - '0';
+      857:  384:    else if (isxdigit(chr))
+      855:  385:      byte |= tolower(chr) - 'a' + 10;
+        -:  386:    else {
+        2:  387:      *error = "expected hex digit";
+        2:  388:      return 0;
+        -:  389:    }
+     1613:  390:    ++*regex;
+        -:  391:  }
+        -:  392:  return byte;
+        -:  393:}
+------------------
+        -:  394:
+    1622*:  395:static uint8_t parse_escape(char **regex, char **error) {
+    1622*:  396:  if (strchr(METACHARS, **regex))
+     808*:  397:    return *(*regex)++;
+        -:  398:
+     814*:  399:  switch (*(*regex)++) {
+        -:  400:  case 'a':
+        -:  401:    return '\a';
+    #####:  402:  case 'b':
+    #####:  403:    return '\b';
+    #####:  404:  case 'f':
+    #####:  405:    return '\f';
+       4*:  406:  case 'n':
+       4*:  407:    return '\n';
+       1*:  408:  case 'r':
+       1*:  409:    return '\r';
+    #####:  410:  case 't':
+    #####:  411:    return '\t';
+    #####:  412:  case 'v':
+    #####:  413:    return '\v';
+     808*:  414:  case 'x':;
+     808*:  415:    uint8_t chr = parse_hexbyte(regex, error);
+     808*:  416:    if (*error)
+       2*:  417:      return 0;
+        -:  418:    return chr;
+        -:  419:  }
+        -:  420:
+       1*:  421:  --*regex;
+       1*:  422:  *error = "unknown escape";
+       1*:  423:  return 0;
+        -:  424:}
+------------------
+parse_escape:
+    #####:  395:static uint8_t parse_escape(char **regex, char **error) {
+    #####:  396:  if (strchr(METACHARS, **regex))
+    #####:  397:    return *(*regex)++;
+        -:  398:
+    #####:  399:  switch (*(*regex)++) {
+        -:  400:  case 'a':
+        -:  401:    return '\a';
+    #####:  402:  case 'b':
+    #####:  403:    return '\b';
+    #####:  404:  case 'f':
+    #####:  405:    return '\f';
+    #####:  406:  case 'n':
+    #####:  407:    return '\n';
+    #####:  408:  case 'r':
+    #####:  409:    return '\r';
+    #####:  410:  case 't':
+    #####:  411:    return '\t';
+    #####:  412:  case 'v':
+    #####:  413:    return '\v';
+    #####:  414:  case 'x':;
+    #####:  415:    uint8_t chr = parse_hexbyte(regex, error);
+    #####:  416:    if (*error)
+    #####:  417:      return 0;
+        -:  418:    return chr;
+        -:  419:  }
+        -:  420:
+    #####:  421:  --*regex;
+    #####:  422:  *error = "unknown escape";
+    #####:  423:  return 0;
+        -:  424:}
+------------------
+parse_escape:
+     1622:  395:static uint8_t parse_escape(char **regex, char **error) {
+     1622:  396:  if (strchr(METACHARS, **regex))
+      808:  397:    return *(*regex)++;
+        -:  398:
+      814:  399:  switch (*(*regex)++) {
+        -:  400:  case 'a':
+        -:  401:    return '\a';
+    #####:  402:  case 'b':
+    #####:  403:    return '\b';
+    #####:  404:  case 'f':
+    #####:  405:    return '\f';
+        4:  406:  case 'n':
+        4:  407:    return '\n';
+        1:  408:  case 'r':
+        1:  409:    return '\r';
+    #####:  410:  case 't':
+    #####:  411:    return '\t';
+    #####:  412:  case 'v':
+    #####:  413:    return '\v';
+      808:  414:  case 'x':;
+      808:  415:    uint8_t chr = parse_hexbyte(regex, error);
+      808:  416:    if (*error)
+        2:  417:      return 0;
+        -:  418:    return chr;
+        -:  419:  }
+        -:  420:
+        1:  421:  --*regex;
+        1:  422:  *error = "unknown escape";
+        1:  423:  return 0;
+        -:  424:}
+------------------
+        -:  425:
+    8580*:  426:static uint8_t parse_symbol(char **regex, char **error) {
+    8580*:  427:  if (**regex == '\\') {
+    1622*:  428:    ++*regex;
+    1622*:  429:    uint8_t escape = parse_escape(regex, error);
+    1622*:  430:    if (*error)
+        -:  431:      return 0;
+        -:  432:
+    1619*:  433:    return escape;
+        -:  434:  }
+        -:  435:
+    6958*:  436:  if (**regex == '\0') {
+       1*:  437:    *error = "expected symbol";
+       1*:  438:    return 0;
+        -:  439:  }
+        -:  440:
+    6957*:  441:  if (strchr(METACHARS, **regex)) {
+      27*:  442:    *error = "unexpected metacharacter";
+      27*:  443:    return 0;
+        -:  444:  }
+        -:  445:
+    6930*:  446:  if (!isprint(**regex)) {
+       2*:  447:    *error = "unexpected nonprintable character";
+       2*:  448:    return 0;
+        -:  449:  }
+        -:  450:
+    6928*:  451:  return *(*regex)++;
+        -:  452:}
+------------------
+parse_symbol:
+    #####:  426:static uint8_t parse_symbol(char **regex, char **error) {
+    #####:  427:  if (**regex == '\\') {
+    #####:  428:    ++*regex;
+    #####:  429:    uint8_t escape = parse_escape(regex, error);
+    #####:  430:    if (*error)
+        -:  431:      return 0;
+        -:  432:
+    #####:  433:    return escape;
+        -:  434:  }
+        -:  435:
+    #####:  436:  if (**regex == '\0') {
+    #####:  437:    *error = "expected symbol";
+    #####:  438:    return 0;
+        -:  439:  }
+        -:  440:
+    #####:  441:  if (strchr(METACHARS, **regex)) {
+    #####:  442:    *error = "unexpected metacharacter";
+    #####:  443:    return 0;
+        -:  444:  }
+        -:  445:
+    #####:  446:  if (!isprint(**regex)) {
+    #####:  447:    *error = "unexpected nonprintable character";
+    #####:  448:    return 0;
+        -:  449:  }
+        -:  450:
+    #####:  451:  return *(*regex)++;
+        -:  452:}
+------------------
+parse_symbol:
+     8580:  426:static uint8_t parse_symbol(char **regex, char **error) {
+     8580:  427:  if (**regex == '\\') {
+     1622:  428:    ++*regex;
+     1622:  429:    uint8_t escape = parse_escape(regex, error);
+     1622:  430:    if (*error)
+        -:  431:      return 0;
+        -:  432:
+     1619:  433:    return escape;
+        -:  434:  }
+        -:  435:
+     6958:  436:  if (**regex == '\0') {
+        1:  437:    *error = "expected symbol";
+        1:  438:    return 0;
+        -:  439:  }
+        -:  440:
+     6957:  441:  if (strchr(METACHARS, **regex)) {
+       27:  442:    *error = "unexpected metacharacter";
+       27:  443:    return 0;
+        -:  444:  }
+        -:  445:
+     6930:  446:  if (!isprint(**regex)) {
+        2:  447:    *error = "unexpected nonprintable character";
+        2:  448:    return 0;
+        -:  449:  }
+        -:  450:
+     6928:  451:  return *(*regex)++;
+        -:  452:}
+------------------
+        -:  453:
+    7699*:  454:static void parse_shorthand(symset_t symset, char **regex, char **error) {
+        -:  455:  memset(symset, 0x00, sizeof(symset_t));
+        -:  456:
+        -:  457:#define RETURN_SYMSET(COND)                                                    \
+        -:  458:  for (int chr = 0; chr < 256; chr++)                                          \
+        -:  459:    if (COND)                                                                  \
+        -:  460:      bitset_set(symset, chr);                                                 \
+        -:  461:  return;
+        -:  462:
+    7699*:  463:  if (**regex == '\\') {
+    1291*:  464:    ++*regex;
+        -:  465:
+    1291*:  466:    switch (*(*regex)++) {
+        -:  467:    case 'd':
+    1542*:  468:      RETURN_SYMSET(isdigit(chr))
+        -:  469:    case 'D':
+    #####:  470:      RETURN_SYMSET(!isdigit(chr))
+        -:  471:    case 's':
+     257*:  472:      RETURN_SYMSET(isspace(chr))
+        -:  473:    case 'S':
+    #####:  474:      RETURN_SYMSET(!isspace(chr))
+        -:  475:    case 'w':
+    1028*:  476:      RETURN_SYMSET(chr == '_' || isalnum(chr))
+        -:  477:    case 'W':
+     514*:  478:      RETURN_SYMSET(chr != '_' && !isalnum(chr))
+        -:  479:    }
+        -:  480:
+    1278*:  481:    --*regex, --*regex;
+        -:  482:  }
+        -:  483:
+    7686*:  484:  if (**regex == '.') {
+      16*:  485:    ++*regex;
+    4112*:  486:    RETURN_SYMSET(chr != '\n')
+        -:  487:  }
+        -:  488:
+        -:  489:#undef RETURN_SYMSET
+        -:  490:
+    7670*:  491:  *error = "expected shorthand class";
+    7670*:  492:  return;
+        -:  493:}
+------------------
+parse_shorthand:
+    #####:  454:static void parse_shorthand(symset_t symset, char **regex, char **error) {
+        -:  455:  memset(symset, 0x00, sizeof(symset_t));
+        -:  456:
+        -:  457:#define RETURN_SYMSET(COND)                                                    \
+        -:  458:  for (int chr = 0; chr < 256; chr++)                                          \
+        -:  459:    if (COND)                                                                  \
+        -:  460:      bitset_set(symset, chr);                                                 \
+        -:  461:  return;
+        -:  462:
+    #####:  463:  if (**regex == '\\') {
+    #####:  464:    ++*regex;
+        -:  465:
+    #####:  466:    switch (*(*regex)++) {
+        -:  467:    case 'd':
+    #####:  468:      RETURN_SYMSET(isdigit(chr))
+        -:  469:    case 'D':
+    #####:  470:      RETURN_SYMSET(!isdigit(chr))
+        -:  471:    case 's':
+    #####:  472:      RETURN_SYMSET(isspace(chr))
+        -:  473:    case 'S':
+    #####:  474:      RETURN_SYMSET(!isspace(chr))
+        -:  475:    case 'w':
+    #####:  476:      RETURN_SYMSET(chr == '_' || isalnum(chr))
+        -:  477:    case 'W':
+    #####:  478:      RETURN_SYMSET(chr != '_' && !isalnum(chr))
+        -:  479:    }
+        -:  480:
+    #####:  481:    --*regex, --*regex;
+        -:  482:  }
+        -:  483:
+    #####:  484:  if (**regex == '.') {
+    #####:  485:    ++*regex;
+    #####:  486:    RETURN_SYMSET(chr != '\n')
+        -:  487:  }
+        -:  488:
+        -:  489:#undef RETURN_SYMSET
+        -:  490:
+    #####:  491:  *error = "expected shorthand class";
+    #####:  492:  return;
+        -:  493:}
+------------------
+parse_shorthand:
+     7699:  454:static void parse_shorthand(symset_t symset, char **regex, char **error) {
+        -:  455:  memset(symset, 0x00, sizeof(symset_t));
+        -:  456:
+        -:  457:#define RETURN_SYMSET(COND)                                                    \
+        -:  458:  for (int chr = 0; chr < 256; chr++)                                          \
+        -:  459:    if (COND)                                                                  \
+        -:  460:      bitset_set(symset, chr);                                                 \
+        -:  461:  return;
+        -:  462:
+     7699:  463:  if (**regex == '\\') {
+     1291:  464:    ++*regex;
+        -:  465:
+     1291:  466:    switch (*(*regex)++) {
+        -:  467:    case 'd':
+     1542:  468:      RETURN_SYMSET(isdigit(chr))
+        -:  469:    case 'D':
+    #####:  470:      RETURN_SYMSET(!isdigit(chr))
+        -:  471:    case 's':
+      257:  472:      RETURN_SYMSET(isspace(chr))
+        -:  473:    case 'S':
+    #####:  474:      RETURN_SYMSET(!isspace(chr))
+        -:  475:    case 'w':
+     1028:  476:      RETURN_SYMSET(chr == '_' || isalnum(chr))
+        -:  477:    case 'W':
+      514:  478:      RETURN_SYMSET(chr != '_' && !isalnum(chr))
+        -:  479:    }
+        -:  480:
+     1278:  481:    --*regex, --*regex;
+        -:  482:  }
+        -:  483:
+     7686:  484:  if (**regex == '.') {
+       16:  485:    ++*regex;
+     4112:  486:    RETURN_SYMSET(chr != '\n')
+        -:  487:  }
+        -:  488:
+        -:  489:#undef RETURN_SYMSET
+        -:  490:
+     7670:  491:  *error = "expected shorthand class";
+     7670:  492:  return;
+        -:  493:}
+------------------
+        -:  494:
+    7699*:  495:static void parse_symset(symset_t symset, char **regex, char **error) {
+        -:  496:  bool complement = false;
+    7699*:  497:  if (**regex == '^')
+      56*:  498:    ++*regex, complement = true;
+        -:  499:
+    7699*:  500:  char *last_regex = *regex;
+    7699*:  501:  parse_shorthand(symset, regex, error);
+    7699*:  502:  if (!*error)
+      29*:  503:    goto process_complement;
+    7670*:  504:  *error = NULL;
+    7670*:  505:  *regex = last_regex;
+        -:  506:
+    7670*:  507:  if (**regex == '[') {
+     731*:  508:    ++*regex;
+        -:  509:
+        -:  510:    memset(symset, 0x00, sizeof(symset_t));
+        -:  511:    // hacky lookahead for better diagnostics
+    3667*:  512:    while (!strchr("]", **regex)) {
+        -:  513:      symset_t sub;
+    2941*:  514:      parse_symset(sub, regex, error);
+    2941*:  515:      if (*error)
+       5*:  516:        return;
+        -:  517:
+   96888*:  518:      for (int i = 0; i < sizeof(symset_t); i++)
+   93952*:  519:        symset[i] |= sub[i];
+        -:  520:    }
+        -:  521:
+     726*:  522:    if (**regex != ']') {
+       1*:  523:      *error = "expected ']'";
+       1*:  524:      return;
+        -:  525:    }
+        -:  526:
+     725*:  527:    ++*regex;
+     725*:  528:    goto process_complement;
+        -:  529:  }
+        -:  530:  *regex = last_regex;
+        -:  531:
+    6939*:  532:  if (**regex == '<') {
+      46*:  533:    ++*regex;
+        -:  534:
+        -:  535:    memset(symset, 0xff, sizeof(symset_t));
+        -:  536:    // hacky lookahead for better diagnostics
+      55*:  537:    while (!strchr(">", **regex)) {
+        -:  538:      symset_t sub;
+       9*:  539:      parse_symset(sub, regex, error);
+       9*:  540:      if (*error)
+    #####:  541:        return;
+        -:  542:
+     297*:  543:      for (int i = 0; i < sizeof(symset_t); i++)
+     288*:  544:        symset[i] &= sub[i];
+        -:  545:    }
+        -:  546:
+      46*:  547:    if (**regex != '>') {
+       1*:  548:      *error = "expected '>'";
+       1*:  549:      return;
+        -:  550:    }
+        -:  551:
+      45*:  552:    ++*regex;
+      45*:  553:    goto process_complement;
+        -:  554:  }
+        -:  555:  *regex = last_regex;
+        -:  556:
+    6893*:  557:  uint8_t begin = parse_symbol(regex, error);
+    6893*:  558:  if (!*error) {
+        -:  559:    uint8_t end = begin;
+    6862*:  560:    if (**regex == '-') {
+    1687*:  561:      ++*regex;
+    1687*:  562:      end = parse_symbol(regex, error);
+    1687*:  563:      if (*error)
+        -:  564:        return;
+        -:  565:    }
+        -:  566:
+        -:  567:    end++; // open upper bound
+        -:  568:    memset(symset, 0x00, sizeof(symset_t));
+        -:  569:    uint8_t chr = begin;
+        -:  570:    do
+   36129*:  571:      bitset_set(symset, chr);
+   36129*:  572:    while (++chr != end);
+    6860*:  573:    goto process_complement;
+        -:  574:  }
+        -:  575:  return;
+        -:  576:
+    7659*:  577:process_complement:
+    7659*:  578:  if (complement)
+    1815*:  579:    for (int i = 0; i < sizeof(symset_t); i++)
+    1760*:  580:      symset[i] = ~symset[i];
+        -:  581:  return;
+        -:  582:}
+------------------
+parse_symset:
+    #####:  495:static void parse_symset(symset_t symset, char **regex, char **error) {
+        -:  496:  bool complement = false;
+    #####:  497:  if (**regex == '^')
+    #####:  498:    ++*regex, complement = true;
+        -:  499:
+    #####:  500:  char *last_regex = *regex;
+    #####:  501:  parse_shorthand(symset, regex, error);
+    #####:  502:  if (!*error)
+    #####:  503:    goto process_complement;
+    #####:  504:  *error = NULL;
+    #####:  505:  *regex = last_regex;
+        -:  506:
+    #####:  507:  if (**regex == '[') {
+    #####:  508:    ++*regex;
+        -:  509:
+        -:  510:    memset(symset, 0x00, sizeof(symset_t));
+        -:  511:    // hacky lookahead for better diagnostics
+    #####:  512:    while (!strchr("]", **regex)) {
+        -:  513:      symset_t sub;
+    #####:  514:      parse_symset(sub, regex, error);
+    #####:  515:      if (*error)
+    #####:  516:        return;
+        -:  517:
+    #####:  518:      for (int i = 0; i < sizeof(symset_t); i++)
+    #####:  519:        symset[i] |= sub[i];
+        -:  520:    }
+        -:  521:
+    #####:  522:    if (**regex != ']') {
+    #####:  523:      *error = "expected ']'";
+    #####:  524:      return;
+        -:  525:    }
+        -:  526:
+    #####:  527:    ++*regex;
+    #####:  528:    goto process_complement;
+        -:  529:  }
+        -:  530:  *regex = last_regex;
+        -:  531:
+    #####:  532:  if (**regex == '<') {
+    #####:  533:    ++*regex;
+        -:  534:
+        -:  535:    memset(symset, 0xff, sizeof(symset_t));
+        -:  536:    // hacky lookahead for better diagnostics
+    #####:  537:    while (!strchr(">", **regex)) {
+        -:  538:      symset_t sub;
+    #####:  539:      parse_symset(sub, regex, error);
+    #####:  540:      if (*error)
+    #####:  541:        return;
+        -:  542:
+    #####:  543:      for (int i = 0; i < sizeof(symset_t); i++)
+    #####:  544:        symset[i] &= sub[i];
+        -:  545:    }
+        -:  546:
+    #####:  547:    if (**regex != '>') {
+    #####:  548:      *error = "expected '>'";
+    #####:  549:      return;
+        -:  550:    }
+        -:  551:
+    #####:  552:    ++*regex;
+    #####:  553:    goto process_complement;
+        -:  554:  }
+        -:  555:  *regex = last_regex;
+        -:  556:
+    #####:  557:  uint8_t begin = parse_symbol(regex, error);
+    #####:  558:  if (!*error) {
+        -:  559:    uint8_t end = begin;
+    #####:  560:    if (**regex == '-') {
+    #####:  561:      ++*regex;
+    #####:  562:      end = parse_symbol(regex, error);
+    #####:  563:      if (*error)
+        -:  564:        return;
+        -:  565:    }
+        -:  566:
+        -:  567:    end++; // open upper bound
+        -:  568:    memset(symset, 0x00, sizeof(symset_t));
+        -:  569:    uint8_t chr = begin;
+        -:  570:    do
+    #####:  571:      bitset_set(symset, chr);
+    #####:  572:    while (++chr != end);
+    #####:  573:    goto process_complement;
+        -:  574:  }
+        -:  575:  return;
+        -:  576:
+    #####:  577:process_complement:
+    #####:  578:  if (complement)
+    #####:  579:    for (int i = 0; i < sizeof(symset_t); i++)
+    #####:  580:      symset[i] = ~symset[i];
+        -:  581:  return;
+        -:  582:}
+------------------
+parse_symset:
+     7699:  495:static void parse_symset(symset_t symset, char **regex, char **error) {
+        -:  496:  bool complement = false;
+     7699:  497:  if (**regex == '^')
+       56:  498:    ++*regex, complement = true;
+        -:  499:
+     7699:  500:  char *last_regex = *regex;
+     7699:  501:  parse_shorthand(symset, regex, error);
+     7699:  502:  if (!*error)
+       29:  503:    goto process_complement;
+     7670:  504:  *error = NULL;
+     7670:  505:  *regex = last_regex;
+        -:  506:
+     7670:  507:  if (**regex == '[') {
+      731:  508:    ++*regex;
+        -:  509:
+        -:  510:    memset(symset, 0x00, sizeof(symset_t));
+        -:  511:    // hacky lookahead for better diagnostics
+     3667:  512:    while (!strchr("]", **regex)) {
+        -:  513:      symset_t sub;
+     2941:  514:      parse_symset(sub, regex, error);
+     2941:  515:      if (*error)
+        5:  516:        return;
+        -:  517:
+    96888:  518:      for (int i = 0; i < sizeof(symset_t); i++)
+    93952:  519:        symset[i] |= sub[i];
+        -:  520:    }
+        -:  521:
+      726:  522:    if (**regex != ']') {
+        1:  523:      *error = "expected ']'";
+        1:  524:      return;
+        -:  525:    }
+        -:  526:
+      725:  527:    ++*regex;
+      725:  528:    goto process_complement;
+        -:  529:  }
+        -:  530:  *regex = last_regex;
+        -:  531:
+     6939:  532:  if (**regex == '<') {
+       46:  533:    ++*regex;
+        -:  534:
+        -:  535:    memset(symset, 0xff, sizeof(symset_t));
+        -:  536:    // hacky lookahead for better diagnostics
+       55:  537:    while (!strchr(">", **regex)) {
+        -:  538:      symset_t sub;
+        9:  539:      parse_symset(sub, regex, error);
+        9:  540:      if (*error)
+    #####:  541:        return;
+        -:  542:
+      297:  543:      for (int i = 0; i < sizeof(symset_t); i++)
+      288:  544:        symset[i] &= sub[i];
+        -:  545:    }
+        -:  546:
+       46:  547:    if (**regex != '>') {
+        1:  548:      *error = "expected '>'";
+        1:  549:      return;
+        -:  550:    }
+        -:  551:
+       45:  552:    ++*regex;
+       45:  553:    goto process_complement;
+        -:  554:  }
+        -:  555:  *regex = last_regex;
+        -:  556:
+     6893:  557:  uint8_t begin = parse_symbol(regex, error);
+     6893:  558:  if (!*error) {
+        -:  559:    uint8_t end = begin;
+     6862:  560:    if (**regex == '-') {
+     1687:  561:      ++*regex;
+     1687:  562:      end = parse_symbol(regex, error);
+     1687:  563:      if (*error)
+        -:  564:        return;
+        -:  565:    }
+        -:  566:
+        -:  567:    end++; // open upper bound
+        -:  568:    memset(symset, 0x00, sizeof(symset_t));
+        -:  569:    uint8_t chr = begin;
+        -:  570:    do
+    36129:  571:      bitset_set(symset, chr);
+    36129:  572:    while (++chr != end);
+     6860:  573:    goto process_complement;
+        -:  574:  }
+        -:  575:  return;
+        -:  576:
+     7659:  577:process_complement:
+     7659:  578:  if (complement)
+     1815:  579:    for (int i = 0; i < sizeof(symset_t); i++)
+     1760:  580:      symset[i] = ~symset[i];
+        -:  581:  return;
+        -:  582:}
+------------------
+        -:  583:
+        -:  584:static struct nfa parse_regex(char **regex, char **error);
+    5433*:  585:static struct nfa parse_atom(char **regex, char **error) {
+    5433*:  586:  if (**regex == '(') {
+     684*:  587:    ++*regex;
+     684*:  588:    struct nfa sub = parse_regex(regex, error);
+     684*:  589:    if (*error)
+    #####:  590:      return (struct nfa){NULL};
+        -:  591:
+     684*:  592:    if (**regex != ')') {
+       1*:  593:      *error = "expected ')'";
+       1*:  594:      nfa_free(sub);
+       1*:  595:      return (struct nfa){NULL};
+        -:  596:    }
+        -:  597:
+     683*:  598:    ++*regex;
+     683*:  599:    return sub;
+        -:  600:  }
+        -:  601:
+    4749*:  602:  struct nfa chars = {.initial = nstate_alloc(),
+    4749*:  603:                      .final = nstate_alloc(),
+        -:  604:                      .complemented = false};
+    4749*:  605:  chars.initial->next = chars.final;
+    4749*:  606:  chars.initial->target = chars.final;
+        -:  607:
+    4749*:  608:  parse_symset(chars.initial->label, regex, error);
+    4749*:  609:  if (*error) {
+      35*:  610:    nfa_free(chars);
+      35*:  611:    return (struct nfa){NULL};
+        -:  612:  }
+        -:  613:
+    4714*:  614:  return chars;
+        -:  615:}
+------------------
+parse_atom:
+    #####:  585:static struct nfa parse_atom(char **regex, char **error) {
+    #####:  586:  if (**regex == '(') {
+    #####:  587:    ++*regex;
+    #####:  588:    struct nfa sub = parse_regex(regex, error);
+    #####:  589:    if (*error)
+    #####:  590:      return (struct nfa){NULL};
+        -:  591:
+    #####:  592:    if (**regex != ')') {
+    #####:  593:      *error = "expected ')'";
+    #####:  594:      nfa_free(sub);
+    #####:  595:      return (struct nfa){NULL};
+        -:  596:    }
+        -:  597:
+    #####:  598:    ++*regex;
+    #####:  599:    return sub;
+        -:  600:  }
+        -:  601:
+    #####:  602:  struct nfa chars = {.initial = nstate_alloc(),
+    #####:  603:                      .final = nstate_alloc(),
+        -:  604:                      .complemented = false};
+    #####:  605:  chars.initial->next = chars.final;
+    #####:  606:  chars.initial->target = chars.final;
+        -:  607:
+    #####:  608:  parse_symset(chars.initial->label, regex, error);
+    #####:  609:  if (*error) {
+    #####:  610:    nfa_free(chars);
+    #####:  611:    return (struct nfa){NULL};
+        -:  612:  }
+        -:  613:
+    #####:  614:  return chars;
+        -:  615:}
+------------------
+parse_atom:
+     5433:  585:static struct nfa parse_atom(char **regex, char **error) {
+     5433:  586:  if (**regex == '(') {
+      684:  587:    ++*regex;
+      684:  588:    struct nfa sub = parse_regex(regex, error);
+      684:  589:    if (*error)
+    #####:  590:      return (struct nfa){NULL};
+        -:  591:
+      684:  592:    if (**regex != ')') {
+        1:  593:      *error = "expected ')'";
+        1:  594:      nfa_free(sub);
+        1:  595:      return (struct nfa){NULL};
+        -:  596:    }
+        -:  597:
+      683:  598:    ++*regex;
+      683:  599:    return sub;
+        -:  600:  }
+        -:  601:
+     4749:  602:  struct nfa chars = {.initial = nstate_alloc(),
+     4749:  603:                      .final = nstate_alloc(),
+        -:  604:                      .complemented = false};
+     4749:  605:  chars.initial->next = chars.final;
+     4749:  606:  chars.initial->target = chars.final;
+        -:  607:
+     4749:  608:  parse_symset(chars.initial->label, regex, error);
+     4749:  609:  if (*error) {
+       35:  610:    nfa_free(chars);
+       35:  611:    return (struct nfa){NULL};
+        -:  612:  }
+        -:  613:
+     4714:  614:  return chars;
+        -:  615:}
+------------------
+        -:  616:
+    5433*:  617:static struct nfa parse_factor(char **regex, char **error) {
+    5433*:  618:  struct nfa atom = parse_atom(regex, error);
+    5433*:  619:  if (*error)
+      36*:  620:    return (struct nfa){NULL};
+        -:  621:
+        -:  622:  //         <---
+        -:  623:  // -->O-->(atom)-->O-->
+        -:  624:  //     ----------->
+    5397*:  625:  if (**regex == '*') {
+     296*:  626:    ++*regex;
+     296*:  627:    nfa_uncomplement(&atom);
+     296*:  628:    atom.final->epsilon1 = atom.initial;
+        -:  629:    nfa_pad_initial(&atom), nfa_pad_final(&atom);
+     296*:  630:    atom.initial->epsilon1 = atom.final;
+     296*:  631:    return atom;
+        -:  632:  }
+        -:  633:
+        -:  634:  //         <---
+        -:  635:  // -->O-->(atom)-->O-->
+    5101*:  636:  if (**regex == '+') {
+     104*:  637:    ++*regex;
+     104*:  638:    nfa_uncomplement(&atom);
+     104*:  639:    atom.final->epsilon1 = atom.initial;
+        -:  640:    nfa_pad_initial(&atom), nfa_pad_final(&atom);
+     104*:  641:    return atom;
+        -:  642:  }
+        -:  643:
+        -:  644:  // -->(atom)-->
+        -:  645:  //     --->
+    4997*:  646:  if (**regex == '?') {
+     104*:  647:    ++*regex;
+     104*:  648:    nfa_uncomplement(&atom);
+     104*:  649:    if (atom.initial->epsilon1)
+        -:  650:      nfa_pad_initial(&atom);
+     104*:  651:    atom.initial->epsilon1 = atom.final;
+     104*:  652:    return atom;
+        -:  653:  }
+        -:  654:
+        -:  655:  char *last_regex = *regex;
+    4893*:  656:  if (**regex == '{') {
+      31*:  657:    ++*regex;
+      31*:  658:    nfa_uncomplement(&atom);
+      31*:  659:    unsigned min = parse_natural(regex, error);
+      31*:  660:    if (*error && min == UINT_MAX) { // overflow condition
+       3*:  661:      nfa_free(atom);
+       3*:  662:      return (struct nfa){NULL};
+      28*:  663:    } else if (*error)
+       9*:  664:      min = 0, *error = NULL;
+        -:  665:
+        -:  666:    unsigned max = min;
+        -:  667:    bool max_unbounded = false;
+      28*:  668:    if (**regex == ',') {
+      11*:  669:      ++*regex;
+      11*:  670:      max = parse_natural(regex, error);
+      11*:  671:      if (*error && max == UINT_MAX) { // overflow condition
+       1*:  672:        nfa_free(atom);
+       1*:  673:        return (struct nfa){NULL};
+      10*:  674:      } else if (*error)
+       5*:  675:        max_unbounded = true, *error = NULL;
+        -:  676:    }
+        -:  677:
+      27*:  678:    if (**regex != '}') {
+       3*:  679:      *error = "expected '}'";
+       3*:  680:      nfa_free(atom);
+       3*:  681:      return (struct nfa){NULL};
+        -:  682:    }
+      24*:  683:    ++*regex;
+        -:  684:
+      24*:  685:    if (min > max && !max_unbounded) {
+       1*:  686:      *regex = last_regex;
+       1*:  687:      *error = "misbounded quantifier";
+       1*:  688:      nfa_free(atom);
+       1*:  689:      return (struct nfa){NULL};
+        -:  690:    }
+        -:  691:
+      23*:  692:    struct nfa atoms = {.complemented = false};
+      23*:  693:    atoms.initial = atoms.final = nstate_alloc();
+        -:  694:
+        -:  695:    // if `max` is bounded, make `max` copies and add `?` epsilon transitions:
+        -:  696:    // -->(atom)...(atom)(atom)-->
+        -:  697:    //              --->  --->
+        -:  698:    // if it is not, make `min + 1` copies and add one `*` epsilon transition:
+        -:  699:    //                       <---
+        -:  700:    // -->...(atom)(atom)-->(atom)-->O-->
+        -:  701:    //                   ----------->
+      75*:  702:    for (unsigned i = 0; max_unbounded ? i <= min : i < max; i++) {
+      52*:  703:      struct nfa clone = nfa_clone(atom);
+      52*:  704:      if (i >= min) {
+      10*:  705:        if (max_unbounded) {
+       4*:  706:          clone.final->epsilon1 = clone.initial;
+        -:  707:          nfa_pad_initial(&clone), nfa_pad_final(&clone);
+        -:  708:        }
+      10*:  709:        clone.initial->epsilon1 = clone.final;
+        -:  710:      }
+        -:  711:
+      52*:  712:      nfa_concat(&atoms, clone);
+        -:  713:
+        -:  714:      // needed for when `min == UINT_MAX && max_unbounded`. this isn't a bodge;
+        -:  715:      // the correct number of copies will have been made by the time we break
+      52*:  716:      if (i == UINT_MAX)
+        -:  717:        break;
+        -:  718:    }
+        -:  719:
+      23*:  720:    nfa_free(atom);
+        -:  721:
+      23*:  722:    return atoms;
+        -:  723:  }
+        -:  724:
+    4862*:  725:  return atom;
+        -:  726:}
+------------------
+parse_factor:
+    #####:  617:static struct nfa parse_factor(char **regex, char **error) {
+    #####:  618:  struct nfa atom = parse_atom(regex, error);
+    #####:  619:  if (*error)
+    #####:  620:    return (struct nfa){NULL};
+        -:  621:
+        -:  622:  //         <---
+        -:  623:  // -->O-->(atom)-->O-->
+        -:  624:  //     ----------->
+    #####:  625:  if (**regex == '*') {
+    #####:  626:    ++*regex;
+    #####:  627:    nfa_uncomplement(&atom);
+    #####:  628:    atom.final->epsilon1 = atom.initial;
+        -:  629:    nfa_pad_initial(&atom), nfa_pad_final(&atom);
+    #####:  630:    atom.initial->epsilon1 = atom.final;
+    #####:  631:    return atom;
+        -:  632:  }
+        -:  633:
+        -:  634:  //         <---
+        -:  635:  // -->O-->(atom)-->O-->
+    #####:  636:  if (**regex == '+') {
+    #####:  637:    ++*regex;
+    #####:  638:    nfa_uncomplement(&atom);
+    #####:  639:    atom.final->epsilon1 = atom.initial;
+        -:  640:    nfa_pad_initial(&atom), nfa_pad_final(&atom);
+    #####:  641:    return atom;
+        -:  642:  }
+        -:  643:
+        -:  644:  // -->(atom)-->
+        -:  645:  //     --->
+    #####:  646:  if (**regex == '?') {
+    #####:  647:    ++*regex;
+    #####:  648:    nfa_uncomplement(&atom);
+    #####:  649:    if (atom.initial->epsilon1)
+        -:  650:      nfa_pad_initial(&atom);
+    #####:  651:    atom.initial->epsilon1 = atom.final;
+    #####:  652:    return atom;
+        -:  653:  }
+        -:  654:
+        -:  655:  char *last_regex = *regex;
+    #####:  656:  if (**regex == '{') {
+    #####:  657:    ++*regex;
+    #####:  658:    nfa_uncomplement(&atom);
+    #####:  659:    unsigned min = parse_natural(regex, error);
+    #####:  660:    if (*error && min == UINT_MAX) { // overflow condition
+    #####:  661:      nfa_free(atom);
+    #####:  662:      return (struct nfa){NULL};
+    #####:  663:    } else if (*error)
+    #####:  664:      min = 0, *error = NULL;
+        -:  665:
+        -:  666:    unsigned max = min;
+        -:  667:    bool max_unbounded = false;
+    #####:  668:    if (**regex == ',') {
+    #####:  669:      ++*regex;
+    #####:  670:      max = parse_natural(regex, error);
+    #####:  671:      if (*error && max == UINT_MAX) { // overflow condition
+    #####:  672:        nfa_free(atom);
+    #####:  673:        return (struct nfa){NULL};
+    #####:  674:      } else if (*error)
+    #####:  675:        max_unbounded = true, *error = NULL;
+        -:  676:    }
+        -:  677:
+    #####:  678:    if (**regex != '}') {
+    #####:  679:      *error = "expected '}'";
+    #####:  680:      nfa_free(atom);
+    #####:  681:      return (struct nfa){NULL};
+        -:  682:    }
+    #####:  683:    ++*regex;
+        -:  684:
+    #####:  685:    if (min > max && !max_unbounded) {
+    #####:  686:      *regex = last_regex;
+    #####:  687:      *error = "misbounded quantifier";
+    #####:  688:      nfa_free(atom);
+    #####:  689:      return (struct nfa){NULL};
+        -:  690:    }
+        -:  691:
+    #####:  692:    struct nfa atoms = {.complemented = false};
+    #####:  693:    atoms.initial = atoms.final = nstate_alloc();
+        -:  694:
+        -:  695:    // if `max` is bounded, make `max` copies and add `?` epsilon transitions:
+        -:  696:    // -->(atom)...(atom)(atom)-->
+        -:  697:    //              --->  --->
+        -:  698:    // if it is not, make `min + 1` copies and add one `*` epsilon transition:
+        -:  699:    //                       <---
+        -:  700:    // -->...(atom)(atom)-->(atom)-->O-->
+        -:  701:    //                   ----------->
+    #####:  702:    for (unsigned i = 0; max_unbounded ? i <= min : i < max; i++) {
+    #####:  703:      struct nfa clone = nfa_clone(atom);
+    #####:  704:      if (i >= min) {
+    #####:  705:        if (max_unbounded) {
+    #####:  706:          clone.final->epsilon1 = clone.initial;
+        -:  707:          nfa_pad_initial(&clone), nfa_pad_final(&clone);
+        -:  708:        }
+    #####:  709:        clone.initial->epsilon1 = clone.final;
+        -:  710:      }
+        -:  711:
+    #####:  712:      nfa_concat(&atoms, clone);
+        -:  713:
+        -:  714:      // needed for when `min == UINT_MAX && max_unbounded`. this isn't a bodge;
+        -:  715:      // the correct number of copies will have been made by the time we break
+    #####:  716:      if (i == UINT_MAX)
+        -:  717:        break;
+        -:  718:    }
+        -:  719:
+    #####:  720:    nfa_free(atom);
+        -:  721:
+    #####:  722:    return atoms;
+        -:  723:  }
+        -:  724:
+    #####:  725:  return atom;
+        -:  726:}
+------------------
+parse_factor:
+     5433:  617:static struct nfa parse_factor(char **regex, char **error) {
+     5433:  618:  struct nfa atom = parse_atom(regex, error);
+     5433:  619:  if (*error)
+       36:  620:    return (struct nfa){NULL};
+        -:  621:
+        -:  622:  //         <---
+        -:  623:  // -->O-->(atom)-->O-->
+        -:  624:  //     ----------->
+     5397:  625:  if (**regex == '*') {
+      296:  626:    ++*regex;
+      296:  627:    nfa_uncomplement(&atom);
+      296:  628:    atom.final->epsilon1 = atom.initial;
+        -:  629:    nfa_pad_initial(&atom), nfa_pad_final(&atom);
+      296:  630:    atom.initial->epsilon1 = atom.final;
+      296:  631:    return atom;
+        -:  632:  }
+        -:  633:
+        -:  634:  //         <---
+        -:  635:  // -->O-->(atom)-->O-->
+     5101:  636:  if (**regex == '+') {
+      104:  637:    ++*regex;
+      104:  638:    nfa_uncomplement(&atom);
+      104:  639:    atom.final->epsilon1 = atom.initial;
+        -:  640:    nfa_pad_initial(&atom), nfa_pad_final(&atom);
+      104:  641:    return atom;
+        -:  642:  }
+        -:  643:
+        -:  644:  // -->(atom)-->
+        -:  645:  //     --->
+     4997:  646:  if (**regex == '?') {
+      104:  647:    ++*regex;
+      104:  648:    nfa_uncomplement(&atom);
+      104:  649:    if (atom.initial->epsilon1)
+        -:  650:      nfa_pad_initial(&atom);
+      104:  651:    atom.initial->epsilon1 = atom.final;
+      104:  652:    return atom;
+        -:  653:  }
+        -:  654:
+        -:  655:  char *last_regex = *regex;
+     4893:  656:  if (**regex == '{') {
+       31:  657:    ++*regex;
+       31:  658:    nfa_uncomplement(&atom);
+       31:  659:    unsigned min = parse_natural(regex, error);
+       31:  660:    if (*error && min == UINT_MAX) { // overflow condition
+        3:  661:      nfa_free(atom);
+        3:  662:      return (struct nfa){NULL};
+       28:  663:    } else if (*error)
+        9:  664:      min = 0, *error = NULL;
+        -:  665:
+        -:  666:    unsigned max = min;
+        -:  667:    bool max_unbounded = false;
+       28:  668:    if (**regex == ',') {
+       11:  669:      ++*regex;
+       11:  670:      max = parse_natural(regex, error);
+       11:  671:      if (*error && max == UINT_MAX) { // overflow condition
+        1:  672:        nfa_free(atom);
+        1:  673:        return (struct nfa){NULL};
+       10:  674:      } else if (*error)
+        5:  675:        max_unbounded = true, *error = NULL;
+        -:  676:    }
+        -:  677:
+       27:  678:    if (**regex != '}') {
+        3:  679:      *error = "expected '}'";
+        3:  680:      nfa_free(atom);
+        3:  681:      return (struct nfa){NULL};
+        -:  682:    }
+       24:  683:    ++*regex;
+        -:  684:
+       24:  685:    if (min > max && !max_unbounded) {
+        1:  686:      *regex = last_regex;
+        1:  687:      *error = "misbounded quantifier";
+        1:  688:      nfa_free(atom);
+        1:  689:      return (struct nfa){NULL};
+        -:  690:    }
+        -:  691:
+       23:  692:    struct nfa atoms = {.complemented = false};
+       23:  693:    atoms.initial = atoms.final = nstate_alloc();
+        -:  694:
+        -:  695:    // if `max` is bounded, make `max` copies and add `?` epsilon transitions:
+        -:  696:    // -->(atom)...(atom)(atom)-->
+        -:  697:    //              --->  --->
+        -:  698:    // if it is not, make `min + 1` copies and add one `*` epsilon transition:
+        -:  699:    //                       <---
+        -:  700:    // -->...(atom)(atom)-->(atom)-->O-->
+        -:  701:    //                   ----------->
+       75:  702:    for (unsigned i = 0; max_unbounded ? i <= min : i < max; i++) {
+       52:  703:      struct nfa clone = nfa_clone(atom);
+       52:  704:      if (i >= min) {
+       10:  705:        if (max_unbounded) {
+        4:  706:          clone.final->epsilon1 = clone.initial;
+        -:  707:          nfa_pad_initial(&clone), nfa_pad_final(&clone);
+        -:  708:        }
+       10:  709:        clone.initial->epsilon1 = clone.final;
+        -:  710:      }
+        -:  711:
+       52:  712:      nfa_concat(&atoms, clone);
+        -:  713:
+        -:  714:      // needed for when `min == UINT_MAX && max_unbounded`. this isn't a bodge;
+        -:  715:      // the correct number of copies will have been made by the time we break
+       52:  716:      if (i == UINT_MAX)
+        -:  717:        break;
+        -:  718:    }
+        -:  719:
+       23:  720:    nfa_free(atom);
+        -:  721:
+       23:  722:    return atoms;
+        -:  723:  }
+        -:  724:
+     4862:  725:  return atom;
+        -:  726:}
+------------------
+        -:  727:
+    2500*:  728:static struct nfa parse_term(char **regex, char **error) {
+        -:  729:  bool complement = false;
+    2500*:  730:  if (**regex == '~')
+      21*:  731:    ++*regex, complement = true;
+        -:  732:
+    2500*:  733:  struct nfa term = {.complemented = false};
+    2500*:  734:  term.initial = term.final = nstate_alloc();
+        -:  735:
+        -:  736:  // hacky lookahead for better diagnostics
+    7889*:  737:  while (!strchr(")|&", **regex)) {
+    5433*:  738:    struct nfa factor = parse_factor(regex, error);
+    5433*:  739:    if (*error) {
+      44*:  740:      nfa_free(term);
+      44*:  741:      return (struct nfa){NULL};
+        -:  742:    }
+        -:  743:
+    5389*:  744:    nfa_uncomplement(&factor);
+    5389*:  745:    nfa_concat(&term, factor);
+        -:  746:  }
+        -:  747:
+    2456*:  748:  if (complement)
+      21*:  749:    term.complemented = true;
+        -:  750:
+    2456*:  751:  return term;
+        -:  752:}
+------------------
+parse_term:
+    #####:  728:static struct nfa parse_term(char **regex, char **error) {
+        -:  729:  bool complement = false;
+    #####:  730:  if (**regex == '~')
+    #####:  731:    ++*regex, complement = true;
+        -:  732:
+    #####:  733:  struct nfa term = {.complemented = false};
+    #####:  734:  term.initial = term.final = nstate_alloc();
+        -:  735:
+        -:  736:  // hacky lookahead for better diagnostics
+    #####:  737:  while (!strchr(")|&", **regex)) {
+    #####:  738:    struct nfa factor = parse_factor(regex, error);
+    #####:  739:    if (*error) {
+    #####:  740:      nfa_free(term);
+    #####:  741:      return (struct nfa){NULL};
+        -:  742:    }
+        -:  743:
+    #####:  744:    nfa_uncomplement(&factor);
+    #####:  745:    nfa_concat(&term, factor);
+        -:  746:  }
+        -:  747:
+    #####:  748:  if (complement)
+    #####:  749:    term.complemented = true;
+        -:  750:
+    #####:  751:  return term;
+        -:  752:}
+------------------
+parse_term:
+     2500:  728:static struct nfa parse_term(char **regex, char **error) {
+        -:  729:  bool complement = false;
+     2500:  730:  if (**regex == '~')
+       21:  731:    ++*regex, complement = true;
+        -:  732:
+     2500:  733:  struct nfa term = {.complemented = false};
+     2500:  734:  term.initial = term.final = nstate_alloc();
+        -:  735:
+        -:  736:  // hacky lookahead for better diagnostics
+     7889:  737:  while (!strchr(")|&", **regex)) {
+     5433:  738:    struct nfa factor = parse_factor(regex, error);
+     5433:  739:    if (*error) {
+       44:  740:      nfa_free(term);
+       44:  741:      return (struct nfa){NULL};
+        -:  742:    }
+        -:  743:
+     5389:  744:    nfa_uncomplement(&factor);
+     5389:  745:    nfa_concat(&term, factor);
+        -:  746:  }
+        -:  747:
+     2456:  748:  if (complement)
+       21:  749:    term.complemented = true;
+        -:  750:
+     2456:  751:  return term;
+        -:  752:}
+------------------
+        -:  753:
+     975*:  754:static struct nfa parse_regex(char **regex, char **error) {
+     975*:  755:  struct nfa re = parse_term(regex, error);
+     975*:  756:  if (*error)
+      43*:  757:    return (struct nfa){NULL};
+        -:  758:
+    2456*:  759:  while (**regex == '|' || **regex == '&') {
+    1525*:  760:    bool intersect = *(*regex)++ == '&';
+    1525*:  761:    struct nfa alt = parse_term(regex, error);
+    1525*:  762:    if (*error) {
+       1*:  763:      nfa_free(re);
+       1*:  764:      return (struct nfa){NULL};
+        -:  765:    }
+        -:  766:
+        -:  767:    // we perform NFA intersection by rewriting into an alternation using De
+        -:  768:    // Morgan's law `a&b == ~(~a|~b)`. this isn't nearly as inefficient as it
+        -:  769:    // may appear, because NFA complementation is performed lazily
+    1524*:  770:    re.complemented ^= intersect, alt.complemented ^= intersect;
+    1524*:  771:    nfa_uncomplement(&re), nfa_uncomplement(&alt);
+        -:  772:
+        -:  773:    // -->O-->(re)--->
+        -:  774:    //     -->(alt)-->O-->
+        -:  775:    nfa_pad_initial(&re), nfa_pad_final(&alt);
+    1524*:  776:    re.initial->epsilon1 = alt.initial;
+    1524*:  777:    re.final->epsilon0 = alt.final;
+    1524*:  778:    re.final->next = alt.initial;
+    1524*:  779:    re.final = alt.final;
+        -:  780:
+    1524*:  781:    re.complemented ^= intersect;
+        -:  782:  }
+        -:  783:
+     931*:  784:  return re;
+        -:  785:}
+------------------
+parse_regex:
+    #####:  754:static struct nfa parse_regex(char **regex, char **error) {
+    #####:  755:  struct nfa re = parse_term(regex, error);
+    #####:  756:  if (*error)
+    #####:  757:    return (struct nfa){NULL};
+        -:  758:
+    #####:  759:  while (**regex == '|' || **regex == '&') {
+    #####:  760:    bool intersect = *(*regex)++ == '&';
+    #####:  761:    struct nfa alt = parse_term(regex, error);
+    #####:  762:    if (*error) {
+    #####:  763:      nfa_free(re);
+    #####:  764:      return (struct nfa){NULL};
+        -:  765:    }
+        -:  766:
+        -:  767:    // we perform NFA intersection by rewriting into an alternation using De
+        -:  768:    // Morgan's law `a&b == ~(~a|~b)`. this isn't nearly as inefficient as it
+        -:  769:    // may appear, because NFA complementation is performed lazily
+    #####:  770:    re.complemented ^= intersect, alt.complemented ^= intersect;
+    #####:  771:    nfa_uncomplement(&re), nfa_uncomplement(&alt);
+        -:  772:
+        -:  773:    // -->O-->(re)--->
+        -:  774:    //     -->(alt)-->O-->
+        -:  775:    nfa_pad_initial(&re), nfa_pad_final(&alt);
+    #####:  776:    re.initial->epsilon1 = alt.initial;
+    #####:  777:    re.final->epsilon0 = alt.final;
+    #####:  778:    re.final->next = alt.initial;
+    #####:  779:    re.final = alt.final;
+        -:  780:
+    #####:  781:    re.complemented ^= intersect;
+        -:  782:  }
+        -:  783:
+    #####:  784:  return re;
+        -:  785:}
+------------------
+parse_regex:
+      975:  754:static struct nfa parse_regex(char **regex, char **error) {
+      975:  755:  struct nfa re = parse_term(regex, error);
+      975:  756:  if (*error)
+       43:  757:    return (struct nfa){NULL};
+        -:  758:
+     2456:  759:  while (**regex == '|' || **regex == '&') {
+     1525:  760:    bool intersect = *(*regex)++ == '&';
+     1525:  761:    struct nfa alt = parse_term(regex, error);
+     1525:  762:    if (*error) {
+        1:  763:      nfa_free(re);
+        1:  764:      return (struct nfa){NULL};
+        -:  765:    }
+        -:  766:
+        -:  767:    // we perform NFA intersection by rewriting into an alternation using De
+        -:  768:    // Morgan's law `a&b == ~(~a|~b)`. this isn't nearly as inefficient as it
+        -:  769:    // may appear, because NFA complementation is performed lazily
+     1524:  770:    re.complemented ^= intersect, alt.complemented ^= intersect;
+     1524:  771:    nfa_uncomplement(&re), nfa_uncomplement(&alt);
+        -:  772:
+        -:  773:    // -->O-->(re)--->
+        -:  774:    //     -->(alt)-->O-->
+        -:  775:    nfa_pad_initial(&re), nfa_pad_final(&alt);
+     1524:  776:    re.initial->epsilon1 = alt.initial;
+     1524:  777:    re.final->epsilon0 = alt.final;
+     1524:  778:    re.final->next = alt.initial;
+     1524:  779:    re.final = alt.final;
+        -:  780:
+     1524:  781:    re.complemented ^= intersect;
+        -:  782:  }
+        -:  783:
+      931:  784:  return re;
+        -:  785:}
+------------------
+        -:  786:
+     291*:  787:struct nfa ltre_parse(char **regex, char **error) {
+        -:  788:  // returns a null NFA on error; `*regex` will point to the error location and
+        -:  789:  // `*error` will be set to an error message. `error` may be set to `NULL` to
+        -:  790:  // disable error reporting
+        -:  791:
+        -:  792:  // don't write to `*regex` or `*error` if error reporting is disabled
+     291*:  793:  char *e, *r = *regex;
+     291*:  794:  if (error == NULL)
+        -:  795:    error = &e, regex = &r;
+        -:  796:
+     291*:  797:  *error = NULL;
+     291*:  798:  struct nfa nfa = parse_regex(regex, error);
+     291*:  799:  if (*error)
+      44*:  800:    return (struct nfa){NULL};
+        -:  801:
+     247*:  802:  if (**regex != '\0') {
+       1*:  803:    *error = "expected end of input";
+       1*:  804:    nfa_free(nfa);
+       1*:  805:    return (struct nfa){NULL};
+        -:  806:  }
+        -:  807:
+     246*:  808:  return nfa;
+        -:  809:}
+------------------
+ltre_parse:
+    #####:  787:struct nfa ltre_parse(char **regex, char **error) {
+        -:  788:  // returns a null NFA on error; `*regex` will point to the error location and
+        -:  789:  // `*error` will be set to an error message. `error` may be set to `NULL` to
+        -:  790:  // disable error reporting
+        -:  791:
+        -:  792:  // don't write to `*regex` or `*error` if error reporting is disabled
+    #####:  793:  char *e, *r = *regex;
+    #####:  794:  if (error == NULL)
+        -:  795:    error = &e, regex = &r;
+        -:  796:
+    #####:  797:  *error = NULL;
+    #####:  798:  struct nfa nfa = parse_regex(regex, error);
+    #####:  799:  if (*error)
+    #####:  800:    return (struct nfa){NULL};
+        -:  801:
+    #####:  802:  if (**regex != '\0') {
+    #####:  803:    *error = "expected end of input";
+    #####:  804:    nfa_free(nfa);
+    #####:  805:    return (struct nfa){NULL};
+        -:  806:  }
+        -:  807:
+    #####:  808:  return nfa;
+        -:  809:}
+------------------
+ltre_parse:
+      291:  787:struct nfa ltre_parse(char **regex, char **error) {
+        -:  788:  // returns a null NFA on error; `*regex` will point to the error location and
+        -:  789:  // `*error` will be set to an error message. `error` may be set to `NULL` to
+        -:  790:  // disable error reporting
+        -:  791:
+        -:  792:  // don't write to `*regex` or `*error` if error reporting is disabled
+      291:  793:  char *e, *r = *regex;
+      291:  794:  if (error == NULL)
+        -:  795:    error = &e, regex = &r;
+        -:  796:
+      291:  797:  *error = NULL;
+      291:  798:  struct nfa nfa = parse_regex(regex, error);
+      291:  799:  if (*error)
+       44:  800:    return (struct nfa){NULL};
+        -:  801:
+      247:  802:  if (**regex != '\0') {
+        1:  803:    *error = "expected end of input";
+        1:  804:    nfa_free(nfa);
+        1:  805:    return (struct nfa){NULL};
+        -:  806:  }
+        -:  807:
+      246:  808:  return nfa;
+        -:  809:}
+------------------
+        -:  810:
+    #####:  811:struct nfa ltre_fixed_string(char *string) {
+        -:  812:  // parses a fixed string into an NFA. never errors
+        -:  813:
+        -:  814:  struct nfa nfa = {.complemented = false};
+    #####:  815:  nfa.initial = nfa.final = nstate_alloc();
+        -:  816:
+    #####:  817:  for (; *string; string++) {
+        -:  818:    struct nstate *initial = nfa.final;
+    #####:  819:    nfa.final = nstate_alloc();
+    #####:  820:    initial->next = nfa.final;
+    #####:  821:    initial->target = nfa.final;
+    #####:  822:    bitset_set(initial->label, (uint8_t)*string);
+        -:  823:  }
+        -:  824:
+    #####:  825:  return nfa;
+        -:  826:}
+------------------
+ltre_fixed_string:
+    #####:  811:struct nfa ltre_fixed_string(char *string) {
+        -:  812:  // parses a fixed string into an NFA. never errors
+        -:  813:
+        -:  814:  struct nfa nfa = {.complemented = false};
+    #####:  815:  nfa.initial = nfa.final = nstate_alloc();
+        -:  816:
+    #####:  817:  for (; *string; string++) {
+        -:  818:    struct nstate *initial = nfa.final;
+    #####:  819:    nfa.final = nstate_alloc();
+    #####:  820:    initial->next = nfa.final;
+    #####:  821:    initial->target = nfa.final;
+    #####:  822:    bitset_set(initial->label, (uint8_t)*string);
+        -:  823:  }
+        -:  824:
+    #####:  825:  return nfa;
+        -:  826:}
+------------------
+ltre_fixed_string:
+    #####:  811:struct nfa ltre_fixed_string(char *string) {
+        -:  812:  // parses a fixed string into an NFA. never errors
+        -:  813:
+        -:  814:  struct nfa nfa = {.complemented = false};
+    #####:  815:  nfa.initial = nfa.final = nstate_alloc();
+        -:  816:
+    #####:  817:  for (; *string; string++) {
+        -:  818:    struct nstate *initial = nfa.final;
+    #####:  819:    nfa.final = nstate_alloc();
+    #####:  820:    initial->next = nfa.final;
+    #####:  821:    initial->target = nfa.final;
+    #####:  822:    bitset_set(initial->label, (uint8_t)*string);
+        -:  823:  }
+        -:  824:
+    #####:  825:  return nfa;
+        -:  826:}
+------------------
+        -:  827:
+       5*:  828:void ltre_partial(struct nfa *nfa) {
+        -:  829:  // enable partial matching. effectively, surround the NFA by a pair of `<>*`s
+       5*:  830:  nfa_uncomplement(nfa);
+        -:  831:  nfa_pad_initial(nfa), nfa_pad_final(nfa);
+       5*:  832:  nfa->initial->target = nfa->initial;
+       5*:  833:  nfa->final->target = nfa->final;
+       5*:  834:  memset(nfa->initial->label, 0xff, sizeof(symset_t));
+       5*:  835:  memset(nfa->final->label, 0xff, sizeof(symset_t));
+       5*:  836:}
+------------------
+ltre_partial:
+    #####:  828:void ltre_partial(struct nfa *nfa) {
+        -:  829:  // enable partial matching. effectively, surround the NFA by a pair of `<>*`s
+    #####:  830:  nfa_uncomplement(nfa);
+        -:  831:  nfa_pad_initial(nfa), nfa_pad_final(nfa);
+    #####:  832:  nfa->initial->target = nfa->initial;
+    #####:  833:  nfa->final->target = nfa->final;
+    #####:  834:  memset(nfa->initial->label, 0xff, sizeof(symset_t));
+    #####:  835:  memset(nfa->final->label, 0xff, sizeof(symset_t));
+    #####:  836:}
+------------------
+ltre_partial:
+        5:  828:void ltre_partial(struct nfa *nfa) {
+        -:  829:  // enable partial matching. effectively, surround the NFA by a pair of `<>*`s
+        5:  830:  nfa_uncomplement(nfa);
+        -:  831:  nfa_pad_initial(nfa), nfa_pad_final(nfa);
+        5:  832:  nfa->initial->target = nfa->initial;
+        5:  833:  nfa->final->target = nfa->final;
+        5:  834:  memset(nfa->initial->label, 0xff, sizeof(symset_t));
+        5:  835:  memset(nfa->final->label, 0xff, sizeof(symset_t));
+        5:  836:}
+------------------
+        -:  837:
+       3*:  838:void ltre_ignorecase(struct nfa *nfa) {
+        -:  839:  // enable case-insensitive matching. effectively, for any character a labeled
+        -:  840:  // transition contains, make it also contain its swapped-case counterpart
+       3*:  841:  nfa_uncomplement(nfa);
+      14*:  842:  for (struct nstate *nstate = nfa->initial; nstate; nstate = nstate->next) {
+    2827*:  843:    for (int chr = 0; chr < 256; chr++) {
+    2816*:  844:      if (bitset_get(nstate->label, chr)) {
+      11*:  845:        bitset_set(nstate->label, tolower(chr));
+      22*:  846:        bitset_set(nstate->label, toupper(chr));
+        -:  847:      }
+        -:  848:    }
+        -:  849:  }
+       3*:  850:}
+------------------
+ltre_ignorecase:
+    #####:  838:void ltre_ignorecase(struct nfa *nfa) {
+        -:  839:  // enable case-insensitive matching. effectively, for any character a labeled
+        -:  840:  // transition contains, make it also contain its swapped-case counterpart
+    #####:  841:  nfa_uncomplement(nfa);
+    #####:  842:  for (struct nstate *nstate = nfa->initial; nstate; nstate = nstate->next) {
+    #####:  843:    for (int chr = 0; chr < 256; chr++) {
+    #####:  844:      if (bitset_get(nstate->label, chr)) {
+    #####:  845:        bitset_set(nstate->label, tolower(chr));
+    #####:  846:        bitset_set(nstate->label, toupper(chr));
+        -:  847:      }
+        -:  848:    }
+        -:  849:  }
+    #####:  850:}
+------------------
+ltre_ignorecase:
+        3:  838:void ltre_ignorecase(struct nfa *nfa) {
+        -:  839:  // enable case-insensitive matching. effectively, for any character a labeled
+        -:  840:  // transition contains, make it also contain its swapped-case counterpart
+        3:  841:  nfa_uncomplement(nfa);
+       14:  842:  for (struct nstate *nstate = nfa->initial; nstate; nstate = nstate->next) {
+     2827:  843:    for (int chr = 0; chr < 256; chr++) {
+     2816:  844:      if (bitset_get(nstate->label, chr)) {
+      11*:  845:        bitset_set(nstate->label, tolower(chr));
+      22*:  846:        bitset_set(nstate->label, toupper(chr));
+        -:  847:      }
+        -:  848:    }
+        -:  849:  }
+        3:  850:}
+------------------
+        -:  851:
+       2*:  852:void ltre_complement(struct nfa *nfa) {
+        -:  853:  // complement accepted language. `dfa_step` will read this flag when marking
+        -:  854:  // accepting states
+       2*:  855:  nfa->complemented = !nfa->complemented;
+       2*:  856:}
+------------------
+ltre_complement:
+    #####:  852:void ltre_complement(struct nfa *nfa) {
+        -:  853:  // complement accepted language. `dfa_step` will read this flag when marking
+        -:  854:  // accepting states
+    #####:  855:  nfa->complemented = !nfa->complemented;
+    #####:  856:}
+------------------
+ltre_complement:
+        2:  852:void ltre_complement(struct nfa *nfa) {
+        -:  853:  // complement accepted language. `dfa_step` will read this flag when marking
+        -:  854:  // accepting states
+        2:  855:  nfa->complemented = !nfa->complemented;
+        2:  856:}
+------------------
+        -:  857:
+ 7346449*:  858:static void epsilon_closure(struct nstate *nstate, uint8_t bitset[]) {
+13002275*:  859:  if (!nstate)
+        -:  860:    return;
+        -:  861:
+ 5976099*:  862:  if (bitset_get(bitset, nstate->id))
+        -:  863:    return; // already visited
+        -:  864:
+        -:  865:  bitset_set(bitset, nstate->id);
+ 5655826*:  866:  epsilon_closure(nstate->epsilon0, bitset);
+ 5655826*:  867:  epsilon_closure(nstate->epsilon1, bitset);
+        -:  868:}
+------------------
+epsilon_closure:
+    #####:  858:static void epsilon_closure(struct nstate *nstate, uint8_t bitset[]) {
+    #####:  859:  if (!nstate)
+        -:  860:    return;
+        -:  861:
+    #####:  862:  if (bitset_get(bitset, nstate->id))
+        -:  863:    return; // already visited
+        -:  864:
+        -:  865:  bitset_set(bitset, nstate->id);
+    #####:  866:  epsilon_closure(nstate->epsilon0, bitset);
+    #####:  867:  epsilon_closure(nstate->epsilon1, bitset);
+        -:  868:}
+------------------
+epsilon_closure:
+  7346449:  858:static void epsilon_closure(struct nstate *nstate, uint8_t bitset[]) {
+ 13002275:  859:  if (!nstate)
+        -:  860:    return;
+        -:  861:
+  5976099:  862:  if (bitset_get(bitset, nstate->id))
+        -:  863:    return; // already visited
+        -:  864:
+        -:  865:  bitset_set(bitset, nstate->id);
+  5655826:  866:  epsilon_closure(nstate->epsilon0, bitset);
+  5655826:  867:  epsilon_closure(nstate->epsilon1, bitset);
+        -:  868:}
+------------------
+        -:  869:
+ 1389668*:  870:static void dfa_step(struct dstate **dfap, struct dstate *dstate, uint8_t chr,
+ 1389668*:  871:                     struct nfa nfa, int nfa_size, struct nstate *nstates[]) {
+        -:  872:  // step the DFA `*dfap` starting from state `dstate` by consuming input
+        -:  873:  // character `chr` according to the NFA `nfa`. `nstates` shall expose the
+        -:  874:  // states of the NFA `nfa` as an array of state pointers of length `nfa_size`.
+        -:  875:  // this routine creates new DFA states as needed. call initially with `dstate
+        -:  876:  // == NULL` to create a DFA state corresponding to the epsilon-closure of the
+        -:  877:  // NFA's initial state
+        -:  878:
+ 1389668*:  879:  int bitset_size = (nfa_size + 7) / 8; // ceil
+ 1389668*:  880:  uint8_t bitset_union[bitset_size];
+        -:  881:  memset(bitset_union, 0x00, bitset_size);
+        -:  882:
+ 1389668*:  883:  if (dstate) {
+        -:  884:    // compute the "superposition" of NFA states reachable by consuming `chr`.
+        -:  885:    // using the array of state pointers `nstates` speeds up this hot loop by
+        -:  886:    // 2.5x over iterating through the states linked list using `nstate->next`,
+        -:  887:    // probably because it helps out the prefetches and breaks the memory load
+        -:  888:    // dependency chain
+1498106991*:  889:    for (int id = 0; id < nfa_size; id++)
+1496718038*:  890:      if (bitset_get(dstate->bitset, id) && bitset_get(nstates[id]->label, chr))
+ 1689908*:  891:        epsilon_closure(nstates[id]->target, bitset_union);
+        -:  892:  } else
+     715*:  893:    epsilon_closure(nfa.initial, bitset_union);
+        -:  894:
+        -:  895:  // create a DFA state whose `bitset` corresponds to this "superposition",
+        -:  896:  // if it doesn't already exist. binary tree not necessary, linear search
+        -:  897:  // is just as fast
+        -:  898:  struct dstate **dstatep = dfap;
+40003789*:  899:  while (*dstatep && memcmp((*dstatep)->bitset, bitset_union, bitset_size))
+38614121*:  900:    dstatep = &(*dstatep)->next;
+        -:  901:
+ 1389668*:  902:  if (!*dstatep) {
+    5902*:  903:    *dstatep = dstate_alloc(bitset_size);
+    5902*:  904:    memcpy((*dstatep)->bitset, bitset_union, bitset_size);
+        -:  905:
+        -:  906:    // a DFA state is accepting if and only if it contains the NFA's final state
+        -:  907:    // in its `bitset`. also make sure to swap accepting and non-accepting
+        -:  908:    // states if the NFA is complemented
+    5902*:  909:    (*dstatep)->accepting = bitset_get(bitset_union, nfa.final->id);
+    5902*:  910:    (*dstatep)->accepting ^= nfa.complemented;
+        -:  911:  }
+        -:  912:
+ 1389668*:  913:  if (dstate)
+        -:  914:    // patch the `chr` transition to point to this new (or existing) state
+ 1388953*:  915:    dstate->transitions[chr] = *dstatep;
+ 1389668*:  916:}
+------------------
+dfa_step:
+    #####:  870:static void dfa_step(struct dstate **dfap, struct dstate *dstate, uint8_t chr,
+    #####:  871:                     struct nfa nfa, int nfa_size, struct nstate *nstates[]) {
+        -:  872:  // step the DFA `*dfap` starting from state `dstate` by consuming input
+        -:  873:  // character `chr` according to the NFA `nfa`. `nstates` shall expose the
+        -:  874:  // states of the NFA `nfa` as an array of state pointers of length `nfa_size`.
+        -:  875:  // this routine creates new DFA states as needed. call initially with `dstate
+        -:  876:  // == NULL` to create a DFA state corresponding to the epsilon-closure of the
+        -:  877:  // NFA's initial state
+        -:  878:
+    #####:  879:  int bitset_size = (nfa_size + 7) / 8; // ceil
+    #####:  880:  uint8_t bitset_union[bitset_size];
+        -:  881:  memset(bitset_union, 0x00, bitset_size);
+        -:  882:
+    #####:  883:  if (dstate) {
+        -:  884:    // compute the "superposition" of NFA states reachable by consuming `chr`.
+        -:  885:    // using the array of state pointers `nstates` speeds up this hot loop by
+        -:  886:    // 2.5x over iterating through the states linked list using `nstate->next`,
+        -:  887:    // probably because it helps out the prefetches and breaks the memory load
+        -:  888:    // dependency chain
+    #####:  889:    for (int id = 0; id < nfa_size; id++)
+    #####:  890:      if (bitset_get(dstate->bitset, id) && bitset_get(nstates[id]->label, chr))
+    #####:  891:        epsilon_closure(nstates[id]->target, bitset_union);
+        -:  892:  } else
+    #####:  893:    epsilon_closure(nfa.initial, bitset_union);
+        -:  894:
+        -:  895:  // create a DFA state whose `bitset` corresponds to this "superposition",
+        -:  896:  // if it doesn't already exist. binary tree not necessary, linear search
+        -:  897:  // is just as fast
+        -:  898:  struct dstate **dstatep = dfap;
+    #####:  899:  while (*dstatep && memcmp((*dstatep)->bitset, bitset_union, bitset_size))
+    #####:  900:    dstatep = &(*dstatep)->next;
+        -:  901:
+    #####:  902:  if (!*dstatep) {
+    #####:  903:    *dstatep = dstate_alloc(bitset_size);
+    #####:  904:    memcpy((*dstatep)->bitset, bitset_union, bitset_size);
+        -:  905:
+        -:  906:    // a DFA state is accepting if and only if it contains the NFA's final state
+        -:  907:    // in its `bitset`. also make sure to swap accepting and non-accepting
+        -:  908:    // states if the NFA is complemented
+    #####:  909:    (*dstatep)->accepting = bitset_get(bitset_union, nfa.final->id);
+    #####:  910:    (*dstatep)->accepting ^= nfa.complemented;
+        -:  911:  }
+        -:  912:
+    #####:  913:  if (dstate)
+        -:  914:    // patch the `chr` transition to point to this new (or existing) state
+    #####:  915:    dstate->transitions[chr] = *dstatep;
+    #####:  916:}
+------------------
+dfa_step:
+  1389668:  870:static void dfa_step(struct dstate **dfap, struct dstate *dstate, uint8_t chr,
+  1389668:  871:                     struct nfa nfa, int nfa_size, struct nstate *nstates[]) {
+        -:  872:  // step the DFA `*dfap` starting from state `dstate` by consuming input
+        -:  873:  // character `chr` according to the NFA `nfa`. `nstates` shall expose the
+        -:  874:  // states of the NFA `nfa` as an array of state pointers of length `nfa_size`.
+        -:  875:  // this routine creates new DFA states as needed. call initially with `dstate
+        -:  876:  // == NULL` to create a DFA state corresponding to the epsilon-closure of the
+        -:  877:  // NFA's initial state
+        -:  878:
+  1389668:  879:  int bitset_size = (nfa_size + 7) / 8; // ceil
+  1389668:  880:  uint8_t bitset_union[bitset_size];
+        -:  881:  memset(bitset_union, 0x00, bitset_size);
+        -:  882:
+  1389668:  883:  if (dstate) {
+        -:  884:    // compute the "superposition" of NFA states reachable by consuming `chr`.
+        -:  885:    // using the array of state pointers `nstates` speeds up this hot loop by
+        -:  886:    // 2.5x over iterating through the states linked list using `nstate->next`,
+        -:  887:    // probably because it helps out the prefetches and breaks the memory load
+        -:  888:    // dependency chain
+1498106991:  889:    for (int id = 0; id < nfa_size; id++)
+1496718038:  890:      if (bitset_get(dstate->bitset, id) && bitset_get(nstates[id]->label, chr))
+  1689908:  891:        epsilon_closure(nstates[id]->target, bitset_union);
+        -:  892:  } else
+      715:  893:    epsilon_closure(nfa.initial, bitset_union);
+        -:  894:
+        -:  895:  // create a DFA state whose `bitset` corresponds to this "superposition",
+        -:  896:  // if it doesn't already exist. binary tree not necessary, linear search
+        -:  897:  // is just as fast
+        -:  898:  struct dstate **dstatep = dfap;
+ 40003789:  899:  while (*dstatep && memcmp((*dstatep)->bitset, bitset_union, bitset_size))
+ 38614121:  900:    dstatep = &(*dstatep)->next;
+        -:  901:
+  1389668:  902:  if (!*dstatep) {
+     5902:  903:    *dstatep = dstate_alloc(bitset_size);
+     5902:  904:    memcpy((*dstatep)->bitset, bitset_union, bitset_size);
+        -:  905:
+        -:  906:    // a DFA state is accepting if and only if it contains the NFA's final state
+        -:  907:    // in its `bitset`. also make sure to swap accepting and non-accepting
+        -:  908:    // states if the NFA is complemented
+     5902:  909:    (*dstatep)->accepting = bitset_get(bitset_union, nfa.final->id);
+     5902:  910:    (*dstatep)->accepting ^= nfa.complemented;
+        -:  911:  }
+        -:  912:
+  1389668:  913:  if (dstate)
+        -:  914:    // patch the `chr` transition to point to this new (or existing) state
+  1388953:  915:    dstate->transitions[chr] = *dstatep;
+  1389668:  916:}
+------------------
+        -:  917:
+     392*:  918:struct dstate *ltre_compile(struct nfa nfa) {
+        -:  919:  // fully compile DFA. powerset construction followed by DFA minimization
+        -:  920:
+     392*:  921:  int nfa_size = nfa_get_size(nfa);
+     392*:  922:  struct nstate *nstates[nfa_size];
+   14854*:  923:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+   14462*:  924:    nstates[nstate->id] = nstate;
+        -:  925:
+        -:  926:  // construct new DFA states as we're iterating over them and patching
+        -:  927:  // transitions, starting from the epsilon-closure of the NFA's initial state
+     392*:  928:  struct dstate *dfa = NULL;
+     392*:  929:  dfa_step(&dfa, NULL, 0, nfa, nfa_size, nstates);
+    5815*:  930:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+ 1393711*:  931:    for (int chr = 0; chr < 256; chr++)
+ 1388288*:  932:      dfa_step(&dfa, dstate, chr, nfa, nfa_size, nstates);
+        -:  933:
+     392*:  934:  int dfa_size = dfa_get_size(dfa);
+     392*:  935:  struct dstate *dstates[dfa_size];
+    5815*:  936:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    5423*:  937:    dstates[dstate->id] = dstate;
+        -:  938:
+        -:  939:  // store distinguishability data in a symmetric matrix condensed using bitsets
+     392*:  940:  uint8_t dis[dfa_size][(dfa_size + 7) / 8]; // ceil
+        -:  941:  memset(dis, 0x00, sizeof(dis));
+        -:  942:#define ARE_DIS(id1, id2) bitset_get(dis[id1], id2)
+        -:  943:#define MAKE_DIS(id1, id2) bitset_set(dis[id1], id2), bitset_set(dis[id2], id1)
+        -:  944:
+        -:  945:  // flag indistinguishable states. a pair of states is indistinguishable if and
+        -:  946:  // only if both states have the same `accepting` value and their transitions
+        -:  947:  // are equal up to target state indistinguishability. to avoid dealing with
+        -:  948:  // cycles, we default to all states being indistinguishable then iteratively
+        -:  949:  // rule out the ones that aren't.
+    5815*:  950:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next)
+  903024*:  951:    for (struct dstate *ds2 = ds1->next; ds2; ds2 = ds2->next)
+  897601*:  952:      if (ds1->accepting != ds2->accepting)
+  362718*:  953:        MAKE_DIS(ds1->id, ds2->id);
+    1275*:  954:  for (bool done = false; done = !done;)
+   28060*:  955:    for (int id1 = 0; id1 < dfa_size; id1++)
+ 5162121*:  956:      for (int id2 = id1 + 1; id2 < dfa_size; id2++)
+ 5134944*:  957:        if (!ARE_DIS(id1, id2))
+179597435*:  958:          for (int chr = 0; chr < 256; chr++)
+        -:  959:            // use irreflexivity of distinguishability as a cheap precheck
+178986438*:  960:            if (dstates[id1]->transitions[chr] !=
+178986438*:  961:                dstates[id2]->transitions[chr])
+54781819*:  962:              if (ARE_DIS(dstates[id1]->transitions[chr]->id,
+        -:  963:                          dstates[id2]->transitions[chr]->id)) {
+  363275*:  964:                MAKE_DIS(id1, id2), done = false;
+  363275*:  965:                break;
+        -:  966:              }
+        -:  967:
+        -:  968:  // minimize the DFA by merging indistinguishable states. no need to prune
+        -:  969:  // unreachable states because the powerset construction yields a DFA with
+        -:  970:  // no unreachable states
+    3512*:  971:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+  326166*:  972:    for (struct dstate *prev = ds1; prev; prev = prev->next) {
+  325349*:  973:      for (struct dstate *ds2; ds2 = prev->next;) {
+  322229*:  974:        if (ARE_DIS(ds1->id, ds2->id))
+        -:  975:          break;
+        -:  976:
+        -:  977:        // states are indistinguishable. merge them
+  607573*:  978:        for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+155554390*:  979:          for (int chr = 0; chr < 256; chr++)
+154949120*:  980:            if (dstate->transitions[chr] == ds2)
+  158227*:  981:              dstate->transitions[chr] = ds1;
+        -:  982:
+    2303*:  983:        prev->next = ds2->next, free(ds2);
+        -:  984:      }
+        -:  985:    }
+        -:  986:
+        -:  987:    // flag "terminating" states. a terminating state is a state which either
+        -:  988:    // always or never leads to an accepting state. since `ds1` is now
+        -:  989:    // distinguishable from all other states, it is terminating if and only if
+        -:  990:    // all its transitions point to itself because, by definition, no other
+        -:  991:    // state accepts the same set of words as it does (either all or none)
+    3120*:  992:    ds1->terminating = true;
+  801840*:  993:    for (int chr = 0; chr < 256; chr++)
+  798720*:  994:      if (ds1->transitions[chr] != ds1)
+  684975*:  995:        ds1->terminating = false;
+        -:  996:  }
+        -:  997:
+        -:  998:  // nfa_dump(nfa);
+        -:  999:  // dfa_dump(dfa);
+        -: 1000:  // printf("%2d -> %2d\n", dfa_size, dfa_get_size(dfa));
+        -: 1001:
+     392*: 1002:  return dfa;
+        -: 1003:}
+------------------
+ltre_compile:
+    #####:  918:struct dstate *ltre_compile(struct nfa nfa) {
+        -:  919:  // fully compile DFA. powerset construction followed by DFA minimization
+        -:  920:
+    #####:  921:  int nfa_size = nfa_get_size(nfa);
+    #####:  922:  struct nstate *nstates[nfa_size];
+    #####:  923:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+    #####:  924:    nstates[nstate->id] = nstate;
+        -:  925:
+        -:  926:  // construct new DFA states as we're iterating over them and patching
+        -:  927:  // transitions, starting from the epsilon-closure of the NFA's initial state
+    #####:  928:  struct dstate *dfa = NULL;
+    #####:  929:  dfa_step(&dfa, NULL, 0, nfa, nfa_size, nstates);
+    #####:  930:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    #####:  931:    for (int chr = 0; chr < 256; chr++)
+    #####:  932:      dfa_step(&dfa, dstate, chr, nfa, nfa_size, nstates);
+        -:  933:
+    #####:  934:  int dfa_size = dfa_get_size(dfa);
+    #####:  935:  struct dstate *dstates[dfa_size];
+    #####:  936:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    #####:  937:    dstates[dstate->id] = dstate;
+        -:  938:
+        -:  939:  // store distinguishability data in a symmetric matrix condensed using bitsets
+    #####:  940:  uint8_t dis[dfa_size][(dfa_size + 7) / 8]; // ceil
+        -:  941:  memset(dis, 0x00, sizeof(dis));
+        -:  942:#define ARE_DIS(id1, id2) bitset_get(dis[id1], id2)
+        -:  943:#define MAKE_DIS(id1, id2) bitset_set(dis[id1], id2), bitset_set(dis[id2], id1)
+        -:  944:
+        -:  945:  // flag indistinguishable states. a pair of states is indistinguishable if and
+        -:  946:  // only if both states have the same `accepting` value and their transitions
+        -:  947:  // are equal up to target state indistinguishability. to avoid dealing with
+        -:  948:  // cycles, we default to all states being indistinguishable then iteratively
+        -:  949:  // rule out the ones that aren't.
+    #####:  950:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next)
+    #####:  951:    for (struct dstate *ds2 = ds1->next; ds2; ds2 = ds2->next)
+    #####:  952:      if (ds1->accepting != ds2->accepting)
+    #####:  953:        MAKE_DIS(ds1->id, ds2->id);
+    #####:  954:  for (bool done = false; done = !done;)
+    #####:  955:    for (int id1 = 0; id1 < dfa_size; id1++)
+    #####:  956:      for (int id2 = id1 + 1; id2 < dfa_size; id2++)
+    #####:  957:        if (!ARE_DIS(id1, id2))
+    #####:  958:          for (int chr = 0; chr < 256; chr++)
+        -:  959:            // use irreflexivity of distinguishability as a cheap precheck
+    #####:  960:            if (dstates[id1]->transitions[chr] !=
+    #####:  961:                dstates[id2]->transitions[chr])
+    #####:  962:              if (ARE_DIS(dstates[id1]->transitions[chr]->id,
+        -:  963:                          dstates[id2]->transitions[chr]->id)) {
+    #####:  964:                MAKE_DIS(id1, id2), done = false;
+    #####:  965:                break;
+        -:  966:              }
+        -:  967:
+        -:  968:  // minimize the DFA by merging indistinguishable states. no need to prune
+        -:  969:  // unreachable states because the powerset construction yields a DFA with
+        -:  970:  // no unreachable states
+    #####:  971:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+    #####:  972:    for (struct dstate *prev = ds1; prev; prev = prev->next) {
+    #####:  973:      for (struct dstate *ds2; ds2 = prev->next;) {
+    #####:  974:        if (ARE_DIS(ds1->id, ds2->id))
+        -:  975:          break;
+        -:  976:
+        -:  977:        // states are indistinguishable. merge them
+    #####:  978:        for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    #####:  979:          for (int chr = 0; chr < 256; chr++)
+    #####:  980:            if (dstate->transitions[chr] == ds2)
+    #####:  981:              dstate->transitions[chr] = ds1;
+        -:  982:
+    #####:  983:        prev->next = ds2->next, free(ds2);
+        -:  984:      }
+        -:  985:    }
+        -:  986:
+        -:  987:    // flag "terminating" states. a terminating state is a state which either
+        -:  988:    // always or never leads to an accepting state. since `ds1` is now
+        -:  989:    // distinguishable from all other states, it is terminating if and only if
+        -:  990:    // all its transitions point to itself because, by definition, no other
+        -:  991:    // state accepts the same set of words as it does (either all or none)
+    #####:  992:    ds1->terminating = true;
+    #####:  993:    for (int chr = 0; chr < 256; chr++)
+    #####:  994:      if (ds1->transitions[chr] != ds1)
+    #####:  995:        ds1->terminating = false;
+        -:  996:  }
+        -:  997:
+        -:  998:  // nfa_dump(nfa);
+        -:  999:  // dfa_dump(dfa);
+        -: 1000:  // printf("%2d -> %2d\n", dfa_size, dfa_get_size(dfa));
+        -: 1001:
+    #####: 1002:  return dfa;
+        -: 1003:}
+------------------
+ltre_compile:
+      392:  918:struct dstate *ltre_compile(struct nfa nfa) {
+        -:  919:  // fully compile DFA. powerset construction followed by DFA minimization
+        -:  920:
+      392:  921:  int nfa_size = nfa_get_size(nfa);
+      392:  922:  struct nstate *nstates[nfa_size];
+    14854:  923:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+    14462:  924:    nstates[nstate->id] = nstate;
+        -:  925:
+        -:  926:  // construct new DFA states as we're iterating over them and patching
+        -:  927:  // transitions, starting from the epsilon-closure of the NFA's initial state
+      392:  928:  struct dstate *dfa = NULL;
+      392:  929:  dfa_step(&dfa, NULL, 0, nfa, nfa_size, nstates);
+     5815:  930:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+  1393711:  931:    for (int chr = 0; chr < 256; chr++)
+  1388288:  932:      dfa_step(&dfa, dstate, chr, nfa, nfa_size, nstates);
+        -:  933:
+      392:  934:  int dfa_size = dfa_get_size(dfa);
+      392:  935:  struct dstate *dstates[dfa_size];
+     5815:  936:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+     5423:  937:    dstates[dstate->id] = dstate;
+        -:  938:
+        -:  939:  // store distinguishability data in a symmetric matrix condensed using bitsets
+      392:  940:  uint8_t dis[dfa_size][(dfa_size + 7) / 8]; // ceil
+        -:  941:  memset(dis, 0x00, sizeof(dis));
+        -:  942:#define ARE_DIS(id1, id2) bitset_get(dis[id1], id2)
+        -:  943:#define MAKE_DIS(id1, id2) bitset_set(dis[id1], id2), bitset_set(dis[id2], id1)
+        -:  944:
+        -:  945:  // flag indistinguishable states. a pair of states is indistinguishable if and
+        -:  946:  // only if both states have the same `accepting` value and their transitions
+        -:  947:  // are equal up to target state indistinguishability. to avoid dealing with
+        -:  948:  // cycles, we default to all states being indistinguishable then iteratively
+        -:  949:  // rule out the ones that aren't.
+     5815:  950:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next)
+   903024:  951:    for (struct dstate *ds2 = ds1->next; ds2; ds2 = ds2->next)
+   897601:  952:      if (ds1->accepting != ds2->accepting)
+   362718:  953:        MAKE_DIS(ds1->id, ds2->id);
+     1275:  954:  for (bool done = false; done = !done;)
+    28060:  955:    for (int id1 = 0; id1 < dfa_size; id1++)
+  5162121:  956:      for (int id2 = id1 + 1; id2 < dfa_size; id2++)
+  5134944:  957:        if (!ARE_DIS(id1, id2))
+179597435:  958:          for (int chr = 0; chr < 256; chr++)
+        -:  959:            // use irreflexivity of distinguishability as a cheap precheck
+178986438:  960:            if (dstates[id1]->transitions[chr] !=
+178986438:  961:                dstates[id2]->transitions[chr])
+ 54781819:  962:              if (ARE_DIS(dstates[id1]->transitions[chr]->id,
+        -:  963:                          dstates[id2]->transitions[chr]->id)) {
+   363275:  964:                MAKE_DIS(id1, id2), done = false;
+   363275:  965:                break;
+        -:  966:              }
+        -:  967:
+        -:  968:  // minimize the DFA by merging indistinguishable states. no need to prune
+        -:  969:  // unreachable states because the powerset construction yields a DFA with
+        -:  970:  // no unreachable states
+     3512:  971:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+   326166:  972:    for (struct dstate *prev = ds1; prev; prev = prev->next) {
+   325349:  973:      for (struct dstate *ds2; ds2 = prev->next;) {
+   322229:  974:        if (ARE_DIS(ds1->id, ds2->id))
+        -:  975:          break;
+        -:  976:
+        -:  977:        // states are indistinguishable. merge them
+   607573:  978:        for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+155554390:  979:          for (int chr = 0; chr < 256; chr++)
+154949120:  980:            if (dstate->transitions[chr] == ds2)
+   158227:  981:              dstate->transitions[chr] = ds1;
+        -:  982:
+     2303:  983:        prev->next = ds2->next, free(ds2);
+        -:  984:      }
+        -:  985:    }
+        -:  986:
+        -:  987:    // flag "terminating" states. a terminating state is a state which either
+        -:  988:    // always or never leads to an accepting state. since `ds1` is now
+        -:  989:    // distinguishable from all other states, it is terminating if and only if
+        -:  990:    // all its transitions point to itself because, by definition, no other
+        -:  991:    // state accepts the same set of words as it does (either all or none)
+     3120:  992:    ds1->terminating = true;
+   801840:  993:    for (int chr = 0; chr < 256; chr++)
+   798720:  994:      if (ds1->transitions[chr] != ds1)
+   684975:  995:        ds1->terminating = false;
+        -:  996:  }
+        -:  997:
+        -:  998:  // nfa_dump(nfa);
+        -:  999:  // dfa_dump(dfa);
+        -: 1000:  // printf("%2d -> %2d\n", dfa_size, dfa_get_size(dfa));
+        -: 1001:
+      392: 1002:  return dfa;
+        -: 1003:}
+------------------
+        -: 1004:
+     323*: 1005:bool ltre_matches(struct dstate *dfa, uint8_t *input) {
+        -: 1006:  // time linear in the input length :)
+    1254*: 1007:  for (; !dfa->terminating && *input; input++)
+     931*: 1008:    dfa = dfa->transitions[*input];
+     323*: 1009:  return dfa->accepting;
+        -: 1010:}
+------------------
+ltre_matches:
+    #####: 1005:bool ltre_matches(struct dstate *dfa, uint8_t *input) {
+        -: 1006:  // time linear in the input length :)
+    #####: 1007:  for (; !dfa->terminating && *input; input++)
+    #####: 1008:    dfa = dfa->transitions[*input];
+    #####: 1009:  return dfa->accepting;
+        -: 1010:}
+------------------
+ltre_matches:
+      323: 1005:bool ltre_matches(struct dstate *dfa, uint8_t *input) {
+        -: 1006:  // time linear in the input length :)
+     1254: 1007:  for (; !dfa->terminating && *input; input++)
+      931: 1008:    dfa = dfa->transitions[*input];
+      323: 1009:  return dfa->accepting;
+        -: 1010:}
+------------------
+        -: 1011:
+     323*: 1012:bool ltre_matches_lazy(struct dstate **dfap, struct nfa nfa, uint8_t *input) {
+        -: 1013:  // Thompson's algorithm. lazily create new DFA states as we need them. cached
+        -: 1014:  // DFA states are stored in `*dfap`. call initially with an empty cache using
+        -: 1015:  // `*dfap == NULL`, and make sure to `dfa_free(*dfap)` when finished with
+        -: 1016:  // this NFA
+        -: 1017:
+     323*: 1018:  int nfa_size = nfa_get_size(nfa);
+     323*: 1019:  struct nstate *nstates[nfa_size];
+  188392*: 1020:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+  188069*: 1021:    nstates[nstate->id] = nstate;
+        -: 1022:
+     323*: 1023:  dfa_step(dfap, NULL, 0, nfa, nfa_size, nstates);
+        -: 1024:
+        -: 1025:  // time linear in the input length :)
+     323*: 1026:  struct dstate *dstate = *dfap;
+    1340*: 1027:  for (; *input; dstate = dstate->transitions[*input++])
+    1017*: 1028:    if (!dstate->transitions[*input])
+     665*: 1029:      dfa_step(dfap, dstate, *input, nfa, nfa_size, nstates);
+        -: 1030:
+     323*: 1031:  return dstate->accepting;
+        -: 1032:}
+------------------
+ltre_matches_lazy:
+    #####: 1012:bool ltre_matches_lazy(struct dstate **dfap, struct nfa nfa, uint8_t *input) {
+        -: 1013:  // Thompson's algorithm. lazily create new DFA states as we need them. cached
+        -: 1014:  // DFA states are stored in `*dfap`. call initially with an empty cache using
+        -: 1015:  // `*dfap == NULL`, and make sure to `dfa_free(*dfap)` when finished with
+        -: 1016:  // this NFA
+        -: 1017:
+    #####: 1018:  int nfa_size = nfa_get_size(nfa);
+    #####: 1019:  struct nstate *nstates[nfa_size];
+    #####: 1020:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+    #####: 1021:    nstates[nstate->id] = nstate;
+        -: 1022:
+    #####: 1023:  dfa_step(dfap, NULL, 0, nfa, nfa_size, nstates);
+        -: 1024:
+        -: 1025:  // time linear in the input length :)
+    #####: 1026:  struct dstate *dstate = *dfap;
+    #####: 1027:  for (; *input; dstate = dstate->transitions[*input++])
+    #####: 1028:    if (!dstate->transitions[*input])
+    #####: 1029:      dfa_step(dfap, dstate, *input, nfa, nfa_size, nstates);
+        -: 1030:
+    #####: 1031:  return dstate->accepting;
+        -: 1032:}
+------------------
+ltre_matches_lazy:
+      323: 1012:bool ltre_matches_lazy(struct dstate **dfap, struct nfa nfa, uint8_t *input) {
+        -: 1013:  // Thompson's algorithm. lazily create new DFA states as we need them. cached
+        -: 1014:  // DFA states are stored in `*dfap`. call initially with an empty cache using
+        -: 1015:  // `*dfap == NULL`, and make sure to `dfa_free(*dfap)` when finished with
+        -: 1016:  // this NFA
+        -: 1017:
+      323: 1018:  int nfa_size = nfa_get_size(nfa);
+      323: 1019:  struct nstate *nstates[nfa_size];
+   188392: 1020:  for (struct nstate *nstate = nfa.initial; nstate; nstate = nstate->next)
+   188069: 1021:    nstates[nstate->id] = nstate;
+        -: 1022:
+      323: 1023:  dfa_step(dfap, NULL, 0, nfa, nfa_size, nstates);
+        -: 1024:
+        -: 1025:  // time linear in the input length :)
+      323: 1026:  struct dstate *dstate = *dfap;
+     1340: 1027:  for (; *input; dstate = dstate->transitions[*input++])
+     1017: 1028:    if (!dstate->transitions[*input])
+      665: 1029:      dfa_step(dfap, dstate, *input, nfa, nfa_size, nstates);
+        -: 1030:
+      323: 1031:  return dstate->accepting;
+        -: 1032:}
+------------------
+        -: 1033:
+     146*: 1034:struct nfa ltre_uncompile(struct dstate *dfa) {
+     146*: 1035:  int dfa_size = dfa_get_size(dfa);
+        -: 1036:
+     146*: 1037:  struct nfa nfa = {.initial = nstate_alloc(),
+     146*: 1038:                    .final = nstate_alloc(),
+        -: 1039:                    .complemented = false};
+        -: 1040:  struct nstate *tail = nfa.initial; // used to allocate new NFA states
+        -: 1041:
+     146*: 1042:  struct nstate *nstates[dfa_size]; // mapping from DFA state to NFA state
+    1483*: 1043:  for (int id = 0; id < dfa_size; id++)
+    1337*: 1044:    nstates[id] = tail->next = nstate_alloc(), tail = tail->next;
+        -: 1045:
+     146*: 1046:  nfa.initial->epsilon1 = nstates[dfa->id];
+        -: 1047:  // use `epsilon1` transitions to `nfa.final` to model accepting states
+    1483*: 1048:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    1337*: 1049:    if (dstate->accepting)
+     620*: 1050:      nstates[dstate->id]->epsilon1 = nfa.final;
+        -: 1051:
+        -: 1052:  // the labeled transitions of a `dstate` may target multiple different states,
+        -: 1053:  // but that of an `nstate` may only target one, namely `nstate.target`. to
+        -: 1054:  // bridge the gap, DFA states are mapped not to a single NFA state, but to the
+        -: 1055:  // root of a binary tree of NFA states formed by `epsilon0` and `epsilon1`.
+    1483*: 1056:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+        -: 1057:    struct nstate *free = NULL;
+        -: 1058:
+  288288*: 1059:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -: 1060:      bool empty = true;
+  286951*: 1061:      symset_t transitions = {0};
+73746407*: 1062:      for (int chr = 0; chr < 256; chr++)
+73459456*: 1063:        if (ds1->transitions[chr] == ds2)
+  342272*: 1064:          bitset_set(transitions, chr), empty = false;
+        -: 1065:
+  286951*: 1066:      if (empty)
+  283161*: 1067:        continue;
+        -: 1068:
+        -: 1069:      struct nstate *src; // the "source" state for this labeled transition
+        -: 1070:
+        -: 1071:      // root->O-->O-->O-->O->free-->
+        -: 1072:      //   |   |   |   |   |   |
+        -: 1073:      //   O   O   O   O   O   O
+    3790*: 1074:      if (free == NULL)
+        -: 1075:        // first iteration. make sure the root of the tree comes from `nstates`
+    1337*: 1076:        free = nstates[ds1->id], src = free;
+        -: 1077:      else {
+    2453*: 1078:        src = tail->next = nstate_alloc(), tail = tail->next;
+        -: 1079:
+        -: 1080:        // maintain that `free` is an `nstate` with at least one unused epsilon
+        -: 1081:        // transition. if `epsilon1` is unused then use it to point to our
+        -: 1082:        // source state, but stay where we are because `epsilon0` is still
+        -: 1083:        // unused. otherwise, `epsilon0` is the only unused epsilon transition,
+        -: 1084:        // so use it to point to our source state and move over because the
+        -: 1085:        // current state has become saturated. the resulting binary tree is
+        -: 1086:        // unbalanced, but generating it is easy and it is still twice as
+        -: 1087:        // efficient as a linked list would be
+    2453*: 1088:        if (!free->epsilon1)
+    1221*: 1089:          free->epsilon1 = tail;
+        -: 1090:        else
+    1232*: 1091:          free->epsilon0 = tail, free = tail;
+        -: 1092:      }
+        -: 1093:
+    3790*: 1094:      src->target = nstates[ds2->id];
+    3790*: 1095:      memcpy(src->label, transitions, sizeof(symset_t));
+        -: 1096:    }
+        -: 1097:  }
+        -: 1098:
+     146*: 1099:  tail->next = nfa.final;
+        -: 1100:
+        -: 1101:  // dfa_dump(dfa);
+        -: 1102:  // nfa_dump(nfa);
+        -: 1103:  // printf("%2d -> %2d\n", dfa_size, nfa_get_size(nfa));
+        -: 1104:
+     146*: 1105:  return nfa;
+        -: 1106:}
+------------------
+ltre_uncompile:
+    #####: 1034:struct nfa ltre_uncompile(struct dstate *dfa) {
+    #####: 1035:  int dfa_size = dfa_get_size(dfa);
+        -: 1036:
+    #####: 1037:  struct nfa nfa = {.initial = nstate_alloc(),
+    #####: 1038:                    .final = nstate_alloc(),
+        -: 1039:                    .complemented = false};
+        -: 1040:  struct nstate *tail = nfa.initial; // used to allocate new NFA states
+        -: 1041:
+    #####: 1042:  struct nstate *nstates[dfa_size]; // mapping from DFA state to NFA state
+    #####: 1043:  for (int id = 0; id < dfa_size; id++)
+    #####: 1044:    nstates[id] = tail->next = nstate_alloc(), tail = tail->next;
+        -: 1045:
+    #####: 1046:  nfa.initial->epsilon1 = nstates[dfa->id];
+        -: 1047:  // use `epsilon1` transitions to `nfa.final` to model accepting states
+    #####: 1048:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+    #####: 1049:    if (dstate->accepting)
+    #####: 1050:      nstates[dstate->id]->epsilon1 = nfa.final;
+        -: 1051:
+        -: 1052:  // the labeled transitions of a `dstate` may target multiple different states,
+        -: 1053:  // but that of an `nstate` may only target one, namely `nstate.target`. to
+        -: 1054:  // bridge the gap, DFA states are mapped not to a single NFA state, but to the
+        -: 1055:  // root of a binary tree of NFA states formed by `epsilon0` and `epsilon1`.
+    #####: 1056:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+        -: 1057:    struct nstate *free = NULL;
+        -: 1058:
+    #####: 1059:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -: 1060:      bool empty = true;
+    #####: 1061:      symset_t transitions = {0};
+    #####: 1062:      for (int chr = 0; chr < 256; chr++)
+    #####: 1063:        if (ds1->transitions[chr] == ds2)
+    #####: 1064:          bitset_set(transitions, chr), empty = false;
+        -: 1065:
+    #####: 1066:      if (empty)
+    #####: 1067:        continue;
+        -: 1068:
+        -: 1069:      struct nstate *src; // the "source" state for this labeled transition
+        -: 1070:
+        -: 1071:      // root->O-->O-->O-->O->free-->
+        -: 1072:      //   |   |   |   |   |   |
+        -: 1073:      //   O   O   O   O   O   O
+    #####: 1074:      if (free == NULL)
+        -: 1075:        // first iteration. make sure the root of the tree comes from `nstates`
+    #####: 1076:        free = nstates[ds1->id], src = free;
+        -: 1077:      else {
+    #####: 1078:        src = tail->next = nstate_alloc(), tail = tail->next;
+        -: 1079:
+        -: 1080:        // maintain that `free` is an `nstate` with at least one unused epsilon
+        -: 1081:        // transition. if `epsilon1` is unused then use it to point to our
+        -: 1082:        // source state, but stay where we are because `epsilon0` is still
+        -: 1083:        // unused. otherwise, `epsilon0` is the only unused epsilon transition,
+        -: 1084:        // so use it to point to our source state and move over because the
+        -: 1085:        // current state has become saturated. the resulting binary tree is
+        -: 1086:        // unbalanced, but generating it is easy and it is still twice as
+        -: 1087:        // efficient as a linked list would be
+    #####: 1088:        if (!free->epsilon1)
+    #####: 1089:          free->epsilon1 = tail;
+        -: 1090:        else
+    #####: 1091:          free->epsilon0 = tail, free = tail;
+        -: 1092:      }
+        -: 1093:
+    #####: 1094:      src->target = nstates[ds2->id];
+    #####: 1095:      memcpy(src->label, transitions, sizeof(symset_t));
+        -: 1096:    }
+        -: 1097:  }
+        -: 1098:
+    #####: 1099:  tail->next = nfa.final;
+        -: 1100:
+        -: 1101:  // dfa_dump(dfa);
+        -: 1102:  // nfa_dump(nfa);
+        -: 1103:  // printf("%2d -> %2d\n", dfa_size, nfa_get_size(nfa));
+        -: 1104:
+    #####: 1105:  return nfa;
+        -: 1106:}
+------------------
+ltre_uncompile:
+      146: 1034:struct nfa ltre_uncompile(struct dstate *dfa) {
+      146: 1035:  int dfa_size = dfa_get_size(dfa);
+        -: 1036:
+      146: 1037:  struct nfa nfa = {.initial = nstate_alloc(),
+      146: 1038:                    .final = nstate_alloc(),
+        -: 1039:                    .complemented = false};
+        -: 1040:  struct nstate *tail = nfa.initial; // used to allocate new NFA states
+        -: 1041:
+      146: 1042:  struct nstate *nstates[dfa_size]; // mapping from DFA state to NFA state
+     1483: 1043:  for (int id = 0; id < dfa_size; id++)
+     1337: 1044:    nstates[id] = tail->next = nstate_alloc(), tail = tail->next;
+        -: 1045:
+      146: 1046:  nfa.initial->epsilon1 = nstates[dfa->id];
+        -: 1047:  // use `epsilon1` transitions to `nfa.final` to model accepting states
+     1483: 1048:  for (struct dstate *dstate = dfa; dstate; dstate = dstate->next)
+     1337: 1049:    if (dstate->accepting)
+      620: 1050:      nstates[dstate->id]->epsilon1 = nfa.final;
+        -: 1051:
+        -: 1052:  // the labeled transitions of a `dstate` may target multiple different states,
+        -: 1053:  // but that of an `nstate` may only target one, namely `nstate.target`. to
+        -: 1054:  // bridge the gap, DFA states are mapped not to a single NFA state, but to the
+        -: 1055:  // root of a binary tree of NFA states formed by `epsilon0` and `epsilon1`.
+     1483: 1056:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+        -: 1057:    struct nstate *free = NULL;
+        -: 1058:
+   288288: 1059:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -: 1060:      bool empty = true;
+   286951: 1061:      symset_t transitions = {0};
+ 73746407: 1062:      for (int chr = 0; chr < 256; chr++)
+ 73459456: 1063:        if (ds1->transitions[chr] == ds2)
+   342272: 1064:          bitset_set(transitions, chr), empty = false;
+        -: 1065:
+   286951: 1066:      if (empty)
+   283161: 1067:        continue;
+        -: 1068:
+        -: 1069:      struct nstate *src; // the "source" state for this labeled transition
+        -: 1070:
+        -: 1071:      // root->O-->O-->O-->O->free-->
+        -: 1072:      //   |   |   |   |   |   |
+        -: 1073:      //   O   O   O   O   O   O
+     3790: 1074:      if (free == NULL)
+        -: 1075:        // first iteration. make sure the root of the tree comes from `nstates`
+     1337: 1076:        free = nstates[ds1->id], src = free;
+        -: 1077:      else {
+     2453: 1078:        src = tail->next = nstate_alloc(), tail = tail->next;
+        -: 1079:
+        -: 1080:        // maintain that `free` is an `nstate` with at least one unused epsilon
+        -: 1081:        // transition. if `epsilon1` is unused then use it to point to our
+        -: 1082:        // source state, but stay where we are because `epsilon0` is still
+        -: 1083:        // unused. otherwise, `epsilon0` is the only unused epsilon transition,
+        -: 1084:        // so use it to point to our source state and move over because the
+        -: 1085:        // current state has become saturated. the resulting binary tree is
+        -: 1086:        // unbalanced, but generating it is easy and it is still twice as
+        -: 1087:        // efficient as a linked list would be
+     2453: 1088:        if (!free->epsilon1)
+     1221: 1089:          free->epsilon1 = tail;
+        -: 1090:        else
+     1232: 1091:          free->epsilon0 = tail, free = tail;
+        -: 1092:      }
+        -: 1093:
+     3790: 1094:      src->target = nstates[ds2->id];
+     3790: 1095:      memcpy(src->label, transitions, sizeof(symset_t));
+        -: 1096:    }
+        -: 1097:  }
+        -: 1098:
+      146: 1099:  tail->next = nfa.final;
+        -: 1100:
+        -: 1101:  // dfa_dump(dfa);
+        -: 1102:  // nfa_dump(nfa);
+        -: 1103:  // printf("%2d -> %2d\n", dfa_size, nfa_get_size(nfa));
+        -: 1104:
+      146: 1105:  return nfa;
+        -: 1106:}
+------------------
+        -: 1107:
+     122*: 1108:char *ltre_decompile(struct dstate *dfa) {
+        -: 1109:  // we codegen the DFA straight into a regular expression string. start by
+        -: 1110:  // turning the DFA into a GNFA stored as a matrix of `arrow`s on the stack,
+        -: 1111:  // each of which holds a regular expression string as label and a precedence
+        -: 1112:  // value for parenthesizing
+        -: 1113:  enum prec {
+        -: 1114:    ALT,    // outermost is an alternation
+        -: 1115:    CONCAT, // outermost is a concatenation
+        -: 1116:    QUANT,  // outermost is a quantifier
+        -: 1117:    SYMSET, // outermost is a symset
+        -: 1118:  };
+        -: 1119:  struct arrow {
+        -: 1120:    // we use a `NULL` label as a shorthand for empty /[]/ transitions an an
+        -: 1121:    // empty string as a shorthand for epsilon /()/ transitions. this way we can
+        -: 1122:    // test for /[]/ with `if (!label)` and test for /()/ with `if (!*label)`
+        -: 1123:    char *label;
+        -: 1124:    enum prec prec;
+        -: 1125:  };
+        -: 1126:
+     122*: 1127:  int dfa_size = dfa_get_size(dfa);
+        -: 1128:  // also create an auxiliary state and store it at index `dfa_size`
+     122*: 1129:  struct arrow arrows[dfa_size + 1][dfa_size + 1];
+     854*: 1130:  for (int id = 0; id <= dfa_size; id++)
+     732*: 1131:    arrows[dfa_size][id].label = arrows[id][dfa_size].label = NULL;
+        -: 1132:
+        -: 1133:  // create an epsilon /()/ transition from the auxiliary state to the DFA's
+        -: 1134:  // initial state
+     122*: 1135:  arrows[dfa_size][dfa->id].label = malloc(1);
+     122*: 1136:  *arrows[dfa_size][dfa->id].label = '\0';
+     122*: 1137:  arrows[dfa_size][dfa->id].prec = SYMSET;
+     732*: 1138:  for (struct dstate *ds1 = dfa; ds1; ds1 = ds1->next) {
+        -: 1139:    // create epsilon /()/ transitions from the DFA's accepting states to the
+        -: 1140:    // auxiliary state
+     610*: 1141:    if (ds1->accepting) {
+     261*: 1142:      arrows[ds1->id][dfa_size].label = malloc(1);
+     261*: 1143:      *arrows[ds1->id][dfa_size].label = '\0';
+     261*: 1144:      arrows[ds1->id][dfa_size].prec = SYMSET;
+        -: 1145:    }
+        -: 1146:
+   20494*: 1147:    for (struct dstate *ds2 = dfa; ds2; ds2 = ds2->next) {
+        -: 1148:      bool empty = true;
+   19884*: 1149:      symset_t transitions = {0};
+ 5110188*: 1150:      for (int chr = 0; chr < 256; chr++)
+ 5090304*: 1151:        if (ds1->transitions[chr] == ds2)
+  156160*: 1152:          bitset_set(transitions, chr), empty = false;
+        -: 1153:
+   19884*: 1154:      arrows[ds1->id][ds2->id].label = NULL;
+        -: 1155:
+   19884*: 1156:      if (empty)
+   18306*: 1157:        continue;
+        -: 1158:
+    1578*: 1159:      char *fmt = symset_fmt(transitions);
+    1578*: 1160:      arrows[ds1->id][ds2->id].label = malloc(strlen(fmt) + 1);
+        -: 1161:      strcpy(arrows[ds1->id][ds2->id].label, fmt);
+    1578*: 1162:      arrows[ds1->id][ds2->id].prec = SYMSET;
+        -: 1163:    }
+        -: 1164:  }
+        -: 1165:
+        -: 1166:  // iteratively select one state according to some heuristic and reroute all
+        -: 1167:  // its inbound and outbound transitions so as to bypass that state, while also
+        -: 1168:  // taking care of self-loops. don't ever select the auxiliary state, so that
+        -: 1169:  // when we're done the final regular expression ends up as a self-loop on the
+        -: 1170:  // auxiliary state. choosing the state with minimal vertex degree seems to
+        -: 1171:  // work okay, sa that's the heuristic we're using
+        -: 1172:  while (1) {
+        -: 1173:    int best_fit;
+        -: 1174:    int min_degree = INT_MAX;
+   21226*: 1175:    for (int id1 = 0; id1 < dfa_size; id1++) {
+        -: 1176:      int degree = 0;
+        -: 1177:      // double-counts self-loops, which penalizes them, which is probably good
+ 1975034*: 1178:      for (int id2 = 0; id2 < dfa_size; id2++)
+ 1954540*: 1179:        degree +=
+ 1954540*: 1180:            (arrows[id1][id2].label != NULL) + (arrows[id2][id1].label != NULL);
+   20494*: 1181:      if (degree == 0)
+   10247*: 1182:        continue; // state has already been processed
+   10247*: 1183:      if (degree < min_degree)
+        -: 1184:        min_degree = degree, best_fit = id1;
+        -: 1185:    }
+        -: 1186:
+     732*: 1187:    if (min_degree == INT_MAX)
+        -: 1188:      break; // all states have been processed
+        -: 1189:
+        -: 1190:    // iterate through all pairs of inbound and outbound transitions, including
+        -: 1191:    // those to and from the auxiliary state
+   21104*: 1192:    for (int id1 = 0; id1 <= dfa_size; id1++) {
+   20494*: 1193:      if (id1 == best_fit)
+     610*: 1194:        continue; // inbound transition must not be a self-loop
+ 1974424*: 1195:      for (int id2 = 0; id2 <= dfa_size; id2++) {
+ 1954540*: 1196:        if (id2 == best_fit)
+   19884*: 1197:          continue; // outbound transition must not be a self-loop
+ 1934656*: 1198:        struct arrow in = arrows[id1][best_fit];  // current inbound transition
+ 1934656*: 1199:        struct arrow out = arrows[best_fit][id2]; // current outbout transition
+ 1934656*: 1200:        struct arrow self = arrows[best_fit][best_fit]; // self-transition
+ 1934656*: 1201:        struct arrow existing = arrows[id1][id2]; // existing bypass transition
+        -: 1202:
+        -: 1203:        // (existing)|[](self)(out) == (existing)|(in)(self)[] == (existing)
+ 1934656*: 1204:        if (!in.label || !out.label)
+ 1932967*: 1205:          continue;
+        -: 1206:
+        -: 1207:        // get rid of the self-transition by concatenating it either onto the
+        -: 1208:        // the inbound or outbound transition
+        -: 1209:        struct arrow first, second;
+        -: 1210:
+        -: 1211:        ptrdiff_t diff;
+    1689*: 1212:        if (!self.label || !*self.label) {
+        -: 1213:          // (in)[]*(out) == (in)()*(out) == (in)(out)
+        -: 1214:          first = in, second = out;
+     209*: 1215:        } else if (in.prec >= CONCAT && self.prec >= CONCAT &&
+     167*: 1216:                   (diff = strlen(in.label) - strlen(self.label)) >= 0 &&
+      98*: 1217:                   strcmp(in.label + diff, self.label) == 0) {
+        -: 1218:          // hackily try to avoid breaking apart symsets in the inbound arrow
+      59*: 1219:          if (diff >= 1 && strchr("^-\\", in.label[diff - 1]) &&
+       1*: 1220:              (diff == 1 || in.label[diff - 2] != '\\'))
+       3*: 1221:            goto nevermind; // preserve ^aa* a-zz* \^a^a* but not \^aa* \-aa*
+      56*: 1222:          if (diff >= 2 && strncmp(&in.label[diff - 2], "\\x", 2) == 0 &&
+    #####: 1223:              (diff == 2 || in.label[diff - 3] != '\\'))
+    #####: 1224:            goto nevermind; // preserve \x0a(0a)* but not \\x0a(0a*)
+      56*: 1225:          if (diff >= 3 && strncmp(&in.label[diff - 3], "\\x", 2) == 0 &&
+    #####: 1226:              (diff == 3 || in.label[diff - 4] != '\\'))
+       2*: 1227:            goto nevermind; // preserve \x0aa* but not \\x0aa*
+        -: 1228:
+        -: 1229:          // (in_pre)(self)+(out) where (in) == (in_pre)(self)
+      54*: 1230:          first.label = malloc(strlen(in.label) + 5 + 1);
+        -: 1231:          char *p = first.label;
+        -: 1232:          if (diff != 0 && in.prec < CONCAT)
+        -: 1233:            *p++ = '(';
+      54*: 1234:          memcpy(p, in.label, diff), p += diff;
+        -: 1235:          if (diff != 0 && in.prec < CONCAT)
+        -: 1236:            *p++ = ')';
+      54*: 1237:          if (self.prec <= QUANT)
+    #####: 1238:            *p++ = '(';
+      54*: 1239:          strcpy(p, self.label), p += strlen(self.label);
+      54*: 1240:          if (self.prec <= QUANT)
+    #####: 1241:            *p++ = ')';
+      54*: 1242:          *p++ = '+';
+      54*: 1243:          *p++ = '\0';
+        -: 1244:          first.prec = CONCAT;
+        -: 1245:          second = out;
+        -: 1246:        } else
+     150*: 1247:        nevermind:
+     155*: 1248:          if (out.prec >= CONCAT && self.prec >= CONCAT &&
+      92*: 1249:              (diff = strlen(out.label) - strlen(self.label)) >= 0 &&
+      36*: 1250:              strncmp(out.label, self.label, strlen(self.label)) == 0) {
+        -: 1251:            // it may appear that `a*a-z` would be incorrectly broken apart and
+        -: 1252:            // converted to `a+-z`, but this will never happen because we're
+        -: 1253:            // decompiling a DFA and therefore if there is a self-loop on `a`,
+        -: 1254:            // there can be no outbound transitions on `a`
+        -: 1255:
+        -: 1256:            // (in)(self)+(out_post) where (out) == (self)(out_post)
+    #####: 1257:            second.label = malloc(strlen(out.label) + 5 + 1);
+        -: 1258:            char *p = second.label;
+    #####: 1259:            if (self.prec <= QUANT)
+    #####: 1260:              *p++ = '(';
+    #####: 1261:            strcpy(p, self.label), p += strlen(self.label);
+    #####: 1262:            if (self.prec <= QUANT)
+    #####: 1263:              *p++ = ')';
+    #####: 1264:            *p++ = '+';
+        -: 1265:            if (diff != 0 && out.prec < CONCAT)
+        -: 1266:              *p++ = '(';
+    #####: 1267:            memcpy(p, out.label + diff, diff), p += diff;
+        -: 1268:            if (diff != 0 && out.prec < CONCAT)
+        -: 1269:              *p++ = ')';
+    #####: 1270:            *p++ = '\0';
+        -: 1271:            second.prec = CONCAT;
+        -: 1272:            first = in;
+        -: 1273:          } else {
+        -: 1274:            // (in)(self)*(out)
+        -: 1275:            second.label =
+     155*: 1276:                malloc(strlen(self.label) + strlen(out.label) + 5 + 1);
+        -: 1277:            char *p = second.label;
+     155*: 1278:            if (self.prec <= QUANT)
+      11*: 1279:              *p++ = '(';
+     155*: 1280:            strcpy(p, self.label), p += strlen(self.label);
+     155*: 1281:            if (self.prec <= QUANT)
+      11*: 1282:              *p++ = ')';
+     155*: 1283:            *p++ = '*';
+     155*: 1284:            if (out.prec < CONCAT)
+      56*: 1285:              *p++ = '(';
+     155*: 1286:            strcpy(p, out.label), p += strlen(out.label);
+     155*: 1287:            if (out.prec < CONCAT)
+      56*: 1288:              *p++ = ')';
+     155*: 1289:            *p++ = '\0';
+        -: 1290:            second.prec = CONCAT;
+        -: 1291:            first = in;
+        -: 1292:          }
+        -: 1293:
+        -: 1294:        // concatenate the inbound and outbound transitions to create a
+        -: 1295:        // transition that bypasses the best-fit state
+        -: 1296:        struct arrow bypass;
+        -: 1297:
+    1689*: 1298:        if (!*first.label) {
+        -: 1299:          // ()(second) == (second)
+        -: 1300:          bypass = second;
+    1428*: 1301:        } else if (!*second.label) {
+        -: 1302:          // (first)() == (first)
+        -: 1303:          bypass = first;
+        -: 1304:        } else {
+        -: 1305:          // (first)(second)
+        -: 1306:          bypass.label =
+    1227*: 1307:              malloc(strlen(first.label) + strlen(second.label) + 4 + 1);
+        -: 1308:          char *p = bypass.label;
+    1227*: 1309:          if (first.prec < CONCAT)
+     212*: 1310:            *p++ = '(';
+    1227*: 1311:          strcpy(p, first.label), p += strlen(first.label);
+    1227*: 1312:          if (first.prec < CONCAT)
+     212*: 1313:            *p++ = ')';
+    1227*: 1314:          if (second.prec < CONCAT)
+     195*: 1315:            *p++ = '(';
+    1227*: 1316:          strcpy(p, second.label), p += strlen(second.label);
+    1227*: 1317:          if (second.prec < CONCAT)
+     195*: 1318:            *p++ = ')';
+    1227*: 1319:          *p++ = '\0';
+        -: 1320:          bypass.prec = CONCAT;
+        -: 1321:        }
+        -: 1322:
+        -: 1323:        // if there already exists a transition between the states we're
+        -: 1324:        // targetting, merge it with our bypass transition using an alternation
+        -: 1325:        struct arrow merged;
+        -: 1326:
+    1689*: 1327:        if (!bypass.label) {
+        -: 1328:          // (existing)|[] == (existing)
+        -: 1329:          merged = existing;
+    1689*: 1330:        } else if (!existing.label) {
+        -: 1331:          // []|(bypass) == (bypass)
+     556*: 1332:          if (bypass.label == first.label || bypass.label == second.label) {
+     333*: 1333:            merged.label = malloc(strlen(bypass.label) + 1);
+        -: 1334:            strcpy(merged.label, bypass.label);
+     333*: 1335:            merged.prec = bypass.prec;
+        -: 1336:          } else
+        -: 1337:            merged = bypass;
+    1133*: 1338:        } else if (!*existing.label) {
+        -: 1339:          // ()|(bypass) == (bypass)?
+      34*: 1340:          merged.label = malloc(strlen(bypass.label) + 3 + 1);
+        -: 1341:          char *p = merged.label;
+      34*: 1342:          if (bypass.prec <= QUANT)
+       9*: 1343:            *p++ = '(';
+      34*: 1344:          strcpy(p, bypass.label), p += strlen(bypass.label);
+      34*: 1345:          if (bypass.prec <= QUANT)
+       9*: 1346:            *p++ = ')';
+      34*: 1347:          *p++ = '?';
+      34*: 1348:          *p++ = '\0';
+        -: 1349:          merged.prec = QUANT;
+        -: 1350:        } else {
+        -: 1351:          // (existing)|(bypass)
+        -: 1352:          merged.label =
+    1099*: 1353:              malloc(strlen(existing.label) + strlen(bypass.label) + 1 + 1);
+        -: 1354:          char *p = merged.label;
+    1099*: 1355:          strcpy(p, existing.label), p += strlen(existing.label);
+    1099*: 1356:          *p++ = '|';
+    1099*: 1357:          strcpy(p, bypass.label), p += strlen(bypass.label);
+    1099*: 1358:          *p++ = '\0';
+        -: 1359:          merged.prec = ALT;
+        -: 1360:        }
+        -: 1361:
+    1689*: 1362:        if (first.label != in.label)
+      54*: 1363:          free(first.label);
+    1689*: 1364:        if (second.label != out.label)
+     155*: 1365:          free(second.label);
+    1689*: 1366:        if (bypass.label != first.label && bypass.label != second.label &&
+        -: 1367:            bypass.label != merged.label)
+    1004*: 1368:          free(bypass.label);
+    1689*: 1369:        if (existing.label != merged.label)
+    1689*: 1370:          free(existing.label);
+        -: 1371:
+        -: 1372:        // replace the existing bypass transition with our merged transition
+    1689*: 1373:        arrows[id1][id2] = merged;
+        -: 1374:      }
+        -: 1375:    }
+        -: 1376:
+        -: 1377:    // all transitions going through the best-fit state have been rerouted, so
+        -: 1378:    // replace them all with empty /[]/ transitions, effectively eliminating
+        -: 1379:    // the state by isolating it
+   21104*: 1380:    for (int id = 0; id <= dfa_size; id++) {
+   20494*: 1381:      free(arrows[id][best_fit].label), arrows[id][best_fit].label = NULL;
+   20494*: 1382:      free(arrows[best_fit][id].label), arrows[best_fit][id].label = NULL;
+        -: 1383:    }
+        -: 1384:  }
+        -: 1385:
+        -: 1386:  // the final regular expression ends up as a self-loop on the auxiliary state
+     122*: 1387:  char *regex = arrows[dfa_size][dfa_size].label;
+     122*: 1388:  if (!regex)
+       8*: 1389:    regex = malloc(3), strcpy(regex, "[]");
+        -: 1390:
+     122*: 1391:  return regex;
+        -: 1392:}

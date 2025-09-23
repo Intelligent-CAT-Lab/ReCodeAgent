@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmdb.a CMakeFiles/mdb.dir/mdb.c.o
+/usr/bin/ranlib libmdb.a

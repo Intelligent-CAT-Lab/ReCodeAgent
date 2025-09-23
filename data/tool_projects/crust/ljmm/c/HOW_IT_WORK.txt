@@ -1,0 +1,152 @@
+1. Some Background
+  1.1 C/C++ program Layout
+
+      A C/C++ program on Linux/x86-64 consists of following sessions, in the
+    ascending order of virtual address:
+
+      s1: text, including code and read-only data,
+      s2: data, variables with non-zero initialized value
+      s3: BSS (i.e. block starts by symbol), variables without uninitialized value
+      s4: Randomization, to alleviate vulnerability
+      s5: heap
+      s6: memory-map-area, shared objects are loaded here as well.
+      s7: stack
+      s8: OS
+
+      Both heap and stack grow over time, but in opposite direction. The frontier
+    of the heap is tranditionally called "brk" point, and can be queried via
+    system call "sbrk(0)".
+
+      The reader is referred to [1] for details.
+
+  1.2. mmap()
+
+      The prototype of mmap() is following:
+
+        void *mmap(void *addr, size_t, int, int flags, int, off_t);
+
+      If the "addr" is non-zero, mmap() attemps to allocate from the specified
+    address aligned to page boundary; otherwise, mmap() tries to allocate
+    from default areas. If MAP_32BIT flag is not specified, the default area
+    will start from 1/3 of process's address space, and if the flag is set,
+    the area is confined in [1G..2G].
+
+      Luajit relies on flag MAP_32BIT to allocate blocks with 31-bit address.
+
+      There is a very interesting article about MAP_32BIT flag[2].
+
+      As of this writing, if "-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE" is
+    added to compile flag, the GLIBC will go for mmap64() instead of mmap().
+
+  1.3 GNU libc malloc()
+
+      If it is to allocate a big block, malloc() directly call mmap() to serve
+    the request; otherwise, it tries to allocate from heap. In case the heap
+    does not have unallocated block to satisfy the allocation request, it will
+    expand the heap, and allocate from the expanded the heap.
+
+      It is not always possible to expand heap. For example, there is a mmapped
+    block in the way. If this is the case, GLIBC first mmap a big block (64k,
+    128k?), and then cut a small piece out of it to satisfy the allocation
+    request.
+
+
+2. How it works
+
+    The idea is pretty simple. It is to replace the mmap64() with a wrapper
+  function called __wrap_mmap64(). The wrapper function will in turn calls
+  mmap64() first; if prevails, then the return value of mmap64() is returned
+  directly to the caller; otherwise, it examines the /proc/$PID/maps to find
+  a best fit, in the space of [sbrk(0), 1G], for the mmap-request.
+
+    In order to prevent malloc() from using the address space of [sbrk(0), 1G],
+  it calls mmap() to map a tiny block right after sbrk(0) when the application
+  is launched. For Nginx, the sbrk(0) is quite small. So, Nginx has about 2G
+  (from sbrk(0) to 2G) to "abuse" with this workaround.
+
+  2.1 Replace or preempt "mmap64"
+
+    In "theory", the most straightforward way to replace the mmap64() function
+  wither its wrapper is just to modify Luajit's source code. Although the
+  change is quite small, we have to create a branch and keep it in sync with
+  upstream, which seems to be a big hassle to me.
+
+    An seemly easier alternative is to preempt the mmap64() symbol in libc
+  with its wrap function defined in application (in our case, Nginx).
+  GLIBC functions are usually defined as weak function, and common pratice
+  to override a GLIBC function is to define a function in the application
+  with the same name but with stronger attribute.
+
+    Following this trick, the function overriding the GLIBC's mmap64() would
+  look like following:
+    -----------------------------------------------------
+    void*
+    mmap64(....) {
+        if (need-to-call-mmap64-in-glibc) {
+            // get the pointer to the mmap64 defined in GLIBC
+            real_mmap64 = dlsym(RDLD_NEXT, "mmap64");
+            ...
+        }
+        ...
+    }
+    ------------------------------------------------------
+
+   Note that the overriding mmap64() function needs to get the pointer of
+ the mmap64() defined in GLIBC. This is done by dlsym(). Unfortunately,
+ dlsym() will call malloc() which may in turn call mmap64(), and then
+ would fall into infinite loop!
+
+   So preempt mmap64() isn't viable. Life would be easier if application
+ links libluajit static archive instead of shared object. In that case,
+ it just need to feed flag --wrap=mmap64 to the linker command which will
+ replace all ocurrences of mmap64() in the application with __wrap_mmap64(),
+ and replace __real_mmap64() with mapp64(). To use this trick, we need to
+ defined the wrapper function as __wrap_mmap64,
+
+   Would linking against static archive sacrifices some merits shared objects
+ intrisically have? In our case, I would think it is better to link against
+ libluajit.a, The reasons are:
+
+    o. In our system, there is only one application use luajit, the Nginx.
+       While each machine has quite a few Nginx processes running at once,
+       they share the same piece of code. So linking libluajit.a does not
+       incur code duplication.
+
+    o. There is no cost arising from PIC model.
+
+
+3. Why workaround is provided as an object file
+
+   At beginning, this workaround was provided as a static archive, and it
+ is linked to Nginx by specifying following option to Nginx's configure
+ command:
+    --with-ld-opt='... -Wl,--wrap=mmap64 -L/the/path/to/the/workaround/ -lljmm ...'
+
+    We soon realize lua-nginx-module does not configure. lua-nginx-module's specific
+  link flag is specified following command:
+    "ngx_feature_libs="... -lluajit-5.1 -lm"
+
+    The additional linker flags we specified for Nginx is prepend, instead of
+  appended to lua-nginx-module's link flags, so it ends up to be following:
+     "some/objects -Wl,--wrap=mmap64 -L/the/path/to/the/workaround/ -lljmm ... -lluajit-5.1 -lm"
+
+    Note that linker go through objects and libraries only once. In this process,
+  it remember *all* symbols it come across in object files, while for the
+  libraries, it only remember those symbols that are referenced before.
+
+    In the above command line, the "-Wl,--wrap=mmap64" ask linker to replace all
+  occurrences of mmap64 with __wrap_mmap64. However, there is no occurrence of
+  mmap64 in the "some/objects" at all, linker think __wrap_mmap64 is not needed
+  in the executable, and hence ignore it. However, when it visit -lluajit-5.1,
+  some objects are pulled into the executable, and mmap64()s are repalced with
+  __wrap_mmap64()s. Since __wrap_mmap64() is ignored previously, the link command
+  will fail.
+
+    There are two solutions to the problem:
+    - change Nginx's configure script such that -lljmm is permuted after -lluajit-5.1, or
+    - just link this workaround as a regular object file.
+
+   We go for the 2nd option
+
+[1] http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory/
+[2] http://timetobleed.com/digging-out-the-craziest-bug-you-never-heard-about-from-2008-a-linux-threading-regression/

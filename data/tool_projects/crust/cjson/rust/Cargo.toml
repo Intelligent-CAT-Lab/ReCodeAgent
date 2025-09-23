@@ -1,0 +1,17 @@
+[package]
+name = "cJSON"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test_example"
+path = "src/bin/test_example.rs"
+
+[[test]]
+name = "test_main"
+path = "src/bin/test_main.rs"

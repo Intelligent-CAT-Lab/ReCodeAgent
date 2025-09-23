@@ -1,0 +1,9 @@
+(= counter 5)
+(= result "")
+(while (not (eq counter 0))
+  (progn
+    (= result (+ result "while... "))
+    (= counter (- counter 1))
+  )
+)
+(print result)

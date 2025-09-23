@@ -1,0 +1,85 @@
+        -:    0:Source:morton.c
+        -:    1:/* -*- mode:c;indent-tabs-mode:nil;c-basic-offset:4;coding:utf-8 -*-
+        -:    2:   vi: set et ft=c ts=4 sts=4 sw=4 fenc=utf-8 :vi
+        -:    3:
+        -:    4:   Copyright 2024 Justine Alexandra Roberts Tunney
+        -:    5:
+        -:    6:   Permission to use, copy, modify, and/or distribute this software for
+        -:    7:   any purpose with or without fee is hereby granted, provided that the
+        -:    8:   above copyright notice and this permission notice appear in all copies.
+        -:    9:
+        -:   10:   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+        -:   11:   WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+        -:   12:   WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+        -:   13:   AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+        -:   14:   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+        -:   15:   PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+        -:   16:   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+        -:   17:   PERFORMANCE OF THIS SOFTWARE. */
+        -:   18:
+        -:   19:#include "morton.h"
+        -:   20:
+        -:   21:#ifdef __BMI2__
+        -:   22:#include <immintrin.h>
+        -:   23:#endif
+        -:   24:
+        -:   25:/**
+        -:   26: * Interleaves bits.
+        -:   27: *
+        -:   28: *     morton(0b1100,0b0011)
+        -:   29: *              │││└──┐││││
+        -:   30: *              ││└─┐ │││││
+        -:   31: *              │└┐ │ │││││
+        -:   32: *              │┌─────┘│││
+        -:   33: *              │││ │ │ │││
+        -:   34: *              │││┌────┘││
+        -:   35: *              │││││ │  ││
+        -:   36: *              │││││┌───┘│
+        -:   37: *              │││││││┌──┘
+        -:   38: *            0b10100101
+        -:   39: */
+  4000008:   40:unsigned long long morton(unsigned hi, unsigned lo) {
+        -:   41:#ifdef __BMI2__
+        -:   42:    return _pdep_u64(lo, 0x5555555555555555) |
+        -:   43:           _pdep_u64(hi, 0xAAAAAAAAAAAAAAAA);
+        -:   44:#else
+  4000008:   45:    unsigned long long xu = lo;
+  4000008:   46:    unsigned long long yu = hi;
+  4000008:   47:    xu = (xu | xu << 020) & 0x0000FFFF0000FFFF;
+  4000008:   48:    xu = (xu | xu << 010) & 0x00FF00FF00FF00FF;
+  4000008:   49:    xu = (xu | xu << 004) & 0x0F0F0F0F0F0F0F0F;
+  4000008:   50:    xu = (xu | xu << 002) & 0x3333333333333333;
+  4000008:   51:    xu = (xu | xu << 001) & 0x5555555555555555;
+  4000008:   52:    yu = (yu | yu << 020) & 0x0000FFFF0000FFFF;
+  4000008:   53:    yu = (yu | yu << 010) & 0x00FF00FF00FF00FF;
+  4000008:   54:    yu = (yu | yu << 004) & 0x0F0F0F0F0F0F0F0F;
+  4000008:   55:    yu = (yu | yu << 002) & 0x3333333333333333;
+  4000008:   56:    yu = (yu | yu << 001) & 0x5555555555555555;
+  4000008:   57:    return xu | yu << 1;
+        -:   58:#endif
+        -:   59:}
+        -:   60:
+  8000000:   61:static inline unsigned unmortoner(unsigned long long x) {
+  8000000:   62:    x &= 0x5555555555555555;
+  8000000:   63:    x = (x | x >> 001) & 0x3333333333333333;
+  8000000:   64:    x = (x | x >> 002) & 0x0F0F0F0F0F0F0F0F;
+  8000000:   65:    x = (x | x >> 004) & 0x00FF00FF00FF00FF;
+  8000000:   66:    x = (x | x >> 010) & 0x0000FFFF0000FFFF;
+  8000000:   67:    x = (x | x >> 020) & 0x00000000FFFFFFFF;
+  8000000:   68:    return x;
+        -:   69:}
+        -:   70:
+        -:   71:/**
+        -:   72: * Deinterleaves bits.
+        -:   73: */
+  4000000:   74:struct Morton unmorton(unsigned long long z) {
+        -:   75:    struct Morton m;
+        -:   76:#ifdef __BMI2__
+        -:   77:    m.hi = _pext_u64(z, 0x5555555555555555);
+        -:   78:    m.lo = _pext_u64(z, 0xAAAAAAAAAAAAAAAA);
+        -:   79:#else
+  4000000:   80:    m.hi = unmortoner(z);
+  4000000:   81:    m.lo = unmortoner(z >> 1);
+        -:   82:#endif
+  4000000:   83:    return m;
+        -:   84:}

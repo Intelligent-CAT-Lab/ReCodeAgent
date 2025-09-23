@@ -1,0 +1,13 @@
+[package]
+name = "avalanche"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "matrix_test"
+path = "src/bin/matrix_test.rs"

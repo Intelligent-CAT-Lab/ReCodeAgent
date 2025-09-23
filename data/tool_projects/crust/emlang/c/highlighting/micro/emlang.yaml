@@ -1,0 +1,22 @@
+filetype: emlang
+detect:
+    filename: "\\.eml$"
+
+rules:
+    - constant.string:
+        start: "\""
+        end:   "\""
+        skip:  "\\\\."
+        rules:
+            - constant.specialChar: "\\\\[\"nrtfvbae\\\\]"
+
+    - constant.number: "\\b([0-9\\.]+)\\b"
+
+    - statement: "(:O|:\\)|:\\(|:/|:\\\\|:P|;\\)|;\\(|x\\)|x\\(|:>|:<|:\\||x\\||X_X|:D|:S|:@|@:)"
+    - preproc:   "(:3|;3|x3|><>|<3)"
+
+    - comment:
+        start: ":x"
+        end:   "$"
+        rules:
+            - todo: "(TODO|XXX|FIXME|READABLE):?"

@@ -1,0 +1,8 @@
+(defun get-precedence (op)
+  (if (|| (eq op "+") (eq op "-")) 1 (if (|| (eq op "*") (eq op "/")) 2) 0)
+)
+
+(print (get-precedence "+"))
+(print (get-precedence "-"))
+(print (get-precedence "*"))
+(print (get-precedence "/"))

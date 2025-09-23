@@ -1,0 +1,54 @@
+[
+    {
+        "lines": 86,
+        "coverage": 54.65
+    },
+    {
+        "lines": 4,
+        "coverage": 100.0
+    },
+    {
+        "lines": 9,
+        "coverage": 100.0
+    },
+    {
+        "lines": 112,
+        "coverage": 0.0
+    },
+    {
+        "lines": 7,
+        "coverage": 85.71
+    },
+    {
+        "lines": 48,
+        "coverage": 100.0
+    },
+    {
+        "lines": 59,
+        "coverage": 100.0
+    },
+    {
+        "lines": 117,
+        "coverage": 64.96
+    },
+    {
+        "lines": 40,
+        "coverage": 100.0
+    },
+    {
+        "lines": 42,
+        "coverage": 100.0
+    },
+    {
+        "lines": 5,
+        "coverage": 100.0
+    },
+    {
+        "lines": 107,
+        "coverage": 100.0
+    },
+    {
+        "lines": 636,
+        "coverage": 69.65
+    }
+]

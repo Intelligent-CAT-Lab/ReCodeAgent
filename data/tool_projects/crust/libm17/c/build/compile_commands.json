@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc -Dlibm17_EXPORTS -I/mnt/nas/anirudh/exps/CBench/libm17 -g -fPIC --coverage -std=gnu11 -o CMakeFiles/libm17.dir/encode/encode.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/encode/encode.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/encode/encode.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc -Dlibm17_EXPORTS -I/mnt/nas/anirudh/exps/CBench/libm17 -g -fPIC --coverage -std=gnu11 -o CMakeFiles/libm17.dir/decode/decode.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/decode/decode.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/decode/decode.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc -Dlibm17_EXPORTS -I/mnt/nas/anirudh/exps/CBench/libm17 -g -fPIC --coverage -std=gnu11 -o CMakeFiles/libm17.dir/phy/phy.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/phy/phy.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/phy/phy.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc -Dlibm17_EXPORTS -I/mnt/nas/anirudh/exps/CBench/libm17 -g -fPIC --coverage -std=gnu11 -o CMakeFiles/libm17.dir/math/math.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/math/math.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/math/math.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc -Dlibm17_EXPORTS -I/mnt/nas/anirudh/exps/CBench/libm17 -g -fPIC --coverage -std=gnu11 -o CMakeFiles/libm17.dir/payload/payload.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/payload/payload.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/payload/payload.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc -Dlibm17_EXPORTS -I/mnt/nas/anirudh/exps/CBench/libm17 -g -fPIC --coverage -std=gnu11 -o CMakeFiles/libm17.dir/m17.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/m17.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/m17.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc  -I/mnt/nas/anirudh/exps/CBench/libm17 -g --coverage -std=gnu11 -o CMakeFiles/m17-static.dir/encode/encode.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/encode/encode.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/encode/encode.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc  -I/mnt/nas/anirudh/exps/CBench/libm17 -g --coverage -std=gnu11 -o CMakeFiles/m17-static.dir/decode/decode.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/decode/decode.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/decode/decode.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc  -I/mnt/nas/anirudh/exps/CBench/libm17 -g --coverage -std=gnu11 -o CMakeFiles/m17-static.dir/phy/phy.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/phy/phy.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/phy/phy.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc  -I/mnt/nas/anirudh/exps/CBench/libm17 -g --coverage -std=gnu11 -o CMakeFiles/m17-static.dir/math/math.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/math/math.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/math/math.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc  -I/mnt/nas/anirudh/exps/CBench/libm17 -g --coverage -std=gnu11 -o CMakeFiles/m17-static.dir/payload/payload.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/payload/payload.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/payload/payload.c"
+},
+{
+  "directory": "/mnt/nas/anirudh/exps/CBench/libm17/build",
+  "command": "/usr/bin/cc  -I/mnt/nas/anirudh/exps/CBench/libm17 -g --coverage -std=gnu11 -o CMakeFiles/m17-static.dir/m17.c.o -c /mnt/nas/anirudh/exps/CBench/libm17/m17.c",
+  "file": "/mnt/nas/anirudh/exps/CBench/libm17/m17.c"
+}
+]

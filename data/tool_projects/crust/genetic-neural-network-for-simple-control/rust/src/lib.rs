@@ -1,0 +1,13 @@
+pub mod fit_functions;
+pub mod genetic_operations;
+pub mod general_math;
+pub mod model_system;
+pub mod neural_network;
+pub mod pid_controller;
+pub mod signal_designer;
+pub mod systems_builder;
+pub mod population;
+pub mod sort;
+pub mod activation_fnc;
+pub mod input_toolbox;
+pub mod matrix_math;

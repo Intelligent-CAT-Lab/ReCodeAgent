@@ -1,0 +1,45 @@
+        -:    0:Source:test/test.c
+        -:    1:#include <stdio.h>
+        -:    2:#include <stdlib.h>
+        -:    3:
+        -:    4:#include "vcd.h"
+        -:    5:
+        1:    6:void print_vcd(vcd_t *vcd) {
+        1:    7:    printf("{\n\tdate=\"%s\",\n\tversion=\"%s\",\n\ttimescale= {\n\t\tunit=\"%s\",\n\t\tscale=\"%zu\"\n\t},\n\tsignal= "
+        -:    8:           "{\n",
+        1:    9:           vcd->date, vcd->version, vcd->timescale.unit, vcd->timescale.scale);
+        8:   10:    for (int i = 0; i < vcd->signals_count; ++i) {
+        7:   11:        printf("\t\t%s= {\n\t\t\tsize=%zu,\n\t\t\tchanges= {\n", vcd->signals[i].name, vcd->signals[i].size);
+       37:   12:        for (int j = 0; j < vcd->signals[i].changes_count; ++j) {
+       30:   13:            printf("\t\t\t\t{\n\t\t\t\t\ttimestamp=%u,\n\t\t\t\t\tvalue=%s\n\t\t\t\t},\n",
+       30:   14:                   vcd->signals[i].value_changes[j].timestamp, vcd->signals[i].value_changes[j].value);
+        -:   15:        }
+        7:   16:        printf("\t\t\t},\n\t\t},\n");
+        -:   17:    }
+        1:   18:    printf("\t}\n}\n");
+        1:   19:}
+        -:   20:
+        1:   21:int main(int argc, char *argv[]) {
+        1:   22:    if (argc % 2 == 1) {
+    #####:   23:        fprintf(stderr, "Usage: test <vcd-file> [signal-name timestamp] ...\n");
+    #####:   24:        exit(EXIT_FAILURE);
+        -:   25:    }
+        -:   26:
+        1:   27:    vcd_t *vcd = vcd_read_from_path(argv[1]);
+        1:   28:    if (vcd == NULL) {
+    #####:   29:        fprintf(stderr, "Could not read the VCD\n");
+    #####:   30:        return 1;
+        -:   31:    }
+        -:   32:
+        1:   33:    print_vcd(vcd);
+        1:   34:    printf("\n");
+        -:   35:
+       1*:   36:    for (int i = 2; i < argc; i += 2) {
+    #####:   37:        char *signal_name = argv[i];
+    #####:   38:        signal_t *signal = vcd_get_signal_by_name(vcd, signal_name);
+    #####:   39:        timestamp_t timestamp = strtol(argv[i + 1], NULL, 0);
+    #####:   40:        printf("%s at %u equals %s\n", argv[i], timestamp, vcd_signal_get_value_at_timestamp(signal, timestamp));
+        -:   41:    }
+        -:   42:
+        1:   43:    free(vcd);
+        -:   44:}

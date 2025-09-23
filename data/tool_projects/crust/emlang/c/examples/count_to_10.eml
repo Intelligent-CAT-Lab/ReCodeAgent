@@ -1,0 +1,7 @@
+0 :x Iterator
+
+1 :@ :x Start the loop (it checks the top of the stack for a non-0 integer value)
+	1 ;)       :x Increment the iterator
+	0 :D :O :) :x Duplicate the iterator and print it
+	0 :D 10 :< :x Duplicate the iterator and check if its less than 10
+@:

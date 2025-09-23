@@ -1,0 +1,11 @@
+pub const TRUSTED_CHK_INIT: char = 'B';
+pub const TRUSTED_CHK_LOAD: char = 'L';
+pub const TRUSTED_CHK_END_LOAD: char = 'E';
+pub const TRUSTED_CHK_CLS_PRODUCE: char = 'a';
+pub const TRUSTED_CHK_CLS_IMPORT: char = 'i';
+pub const TRUSTED_CHK_CLS_DELETE: char = 'd';
+pub const TRUSTED_CHK_VALIDATE_UNSAT: char = 'V';
+pub const TRUSTED_CHK_VALIDATE_SAT: char = 'M';
+pub const TRUSTED_CHK_TERMINATE: char = 'T';
+pub const TRUSTED_CHK_RES_ACCEPT: char = 'A';
+pub const TRUSTED_CHK_RES_ERROR: char = 'E';

@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+# diff -u <(./chtrie.o < test.in) test.out
+# print output of chtrie.o < test.in
+echo ./chtrie.o < test.in
+echo All tests passed.

@@ -1,0 +1,13 @@
+[package]
+name = "LTRE"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test"
+path = "src/bin/test.rs"

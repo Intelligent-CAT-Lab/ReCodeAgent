@@ -1,0 +1,93 @@
+        -:    0:Source:tests/test_helpers.c
+        -:    1:#define _GNU_SOURCE
+        -:    2:
+        -:    3:#include <stdio.h>
+        -:    4:#include <stdlib.h>
+        -:    5:#include "test_helpers.h"
+        -:    6:
+       89:    7:static unsigned int _actual_depth(BOSNode *node) {
+       89:    8:	int left_depth = node->left_child_node ? _actual_depth(node->left_child_node) + 1 : 0;
+       89:    9:	int right_depth = node->right_child_node ? _actual_depth(node->right_child_node) + 1 : 0;
+        -:   10:
+       89:   11:	return left_depth > right_depth ? left_depth : right_depth;
+        -:   12:}
+        -:   13:
+       44:   14:static unsigned int _actual_count(BOSNode *node) {
+       66:   15:	int left_count = node->left_child_node ? _actual_count(node->left_child_node) : 0;
+       66:   16:	int right_count = node->right_child_node ? _actual_count(node->right_child_node) : 0;
+        -:   17:
+       44:   18:	return left_count + right_count + 1;
+        -:   19:}
+        -:   20:
+        1:   21:void test_tree_sanity(BOSTree *tree) {
+        1:   22:	unsigned int i;
+        1:   23:	unsigned int count = 0;
+        1:   24:	int error = 0;
+        1:   25:	BOSNode *node;
+       24:   26:	for(node = bostree_select(tree, 0); node; node = bostree_next_node(node)) {
+       23:   27:		count++;
+        -:   28:	}
+        1:   29:	if(count != bostree_node_count(tree)) {
+    #####:   30:		printf("Manual node count yielded %d, order statistics reported %d\n", count, bostree_node_count(tree));
+    #####:   31:		exit(1);
+        -:   32:	}
+       24:   33:	for(i=0; i<bostree_node_count(tree); i++) {
+       23:   34:		node = bostree_select(tree, i);
+       23:   35:		if(node == NULL) {
+    #####:   36:			printf("Rank %d node not found, though count is %d\n", i, bostree_node_count(tree));
+    #####:   37:			error = 1;
+        -:   38:		}
+       23:   39:		if(bostree_rank(node) != i) {
+    #####:   40:			printf("Rank for node %s is %d, but should be %d\n", (char*)node->key, bostree_rank(node), i);
+    #####:   41:			error = 1;
+        -:   42:		}
+       23:   43:		if(bostree_lookup(tree, node->key) != node) {
+    #####:   44:			printf("Lookup for %s returned the wrong node.\n", (char*)node->key);
+    #####:   45:			error = 1;
+        -:   46:		}
+       23:   47:		if(bostree_next_node(node) != bostree_select(tree, i + 1)) {
+    #####:   48:			printf("Next node is %s, but select (i+1) is %s\n", (char*)bostree_next_node(node)->key, (char*)bostree_select(tree, i + 1)->key);
+    #####:   49:			error = 1;
+        -:   50:		}
+       23:   51:		if(bostree_previous_node(node) != bostree_select(tree, i - 1)) {
+    #####:   52:			printf("Next node is %s, but select (i+1) is %s\n", (char*)bostree_next_node(node)->key, (char*)bostree_select(tree, i + 1)->key);
+    #####:   53:			error = 1;
+        -:   54:		}
+       23:   55:		if(node->parent_node != NULL) {
+       22:   56:			if(node->parent_node->left_child_node != node && node->parent_node->right_child_node != node) {
+    #####:   57:				printf("Node %s has a parent, %s, but is not one of its children.\n", (char*)node->key, (char*)node->parent_node->key);
+    #####:   58:				error = 1;
+        -:   59:			}
+        -:   60:		}
+       23:   61:		unsigned int depth = _actual_depth(node);
+       23:   62:		if(depth != node->depth) {
+    #####:   63:			printf("Node %s reports depth %d when the actual depth is %d\n", (char *)node->key, node->depth, depth);
+    #####:   64:			error = 1;
+        -:   65:		}
+       23:   66:		if(node->left_child_node) {
+       11:   67:			unsigned left_count = _actual_count(node->left_child_node);
+       11:   68:			if(left_count != node->left_child_count) {
+    #####:   69:				printf("Node %s reports %d left children when there are %d\n", (char *)node->key, node->left_child_count, left_count);
+    #####:   70:				error = 1;
+        -:   71:			}
+        -:   72:		}
+       23:   73:		if(node->right_child_node) {
+       11:   74:			unsigned right_count = _actual_count(node->right_child_node);
+       11:   75:			if(right_count != node->right_child_count) {
+    #####:   76:				printf("Node %s reports %d right children when there are %d\n", (char *)node->key, node->right_child_count, right_count);
+    #####:   77:				error = 1;
+        -:   78:			}
+        -:   79:		}
+       23:   80:		unsigned left_depth = node->left_child_node != NULL ? node->left_child_node->depth + 1 : 0;
+       23:   81:		unsigned right_depth = node->right_child_node != NULL ? node->right_child_node->depth + 1 : 0;
+       23:   82:		if(abs((int)left_depth - right_depth) > 1) {
+    #####:   83:			printf("Node %s violates the balance constraint: %d left depth vs. %d right depth\n", (char *)node->key, left_depth, right_depth);
+    #####:   84:			error = 1;
+        -:   85:		}
+        -:   86:	}
+        1:   87:	if(error > 0) {
+    #####:   88:		fprintf(stderr, "Exiting due to errors.\n");
+    #####:   89:		abort();
+        -:   90:	}
+        1:   91:}
+        -:   92:

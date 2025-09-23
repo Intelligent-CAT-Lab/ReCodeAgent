@@ -1,0 +1,69 @@
+[package]
+name = "inversion_list"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test_couple_iterator"
+path = "src/bin/test_couple_iterator.rs"
+
+[[test]]
+name = "test_create_destroy_4"
+path = "src/bin/test_create_destroy_4.rs"
+
+[[test]]
+name = "test_clone"
+path = "src/bin/test_clone.rs"
+
+[[test]]
+name = "test_complement"
+path = "src/bin/test_complement.rs"
+
+[[test]]
+name = "test_create_destroy_2"
+path = "src/bin/test_create_destroy_2.rs"
+
+[[test]]
+name = "test_create_destroy_3"
+path = "src/bin/test_create_destroy_3.rs"
+
+[[test]]
+name = "test_difference"
+path = "src/bin/test_difference.rs"
+
+[[test]]
+name = "test_equals"
+path = "src/bin/test_equals.rs"
+
+[[test]]
+name = "test_getters"
+path = "src/bin/test_getters.rs"
+
+[[test]]
+name = "test_intersection"
+path = "src/bin/test_intersection.rs"
+
+[[test]]
+name = "test_iterator"
+path = "src/bin/test_iterator.rs"
+
+[[test]]
+name = "test_member"
+path = "src/bin/test_member.rs"
+
+[[test]]
+name = "test_struct"
+path = "src/bin/test_struct.rs"
+
+[[test]]
+name = "test_to_string"
+path = "src/bin/test_to_string.rs"
+
+[[test]]
+name = "test_union"
+path = "src/bin/test_union.rs"

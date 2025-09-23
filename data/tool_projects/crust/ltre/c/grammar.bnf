@@ -1,0 +1,11 @@
+<regex> ::= <term> ("|" <term> | "&" <term>)* # a regex is alternations and intersections of terms
+<term> ::= "~"? <factor>* # a term is a possibly complemented sequence of factors
+<factor> ::= <atom> ("*" | "+" | "?" | "{" <natural>? ("," <natural>?)? "}")? # a factor is a quantified atom
+<atom> ::= <symset> | "(" <regex> ")" # an atom is either a symset or a subregex
+<symset> ::= "^"? (<shorthand> | <symbol> ("-" <symbol>)? | "[" <symset>* "]" | "<" <symset>* ">") # a symset is a set of symbols
+<shorthand> ::= "\\d" | "\\D" | "\\s" | "\\S" | "\\w" | "\\W" | "." # a shorthand is a predefined symset
+<symbol> ::= "\\" <escape> | (? `isprint` except <metachar> ?) # a symbol matches a single character
+<escape> ::= "a" | "b" | "f" | "n" | "r" | "t" | "v" | "x" <hexbyte> | <metachar> # an escape is a symbol alias
+<hexbyte> ::= (? `isxdigit` ?){2}
+<metachar> ::= "\\" | "." | "-" | "^" | "$" | "*" | "+" | "?" | "{" | "}" | "[" | "]" | "<" | ">" | "(" | ")" | "|" | "&" | "~"
+<natural> ::= (? `isdigit` ?)+

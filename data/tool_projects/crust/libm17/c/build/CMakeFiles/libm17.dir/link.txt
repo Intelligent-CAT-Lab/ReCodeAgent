@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -g --coverage -shared -Wl,-soname,libm17.so.0.1 -o libm17.so.0.1 CMakeFiles/libm17.dir/encode/encode.c.o CMakeFiles/libm17.dir/decode/decode.c.o CMakeFiles/libm17.dir/phy/phy.c.o CMakeFiles/libm17.dir/math/math.c.o CMakeFiles/libm17.dir/payload/payload.c.o CMakeFiles/libm17.dir/m17.c.o  -lm 

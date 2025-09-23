@@ -1,0 +1,14 @@
+(defun length (lst)
+  (progn
+    (= count 0)
+    (while (not (eq lst nil))
+      (progn
+        (= count (+ count 1))
+        (= lst (cdr lst))
+      )
+    )
+    (progn count)
+  )
+)
+
+(print (length '(1 2 4)))

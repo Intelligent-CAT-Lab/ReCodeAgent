@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmyutils.a CMakeFiles/myutils.dir/myutils.c.o
+/usr/bin/ranlib libmyutils.a

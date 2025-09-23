@@ -1,0 +1,230 @@
+        -:    0:Source:test/test.c
+        -:    1:#include <stdio.h>
+        -:    2:#include <stdlib.h>
+        -:    3:#include <stdbool.h>
+        -:    4:#include <string.h>
+        -:    5:#include "minunit.h"
+        -:    6:#include "hamta.h"
+        -:    7:
+        -:    8:
+    #####:    9:static char *test_empty() {
+    #####:   10:    hamt_t *h = new_hamt(hamt_int_hash, hamt_int_equals);
+    #####:   11:    mu_assert("error, hamt not initialized", h != NULL);
+    #####:   12:    hamt_destroy(h, free);
+        -:   13:
+    #####:   14:    return NULL;
+        -:   15:}
+        -:   16:
+    #####:   17:static char *test_big() {
+    #####:   18:    hamt_t *h = new_hamt(hamt_int_hash, hamt_int_equals);
+        -:   19:
+    #####:   20:    int n = 10000;
+    #####:   21:    for (int i = 0; i < n; i++) {
+    #####:   22:        int key = i % (n / 1337) + 1;
+    #####:   23:        int value = i * i + 10;
+        -:   24:
+    #####:   25:        void *kmem = malloc(sizeof(int));
+    #####:   26:        void *vmem = malloc(sizeof(int));
+        -:   27:
+    #####:   28:        memcpy(kmem, (void*) &key, sizeof(int));
+        -:   29:        memcpy(vmem, (void*) &value, sizeof(int));
+        -:   30:
+    #####:   31:        key_value_t conflict_kv;
+    #####:   32:        bool conflict = hamt_set(h, kmem, vmem, &conflict_kv);
+    #####:   33:        if (conflict) {
+    #####:   34:            free(conflict_kv.key);
+    #####:   35:            free(conflict_kv.value);
+        -:   36:        }
+        -:   37:
+    #####:   38:        key_value_t *found = hamt_search(h, kmem);
+    #####:   39:        mu_assert("value inserted and retrieved don't match!", *(int*) found->value == value);
+        -:   40:    }
+        -:   41:
+    #####:   42:    hamt_destroy(h, free);
+        -:   43:
+    #####:   44:    return NULL;
+        -:   45:}
+        -:   46:
+    #####:   47:static char *test_big2() {
+    #####:   48:    hamt_t *h = new_hamt(hamt_int_hash, hamt_int_equals);
+        -:   49:
+    #####:   50:    int n = 10000;
+    #####:   51:    for (int i = 0; i < n; i++) {
+    #####:   52:        int key = i % (n / 1531);
+    #####:   53:        int value = i * i * i;
+        -:   54:
+    #####:   55:        void *kmem = malloc(sizeof(int));
+    #####:   56:        void *vmem = malloc(sizeof(int));
+        -:   57:
+    #####:   58:        memcpy(kmem, (void*) &key, sizeof(int));
+    #####:   59:        memcpy(vmem, (void*) &value, sizeof(int));
+        -:   60:
+    #####:   61:        key_value_t conflict_kv;
+    #####:   62:        bool conflict = hamt_set(h, kmem, vmem, &conflict_kv);
+    #####:   63:        if (conflict) {
+    #####:   64:            free(conflict_kv.key);
+    #####:   65:            free(conflict_kv.value);
+        -:   66:        }
+        -:   67:
+    #####:   68:        key_value_t *found = hamt_search(h, kmem);
+    #####:   69:        mu_assert("value inserted and retrieved don't match!", *(int*) found->value == value);
+        -:   70:    }
+        -:   71:
+    #####:   72:    for (int i = 0; i < n; i++) {
+    #####:   73:        key_value_t removed_kv;
+    #####:   74:        bool removed = hamt_remove(h, (void*) &i, &removed_kv);
+    #####:   75:        if (removed) {
+    #####:   76:            free(removed_kv.key);
+    #####:   77:            free(removed_kv.value);
+        -:   78:        }
+        -:   79:    }
+        -:   80:
+    #####:   81:    hamt_destroy(h, free);
+        -:   82:
+    #####:   83:    return NULL;
+        -:   84:}
+        -:   85:
+    #####:   86:static char *test_create() {
+    #####:   87:    hamt_t *h = new_hamt(hamt_str_hash, hamt_str_equals);
+        -:   88:
+    #####:   89:    char *x = "xx";
+    #####:   90:    char *y = "yy";
+        -:   91:
+    #####:   92:    key_value_t conflict_kv;
+    #####:   93:    hamt_set(h, x, x, &conflict_kv);
+    #####:   94:    hamt_set(h, y, y, &conflict_kv);
+    #####:   95:    hamt_set(h, x, y, &conflict_kv);
+    #####:   96:    hamt_set(h, y, x, &conflict_kv);
+        -:   97:
+    #####:   98:    bool removed = hamt_remove(h, x, &conflict_kv);
+    #####:   99:    if (removed) {
+        -:  100:        // don't deallocate, it was allocated on stack
+    #####:  101:    }
+        -:  102:
+    #####:  103:    hamt_destroy(h, NULL);
+        -:  104:
+    #####:  105:    return NULL;
+        -:  106:}
+        -:  107:
+        -:  108:#define MK_STRING(text) char *(text) = #text; num_elements++
+        -:  109:
+    #####:  110:static char *test_search_destroy() {
+    #####:  111:    hamt_t *h = new_hamt(hamt_str_hash, hamt_str_equals);
+        -:  112:
+    #####:  113:    int num_elements;
+        -:  114:
+    #####:  115:    MK_STRING(aut);
+    #####:  116:    MK_STRING(bus);
+    #####:  117:    MK_STRING(vlak);
+    #####:  118:    MK_STRING(kokos);
+    #####:  119:    MK_STRING(banan);
+    #####:  120:    MK_STRING(losos);
+    #####:  121:    MK_STRING(bro);
+    #####:  122:    MK_STRING(b);
+    #####:  123:    MK_STRING(bubakov);
+        -:  124:
+    #####:  125:    key_value_t conflict_kv;
+    #####:  126:    hamt_set(h, aut, aut, &conflict_kv);
+    #####:  127:    hamt_set(h, bus, bus, &conflict_kv);
+    #####:  128:    hamt_set(h, vlak, vlak, &conflict_kv);
+    #####:  129:    hamt_set(h, kokos, kokos, &conflict_kv);
+    #####:  130:    hamt_set(h, banan, banan, &conflict_kv);
+    #####:  131:    hamt_set(h, losos, losos, &conflict_kv);
+    #####:  132:    hamt_set(h, bro, bro, &conflict_kv);
+    #####:  133:    hamt_set(h, b, b, &conflict_kv);
+    #####:  134:    hamt_set(h, bubakov, bubakov, &conflict_kv);
+        -:  135:
+    #####:  136:    mu_assert("error, hamt size doesn't match 1", hamt_size(h) == num_elements);
+        -:  137:
+    #####:  138:    key_value_t *found;
+    #####:  139:    char *searching_for, *removing;
+    #####:  140:    char *s[] = {losos, bus, aut, vlak, banan, kokos, bro, b, bubakov};
+    #####:  141:    bool removed = false;
+    #####:  142:    int len = sizeof(s) / sizeof(char*);
+        -:  143:
+    #####:  144:    DEBUG_PRINT("\nSEARCHING FOR %d ELEMENTS\n", len);
+    #####:  145:    for (int i = 0; i < len; i++) {
+    #####:  146:        searching_for = s[i];
+    #####:  147:        DEBUG_PRINT("searching for key %s\n", (char*) searching_for);
+    #####:  148:        found = hamt_search(h, searching_for);
+        -:  149:
+    #####:  150:        mu_assert("error, not found", found != NULL);
+    #####:  151:        mu_assert("error, didn't find the correct key", (strcmp(found->value, searching_for)) == 0);
+        -:  152:    }
+        -:  153:
+        -:  154:    // Now remove the elements
+    #####:  155:    mu_assert("error, hamt size doesn't match", hamt_size(h) == num_elements);
+        -:  156:
+    #####:  157:    DEBUG_PRINT("\nREMOVING %d ELEMENTS\n", len);
+    #####:  158:    for (int i = 0; i < len; i++) {
+    #####:  159:        removing = s[i];
+    #####:  160:        DEBUG_PRINT("removing key %s\n", (char*) removing);
+        -:  161:
+    #####:  162:        key_value_t removed_kv;
+    #####:  163:        removed = hamt_remove(h, removing, &removed_kv);
+        -:  164:
+    #####:  165:        mu_assert("error, returned element is NULL", removed == true);
+    #####:  166:        mu_assert("error, hamt size doesn't match after removal", hamt_size(h) == --num_elements);
+        -:  167:    }
+        -:  168:
+    #####:  169:    hamt_destroy(h, NULL);
+        -:  170:
+    #####:  171:    return NULL;
+        -:  172:}
+        -:  173:
+    #####:  174:char *to_str(void *x) {
+    #####:  175:    return (char*) x;
+        -:  176:}
+        -:  177:
+    #####:  178:static char *test_hamta2() {
+    #####:  179:    hamt_t *h = new_hamt(hamt_str_hash, hamt_str_equals);
+        -:  180:
+    #####:  181:    char *s[] = {   "a",
+        -:  182:                    "bb",
+        -:  183:                    "auto",
+        -:  184:                    "bus",
+        -:  185:                    "vlak",
+        -:  186:                    "kokos",
+        -:  187:                    "banan",
+        -:  188:                    "losos",
+        -:  189:                    "bubakov",
+        -:  190:                    "korkodyl",
+        -:  191:                    "x",
+        -:  192:                    "__x__",
+        -:  193:                    "y" };
+        -:  194:
+    #####:  195:    key_value_t conflict_kv;
+    #####:  196:    int len = sizeof(s) / sizeof(char*);
+    #####:  197:    for (int i = 0; i < len; i++) {
+        -:  198:        #ifdef DEBUG
+    #####:  199:        hamt_print(h, to_str);
+        -:  200:        #endif
+    #####:  201:        hamt_set(h, s[i], s[i], &conflict_kv);
+        -:  202:    }
+        -:  203:    #ifdef DEBUG
+    #####:  204:    hamt_print(h, to_str);
+        -:  205:    #endif
+        -:  206:
+    #####:  207:    mu_assert("error, hamt size doesn't match", hamt_size(h) == len);
+        -:  208:
+    #####:  209:    hamt_destroy(h, NULL);
+        -:  210:
+    #####:  211:    return NULL;
+        -:  212:}
+        -:  213:
+        -:  214:
+    #####:  215:static char *all_tests() {
+    #####:  216:    mu_suite_start();
+        -:  217:
+    #####:  218:    mu_run_test(test_empty);
+    #####:  219:    mu_run_test(test_big);
+    #####:  220:    mu_run_test(test_big2);
+    #####:  221:    mu_run_test(test_create);
+    #####:  222:    mu_run_test(test_big);
+    #####:  223:    mu_run_test(test_search_destroy);
+    #####:  224:    mu_run_test(test_hamta2);
+        -:  225:
+        -:  226:    return NULL;
+        -:  227:}
+        -:  228:
+    #####:  229:RUN_TESTS(all_tests);

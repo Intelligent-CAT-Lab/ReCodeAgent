@@ -1,0 +1,43 @@
+        -:    0:Source:tests/test.c
+        -:    1:#include "../src/coroutine.h"
+        -:    2:#include <stdio.h>
+        -:    3:
+        -:    4:struct args {
+        -:    5:	int n;
+        -:    6:};
+        -:    7:
+        -:    8:static void
+        2:    9:foo(struct schedule * S, void *ud) {
+        2:   10:	struct args * arg = ud;
+        2:   11:	int start = arg->n;
+        -:   12:	int i;
+       12:   13:	for (i=0;i<5;i++) {
+       10:   14:		printf("coroutine %d : %d\n",coroutine_running(S) , start + i);
+       10:   15:		coroutine_yield(S);
+        -:   16:	}
+        2:   17:}
+        -:   18:
+        -:   19:static void
+        1:   20:test(struct schedule *S) {
+        1:   21:	struct args arg1 = { 0 };
+        1:   22:	struct args arg2 = { 100 };
+        -:   23:
+        1:   24:	int co1 = coroutine_new(S, foo, &arg1);
+        1:   25:	int co2 = coroutine_new(S, foo, &arg2);
+        1:   26:	printf("main start\n");
+        7:   27:	while (coroutine_status(S,co1) && coroutine_status(S,co2)) {
+        6:   28:		coroutine_resume(S,co1);
+        6:   29:		coroutine_resume(S,co2);
+        -:   30:	} 
+        1:   31:	printf("main end\n");
+        1:   32:}
+        -:   33:
+        -:   34:int 
+        1:   35:main() {
+        1:   36:	struct schedule * S = coroutine_open();
+        1:   37:	test(S);
+        1:   38:	coroutine_close(S);
+        -:   39:	
+        1:   40:	return 0;
+        -:   41:}
+        -:   42:

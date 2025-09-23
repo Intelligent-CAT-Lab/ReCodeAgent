@@ -1,0 +1,4 @@
+Graph recogniser:
+
+The aim of this project is to be albe to recognise some special graphs or classes of graphs, store them properly and choose the best algorithms for them. The user can use a configuration file for the recognition strategies. Also one large graph may be devided into several special graphs or aproximated to a special graph.
+

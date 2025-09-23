@@ -1,0 +1,61 @@
+libpgn
+======
+
+Tiny C library for parsing PGN files (Chess Game Records).
+
+libpgn(3) is capable to read and write PGN files, it is however
+not a FEN parser, and is only intended to work with PGN files.
+
+See the man page for more detailed information.
+
+Building
+--------
+
+Compile libpgn as shared & static library:
+
+    make
+
+Compile & Run PGN formatter:
+
+    make bin && ./bin/pgn fmt games/lazysicilian.pgn
+
+Examples
+--------
+
+In a perfect world, parsing the simplest Bongcloud Attack
+opening <https://en.wikipedia.org/wiki/Bongcloud_Attack>:
+
+    #include <pgn.h>
+    #include <stdio.h>
+
+    int main(void)
+    {
+        pgn_t *pgn = pgn_init();
+        pgn_parse(pgn,
+                "[Event \"Global Championship Finals 2022\"]\n"
+                "[Result \"*\"]\n"
+                "\n"
+                "1. e4 e5 2. Ke2? *");
+
+        printf("%s\n", pgn_metadata_get(pgn->metadata, "Event"));
+        printf("Featuring 'Bongcloud Attack'\n\n");
+
+        for (int i = 0; i < pgn->moves->length; i++) {
+            pgn_move_t white = pgn->moves->values[i].white;
+            pgn_move_t black = pgn->moves->values[i].black;
+            printf("%d.\n  %s\n  %s\n", i + 1, white.notation, black.notation);
+        }
+
+        printf("%s\n", pgn_score_to_string(pgn->score));
+        pgn_cleanup(pgn);
+        return 0;
+    }
+
+You can find more examples from the bin/ and tests/ dir.
+
+Tests
+-----
+
+To run tests, simply invoke:
+
+    make test -s

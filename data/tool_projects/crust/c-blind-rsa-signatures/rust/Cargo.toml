@@ -1,0 +1,8 @@
+[package]
+name = "c-blind-rsa-signatures"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
+openssl-sys = "0.9"

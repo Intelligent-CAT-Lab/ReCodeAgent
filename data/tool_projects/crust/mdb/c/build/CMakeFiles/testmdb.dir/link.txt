@@ -1,0 +1,1 @@
+/usr/bin/cc  -Wall -Wextra -Wno-unused-function -O0 -g -fprofile-arcs -ftest-coverage -rdynamic CMakeFiles/testmdb.dir/testmdb.c.o -o testmdb  libmdb.a 

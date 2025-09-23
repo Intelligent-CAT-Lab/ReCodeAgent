@@ -1,0 +1,21 @@
+[package]
+name = "rubiksolver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "hash_tests"
+path = "src/bin/hash_tests.rs"
+
+[[test]]
+name = "heap_tests"
+path = "src/bin/heap_tests.rs"
+
+[[test]]
+name = "rubik_model_tests"
+path = "src/bin/rubik_model_tests.rs"

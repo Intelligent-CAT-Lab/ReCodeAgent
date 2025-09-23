@@ -1,0 +1,27 @@
+@startuml State Pattern
+
+package "State Pattern" {
+
+class Context {
+    +state
+    +operation()
+}
+
+interface State <<interface>> {
+    +operation()
+}
+
+class State1 {
+    +operation()
+}
+
+class State2 {
+    +operation()
+}
+
+Context --  State
+State <|.d. State1
+State <|.d. State2
+
+}
+@enduml

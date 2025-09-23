@@ -1,0 +1,16 @@
+CFLAGS = $(FLAGS) -O0 -g
+LDFLAGS = $(FLAGS) -O0
+OBJDIR = uobj
+
+CFILES =                   \
+	src/log.c              \
+	tests/test-unit.c        \
+	tests/test-openhash.c    \
+	src/openhash.c         \
+	tests/test-cuckoohash.c  \
+    src/cuckoohash.c
+
+EXES = $(EXEDIR)/unittest
+
+include makefile-generic
+

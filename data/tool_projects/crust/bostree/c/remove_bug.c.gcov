@@ -1,0 +1,62 @@
+        -:    0:Source:tests/remove_bug.c
+        -:    1:/*
+        -:    2:
+        -:    3:	This test was created to monitor a bug where upon deletion of a node the
+        -:    4:	replacer's left child tree vanished:
+        -:    5:
+        -:    6:	For example, consider
+        -:    7:
+        -:    8:	                 H
+        -:    9:	           D       -something-
+        -:   10:	      B      F
+        -:   11:	    A   C   E  G
+        -:   12:	       B'
+        -:   13:
+        -:   14:	with the bug, if D was removed, C would be the replacer element, because it
+        -:   15:	is the largest one in the left sub tree. C would take D's place and B would
+        -:   16:	be attached as C's left child. The bug is that this way, B' vanishes.
+        -:   17:
+        -:   18:	The fix is to attach B' as the right child of B, i.e. replace C with it's left
+        -:   19:	child. C can not have a right child, because then it would not be the largest
+        -:   20:	left child of D.
+        -:   21:
+        -:   22:	This test creates a big tree and then tries to remove every single node
+        -:   23:	from the full tree, each time checking the result for validity.
+        -:   24:
+        -:   25:*/
+        -:   26:#define _GNU_SOURCE
+        -:   27:#include <string.h>
+        -:   28:#include <stdio.h>
+        -:   29:#include <stdlib.h>
+        -:   30:#include <sys/timeb.h>
+        -:   31:#include "../bostree.h"
+        -:   32:#include "test_helpers.h"
+        -:   33:
+    #####:   34:BOSTree *test_tree() {
+    #####:   35:	BOSTree *t = bostree_new((BOSTree_cmp_function)strcmp, NULL);
+    #####:   36:	char i;
+    #####:   37:	for(i='A'; i<'Z'; i++) {
+    #####:   38:		char *key = malloc(2);
+    #####:   39:		key[0] = i; key[1] = 0;
+    #####:   40:		bostree_insert(t, key, NULL);
+        -:   41:	}
+        -:   42:
+    #####:   43:	return t;
+        -:   44:}
+        -:   45:
+    #####:   46:int main() {
+    #####:   47:	char remove[2];
+    #####:   48:	remove[1] = 0;
+    #####:   49:	for(*remove='A'; *remove<'Z'; (*remove)++) {
+    #####:   50:		BOSTree *t = test_tree();
+    #####:   51:		bostree_remove(t, bostree_lookup(t, remove));
+    #####:   52:		test_tree_sanity(t);
+    #####:   53:		if(bostree_node_count(t) != ('Z' - 'A' - 1)) {
+    #####:   54:			printf("Removed one node from a tree, but the node count did not decrease properly.\n");
+    #####:   55:			exit(1);
+        -:   56:		}
+    #####:   57:		bostree_destroy(t);
+        -:   58:	}
+        -:   59:
+    #####:   60:	return 0;
+        -:   61:}

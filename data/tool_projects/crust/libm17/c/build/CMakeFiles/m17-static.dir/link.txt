@@ -1,0 +1,2 @@
+/usr/bin/ar qc libm17.a CMakeFiles/m17-static.dir/encode/encode.c.o CMakeFiles/m17-static.dir/decode/decode.c.o CMakeFiles/m17-static.dir/phy/phy.c.o CMakeFiles/m17-static.dir/math/math.c.o CMakeFiles/m17-static.dir/payload/payload.c.o CMakeFiles/m17-static.dir/m17.c.o
+/usr/bin/ranlib libm17.a

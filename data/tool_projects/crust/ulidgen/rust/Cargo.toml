@@ -1,0 +1,27 @@
+[package]
+name = "ulidgen"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.ulidgen-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

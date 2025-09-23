@@ -1,0 +1,91 @@
+        -:    0:Source:tests/test.c
+        -:    1:#include "../src/CircularBuffer.h"
+        -:    2:#include <string.h>
+        -:    3:#include <assert.h>
+        -:    4:
+        1:    5:int main(int argc, char *argv[]) {
+        1:    6:    CircularBuffer cb = CircularBufferCreate(8);
+        1:    7:    char *a = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        -:    8:    char b[128];
+        1:    9:    int len = 0, offset = 0, outLen = 0;
+        -:   10:
+        -:   11:    // push 3 bytes
+        1:   12:    len = 3;
+        1:   13:    CircularBufferPush(cb, a + offset, len);
+        1:   14:    offset += len;
+       1*:   15:    assert(CircularBufferGetDataSize(cb) == 3);
+        -:   16:    
+        -:   17:    // push 7 bytes
+        1:   18:    len = 7;
+        1:   19:    CircularBufferPush(cb, a + offset, len);
+        1:   20:    offset += len;
+       1*:   21:    assert(CircularBufferGetDataSize(cb) == 8);
+        -:   22:
+        -:   23:    // pop 3 bytes
+        1:   24:    len = 3;
+        1:   25:    memset(b, '\0', 128);
+        1:   26:    outLen = (int)CircularBufferPop(cb, len, b);
+       1*:   27:    assert(outLen == 3 && strncmp(b, "234", len) == 0);
+       1*:   28:    assert(CircularBufferGetDataSize(cb) == 5);
+        -:   29:
+        -:   30:    // read 2 bytes
+        1:   31:    len = 2;
+        1:   32:    memset(b, '\0', 128);
+        1:   33:    outLen = (int)CircularBufferRead(cb, len, b);
+       1*:   34:    assert(outLen == 2 && strncmp(b, "56", len) == 0);
+       1*:   35:    assert(CircularBufferGetDataSize(cb) == 5);
+        -:   36:
+        -:   37:    // push 10 bytes
+        1:   38:    len = 10;
+        1:   39:    CircularBufferPush(cb, a + offset, len);
+        1:   40:    offset += len;
+       1*:   41:    assert(CircularBufferGetDataSize(cb) == 8);
+        -:   42:
+        -:   43:    // pop 3 bytes
+        1:   44:    len = 3;
+        1:   45:    memset(b, '\0', 128);
+        1:   46:    outLen = (int)CircularBufferPop(cb, len, b);
+       1*:   47:    assert(outLen == 3 && strncmp(b, "cde", len) == 0);
+       1*:   48:    assert(CircularBufferGetDataSize(cb) == 5);
+        -:   49:
+        -:   50:    // pop 30 bytes, but only expect 5 available
+        1:   51:    len = 30;
+        1:   52:    memset(b, '\0', 128);
+        1:   53:    outLen = (int)CircularBufferPop(cb, len, b);
+       1*:   54:    assert(outLen == 5 && strncmp(b, "fghij", outLen) == 0);
+       1*:   55:    assert(CircularBufferGetDataSize(cb) == 0);
+        -:   56:
+        -:   57:    // push 5 bytes
+        1:   58:    len = 5;
+        1:   59:    CircularBufferPush(cb, a + offset, len);
+        1:   60:    offset += len;
+       1*:   61:    assert(CircularBufferGetDataSize(cb) == 5);
+        -:   62:
+        -:   63:    // pop 2 bytes
+        1:   64:    len = 2;
+        1:   65:    memset(b, '\0', 128);
+        1:   66:    outLen = (int)CircularBufferPop(cb, len, b);
+        -:   67:    // assert(outLen == 2 && strncmp(b, "kl", len) == 0);
+       1*:   68:    assert(CircularBufferGetDataSize(cb) == 3);
+        -:   69:
+        -:   70:    // push 10 bytes
+        1:   71:    len = 10;
+        1:   72:    CircularBufferPush(cb, a + offset, len);
+        1:   73:    offset += len;
+       1*:   74:    assert(CircularBufferGetDataSize(cb) == 8);
+        -:   75:
+        -:   76:    // pop 6 bytes
+        1:   77:    len = 6;
+        1:   78:    memset(b, '\0', 128);
+        1:   79:    outLen = (int)CircularBufferPop(cb, len, b);
+       1*:   80:    assert(outLen == 6 && strncmp(b, "rstuvw", len) == 0);
+       1*:   81:    assert(CircularBufferGetDataSize(cb) == 2);
+        -:   82:
+        -:   83:    // push 4 bytes
+        1:   84:    len = 4;
+        1:   85:    CircularBufferPush(cb, a + offset, len);
+        1:   86:    offset += len;
+       1*:   87:    assert(CircularBufferGetDataSize(cb) == 6);
+        1:   88:    printf("All tests passed!\n");
+        1:   89:    return 0;
+        -:   90:}

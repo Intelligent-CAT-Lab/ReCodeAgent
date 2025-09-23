@@ -1,0 +1,736 @@
+        -:    0:Source:2bit.c
+        -:    1:#include <sys/types.h>
+        -:    2:#include <sys/stat.h>
+        -:    3:#include <sys/mman.h>
+        -:    4:#include <unistd.h>
+        -:    5:#include <inttypes.h>
+        -:    6:#include <stdio.h>
+        -:    7:#include <stdlib.h>
+        -:    8:#include <string.h>
+        -:    9:#include <ctype.h>
+        -:   10:#include "2bit.h"
+        -:   11:
+        -:   12:uint64_t twobitTell(TwoBit *tb);
+        -:   13:
+        -:   14:/*
+        -:   15:    Read nmemb elements, each of size sz from the current file offset 
+        -:   16:    into data. Return the number of elements read. On error, the return
+        -:   17:    value is either 0 or less than nmemb
+        -:   18:*/
+       50:   19:size_t twobitRead(void *data, size_t sz, size_t nmemb, TwoBit *tb) {
+       50:   20:    if(tb->data) {
+       50:   21:        if(memcpy(data, tb->data + tb->offset, nmemb * sz) == NULL) return 0;
+       50:   22:        tb->offset += nmemb * sz;
+       50:   23:        return nmemb;
+        -:   24:    } else {
+    #####:   25:        return fread(data, sz, nmemb, tb->fp);
+        -:   26:    }
+        -:   27:}
+        -:   28:
+        -:   29:/*
+        -:   30:    Seek to a specific position, which is essentially trivial for memmaped stuff
+        -:   31:
+        -:   32:    Returns: 0 on success, -1 on error
+        -:   33:*/
+       12:   34:int twobitSeek(TwoBit *tb, uint64_t offset) {
+       12:   35:    if(offset >= tb->sz) return -1;
+       12:   36:    if(tb->data) {
+       12:   37:        tb->offset = offset;
+       12:   38:        return 0;
+        -:   39:    } else {
+    #####:   40:        return fseek(tb->fp, (long) offset, SEEK_SET);
+        -:   41:    }
+        -:   42:}
+        -:   43:
+        -:   44:/*
+        -:   45:    Like ftell, but generalized to handle memmaped files
+        -:   46:
+        -:   47:    Returns the offset
+        -:   48:*/
+        4:   49:uint64_t twobitTell(TwoBit *tb) {
+        4:   50:    if(tb->data) return tb->offset;
+    #####:   51:    return (uint64_t) ftell(tb->fp);
+        -:   52:}
+        -:   53:
+        -:   54:/*
+        -:   55:    Given a byte containing 4 bases, return the character representation of the offset'th base
+        -:   56:*/
+        8:   57:char byte2base(uint8_t byte, int offset) {
+        8:   58:    int rev = 3 - offset;
+        8:   59:    uint8_t mask = 3 << (2 * rev);
+        8:   60:    int foo = (mask & byte) >> (2 * rev);
+        8:   61:    char bases[4] = "TCAG";
+        8:   62:    return bases[foo];
+        -:   63:}
+        -:   64:
+        4:   65:void bytes2bases(char *seq, uint8_t *byte, uint32_t sz, int offset) {
+        4:   66:    uint32_t pos = 0, remainder = 0, i = 0;
+        4:   67:    char bases[4] = "TCAG";
+        4:   68:    uint8_t foo = byte[0];
+        -:   69:
+        -:   70:    // Deal with the first partial byte
+        4:   71:    if(offset != 0) {
+    #####:   72:        while(offset < 4 && pos < sz) {
+    #####:   73:           seq[pos++] = byte2base(foo, offset++);
+        -:   74:        }
+    #####:   75:        if(pos >= sz) return;
+    #####:   76:        foo = byte[++i];
+        -:   77:    }
+        -:   78:
+        -:   79:    // Deal with everything else, with the possible exception of the last fractional byte
+        4:   80:    remainder = (sz - pos) % 4;
+      102:   81:    while(pos < sz - remainder) {
+       98:   82:        foo = byte[i++];
+       98:   83:        seq[pos + 3] = bases[foo & 3];
+       98:   84:        foo >>= 2;
+       98:   85:        seq[pos + 2] = bases[foo & 3];
+       98:   86:        foo >>= 2;
+       98:   87:        seq[pos + 1] = bases[foo & 3];
+       98:   88:        foo >>= 2;
+       98:   89:        seq[pos] = bases[foo & 3];
+       98:   90:        foo >>= 2;
+       98:   91:        pos += 4;
+        -:   92:    }
+        -:   93:
+        -:   94:    // Deal with the last partial byte
+        4:   95:    if(remainder > 0) foo = byte[i];
+       12:   96:    for(offset=0; offset<remainder; offset++) {
+        8:   97:        seq[pos++] = byte2base(foo, offset);
+        -:   98:    }
+        -:   99:}
+        -:  100:
+        -:  101:/*
+        -:  102:    Replace Ts (or whatever else is being used) with N as appropriate
+        -:  103:*/
+        4:  104:void NMask(char *seq, TwoBit *tb, uint32_t tid, uint32_t start, uint32_t end) {
+        4:  105:    uint32_t i, width, pos = 0;
+        4:  106:    uint32_t blockStart, blockEnd;
+        -:  107:
+       10:  108:    for(i=0; i<tb->idx->nBlockCount[tid]; i++) {
+        8:  109:        blockStart = tb->idx->nBlockStart[tid][i];
+        8:  110:        blockEnd = blockStart + tb->idx->nBlockSizes[tid][i];
+       8*:  111:        if(blockEnd <= start) continue;
+        8:  112:        if(blockStart >= end) break;
+        6:  113:        if(blockStart < start) {
+        2:  114:            blockEnd = (blockEnd < end) ? blockEnd : end;
+        2:  115:            pos = 0;
+        2:  116:            width = blockEnd - start;
+        -:  117:        } else {
+        4:  118:            blockEnd = (blockEnd < end) ? blockEnd : end;
+        4:  119:            pos = blockStart - start;
+        4:  120:            width = blockEnd - blockStart;
+        -:  121:        }
+        6:  122:        width += pos;
+      258:  123:        for(; pos < width; pos++) seq[pos] = 'N';
+        -:  124:    }
+        4:  125:}
+        -:  126:
+        -:  127:/*
+        -:  128:    Replace uppercase with lower-case letters, if required
+        -:  129:*/
+        4:  130:void softMask(char *seq, TwoBit *tb, uint32_t tid, uint32_t start, uint32_t end) {
+        4:  131:    uint32_t i, width, pos = 0;
+        4:  132:    uint32_t blockStart, blockEnd;
+        -:  133:
+        4:  134:    if(!tb->idx->maskBlockStart) return;
+        -:  135:
+        8:  136:    for(i=0; i<tb->idx->maskBlockCount[tid]; i++) {
+        4:  137:        blockStart = tb->idx->maskBlockStart[tid][i];
+        4:  138:        blockEnd = blockStart + tb->idx->maskBlockSizes[tid][i];
+       4*:  139:        if(blockEnd <= start) continue;
+        4:  140:        if(blockStart >= end) break;
+        4:  141:        if(blockStart < start) {
+    #####:  142:            blockEnd = (blockEnd < end) ? blockEnd : end;
+    #####:  143:            pos = 0;
+    #####:  144:            width = blockEnd - start;
+        -:  145:        } else {
+        4:  146:            blockEnd = (blockEnd < end) ? blockEnd : end;
+        4:  147:            pos = blockStart - start;
+        4:  148:            width = blockEnd - blockStart;
+        -:  149:        }
+        4:  150:        width += pos;
+       36:  151:        for(; pos < width; pos++) {
+       32:  152:            if(seq[pos] != 'N') seq[pos] = tolower(seq[pos]);
+        -:  153:        }
+        -:  154:    }
+        -:  155:}
+        -:  156:
+        -:  157:/*
+        -:  158:    This is the worker function for twobitSequence, which mostly does error checking
+        -:  159:*/
+        4:  160:char *constructSequence(TwoBit *tb, uint32_t tid, uint32_t start, uint32_t end) {
+        4:  161:    uint32_t sz = end - start + 1;
+        4:  162:    uint32_t blockStart, blockEnd;
+        4:  163:    char *seq = malloc(sz * sizeof(char));
+        4:  164:    uint8_t *bytes = NULL;
+        4:  165:    int offset;
+        4:  166:    if(!seq) return NULL;
+        -:  167:
+        -:  168:    //There are 4 bases/byte
+        4:  169:    blockStart = start/4;
+        4:  170:    offset = start % 4;
+        4:  171:    blockEnd = end/4 + ((end % 4) ? 1 : 0);
+        4:  172:    bytes = malloc(blockEnd - blockStart);
+       4*:  173:    if(!bytes) goto error;
+        -:  174:
+       4*:  175:    if(twobitSeek(tb, tb->idx->offset[tid] + blockStart) != 0) goto error;
+       4*:  176:    if(twobitRead(bytes, blockEnd - blockStart, 1, tb) != 1) goto error;
+        4:  177:    bytes2bases(seq, bytes, sz - 1, offset);
+        4:  178:    free(bytes);
+        -:  179:
+        -:  180:    //Null terminate the output
+        4:  181:    seq[sz - 1] = '\0';
+        -:  182:
+        -:  183:    //N-mask everything
+        4:  184:    NMask(seq, tb, tid, start, end);
+        -:  185:
+        -:  186:    //Soft-mask if requested
+        4:  187:    softMask(seq, tb, tid, start, end);
+        -:  188:
+        4:  189:    return seq;
+        -:  190:
+    #####:  191:error:
+    #####:  192:    if(seq) free(seq);
+    #####:  193:    if(bytes) free(bytes);
+        -:  194:    return NULL;
+        -:  195:}
+        -:  196:
+        -:  197:/*
+        -:  198:    Given a chromosome, name, and optional range, return the corresponding sequence.
+        -:  199:
+        -:  200:    The start and end or 0-based half-open, so end-start is the number of bases.
+        -:  201:    If both start and end are 0, then the whole chromosome is used.
+        -:  202:
+        -:  203:    On error (e.g., a missing chromosome), NULL is returned.
+        -:  204:*/
+        4:  205:char *twobitSequence(TwoBit *tb, char *chrom, uint32_t start, uint32_t end) {
+        4:  206:    uint32_t i, tid=0;
+        -:  207:
+        -:  208:    //Get the chromosome ID
+       4*:  209:    for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  210:        if(strcmp(tb->cl->chrom[i], chrom) == 0) {
+        -:  211:            tid = i;
+        -:  212:            break;
+        -:  213:        }
+        -:  214:    }
+        4:  215:    if(tid == 0 && strcmp(tb->cl->chrom[i], chrom) != 0) return NULL;
+        -:  216:
+        -:  217:    //Get the start/end if not specified
+        4:  218:    if(start == end && end == 0) {
+        2:  219:        end = tb->idx->size[tid];
+        -:  220:    }
+        -:  221:
+        -:  222:    //Sanity check the bounds
+        4:  223:    if(end > tb->idx->size[tid]) return NULL;
+        4:  224:    if(start >= end) return NULL;
+        -:  225:
+        4:  226:    return constructSequence(tb, tid, start, end);
+        -:  227:}
+        -:  228:
+        -:  229:/*
+        -:  230:    Given a tid and a position, set the various mask variables to an appropriate block of Ns.
+        -:  231:
+        -:  232:     * If maskIdx is not -1, these are set to the first overlapping block (or maskIdx is set to the number of N blocks).
+        -:  233:     * If maskIdx is not -1 then it's incremented and maskStart/maskEnd set appropriately.
+        -:  234:
+        -:  235:    If the returned interval doesn't overlap the start/end range, then both values will be -1.
+        -:  236:*/
+       10:  237:void getMask(TwoBit *tb, uint32_t tid, uint32_t start, uint32_t end, uint32_t *maskIdx, uint32_t *maskStart, uint32_t *maskEnd) {
+       10:  238:    if(*maskIdx == (uint32_t) -1) {
+       4*:  239:        for((*maskIdx)=0; (*maskIdx)<tb->idx->nBlockCount[tid]; (*maskIdx)++) {
+        4:  240:           *maskStart = tb->idx->nBlockStart[tid][*maskIdx];
+        4:  241:           *maskEnd = (*maskStart) + tb->idx->nBlockSizes[tid][*maskIdx];
+       4*:  242:           if(*maskEnd < start) continue;
+        -:  243:           if(*maskEnd >= start) break;
+        -:  244:        }
+        6:  245:    } else if(*maskIdx >= tb->idx->nBlockCount[tid]) {
+    #####:  246:        *maskStart = (uint32_t) -1;
+    #####:  247:        *maskEnd = (uint32_t) -1;
+        -:  248:    } else {
+        6:  249:        *maskIdx += 1;
+        6:  250:        if(*maskIdx >= tb->idx->nBlockCount[tid]) {
+        2:  251:            *maskStart = (uint32_t) -1;
+        2:  252:            *maskEnd = (uint32_t) -1;
+        -:  253:        } else {
+        4:  254:            *maskStart = tb->idx->nBlockStart[tid][*maskIdx];
+        4:  255:            *maskEnd = (*maskStart) + tb->idx->nBlockSizes[tid][*maskIdx];
+        -:  256:        }
+        -:  257:    }
+        -:  258:
+        -:  259:    //maskStart = maskEnd = -1 if no overlap
+       10:  260:    if(*maskIdx >= tb->idx->nBlockCount[tid] || *maskStart >= end) {
+        4:  261:        *maskStart = (uint32_t) -1;
+        4:  262:        *maskEnd = (uint32_t) -1;
+        -:  263:    }
+       10:  264:}
+        -:  265:
+       10:  266:uint8_t getByteMaskFromOffset(int offset) {
+       10:  267:    switch(offset) {
+        -:  268:        case 0:
+        -:  269:            return (uint8_t) 15;
+        -:  270:        case 1:
+        -:  271:            return (uint8_t) 7;
+        -:  272:        case 2:
+        -:  273:            return (uint8_t) 3;
+        -:  274:    }
+        -:  275:    return 1;
+        -:  276:}
+        -:  277:
+        4:  278:void *twobitBasesWorker(TwoBit *tb, uint32_t tid, uint32_t start, uint32_t end, int fraction) {
+        4:  279:    void *out;
+        4:  280:    uint32_t tmp[4] = {0, 0, 0, 0}, len = end - start + (start % 4), i = 0, j = 0;
+        4:  281:    uint32_t seqLen = end - start;
+        4:  282:    uint32_t blockStart, blockEnd, maskIdx = (uint32_t) -1, maskStart, maskEnd, foo;
+        4:  283:    uint8_t *bytes = NULL, mask = 0, offset;
+        -:  284:
+        4:  285:    if(fraction) {
+        4:  286:        out = malloc(4 * sizeof(double));
+        -:  287:    } else {
+    #####:  288:        out = malloc(4 * sizeof(uint32_t));
+        -:  289:    }
+        4:  290:    if(!out) return NULL;
+        -:  291:
+        -:  292:    //There are 4 bases/byte
+        4:  293:    blockStart = start/4;
+        4:  294:    offset = start % 4;
+        4:  295:    blockEnd = end/4 + ((end % 4) ? 1 : 0);
+        4:  296:    bytes = malloc(blockEnd - blockStart);
+       4*:  297:    if(!bytes) goto error;
+        -:  298:
+        -:  299:    //Set the initial mask, reset start/offset so we always deal with full bytes
+        4:  300:    mask = getByteMaskFromOffset(offset);
+        4:  301:    start = 4 * blockStart;
+        4:  302:    offset = 0;
+        -:  303:
+       4*:  304:    if(twobitSeek(tb, tb->idx->offset[tid] + blockStart) != 0) goto error;
+       4*:  305:    if(twobitRead(bytes, blockEnd - blockStart, 1, tb) != 1) goto error;
+        -:  306:
+        -:  307:    //Get the index/start/end of the next N-mask block
+        4:  308:    getMask(tb, tid, start, end, &maskIdx, &maskStart, &maskEnd);
+        -:  309:
+       52:  310:    while(i < len) {
+        -:  311:        // Check if we need to jump
+       48:  312:        if(maskIdx != -1 && start + i + 4 >= maskStart) {
+        8:  313:            if(start + i >= maskStart || start + i + 4 - offset > maskStart) {
+        -:  314:                //Jump iff the whole byte is inside an N block
+        6:  315:                if(start + i >= maskStart && start + i + 4 - offset < maskEnd) {
+        -:  316:                    //iff we're fully in an N block then jump
+        6:  317:                    i = maskEnd - start;
+        6:  318:                    getMask(tb, tid, i, end, &maskIdx, &maskStart, &maskEnd);
+        6:  319:                    offset = (start + i) % 4;
+        6:  320:                    j = i / 4;
+        6:  321:                    mask = getByteMaskFromOffset(offset);
+        6:  322:                    i = 4 * j; //Now that the mask has been set, reset i to byte offsets
+        6:  323:                    offset = 0;
+        6:  324:                    continue;
+        -:  325:                }
+        -:  326:
+        -:  327:                //Set the mask, if appropriate
+    #####:  328:                foo = 4*j + 4*blockStart; // The smallest position in the byte
+    #####:  329:                if(mask & 1 && (foo + 3 >= maskStart && foo + 3 < maskEnd)) mask -= 1;
+    #####:  330:                if(mask & 2 && (foo + 2 >= maskStart && foo + 2 < maskEnd)) mask -= 2;
+    #####:  331:                if(mask & 4 && (foo + 1 >= maskStart && foo + 1 < maskEnd)) mask -= 4;
+    #####:  332:                if(mask & 8 && (foo >= maskStart && foo < maskEnd)) mask -= 8;
+    #####:  333:                if(foo + 4 > maskEnd) {
+    #####:  334:                    getMask(tb, tid, i, end, &maskIdx, &maskStart, &maskEnd);
+    #####:  335:                    continue;
+        -:  336:                }
+        -:  337:            }
+        -:  338:        }
+        -:  339:
+        -:  340:        //Ensure that anything after then end is masked
+       42:  341:        if(i+4>=len) {
+        4:  342:            if((mask & 1) && i+3>=len) mask -=1;
+        4:  343:            if((mask & 2) && i+2>=len) mask -=2;
+       4*:  344:            if((mask & 4) && i+1>=len) mask -=4;
+        4:  345:            if((mask & 8) && i>=len) mask -=8;
+        -:  346:        }
+        -:  347:
+       42:  348:        foo = bytes[j++];
+        -:  349:        //Offset 3
+       42:  350:        if(mask & 1) {
+       38:  351:            tmp[foo & 3]++;
+        -:  352:        }
+       42:  353:        foo >>= 2;
+       42:  354:        mask >>= 1;
+        -:  355:        //Offset 2
+       42:  356:        if(mask & 1) {
+       38:  357:            tmp[foo & 3]++;
+        -:  358:        }
+       42:  359:        foo >>= 2;
+       42:  360:        mask >>= 1;
+        -:  361:        //Offset 1
+       42:  362:        if(mask & 1) {
+       36:  363:            tmp[foo & 3]++;
+        -:  364:        }
+       42:  365:        foo >>= 2;
+       42:  366:        mask >>= 1;
+        -:  367:        //Offset 0
+       42:  368:        if(mask & 1) {
+       36:  369:            tmp[foo & 3]++; // offset 0
+        -:  370:        }
+        -:  371:        i += 4;
+        -:  372:        mask = 15;
+        -:  373:    }
+        4:  374:    free(bytes);
+        -:  375:
+        -:  376:    //out is in TCAG order, since that's how 2bit is stored.
+        -:  377:    //However, for whatever reason I went with ACTG in the first release...
+        4:  378:    if(fraction) {
+        4:  379:        ((double*) out)[0] = ((double) tmp[2])/((double) seqLen);
+        4:  380:        ((double*) out)[1] = ((double) tmp[1])/((double) seqLen);
+        4:  381:        ((double*) out)[2] = ((double) tmp[0])/((double) seqLen);
+        4:  382:        ((double*) out)[3] = ((double) tmp[3])/((double) seqLen);
+        -:  383:    } else {
+    #####:  384:        ((uint32_t*) out)[0] = tmp[2];
+    #####:  385:        ((uint32_t*) out)[1] = tmp[1];
+    #####:  386:        ((uint32_t*) out)[2] = tmp[0];
+    #####:  387:        ((uint32_t*) out)[3] = tmp[3];
+        -:  388:    }
+        -:  389:
+        -:  390:    return out;
+        -:  391:
+    #####:  392:error:
+    #####:  393:    if(out) free(out);
+    #####:  394:    if(bytes) free(bytes);
+        -:  395:    return NULL;
+        -:  396:}
+        -:  397:
+        4:  398:void *twobitBases(TwoBit *tb, char *chrom, uint32_t start, uint32_t end, int fraction) {
+        4:  399:    uint32_t tid = 0, i;
+        -:  400:
+        -:  401:    //Get the chromosome ID
+       4*:  402:    for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  403:        if(strcmp(tb->cl->chrom[i], chrom) == 0) {
+        -:  404:            tid = i;
+        -:  405:            break;
+        -:  406:        }
+        -:  407:    }
+        -:  408:
+        4:  409:    if(tid == 0 && strcmp(tb->cl->chrom[i], chrom) != 0) return NULL;
+        -:  410:
+        -:  411:    //Get the start/end if not specified
+        4:  412:    if(start == end && end == 0) {
+        2:  413:        end = tb->idx->size[tid];
+        -:  414:    }
+        -:  415:
+        -:  416:    //Sanity check the bounds
+        4:  417:    if(end > tb->idx->size[tid]) return NULL;
+        4:  418:    if(start >= end) return NULL;
+        -:  419:
+        4:  420:    return twobitBasesWorker(tb, tid, start, end, fraction);
+        -:  421:}
+        -:  422:
+        -:  423:/*
+        -:  424:    Given a chromosome, chrom, return it's length. 0 is used if the chromosome isn't present.
+        -:  425:*/
+    #####:  426:uint32_t twobitChromLen(TwoBit *tb, char *chrom) {
+    #####:  427:    uint32_t i;
+    #####:  428:    for(i=0; i<tb->hdr->nChroms; i++) {
+    #####:  429:        if(strcmp(tb->cl->chrom[i], chrom) == 0) return tb->idx->size[i];
+        -:  430:    }
+        -:  431:    return 0;
+        -:  432:}
+        -:  433:
+        -:  434:/*
+        -:  435:    Fill in tb->idx.
+        -:  436:
+        -:  437:    Note that the masked stuff will only be stored if storeMasked == 1, since it uses gobs of memory otherwise.
+        -:  438:    On error, tb->idx is left as NULL.
+        -:  439:*/
+        2:  440:void twobitIndexRead(TwoBit *tb, int storeMasked) {
+        2:  441:    uint32_t i, data[2];
+        2:  442:    TwoBitMaskedIdx *idx = calloc(1, sizeof(TwoBitMaskedIdx));
+        -:  443:
+        -:  444:    //Allocation and error checking
+        4:  445:    if(!idx) return;
+        2:  446:    idx->size = malloc(tb->hdr->nChroms * sizeof(uint32_t));
+        2:  447:    idx->nBlockCount = calloc(tb->hdr->nChroms, sizeof(uint32_t));
+        2:  448:    idx->nBlockStart = calloc(tb->hdr->nChroms, sizeof(uint32_t*));
+        2:  449:    idx->nBlockSizes = calloc(tb->hdr->nChroms, sizeof(uint32_t*));
+       2*:  450:    if(!idx->size) goto error;
+       2*:  451:    if(!idx->nBlockCount) goto error;
+       2*:  452:    if(!idx->nBlockStart) goto error;
+       2*:  453:    if(!idx->nBlockSizes) goto error;
+        2:  454:    idx->maskBlockCount = calloc(tb->hdr->nChroms, sizeof(uint32_t));
+       2*:  455:    if(!idx->maskBlockCount) goto error;
+        2:  456:    if(storeMasked) {
+        2:  457:        idx->maskBlockStart = calloc(tb->hdr->nChroms, sizeof(uint32_t*));
+        2:  458:        idx->maskBlockSizes = calloc(tb->hdr->nChroms, sizeof(uint32_t*));
+       2*:  459:        if(!idx->maskBlockStart) goto error;
+       2*:  460:        if(!idx->maskBlockSizes) goto error;
+        -:  461:    }
+        2:  462:    idx->offset = malloc(tb->hdr->nChroms * sizeof(uint64_t));
+       2*:  463:    if(!idx->offset) goto error;
+        -:  464:
+        -:  465:    //Read in each chromosome/contig
+        6:  466:    for(i=0; i<tb->hdr->nChroms; i++) {
+       4*:  467:        if(twobitSeek(tb, tb->cl->offset[i]) != 0) goto error;
+       4*:  468:        if(twobitRead(data, sizeof(uint32_t), 2, tb) != 2) goto error;
+        4:  469:        idx->size[i] = data[0];
+        4:  470:        idx->nBlockCount[i] = data[1];
+        -:  471:
+        -:  472:        //Allocate the nBlock starts/sizes and fill them in
+        4:  473:        idx->nBlockStart[i] = malloc(idx->nBlockCount[i] * sizeof(uint32_t));
+        4:  474:        idx->nBlockSizes[i] = malloc(idx->nBlockCount[i] * sizeof(uint32_t));
+       4*:  475:        if(!idx->nBlockStart[i]) goto error;
+       4*:  476:        if(!idx->nBlockSizes[i]) goto error;
+       4*:  477:        if(twobitRead(idx->nBlockStart[i], sizeof(uint32_t), idx->nBlockCount[i], tb) != idx->nBlockCount[i]) goto error;
+       4*:  478:        if(twobitRead(idx->nBlockSizes[i], sizeof(uint32_t), idx->nBlockCount[i], tb) != idx->nBlockCount[i]) goto error;
+        -:  479:
+        -:  480:        //Get the masked block information
+       4*:  481:        if(twobitRead(idx->maskBlockCount + i, sizeof(uint32_t), 1, tb) != 1) goto error;
+        -:  482:
+        -:  483:        //Allocate the maskBlock starts/sizes and fill them in
+        4:  484:        if(storeMasked) {
+        4:  485:            idx->maskBlockStart[i] = malloc(idx->maskBlockCount[i] * sizeof(uint32_t));
+        4:  486:            idx->maskBlockSizes[i] = malloc(idx->maskBlockCount[i] * sizeof(uint32_t));
+       4*:  487:            if(!idx->maskBlockStart[i]) goto error;
+       4*:  488:            if(!idx->maskBlockSizes[i]) goto error;
+       4*:  489:            if(twobitRead(idx->maskBlockStart[i], sizeof(uint32_t), idx->maskBlockCount[i], tb) != idx->maskBlockCount[i]) goto error;
+       4*:  490:            if(twobitRead(idx->maskBlockSizes[i], sizeof(uint32_t), idx->maskBlockCount[i], tb) != idx->maskBlockCount[i]) goto error;
+        -:  491:        } else {
+    #####:  492:            if(twobitSeek(tb, twobitTell(tb) + 8 * idx->maskBlockCount[i]) != 0) goto error;
+        -:  493:        }
+        -:  494:
+        -:  495:        //Reserved
+       4*:  496:        if(twobitRead(data, sizeof(uint32_t), 1, tb) != 1) goto error;
+        -:  497:
+        4:  498:        idx->offset[i] = twobitTell(tb);
+        -:  499:    }
+        -:  500:
+        2:  501:    tb->idx = idx;
+        2:  502:    return;
+        -:  503:
+    #####:  504:error:
+    #####:  505:    if(idx) {
+    #####:  506:        if(idx->size) free(idx->size);
+        -:  507:
+    #####:  508:        if(idx->nBlockCount) free(idx->nBlockCount);
+    #####:  509:        if(idx->nBlockStart) {
+    #####:  510:            for(i=0; i<tb->hdr->nChroms; i++) {
+    #####:  511:                if(idx->nBlockStart[i]) free(idx->nBlockStart[i]);
+        -:  512:            }
+    #####:  513:            free(idx->nBlockStart[i]);
+        -:  514:        }
+    #####:  515:        if(idx->nBlockSizes) {
+    #####:  516:            for(i=0; i<tb->hdr->nChroms; i++) {
+    #####:  517:                if(idx->nBlockSizes[i]) free(idx->nBlockSizes[i]);
+        -:  518:            }
+    #####:  519:            free(idx->nBlockSizes[i]);
+        -:  520:        }
+        -:  521:
+    #####:  522:        if(idx->maskBlockCount) free(idx->maskBlockCount);
+    #####:  523:        if(idx->maskBlockStart) {
+    #####:  524:            for(i=0; i<tb->hdr->nChroms; i++) {
+    #####:  525:                if(idx->maskBlockStart[i]) free(idx->maskBlockStart[i]);
+        -:  526:            }
+    #####:  527:            free(idx->maskBlockStart[i]);
+        -:  528:        }
+    #####:  529:        if(idx->maskBlockSizes) {
+    #####:  530:            for(i=0; i<tb->hdr->nChroms; i++) {
+    #####:  531:                if(idx->maskBlockSizes[i]) free(idx->maskBlockSizes[i]);
+        -:  532:            }
+    #####:  533:            free(idx->maskBlockSizes[i]);
+        -:  534:        }
+        -:  535:
+    #####:  536:        if(idx->offset) free(idx->offset);
+        -:  537:
+    #####:  538:        free(idx);
+        -:  539:    }
+        -:  540:}
+        -:  541:
+        2:  542:void twobitIndexDestroy(TwoBit *tb) {
+        2:  543:    uint32_t i;
+        -:  544:
+        2:  545:    if(tb->idx) {
+        2:  546:        if(tb->idx->size) free(tb->idx->size);
+        -:  547:
+        2:  548:        if(tb->idx->nBlockCount) free(tb->idx->nBlockCount);
+        2:  549:        if(tb->idx->nBlockStart) {
+        6:  550:            for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  551:                if(tb->idx->nBlockStart[i]) free(tb->idx->nBlockStart[i]);
+        -:  552:            }
+        2:  553:            free(tb->idx->nBlockStart);
+        -:  554:        }
+        2:  555:        if(tb->idx->nBlockSizes) {
+        6:  556:            for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  557:                if(tb->idx->nBlockSizes[i]) free(tb->idx->nBlockSizes[i]);
+        -:  558:            }
+        2:  559:            free(tb->idx->nBlockSizes);
+        -:  560:        }
+        -:  561:
+        2:  562:        if(tb->idx->maskBlockCount) free(tb->idx->maskBlockCount);
+        2:  563:        if(tb->idx->maskBlockStart) {
+        6:  564:            for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  565:                if(tb->idx->maskBlockStart[i]) free(tb->idx->maskBlockStart[i]);
+        -:  566:            }
+        2:  567:            free(tb->idx->maskBlockStart);
+        -:  568:        }
+        2:  569:        if(tb->idx->maskBlockSizes) {
+        6:  570:            for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  571:                if(tb->idx->maskBlockSizes[i]) free(tb->idx->maskBlockSizes[i]);
+        -:  572:            }
+        2:  573:            free(tb->idx->maskBlockSizes);
+        -:  574:        }
+        -:  575:
+        2:  576:        if(tb->idx->offset) free(tb->idx->offset);
+        -:  577:
+        2:  578:        free(tb->idx);
+        -:  579:    }
+        2:  580:}
+        -:  581:
+        2:  582:void twobitChromListRead(TwoBit *tb) {
+        2:  583:    uint32_t i;
+        2:  584:    uint8_t byte;
+        2:  585:    char *str = NULL;
+        2:  586:    TwoBitCL *cl = calloc(1, sizeof(TwoBitCL));
+        -:  587:
+        -:  588:    //Allocate cl and do error checking
+       2*:  589:    if(!cl) goto error;
+        2:  590:    cl->chrom = calloc(tb->hdr->nChroms, sizeof(char*));
+        2:  591:    cl->offset = malloc(sizeof(uint32_t) * tb->hdr->nChroms);
+       2*:  592:    if(!cl->chrom) goto error;
+       2*:  593:    if(!cl->offset) goto error;
+        -:  594:
+        6:  595:    for(i=0; i<tb->hdr->nChroms; i++) {
+        -:  596:        //Get the string size (not null terminated!)
+       4*:  597:        if(twobitRead(&byte, 1, 1, tb) != 1) goto error;
+        -:  598:
+        -:  599:        //Read in the string
+        4:  600:        str = calloc(1 + byte, sizeof(char));
+       4*:  601:        if(!str) goto error;
+       4*:  602:        if(twobitRead(str, 1, byte, tb) != byte) goto error;
+        4:  603:        cl->chrom[i] = str;
+        4:  604:        str = NULL;
+        -:  605:
+        -:  606:        //Read in the size
+       4*:  607:        if(twobitRead(cl->offset + i, sizeof(uint32_t), 1, tb) != 1) goto error;
+        -:  608:    }
+        -:  609:
+        2:  610:    tb->cl = cl;
+        2:  611:    return;
+        -:  612:
+    #####:  613:error:
+    #####:  614:    if(str) free(str);
+    #####:  615:    if(cl) {
+    #####:  616:        if(cl->offset) free(cl->offset);
+    #####:  617:        if(cl->chrom) {
+    #####:  618:            for(i=0; i<tb->hdr->nChroms; i++) {
+    #####:  619:                if(cl->chrom[i]) free(cl->chrom[i]);
+        -:  620:            }
+    #####:  621:            free(cl->chrom);
+        -:  622:        }
+    #####:  623:        free(cl);
+        -:  624:    }
+        -:  625:}
+        -:  626:
+        2:  627:void twobitChromListDestroy(TwoBit *tb) {
+        2:  628:    uint32_t i;
+        -:  629:
+        2:  630:    if(tb->cl) {
+        2:  631:        if(tb->cl->offset) free(tb->cl->offset);
+        2:  632:        if(tb->cl->chrom) {
+        6:  633:            for(i=0; i<tb->hdr->nChroms; i++) {
+        4:  634:                if(tb->cl->chrom[i]) free(tb->cl->chrom[i]);
+        -:  635:            }
+        2:  636:            free(tb->cl->chrom);
+        -:  637:        }
+        2:  638:        free(tb->cl);
+        -:  639:    }
+        2:  640:}
+        -:  641:
+        2:  642:void twobitHdrRead(TwoBit *tb) {
+        -:  643:    //Read the first 16 bytes
+        2:  644:    uint32_t data[4];
+        2:  645:    TwoBitHeader *hdr = calloc(1, sizeof(TwoBitHeader));
+        -:  646:
+        4:  647:    if(!hdr) return;
+        -:  648:
+       2*:  649:    if(twobitRead(data, 4, 4, tb) != 4) goto error;
+        -:  650:
+        -:  651:    //Magic
+        2:  652:    hdr->magic = data[0];
+        2:  653:    if(hdr->magic != 0x1A412743) {
+    #####:  654:        fprintf(stderr, "[twobitHdrRead] Received an invalid file magic number (0x%"PRIx32")!\n", hdr->magic);
+    #####:  655:        goto error;
+        -:  656:    }
+        -:  657:
+        -:  658:    //Version
+        2:  659:    hdr->version = data[1];
+        2:  660:    if(hdr->version != 0) {
+    #####:  661:        fprintf(stderr, "[twobitHdrRead] The file version is %"PRIu32" while only version 0 is defined!\n", hdr->version);
+    #####:  662:        goto error;
+        -:  663:    }
+        -:  664:
+        -:  665:    //Sequence Count
+        2:  666:    hdr->nChroms = data[2];
+        2:  667:    if(hdr->nChroms == 0) {
+    #####:  668:        fprintf(stderr, "[twobitHdrRead] There are apparently no chromosomes/contigs in this file!\n");
+    #####:  669:        goto error;
+        -:  670:    }
+        -:  671:
+        2:  672:    tb->hdr = hdr;
+        2:  673:    return;
+        -:  674:
+    #####:  675:error:
+    #####:  676:    if(hdr) free(hdr);
+        -:  677:}
+        -:  678:
+        2:  679:void twobitHdrDestroy(TwoBit *tb) {
+        2:  680:    if(tb->hdr) free(tb->hdr);
+        2:  681:}
+        -:  682:
+        2:  683:void twobitClose(TwoBit *tb) {
+        2:  684:    if(tb) {
+        2:  685:        if(tb->fp) fclose(tb->fp);
+        2:  686:        if(tb->data) munmap(tb->data, tb->sz);
+        2:  687:        twobitChromListDestroy(tb);
+        2:  688:        twobitIndexDestroy(tb);
+        -:  689:        //N.B., this needs to be called last
+        2:  690:        twobitHdrDestroy(tb);
+        2:  691:        free(tb);
+        -:  692:    }
+        2:  693:}
+        -:  694:
+        2:  695:TwoBit* twobitOpen(char *fname, int storeMasked) {
+        2:  696:    int fd;
+        2:  697:    struct stat fs;
+        2:  698:    TwoBit *tb = calloc(1, sizeof(TwoBit));
+        2:  699:    if(!tb) return NULL;
+        -:  700:
+        2:  701:    tb->fp = fopen(fname, "rb");
+       2*:  702:    if(!tb->fp) goto error;
+        -:  703:
+        -:  704:    //Try to memory map the whole thing, since these aren't terribly large
+        -:  705:    //Since we might be multithreading this in python, use shared memory
+        2:  706:    fd = fileno(tb->fp);
+        2:  707:    if(fstat(fd, &fs) == 0) {
+        2:  708:        tb->sz = (uint64_t) fs.st_size;
+        2:  709:        tb->data = mmap(NULL, fs.st_size, PROT_READ, MAP_SHARED, fd, 0);
+        2:  710:        if(tb->data) {
+        2:  711:            if(madvise(tb->data, fs.st_size, MADV_RANDOM) != 0) {
+    #####:  712:                munmap(tb->data, fs.st_size);
+    #####:  713:                tb->data = NULL;
+        -:  714:            }
+        -:  715:        }
+        -:  716:    }
+        -:  717:
+        -:  718:    //Attempt to read in the fixed header
+        2:  719:    twobitHdrRead(tb);
+       2*:  720:    if(!tb->hdr) goto error;
+        -:  721:
+        -:  722:    //Read in the chromosome list
+        2:  723:    twobitChromListRead(tb);
+       2*:  724:    if(!tb->cl) goto error;
+        -:  725:
+        -:  726:    //Read in the mask index
+        2:  727:    twobitIndexRead(tb, storeMasked);
+       2*:  728:    if(!tb->idx) goto error;
+        -:  729:
+        -:  730:    return tb;
+        -:  731:
+    #####:  732:error:
+    #####:  733:    twobitClose(tb);
+    #####:  734:    return NULL;
+        -:  735:}

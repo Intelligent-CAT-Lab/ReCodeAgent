@@ -1,0 +1,39 @@
+BOSTree -- An order statistic, self-balancing AVL tree implementation in C
+
+An order statistic tree is a tree structure with two additional methods,
+rank(node) and select(index), which allow array-like access in O(log n) time.
+The idea is to simply store, for each node, the number of child-nodes.
+Self-balancing search trees maintain a minimal height by rebalancing their
+sub-trees.
+
+I did not find a C reference implementation for such a tree, so I wrote one
+myself. This implementation uses map semantics, that is, stores key and value
+as separate pointers.
+
+It stores some not strictly necessary numbers, such as the number of sub-nodes
+of the right child of a node. This allows to calculate the overall count
+quickly, but can be removed to make the structure's overhead smaller.
+
+The code has been extensively tested, is apparently AFL-proof, and leaks no
+memory whatsoever according to valgrind. BOSTree has been in use in pqiv for
+some time now.
+
+
+ALTERNATIVES:
+
+· In GNU/C++, Policy-Based Data Structures can be used according to
+  http://stackoverflow.com/questions/11230734/c-stl-order-statistic-tree
+  That code probably is much more mature. Use it if this is an option!
+
+· If you do not need the order statistic part, there are plenty of balanced
+  tree implementations which suit your use case better. They are better tested
+  and much faster because they do not have the overhead of order statistics. For
+  example, see glib:
+  https://developer.gnome.org/glib/stable/glib-Balanced-Binary-Trees.html
+
+· glib appears to have a concealed order statistic balanced binary tree
+  implementation, only they name this sequences:
+  https://developer.gnome.org/glib/stable/glib-Sequences.html
+
+
+Licensed under the terms of the GPLv3.

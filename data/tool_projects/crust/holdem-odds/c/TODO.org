@@ -1,0 +1,10 @@
+* BUGS
+* FEATURES
+- [ ] Hand detection
+- [ ] Hand comparisons
+- [ ] Simulations
+* FIXES
+- [X] Make NewCard return a Card; Card should contain InvalidRank and
+  InvalidSuit if incorrectly constructed.
+- [X] Alternative "constructors": NewCardFromString(char *) and
+  NewCardFromChar(char, char)

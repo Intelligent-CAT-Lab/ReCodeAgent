@@ -1,0 +1,90 @@
+[
+  {
+    "fixture": "./snapshot/fixtures/length-for-string.wsp",
+    "stdout": "6"
+  },
+  {
+    "fixture": "./snapshot/fixtures/pop-1.wsp",
+    "stdout": "2"
+  },
+  {
+    "fixture": "./snapshot/fixtures/pop-3.wsp",
+    "stdout": "1"
+  },
+  {
+    "fixture": "./snapshot/fixtures/pop-2.wsp",
+    "stdout": "nil"
+  },
+  {
+    "fixture": "./snapshot/fixtures/remove-whitespaces.wsp",
+    "stdout": "foobar"
+  },
+  {
+    "fixture": "./snapshot/fixtures/calc.wsp",
+    "stdout": "3"
+  },
+  {
+    "fixture": "./snapshot/fixtures/string-ref-1.wsp",
+    "stdout": "d"
+  },
+  {
+    "fixture": "./snapshot/fixtures/map.wsp",
+    "stdout": "(1st 2nd 3rd)"
+  },
+  {
+    "fixture": "./snapshot/fixtures/fact.wsp",
+    "stdout": "120"
+  },
+  {
+    "fixture": "./snapshot/fixtures/or-1.wsp",
+    "stdout": "T"
+  },
+  {
+    "fixture": "./snapshot/fixtures/is-int-string-1.wsp",
+    "stdout": "F"
+  },
+  {
+    "fixture": "./snapshot/fixtures/simple_print.wsp",
+    "stdout": "Hello World!"
+  },
+  {
+    "fixture": "./snapshot/fixtures/is-int-string-2.wsp",
+    "stdout": "T"
+  },
+  {
+    "fixture": "./snapshot/fixtures/splice.wsp",
+    "stdout": "ob"
+  },
+  {
+    "fixture": "./snapshot/fixtures/push-1.wsp",
+    "stdout": "(1 2 3 4)"
+  },
+  {
+    "fixture": "./snapshot/fixtures/while.wsp",
+    "stdout": "while... while... while... while... while... "
+  },
+  {
+    "fixture": "./snapshot/fixtures/push-2.wsp",
+    "stdout": "(1 2 3)"
+  },
+  {
+    "fixture": "./snapshot/fixtures/string-ref.wsp",
+    "stdout": "b"
+  },
+  {
+    "fixture": "./snapshot/fixtures/and-1.wsp",
+    "stdout": "F"
+  },
+  {
+    "fixture": "./snapshot/fixtures/length-1.wsp",
+    "stdout": "0"
+  },
+  {
+    "fixture": "./snapshot/fixtures/parse-int-1.wsp",
+    "stdout": "40"
+  },
+  {
+    "fixture": "./snapshot/fixtures/length-2.wsp",
+    "stdout": "3"
+  }
+]

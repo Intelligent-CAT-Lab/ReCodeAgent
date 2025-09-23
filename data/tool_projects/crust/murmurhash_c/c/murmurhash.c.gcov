@@ -1,0 +1,133 @@
+        -:    0:Source:murmurhash.c
+        -:    1:/**
+        -:    2: * `murmurhash.c' - murmurhash
+        -:    3: *
+        -:    4: * copyright (c) 2014-2025 joseph werle <joseph.werle@gmail.com>
+        -:    5: */
+        -:    6:#include <stdlib.h>
+        -:    7:#include <stdio.h>
+        -:    8:#include <stdint.h>
+        -:    9:#include "murmurhash.h"
+        -:   10:
+        -:   11:#if MURMURHASH_WANTS_HTOLE32
+        -:   12:#define MURMURHASH_HAS_HTOLE32 1
+        -:   13:#ifndef htole32
+      13*:   14:static uint32_t htole32 (uint32_t value) {
+        -:   15:#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        -:   16:  value = (
+        -:   17:    ((value & 0xFF000000) >> 24) |
+        -:   18:    ((value & 0x00FF0000) >> 8)  |
+        -:   19:    ((value & 0x0000FF00) << 8)  |
+        -:   20:    ((value & 0x000000FF) << 24)
+        -:   21:  );
+        -:   22:#endif
+      13*:   23:  return value;
+        -:   24:}
+------------------
+htole32:
+    #####:   14:static uint32_t htole32 (uint32_t value) {
+        -:   15:#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        -:   16:  value = (
+        -:   17:    ((value & 0xFF000000) >> 24) |
+        -:   18:    ((value & 0x00FF0000) >> 8)  |
+        -:   19:    ((value & 0x0000FF00) << 8)  |
+        -:   20:    ((value & 0x000000FF) << 24)
+        -:   21:  );
+        -:   22:#endif
+    #####:   23:  return value;
+        -:   24:}
+------------------
+htole32:
+    #####:   14:static uint32_t htole32 (uint32_t value) {
+        -:   15:#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        -:   16:  value = (
+        -:   17:    ((value & 0xFF000000) >> 24) |
+        -:   18:    ((value & 0x00FF0000) >> 8)  |
+        -:   19:    ((value & 0x0000FF00) << 8)  |
+        -:   20:    ((value & 0x000000FF) << 24)
+        -:   21:  );
+        -:   22:#endif
+    #####:   23:  return value;
+        -:   24:}
+------------------
+htole32:
+       13:   14:static uint32_t htole32 (uint32_t value) {
+        -:   15:#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        -:   16:  value = (
+        -:   17:    ((value & 0xFF000000) >> 24) |
+        -:   18:    ((value & 0x00FF0000) >> 8)  |
+        -:   19:    ((value & 0x0000FF00) << 8)  |
+        -:   20:    ((value & 0x000000FF) << 24)
+        -:   21:  );
+        -:   22:#endif
+       13:   23:  return value;
+        -:   24:}
+------------------
+        -:   25:#endif
+        -:   26:#endif
+        -:   27:
+      19*:   28:uint32_t murmurhash (const char *key, uint32_t len, uint32_t seed) {
+      19*:   29:  uint32_t c1 = 0xcc9e2d51;
+      19*:   30:  uint32_t c2 = 0x1b873593;
+      19*:   31:  uint32_t r1 = 15;
+      19*:   32:  uint32_t r2 = 13;
+      19*:   33:  uint32_t m = 5;
+      19*:   34:  uint32_t n = 0xe6546b64;
+      19*:   35:  uint32_t h = 0;
+      19*:   36:  uint32_t k = 0;
+      19*:   37:  uint8_t *d = (uint8_t *) key; // 32 bit extract from `key'
+      19*:   38:  const uint32_t *chunks = NULL;
+      19*:   39:  const uint8_t *tail = NULL; // tail - last 8 bytes
+      19*:   40:  int i = 0;
+      19*:   41:  int l = len / 4; // chunk length
+        -:   42:
+      19*:   43:  h = seed;
+        -:   44:
+      19*:   45:  chunks = (const uint32_t *) (d + l * 4); // body
+      19*:   46:  tail = (const uint8_t *) (d + l * 4); // last 8 byte chunk of `key'
+        -:   47:
+        -:   48:  // for each 4 byte chunk of `key'
+      32*:   49:  for (i = -l; i != 0; ++i) {
+        -:   50:    // next 4 byte chunk of `key'
+        -:   51:  #if MURMURHASH_HAS_HTOLE32
+      13*:   52:    k = htole32(chunks[i]);
+        -:   53:  #else
+        -:   54:    k = chunks[i];
+        -:   55:  #endif
+        -:   56:
+        -:   57:    // encode next 4 byte chunk of `key'
+      13*:   58:    k *= c1;
+      13*:   59:    k = (k << r1) | (k >> (32 - r1));
+      13*:   60:    k *= c2;
+        -:   61:
+        -:   62:    // append to hash
+      13*:   63:    h ^= k;
+      13*:   64:    h = (h << r2) | (h >> (32 - r2));
+      13*:   65:    h = h * m + n;
+        -:   66:  }
+        -:   67:
+      19*:   68:  k = 0;
+        -:   69:
+        -:   70:  // remainder
+      19*:   71:  switch (len & 3) { // `len % 4'
+       3*:   72:    case 3: k ^= (tail[2] << 16);
+       8*:   73:    case 2: k ^= (tail[1] << 8);
+        -:   74:
+      12*:   75:    case 1:
+      12*:   76:      k ^= tail[0];
+      12*:   77:      k *= c1;
+      12*:   78:      k = (k << r1) | (k >> (32 - r1));
+      12*:   79:      k *= c2;
+      12*:   80:      h ^= k;
+        -:   81:  }
+        -:   82:
+      19*:   83:  h ^= len;
+        -:   84:
+      19*:   85:  h ^= (h >> 16);
+      19*:   86:  h *= 0x85ebca6b;
+      19*:   87:  h ^= (h >> 13);
+      19*:   88:  h *= 0xc2b2ae35;
+      19*:   89:  h ^= (h >> 16);
+        -:   90:
+      19*:   91:  return h;
+        -:   92:}

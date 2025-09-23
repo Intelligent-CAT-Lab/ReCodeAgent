@@ -1,0 +1,34 @@
+[
+    {
+        "lines": 707,
+        "coverage": 89.82
+    },
+    {
+        "lines": 3,
+        "coverage": 100.0
+    },
+    {
+        "lines": 2,
+        "coverage": 100.0
+    },
+    {
+        "lines": 9,
+        "coverage": 11.11
+    },
+    {
+        "lines": 71,
+        "coverage": 0.0
+    },
+    {
+        "lines": 1,
+        "coverage": 0.0
+    },
+    {
+        "lines": 401,
+        "coverage": 99.75
+    },
+    {
+        "lines": 1194,
+        "coverage": 87.19
+    }
+]

@@ -1,0 +1,205 @@
+        -:    0:Source:ltrep.c
+        -:    1:#include "ltre.h"
+        -:    2:#include <ctype.h>
+        -:    3:#include <fcntl.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <stdlib.h>
+        -:    6:#include <string.h>
+        -:    7:#include <sys/mman.h>
+        -:    8:#include <unistd.h>
+        -:    9:
+        -:   10:// steal implementation details
+        -:   11:struct dstate {
+        -:   12:  struct dstate *transitions[256];
+        -:   13:  bool accepting;
+        -:   14:  bool terminating;
+        -:   15:};
+        -:   16:
+        -:   17:// `-S` is dealt with separately in `parse_args`
+        -:   18:const char *opts = "v xpisF nNHIc h ";
+        -:   19:struct args {
+        -:   20:  struct {
+        -:   21:    bool invert; // -v
+        -:   22:    bool full;   // -x/-p
+        -:   23:    bool ignore; // -i/-s
+        -:   24:    bool fixed;  // -F
+        -:   25:    bool lineno; // -n/-N
+        -:   26:    bool file;   // -H/-I
+        -:   27:    bool count;  // -c
+        -:   28:    bool help;   // -h
+        -:   29:  } opts;
+        -:   30:  char *regex;  // <regex>
+        -:   31:  char **files; // [files...]
+        -:   32:};
+        -:   33:
+        -:   34:#define DESC "LTREP - print lines matching a regex\n"
+        -:   35:#define HELP "Try 'ltrep -h' for more information.\n"
+        -:   36:#define USAGE                                                                  \
+        -:   37:  "Usage:\n"                                                                   \
+        -:   38:  "  ltrep [options...] [--] <regex> [files...]\n"
+        -:   39:#define OPTS                                                                   \
+        -:   40:  "Options:\n"                                                                 \
+        -:   41:  "  -v     invert match; print non-matching lines\n"                          \
+        -:   42:  "  -x/-p  full match; match against whole lines\n"                           \
+        -:   43:  "  -i/-s  ignore case; match case-insensitively\n"                           \
+        -:   44:  "  -S     smart case; set '-i' if regex lowercase\n"                         \
+        -:   45:  "  -F     interpret the regex as a fixed string\n"                           \
+        -:   46:  "  -n/-N  prefix matching lines with line numbers\n"                         \
+        -:   47:  "  -H/-I  prefix matching lines with file names\n"                           \
+        -:   48:  "  -c     only print a count of matching lines\n"                            \
+        -:   49:  "  -h     display this help message and exit\n"                              \
+        -:   50:  "Options '-i/-s' and '-S' override eachother.\n"                             \
+        -:   51:  "A '--' is needed when <regex> begins in '-'.\n"                             \
+        -:   52:  "A file of '-' denotes standard input. If no\n"                              \
+        -:   53:  "files are provided, read from standard input.\n"
+        -:   54:#define INV "Unrecognized option '-%.*s'\n"
+        -:   55:
+    #####:   56:struct args parse_args(char **argv) {
+    #####:   57:  struct args args = {0};
+        -:   58:  bool smartcase = false; // -S
+        -:   59:
+    #####:   60:  if (!*++argv)
+    #####:   61:    fputs(DESC HELP, stdout), exit(EXIT_FAILURE);
+        -:   62:
+    #####:   63:  for (; *argv && **argv == '-'; argv++) {
+    #####:   64:    if (strcmp(*argv, "--") == 0 && argv++)
+        -:   65:      break;
+        -:   66:
+    #####:   67:    for (char *p, *opt = *argv + 1; *opt; opt++) {
+    #####:   68:      if (*opt == 'S')
+        -:   69:        smartcase = true;
+    #####:   70:      else if ((p = strchr(opts, *opt)) && *opt != ' ')
+    #####:   71:        ((bool *)&args.opts)[p - opts >> 1] = !(p - opts & 1);
+        -:   72:      else
+    #####:   73:        printf(INV HELP, *opt == '-' ? -1 : 1, opt), exit(EXIT_FAILURE);
+        -:   74:
+    #####:   75:      smartcase &= *opt != 'i' && *opt != 's'; // `-i/-s` override `-S`
+        -:   76:    }
+        -:   77:  }
+        -:   78:
+    #####:   79:  if (args.opts.help)
+    #####:   80:    fputs(DESC USAGE OPTS, stdout), exit(EXIT_SUCCESS);
+        -:   81:
+    #####:   82:  if (!*argv)
+    #####:   83:    fputs(USAGE HELP, stdout), exit(EXIT_FAILURE);
+    #####:   84:  args.regex = *argv;
+    #####:   85:  args.files = ++argv;
+        -:   86:
+    #####:   87:  if (smartcase) {
+        -:   88:    // not trying to be clever here. /\D/ and /\x6A/, for instance, are treated
+        -:   89:    // as uppercase and cause matches to become case-sensitive. probably not
+        -:   90:    // much of an issue because one could write /^\d/ and /\x6a/ instead
+    #####:   91:    args.opts.ignore = true; // `-S` overrides `-i/-s`
+    #####:   92:    for (char *c = args.regex; *c; c++)
+    #####:   93:      args.opts.ignore &= !isupper(*c);
+        -:   94:  }
+        -:   95:
+    #####:   96:  return args;
+        -:   97:}
+        -:   98:
+    #####:   99:int main(int argc, char **argv) {
+    #####:  100:  struct args args = parse_args(argv);
+        -:  101:
+    #####:  102:  char *error = NULL, *loc = args.regex;
+    #####:  103:  struct nfa nfa =
+    #####:  104:      args.opts.fixed ? ltre_fixed_string(loc) : ltre_parse(&loc, &error);
+    #####:  105:  if (error)
+    #####:  106:    fprintf(stderr, "parse error: %s near '%.16s'\n", error, loc),
+    #####:  107:        exit(EXIT_FAILURE);
+        -:  108:
+        -:  109:  // swapping `ltre_partial` and `ltre_ignorecase` would not affect the accepted
+        -:  110:  // language, but swapping `ltre_partial` and `ltre_complement` or swapping
+        -:  111:  // `ltre_ignorecase` and `ltre_complement` would. we perform `ltre_complement`
+        -:  112:  // last to preserve that:
+        -:  113:  // - `ltrep -x -vp` means _does not contain_
+        -:  114:  // - `ltrep -x -vi` means _is not a case variation of_
+        -:  115:  // - `ltrep -x -vpi` means _does not contain any case variation of_
+    #####:  116:  if (!args.opts.full)
+    #####:  117:    ltre_partial(&nfa);
+    #####:  118:  if (args.opts.ignore)
+    #####:  119:    ltre_ignorecase(&nfa);
+    #####:  120:  if (args.opts.invert)
+    #####:  121:    ltre_complement(&nfa);
+        -:  122:
+    #####:  123:  struct dstate *dfa = ltre_compile(nfa);
+        -:  124:
+        -:  125:  int count = 0;
+        -:  126:
+        -:  127:#define OUTPUT_IF(COND)                                                        \
+        -:  128:  do {                                                                         \
+        -:  129:    lineno++;                                                                  \
+        -:  130:    if (!(COND))                                                               \
+        -:  131:      break;                                                                   \
+        -:  132:    count++;                                                                   \
+        -:  133:    if (args.opts.count)                                                       \
+        -:  134:      break;                                                                   \
+        -:  135:    if (args.opts.file)                                                        \
+        -:  136:      printf("%s:", *file);                                                    \
+        -:  137:    if (args.opts.lineno)                                                      \
+        -:  138:      printf("%d:", lineno);                                                   \
+        -:  139:    fwrite(line, sizeof(uint8_t), nl - line, stdout);                          \
+        -:  140:    fputc('\n', stdout);                                                       \
+        -:  141:  } while (0)
+        -:  142:
+    #####:  143:  if (!*args.files) {
+    #####:  144:  read_stdin:;
+        -:  145:    int lineno = 0;
+        -:  146:    size_t len = 0, cap = 256;
+    #####:  147:    uint8_t *nl, *line = malloc(cap);
+    #####:  148:    while (fgets((char *)line + len, cap - len, stdin) != NULL) {
+    #####:  149:      if ((nl = memchr(line + len, '\n', cap - len)) == NULL) {
+    #####:  150:        if (!feof(stdin)) {
+    #####:  151:          len = cap - 1, line = realloc(line, cap *= 2);
+        -:  152:          continue;
+        -:  153:        }
+    #####:  154:        nl = memchr(line + len, '\0', cap - len);
+        -:  155:      }
+    #####:  156:      *nl = '\0', len = 0;
+        -:  157:
+        -:  158:      char **file = &(char *){"<stdin>"}; // fun
+    #####:  159:      OUTPUT_IF(ltre_matches(dfa, line));
+        -:  160:    }
+        -:  161:
+    #####:  162:    if (!feof(stdin))
+    #####:  163:      perror("fgets"), exit(EXIT_FAILURE);
+    #####:  164:    free(line);
+        -:  165:
+        -:  166:    // clear EOF indicator in case a file of `-` is supplied more than once
+    #####:  167:    clearerr(stdin);
+        -:  168:  }
+        -:  169:
+    #####:  170:  for (char **file; *(file = args.files++);) {
+    #####:  171:    if (strcmp(*file, "-") == 0)
+    #####:  172:      goto read_stdin;
+        -:  173:
+        -:  174:    int fd = open(*file, O_RDONLY);
+    #####:  175:    if (fd == -1)
+    #####:  176:      perror("open"), exit(EXIT_FAILURE);
+    #####:  177:    size_t len = lseek(fd, 0, SEEK_END);
+    #####:  178:    uint8_t *data = mmap(0, len, PROT_READ, MAP_PRIVATE, fd, 0);
+        -:  179:
+        -:  180:    // intertwine `ltre_matches` within walking the file for maximum performance
+        -:  181:    int lineno = 0;
+        -:  182:    struct dstate *dstate = dfa;
+        -:  183:    uint8_t *nl = data, *line = data;
+    #####:  184:    for (; nl < data + len; line = ++nl) {
+    #####:  185:      for (dstate = dfa; !dstate->terminating && *nl != '\n' && nl < data + len;
+    #####:  186:           nl++)
+    #####:  187:        dstate = dstate->transitions[*nl];
+    #####:  188:      if (*nl != '\n') {
+    #####:  189:        nl = memchr(nl, '\n', data + len - nl);
+    #####:  190:        nl = nl ? nl : data + len;
+        -:  191:      }
+        -:  192:
+    #####:  193:      OUTPUT_IF(dstate->accepting);
+        -:  194:    }
+        -:  195:
+    #####:  196:    if (close(fd) == -1)
+    #####:  197:      perror("close"), exit(EXIT_FAILURE);
+        -:  198:  }
+        -:  199:
+    #####:  200:  if (args.opts.count)
+        -:  201:    printf("%d\n", count);
+        -:  202:
+    #####:  203:  nfa_free(nfa), dfa_free(dfa);
+        -:  204:}

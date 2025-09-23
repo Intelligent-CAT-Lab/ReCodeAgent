@@ -1,0 +1,55 @@
+        -:    0:Source:tests/sanity.c
+        -:    1:#define _GNU_SOURCE
+        -:    2:
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <stdlib.h>
+        -:    6:#include <sys/timeb.h>
+        -:    7:#include "../bostree.h"
+        -:    8:#include "test_helpers.h"
+        -:    9:
+    #####:   10:void free_function(BOSNode *node) {
+    #####:   11:	free(node->key);
+    #####:   12:	free(node->data);
+    #####:   13:}
+        -:   14:
+    #####:   15:int main() {
+    #####:   16:	BOSTree *tree = bostree_new((BOSTree_cmp_function)strcmp, free_function);
+        -:   17:
+    #####:   18:	char iter;
+    #####:   19:	printf("Insert test:\n");
+    #####:   20:	for(iter='A'; iter<='Z'; iter++) {
+    #####:   21:		char *data = malloc(2);
+    #####:   22:		*data = iter;
+    #####:   23:		data[1] = 0;
+    #####:   24:		printf("Insert %s, ", data);
+    #####:   25:		bostree_insert(tree, data, strdup("Value"));
+        -:   26:
+    #####:   27:		test_tree_sanity(tree);
+        -:   28:	}
+        -:   29:
+        -:   30:#ifndef NDEBUG
+    #####:   31:	bostree_print(tree);
+        -:   32:#endif
+        -:   33:
+        -:   34:
+    #####:   35:	printf("\nRemove test:\n");
+    #####:   36:	for(iter='A'; iter<='Z'; iter++) {
+    #####:   37:		char data[2];
+    #####:   38:		*data = iter;
+    #####:   39:		data[1] = 0;
+    #####:   40:		printf("Remove %s, ", data);
+    #####:   41:		BOSNode *node = bostree_lookup(tree, data);
+    #####:   42:		if(node == NULL) {
+    #####:   43:			printf("Lookup for %s showed it was already deleted\n", data);
+    #####:   44:			exit(1);
+        -:   45:		}
+    #####:   46:		bostree_remove(tree, node);
+        -:   47:
+    #####:   48:		test_tree_sanity(tree);
+        -:   49:	}
+    #####:   50:	printf("\n");
+        -:   51:
+    #####:   52:	bostree_destroy(tree);
+    #####:   53:	exit(0);
+        -:   54:}

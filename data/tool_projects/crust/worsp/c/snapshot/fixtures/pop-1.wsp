@@ -1,0 +1,4 @@
+(= list '(1 2 3 4))
+(pop list)
+(pop list)
+(print (pop list))

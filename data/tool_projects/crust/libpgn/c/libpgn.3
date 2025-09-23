@@ -1,0 +1,56 @@
+.TH LIBPGN 3 "2024 August 30" "libpgn 0.0.1"
+
+.SH NAME
+libpgn \- PGN file parser
+
+.SH SYNOPSIS
+.B #include <pgn.h>
+.LP
+pgn_t *\fBpgn_init\fP(void);
+.br
+void \fBpgn_parse\fP(pgn_t *\fIpgn\fP, char *\fIstr\fP);
+.br
+void \fBpgn_cleanup\fP(pgn_t *\fIpgn\fP);
+
+.SH DESCRIPTION
+.LP
+.B libpgn
+is a parser for PGN (Portable Game Notation) files that's usually used to record a chess game. The parser tries to parse all the variables a PGN file has. Metadata, movetext, comments with it's respective position, and many others.
+
+.SH EXAMPLES
+Parsing the simplest Bongcloud Attack opening:
+.LP
+.\" .in +4n
+.EX
+    #include <pgn.h>
+    #include <stdio.h>
+
+    int main(void)
+    {
+        pgn_t *pgn = pgn_init();
+        pgn_parse(pgn,
+                "[Event "Global Championship Finals 2022"]\[rs]n"
+                "[Result "*"]\[rs]n"
+                "\[rs]n"
+                "1. e4 e5 2. Ke2? *");
+
+        printf("%s\n", pgn_metadata_get(pgn->metadata, "Event"));
+        printf("Featuring 'Bongcloud Attack'\[rs]n\[rs]n");
+
+        for (int i = 0; i < pgn->moves->length; i++) {
+            pgn_move_t white = pgn->moves->values[i].white;
+            pgn_move_t black = pgn->moves->values[i].black;
+            printf("%d.\[rs]n  %s\[rs]n  %s\[rs]n", i + 1, white.notation, black.notation);
+        }
+
+        printf("%s\[rs]n", pgn_score_to_string(pgn->score));
+        pgn_cleanup(pgn);
+        return 0;
+    }
+.EE
+.LP
+Link with -lpgn.
+
+.SH AUTHORS
+.LP
+youkwhd <lolywk@tutanota.com>

@@ -1,0 +1,1 @@
+gcc -o main morton.c tests/test.c -fPIC -fprofile-arcs -ftest-coverage && ./main

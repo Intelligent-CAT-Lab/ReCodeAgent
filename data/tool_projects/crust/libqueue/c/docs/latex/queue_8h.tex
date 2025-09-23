@@ -1,0 +1,188 @@
+\hypertarget{queue_8h}{}\doxysection{include/queue.h File Reference}
+\label{queue_8h}\index{include/queue.h@{include/queue.h}}
+
+
+Entry header file to the library.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structqueue__node__t}{queue\+\_\+node\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Nodes in the queue. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structqueue__t}{queue\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Queue instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structqueue__node__t}{queue\+\_\+node\+\_\+t}} \mbox{\hyperlink{queue_8h_a6b6479e40356a941cd56c0b0b1907c10}{queue\+\_\+node\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Nodes in the queue. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{queue_8h_a829a228ca88ceb7c24f2321b034b9cd3}{queue\+\_\+new}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue)
+\begin{DoxyCompactList}\small\item\em Initialize a queue. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{queue_8h_aa7d54bb9efeb9ec679bb6b73aac2a7ad}{queue\+\_\+push}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue, void $\ast$value)
+\begin{DoxyCompactList}\small\item\em Push elements to the back of the queue. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{queue_8h_ab55dbf8ea466f45a1377b90ac804abd3}{queue\+\_\+pop}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue)
+\begin{DoxyCompactList}\small\item\em Pop elements from the front of the queue. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{queue_8h_a4a47bf34bde6dd251a0794b46999716a}{queue\+\_\+front}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue)
+\begin{DoxyCompactList}\small\item\em Peek the front element of the queue. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{queue_8h_ae0761bcca23e5074dc5bbfe1f1e01724}{queue\+\_\+back}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue)
+\begin{DoxyCompactList}\small\item\em Peek the last element of the queue. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{queue_8h_a4acc2d46403c95d309514fd5c98dbb09}{queue\+\_\+empty}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue)
+\begin{DoxyCompactList}\small\item\em Check if queue is empty. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{queue_8h_ac8395c96973c80c935435f6b31479397}{queue\+\_\+free}} (\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$queue)
+\begin{DoxyCompactList}\small\item\em Free the queue\textquotesingle{}s elements. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Entry header file to the library. 
+
+\begin{DoxyAuthor}{Author}
+Saurav Pal (resyfer) 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\mbox{\hyperlink{bug__bug000001}{Bug}}]No known bugs \end{DoxyRefDesc}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{queue_8h_a6b6479e40356a941cd56c0b0b1907c10}\label{queue_8h_a6b6479e40356a941cd56c0b0b1907c10}} 
+\index{queue.h@{queue.h}!queue\_node\_t@{queue\_node\_t}}
+\index{queue\_node\_t@{queue\_node\_t}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_node\_t}{queue\_node\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structqueue__node__t}{queue\+\_\+node\+\_\+t}} \mbox{\hyperlink{structqueue__node__t}{queue\+\_\+node\+\_\+t}}}
+
+
+
+Nodes in the queue. 
+
+The building blocks of queue 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{queue_8h_ae0761bcca23e5074dc5bbfe1f1e01724}\label{queue_8h_ae0761bcca23e5074dc5bbfe1f1e01724}} 
+\index{queue.h@{queue.h}!queue\_back@{queue\_back}}
+\index{queue\_back@{queue\_back}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_back()}{queue\_back()}}
+{\footnotesize\ttfamily void $\ast$ queue\+\_\+back (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue }\end{DoxyParamCaption})}
+
+
+
+Peek the last element of the queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & Queue instance. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void$\ast$ Last element 
+\end{DoxyReturn}
+\mbox{\Hypertarget{queue_8h_a4acc2d46403c95d309514fd5c98dbb09}\label{queue_8h_a4acc2d46403c95d309514fd5c98dbb09}} 
+\index{queue.h@{queue.h}!queue\_empty@{queue\_empty}}
+\index{queue\_empty@{queue\_empty}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_empty()}{queue\_empty()}}
+{\footnotesize\ttfamily bool queue\+\_\+empty (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue }\end{DoxyParamCaption})}
+
+
+
+Check if queue is empty. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true If queue is empty 
+
+false If queue is not empty 
+\end{DoxyReturn}
+\mbox{\Hypertarget{queue_8h_ac8395c96973c80c935435f6b31479397}\label{queue_8h_ac8395c96973c80c935435f6b31479397}} 
+\index{queue.h@{queue.h}!queue\_free@{queue\_free}}
+\index{queue\_free@{queue\_free}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_free()}{queue\_free()}}
+{\footnotesize\ttfamily void queue\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue }\end{DoxyParamCaption})}
+
+
+
+Free the queue\textquotesingle{}s elements. 
+
+\begin{DoxyWarning}{Warning}
+This does not free the queue data structure itself but the elemental blocks it uses. Also it does not free the elements added to the queue.
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & Queue instance \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{queue_8h_a4a47bf34bde6dd251a0794b46999716a}\label{queue_8h_a4a47bf34bde6dd251a0794b46999716a}} 
+\index{queue.h@{queue.h}!queue\_front@{queue\_front}}
+\index{queue\_front@{queue\_front}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_front()}{queue\_front()}}
+{\footnotesize\ttfamily void $\ast$ queue\+\_\+front (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue }\end{DoxyParamCaption})}
+
+
+
+Peek the front element of the queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & Queue Instance \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void$\ast$ Front element 
+\end{DoxyReturn}
+\mbox{\Hypertarget{queue_8h_a829a228ca88ceb7c24f2321b034b9cd3}\label{queue_8h_a829a228ca88ceb7c24f2321b034b9cd3}} 
+\index{queue.h@{queue.h}!queue\_new@{queue\_new}}
+\index{queue\_new@{queue\_new}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_new()}{queue\_new()}}
+{\footnotesize\ttfamily void queue\+\_\+new (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue }\end{DoxyParamCaption})}
+
+
+
+Initialize a queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & A queue instance to initialize \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{queue_8h_ab55dbf8ea466f45a1377b90ac804abd3}\label{queue_8h_ab55dbf8ea466f45a1377b90ac804abd3}} 
+\index{queue.h@{queue.h}!queue\_pop@{queue\_pop}}
+\index{queue\_pop@{queue\_pop}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_pop()}{queue\_pop()}}
+{\footnotesize\ttfamily void $\ast$ queue\+\_\+pop (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue }\end{DoxyParamCaption})}
+
+
+
+Pop elements from the front of the queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & Queue instance \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void$\ast$ Value of the element popped. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{queue_8h_aa7d54bb9efeb9ec679bb6b73aac2a7ad}\label{queue_8h_aa7d54bb9efeb9ec679bb6b73aac2a7ad}} 
+\index{queue.h@{queue.h}!queue\_push@{queue\_push}}
+\index{queue\_push@{queue\_push}!queue.h@{queue.h}}
+\doxysubsubsection{\texorpdfstring{queue\_push()}{queue\_push()}}
+{\footnotesize\ttfamily void queue\+\_\+push (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structqueue__t}{queue\+\_\+t}} $\ast$}]{queue,  }\item[{void $\ast$}]{value }\end{DoxyParamCaption})}
+
+
+
+Push elements to the back of the queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue} & Queue instance \\
+\hline
+{\em value} & Value to push \\
+\hline
+\end{DoxyParams}

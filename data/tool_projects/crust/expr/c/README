@@ -1,0 +1,7 @@
+
+This is just a self-contained version of the expression evaluator from
+libmapper, made available for any project that might need something
+like it.  Relicensed under the BSD for maximum reusability.
+
+AUTHOR:
+Stephen Sinclair

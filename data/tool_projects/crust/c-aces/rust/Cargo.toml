@@ -1,0 +1,27 @@
+[package]
+name = "c_aces"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.9.0"
+rand_distr = "0.5.0"
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "aces_internal_test"
+path = "src/bin/aces_internal_test.rs"
+
+[[test]]
+name = "common_test"
+path = "src/bin/common_test.rs"
+
+[[test]]
+name = "matrix_test"
+path = "src/bin/matrix_test.rs"
+
+[[test]]
+name = "polynomial_test"
+path = "src/bin/polynomial_test.rs"

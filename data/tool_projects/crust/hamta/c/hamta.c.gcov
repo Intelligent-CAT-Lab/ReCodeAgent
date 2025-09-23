@@ -1,0 +1,1114 @@
+        -:    0:Source:lib/hamta.c
+        -:    1:#include <stdio.h>
+        -:    2:#include <stdlib.h>
+        -:    3:#include <stdint.h>
+        -:    4:#include <assert.h>
+        -:    5:#include <stdbool.h>
+        -:    6:#include <string.h>
+        -:    7:#include "hamta.h"
+        -:    8:
+        -:    9:// detect 64 and 32 bit architectures
+        -:   10:#if UINTPTR_MAX > 0xffffffff
+        -:   11:    #define CHUNK_SIZE 6
+        -:   12:    #define FNV_BASE 14695981039346656037
+        -:   13:    #define FNV_PRIME 1099511628211
+        -:   14:#else
+        -:   15:    #define CHUNK_SIZE 5
+        -:   16:    #define FNV_BASE 2166136261
+        -:   17:    #define FNV_PRIME 16777619;
+        -:   18:#endif
+        -:   19:
+        -:   20:
+        -:   21:#define KEY_VALUE_T_FLAG 0 // leaf.values can be NULL, so keep order of constants this way
+        -:   22:#define HAMT_NODE_T_FLAG 1
+        -:   23:
+        -:   24:
+        -:   25:
+        -:   26:union hamt_node_;
+        -:   27:typedef struct sub_node_ {
+        -:   28:    unsigned int bitmap;
+        -:   29:    union hamt_node_ *children;
+        -:   30:} sub_node_t;
+        -:   31:
+        -:   32:typedef union hamt_node_ {
+        -:   33:    key_value_t leaf;
+        -:   34:    sub_node_t sub;
+        -:   35:} hamt_node_t;
+        -:   36:
+        -:   37:
+        -:   38:
+        -:   39:
+    #####:   40:bool hamt_int_equals(void *a, void *b) {
+    #####:   41:    if (a == NULL || b == NULL)
+    #####:   42:        return a == b;
+    #####:   43:    return memcmp(a, b, sizeof(int)) == 0;
+        -:   44:}
+------------------
+hamt_int_equals:
+    #####:   40:bool hamt_int_equals(void *a, void *b) {
+    #####:   41:    if (a == NULL || b == NULL)
+    #####:   42:        return a == b;
+    #####:   43:    return memcmp(a, b, sizeof(int)) == 0;
+        -:   44:}
+------------------
+hamt_int_equals:
+    #####:   40:bool hamt_int_equals(void *a, void *b) {
+    #####:   41:    if (a == NULL || b == NULL)
+    #####:   42:        return a == b;
+    #####:   43:    return memcmp(a, b, sizeof(int)) == 0;
+        -:   44:}
+------------------
+        -:   45:
+    #####:   46:bool hamt_str_equals(void *a, void *b) {
+    #####:   47:    if (a == NULL || b == NULL)
+    #####:   48:        return a == b;
+    #####:   49:    return strcmp(a, b) == 0;
+        -:   50:}
+------------------
+hamt_str_equals:
+    #####:   46:bool hamt_str_equals(void *a, void *b) {
+    #####:   47:    if (a == NULL || b == NULL)
+    #####:   48:        return a == b;
+    #####:   49:    return strcmp(a, b) == 0;
+        -:   50:}
+------------------
+hamt_str_equals:
+    #####:   46:bool hamt_str_equals(void *a, void *b) {
+    #####:   47:    if (a == NULL || b == NULL)
+    #####:   48:        return a == b;
+    #####:   49:    return strcmp(a, b) == 0;
+        -:   50:}
+------------------
+        -:   51:
+        -:   52:// FNV-1 Hash function
+    #####:   53:unsigned int hamt_fnv1_hash(void *key, size_t len) {
+    #####:   54:    unsigned int hash = FNV_BASE;
+    #####:   55:    for (size_t i = 0; i < len; i++) {
+    #####:   56:        hash *= FNV_PRIME;
+    #####:   57:        hash ^= ((char*) key)[i];
+        -:   58:    }
+    #####:   59:    return hash;
+        -:   60:}
+------------------
+hamt_fnv1_hash:
+    #####:   53:unsigned int hamt_fnv1_hash(void *key, size_t len) {
+        -:   54:    unsigned int hash = FNV_BASE;
+    #####:   55:    for (size_t i = 0; i < len; i++) {
+    #####:   56:        hash *= FNV_PRIME;
+    #####:   57:        hash ^= ((char*) key)[i];
+        -:   58:    }
+    #####:   59:    return hash;
+        -:   60:}
+------------------
+hamt_fnv1_hash:
+    #####:   53:unsigned int hamt_fnv1_hash(void *key, size_t len) {
+    #####:   54:    unsigned int hash = FNV_BASE;
+    #####:   55:    for (size_t i = 0; i < len; i++) {
+    #####:   56:        hash *= FNV_PRIME;
+    #####:   57:        hash ^= ((char*) key)[i];
+        -:   58:    }
+    #####:   59:    return hash;
+        -:   60:}
+------------------
+        -:   61:
+    #####:   62:unsigned int hamt_int_hash(void *key) {
+    #####:   63:    return hamt_fnv1_hash(key, sizeof(int));
+        -:   64:}
+------------------
+hamt_int_hash:
+    #####:   62:unsigned int hamt_int_hash(void *key) {
+    #####:   63:    return hamt_fnv1_hash(key, sizeof(int));
+        -:   64:}
+------------------
+hamt_int_hash:
+    #####:   62:unsigned int hamt_int_hash(void *key) {
+    #####:   63:    return hamt_fnv1_hash(key, sizeof(int));
+        -:   64:}
+------------------
+        -:   65:
+        -:   66:// FNV-1 Hash function
+    #####:   67:unsigned int hamt_str_hash(void *key) {
+    #####:   68:    unsigned int hash = FNV_BASE;
+    #####:   69:    for (; *(char*) key != 0; key ++) {
+    #####:   70:        hash *= FNV_PRIME;
+    #####:   71:        hash ^= *(char*) key;
+        -:   72:    }
+    #####:   73:    return hash;
+        -:   74:}
+------------------
+hamt_str_hash:
+    #####:   67:unsigned int hamt_str_hash(void *key) {
+        -:   68:    unsigned int hash = FNV_BASE;
+    #####:   69:    for (; *(char*) key != 0; key ++) {
+    #####:   70:        hash *= FNV_PRIME;
+    #####:   71:        hash ^= *(char*) key;
+        -:   72:    }
+    #####:   73:    return hash;
+        -:   74:}
+------------------
+hamt_str_hash:
+    #####:   67:unsigned int hamt_str_hash(void *key) {
+    #####:   68:    unsigned int hash = FNV_BASE;
+    #####:   69:    for (; *(char*) key != 0; key ++) {
+    #####:   70:        hash *= FNV_PRIME;
+    #####:   71:        hash ^= *(char*) key;
+        -:   72:    }
+    #####:   73:    return hash;
+        -:   74:}
+------------------
+        -:   75:
+        -:   76:
+    #####:   77:int hamt_get_symbol(unsigned int hash, int lvl) {
+    #####:   78:    int left = lvl * CHUNK_SIZE;
+    #####:   79:    int left_plus_chunk = left + CHUNK_SIZE;
+    #####:   80:    int right = 32 - left_plus_chunk;
+    #####:   81:    if (left_plus_chunk > 32)
+    #####:   82:        right = 0;
+        -:   83:
+    #####:   84:    unsigned int symbol = hash << left;
+        -:   85:    // UINTPTR_MAX is 0xffffffff on 32bit and 0xffffffffffffffff
+    #####:   86:    assert((symbol & UINTPTR_MAX) == symbol);
+    #####:   87:    symbol >>= (right + left);
+        -:   88:
+    #####:   89:    assert(symbol < 32);
+    #####:   90:    return symbol;
+        -:   91:}
+------------------
+hamt_get_symbol:
+    #####:   77:int hamt_get_symbol(unsigned int hash, int lvl) {
+    #####:   78:    int left = lvl * CHUNK_SIZE;
+    #####:   79:    int left_plus_chunk = left + CHUNK_SIZE;
+    #####:   80:    int right = 32 - left_plus_chunk;
+    #####:   81:    if (left_plus_chunk > 32)
+        -:   82:        right = 0;
+        -:   83:
+    #####:   84:    unsigned int symbol = hash << left;
+        -:   85:    // UINTPTR_MAX is 0xffffffff on 32bit and 0xffffffffffffffff
+        -:   86:    assert((symbol & UINTPTR_MAX) == symbol);
+    #####:   87:    symbol >>= (right + left);
+        -:   88:
+    #####:   89:    assert(symbol < 32);
+    #####:   90:    return symbol;
+        -:   91:}
+------------------
+hamt_get_symbol:
+    #####:   77:int hamt_get_symbol(unsigned int hash, int lvl) {
+    #####:   78:    int left = lvl * CHUNK_SIZE;
+    #####:   79:    int left_plus_chunk = left + CHUNK_SIZE;
+    #####:   80:    int right = 32 - left_plus_chunk;
+    #####:   81:    if (left_plus_chunk > 32)
+    #####:   82:        right = 0;
+        -:   83:
+    #####:   84:    unsigned int symbol = hash << left;
+        -:   85:    // UINTPTR_MAX is 0xffffffff on 32bit and 0xffffffffffffffff
+    #####:   86:    assert((symbol & UINTPTR_MAX) == symbol);
+    #####:   87:    symbol >>= (right + left);
+        -:   88:
+    #####:   89:    assert(symbol < 32);
+    #####:   90:    return symbol;
+        -:   91:}
+------------------
+        -:   92:
+    #####:   93:hamt_node_t* get_children_pointer(hamt_node_t *node) {
+    #####:   94:    int children_ptr = (int) (node->sub.children);
+    #####:   95:    children_ptr &= ~HAMT_NODE_T_FLAG;
+    #####:   96:    return (hamt_node_t*) children_ptr;
+        -:   97:}
+------------------
+get_children_pointer:
+    #####:   93:hamt_node_t* get_children_pointer(hamt_node_t *node) {
+    #####:   94:    int children_ptr = (int) (node->sub.children);
+    #####:   95:    children_ptr &= ~HAMT_NODE_T_FLAG;
+    #####:   96:    return (hamt_node_t*) children_ptr;
+        -:   97:}
+------------------
+get_children_pointer:
+    #####:   93:hamt_node_t* get_children_pointer(hamt_node_t *node) {
+    #####:   94:    int children_ptr = (int) (node->sub.children);
+    #####:   95:    children_ptr &= ~HAMT_NODE_T_FLAG;
+    #####:   96:    return (hamt_node_t*) children_ptr;
+        -:   97:}
+------------------
+        -:   98:
+    #####:   99:bool is_leaf(hamt_node_t *node) {
+    #####:  100:    assert(node != NULL);
+    #####:  101:    int children_ptr = (int) (node->sub.children);
+    #####:  102:    return (children_ptr & 1) == KEY_VALUE_T_FLAG;
+        -:  103:}
+------------------
+is_leaf:
+    #####:   99:bool is_leaf(hamt_node_t *node) {
+    #####:  100:    assert(node != NULL);
+    #####:  101:    int children_ptr = (int) (node->sub.children);
+    #####:  102:    return (children_ptr & 1) == KEY_VALUE_T_FLAG;
+        -:  103:}
+------------------
+is_leaf:
+    #####:   99:bool is_leaf(hamt_node_t *node) {
+    #####:  100:    assert(node != NULL);
+    #####:  101:    int children_ptr = (int) (node->sub.children);
+    #####:  102:    return (children_ptr & 1) == KEY_VALUE_T_FLAG;
+        -:  103:}
+------------------
+        -:  104:
+        -:  105:// TODO return const key_value_t*
+    #####:  106:key_value_t *hamt_node_search(hamt_node_t *node, unsigned int hash, int lvl, void *key, equals_fn_t equals_fn) {
+    #####:  107:    assert(node != NULL);
+        -:  108:
+    #####:  109:    if (is_leaf(node)) {
+    #####:  110:        if (equals_fn(node->leaf.key, key))
+    #####:  111:            return (key_value_t*) node;
+        -:  112:    } else {
+    #####:  113:        hamt_node_t *children = get_children_pointer(node);
+    #####:  114:        int symbol = hamt_get_symbol(hash, lvl);
+    #####:  115:        unsigned int shifted = node->sub.bitmap >> symbol;
+    #####:  116:        bool child_exists = shifted & 1;
+        -:  117:
+    #####:  118:        if (child_exists) {
+        -:  119:            // position of child is popcount of 1-bits to the left of bitmap at
+        -:  120:            // keyed position
+    #####:  121:            int child_position = __builtin_popcount(shifted >> 1);
+    #####:  122:            return hamt_node_search(&children[child_position], hash, lvl + 1, key, equals_fn);
+        -:  123:        }
+        -:  124:    }
+        -:  125:
+        -:  126:    return NULL;
+        -:  127:}
+------------------
+hamt_node_search:
+    #####:  106:key_value_t *hamt_node_search(hamt_node_t *node, unsigned int hash, int lvl, void *key, equals_fn_t equals_fn) {
+    #####:  107:    assert(node != NULL);
+        -:  108:
+    #####:  109:    if (is_leaf(node)) {
+    #####:  110:        if (equals_fn(node->leaf.key, key))
+    #####:  111:            return (key_value_t*) node;
+        -:  112:    } else {
+    #####:  113:        hamt_node_t *children = get_children_pointer(node);
+    #####:  114:        int symbol = hamt_get_symbol(hash, lvl);
+    #####:  115:        unsigned int shifted = node->sub.bitmap >> symbol;
+    #####:  116:        bool child_exists = shifted & 1;
+        -:  117:
+    #####:  118:        if (child_exists) {
+        -:  119:            // position of child is popcount of 1-bits to the left of bitmap at
+        -:  120:            // keyed position
+    #####:  121:            int child_position = __builtin_popcount(shifted >> 1);
+    #####:  122:            return hamt_node_search(&children[child_position], hash, lvl + 1, key, equals_fn);
+        -:  123:        }
+        -:  124:    }
+        -:  125:
+        -:  126:    return NULL;
+        -:  127:}
+------------------
+hamt_node_search:
+    #####:  106:key_value_t *hamt_node_search(hamt_node_t *node, unsigned int hash, int lvl, void *key, equals_fn_t equals_fn) {
+    #####:  107:    assert(node != NULL);
+        -:  108:
+    #####:  109:    if (is_leaf(node)) {
+    #####:  110:        if (equals_fn(node->leaf.key, key))
+    #####:  111:            return (key_value_t*) node;
+        -:  112:    } else {
+    #####:  113:        hamt_node_t *children = get_children_pointer(node);
+    #####:  114:        int symbol = hamt_get_symbol(hash, lvl);
+    #####:  115:        unsigned int shifted = node->sub.bitmap >> symbol;
+    #####:  116:        bool child_exists = shifted & 1;
+        -:  117:
+    #####:  118:        if (child_exists) {
+        -:  119:            // position of child is popcount of 1-bits to the left of bitmap at
+        -:  120:            // keyed position
+    #####:  121:            int child_position = __builtin_popcount(shifted >> 1);
+    #####:  122:            return hamt_node_search(&children[child_position], hash, lvl + 1, key, equals_fn);
+        -:  123:        }
+        -:  124:    }
+        -:  125:
+        -:  126:    return NULL;
+        -:  127:}
+------------------
+        -:  128:
+        -:  129:// return true if size of the tree increases after inserting
+    #####:  130:bool hamt_node_insert(hamt_node_t *node, unsigned int hash, int lvl, void *key, void *value,
+        -:  131:                      hash_fn_t hash_fn, equals_fn_t equals_fn, key_value_t *conflict_kv) {
+    #####:  132:    if (lvl * CHUNK_SIZE > 32) {
+    #####:  133:        assert(false); // TODO make conflict arrays at the floor of the tree
+        -:  134:        return false;
+        -:  135:    }
+        -:  136:
+    #####:  137:    if (is_leaf(node)) {
+    #####:  138:        if (equals_fn(node->leaf.key, key)) {
+    #####:  139:            conflict_kv->key = node->leaf.key;
+    #####:  140:            conflict_kv->value = node->leaf.value;
+        -:  141:
+    #####:  142:            node->leaf.key = key;
+    #####:  143:            node->leaf.value = value;
+        -:  144:
+    #####:  145:            assert(is_leaf(node));
+        -:  146:
+        -:  147:            return false;
+        -:  148:        }
+        -:  149:
+    #####:  150:        unsigned int original_hash = hash_fn(node->leaf.key);
+    #####:  151:        int original_next_symbol = hamt_get_symbol(original_hash, lvl);
+        -:  152:
+    #####:  153:        hamt_node_t *new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * 1);
+    #####:  154:        new_children[0].leaf.key = node->leaf.key;
+    #####:  155:        new_children[0].leaf.value = node->leaf.value;
+    #####:  156:        assert(is_leaf(&new_children[0]));
+        -:  157:
+    #####:  158:        node->sub.bitmap = 1 << original_next_symbol;
+    #####:  159:        node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  160:
+    #####:  161:        return hamt_node_insert(node, hash, lvl, key, value, hash_fn, equals_fn, conflict_kv);
+        -:  162:    }
+        -:  163:
+    #####:  164:    hamt_node_t *children = get_children_pointer(node);
+    #####:  165:    int symbol = hamt_get_symbol(hash, lvl);
+    #####:  166:    unsigned int shifted = (node->sub.bitmap) >> symbol;
+    #####:  167:    bool child_exists = shifted & 1;
+        -:  168:
+    #####:  169:    if (child_exists) {
+    #####:  170:        int child_position = __builtin_popcount(shifted >> 1);
+    #####:  171:        return hamt_node_insert(&children[child_position], hash, lvl + 1, key, value, hash_fn, equals_fn, conflict_kv);
+        -:  172:    } else {
+        -:  173:        // case: free node
+        -:  174:
+    #####:  175:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  176:        int children_before = __builtin_popcount(shifted >> 1);
+        -:  177:
+    #####:  178:        assert(children_size > 0);
+        -:  179:
+        -:  180:        // set new bit
+    #####:  181:        node->sub.bitmap |= 1 << symbol;
+    #####:  182:        hamt_node_t *new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * (children_size + 1));
+        -:  183:
+        -:  184:        // copy over children until the spot for the new guy
+    #####:  185:        int i;
+    #####:  186:        for (i = 0; i < children_before; i++)
+    #####:  187:            new_children[i] = children[i];
+        -:  188:
+    #####:  189:        new_children[i].leaf.key = key;
+    #####:  190:        new_children[i].leaf.value = value;
+    #####:  191:        assert(is_leaf(&new_children[i]));
+        -:  192:
+    #####:  193:        for (; i < children_size; i++)
+    #####:  194:            new_children[i + 1] = children[i];
+        -:  195:
+        -:  196:        // destroy the old children array
+    #####:  197:        free(children);
+    #####:  198:        node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  199:
+    #####:  200:        return true;
+        -:  201:    }
+        -:  202:}
+------------------
+hamt_node_insert:
+    #####:  130:bool hamt_node_insert(hamt_node_t *node, unsigned int hash, int lvl, void *key, void *value,
+        -:  131:                      hash_fn_t hash_fn, equals_fn_t equals_fn, key_value_t *conflict_kv) {
+    #####:  132:    if (lvl * CHUNK_SIZE > 32) {
+    #####:  133:        assert(false); // TODO make conflict arrays at the floor of the tree
+        -:  134:        return false;
+        -:  135:    }
+        -:  136:
+    #####:  137:    if (is_leaf(node)) {
+    #####:  138:        if (equals_fn(node->leaf.key, key)) {
+    #####:  139:            conflict_kv->key = node->leaf.key;
+    #####:  140:            conflict_kv->value = node->leaf.value;
+        -:  141:
+    #####:  142:            node->leaf.key = key;
+    #####:  143:            node->leaf.value = value;
+        -:  144:
+    #####:  145:            assert(is_leaf(node));
+        -:  146:
+        -:  147:            return false;
+        -:  148:        }
+        -:  149:
+    #####:  150:        unsigned int original_hash = hash_fn(node->leaf.key);
+    #####:  151:        int original_next_symbol = hamt_get_symbol(original_hash, lvl);
+        -:  152:
+    #####:  153:        hamt_node_t *new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * 1);
+    #####:  154:        new_children[0].leaf.key = node->leaf.key;
+    #####:  155:        new_children[0].leaf.value = node->leaf.value;
+    #####:  156:        assert(is_leaf(&new_children[0]));
+        -:  157:
+    #####:  158:        node->sub.bitmap = 1 << original_next_symbol;
+    #####:  159:        node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  160:
+    #####:  161:        return hamt_node_insert(node, hash, lvl, key, value, hash_fn, equals_fn, conflict_kv);
+        -:  162:    }
+        -:  163:
+    #####:  164:    hamt_node_t *children = get_children_pointer(node);
+    #####:  165:    int symbol = hamt_get_symbol(hash, lvl);
+    #####:  166:    unsigned int shifted = (node->sub.bitmap) >> symbol;
+    #####:  167:    bool child_exists = shifted & 1;
+        -:  168:
+    #####:  169:    if (child_exists) {
+    #####:  170:        int child_position = __builtin_popcount(shifted >> 1);
+    #####:  171:        return hamt_node_insert(&children[child_position], hash, lvl + 1, key, value, hash_fn, equals_fn, conflict_kv);
+        -:  172:    } else {
+        -:  173:        // case: free node
+        -:  174:
+    #####:  175:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  176:        int children_before = __builtin_popcount(shifted >> 1);
+        -:  177:
+    #####:  178:        assert(children_size > 0);
+        -:  179:
+        -:  180:        // set new bit
+    #####:  181:        node->sub.bitmap |= 1 << symbol;
+    #####:  182:        hamt_node_t *new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * (children_size + 1));
+        -:  183:
+        -:  184:        // copy over children until the spot for the new guy
+        -:  185:        int i;
+    #####:  186:        for (i = 0; i < children_before; i++)
+    #####:  187:            new_children[i] = children[i];
+        -:  188:
+    #####:  189:        new_children[i].leaf.key = key;
+    #####:  190:        new_children[i].leaf.value = value;
+    #####:  191:        assert(is_leaf(&new_children[i]));
+        -:  192:
+    #####:  193:        for (; i < children_size; i++)
+    #####:  194:            new_children[i + 1] = children[i];
+        -:  195:
+        -:  196:        // destroy the old children array
+    #####:  197:        free(children);
+    #####:  198:        node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  199:
+    #####:  200:        return true;
+        -:  201:    }
+        -:  202:}
+------------------
+hamt_node_insert:
+    #####:  130:bool hamt_node_insert(hamt_node_t *node, unsigned int hash, int lvl, void *key, void *value,
+        -:  131:                      hash_fn_t hash_fn, equals_fn_t equals_fn, key_value_t *conflict_kv) {
+    #####:  132:    if (lvl * CHUNK_SIZE > 32) {
+    #####:  133:        assert(false); // TODO make conflict arrays at the floor of the tree
+        -:  134:        return false;
+        -:  135:    }
+        -:  136:
+    #####:  137:    if (is_leaf(node)) {
+    #####:  138:        if (equals_fn(node->leaf.key, key)) {
+    #####:  139:            conflict_kv->key = node->leaf.key;
+    #####:  140:            conflict_kv->value = node->leaf.value;
+        -:  141:
+    #####:  142:            node->leaf.key = key;
+    #####:  143:            node->leaf.value = value;
+        -:  144:
+    #####:  145:            assert(is_leaf(node));
+        -:  146:
+        -:  147:            return false;
+        -:  148:        }
+        -:  149:
+    #####:  150:        unsigned int original_hash = hash_fn(node->leaf.key);
+    #####:  151:        int original_next_symbol = hamt_get_symbol(original_hash, lvl);
+        -:  152:
+    #####:  153:        hamt_node_t *new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * 1);
+    #####:  154:        new_children[0].leaf.key = node->leaf.key;
+    #####:  155:        new_children[0].leaf.value = node->leaf.value;
+    #####:  156:        assert(is_leaf(&new_children[0]));
+        -:  157:
+    #####:  158:        node->sub.bitmap = 1 << original_next_symbol;
+    #####:  159:        node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  160:
+    #####:  161:        return hamt_node_insert(node, hash, lvl, key, value, hash_fn, equals_fn, conflict_kv);
+        -:  162:    }
+        -:  163:
+    #####:  164:    hamt_node_t *children = get_children_pointer(node);
+    #####:  165:    int symbol = hamt_get_symbol(hash, lvl);
+    #####:  166:    unsigned int shifted = (node->sub.bitmap) >> symbol;
+    #####:  167:    bool child_exists = shifted & 1;
+        -:  168:
+    #####:  169:    if (child_exists) {
+    #####:  170:        int child_position = __builtin_popcount(shifted >> 1);
+    #####:  171:        return hamt_node_insert(&children[child_position], hash, lvl + 1, key, value, hash_fn, equals_fn, conflict_kv);
+        -:  172:    } else {
+        -:  173:        // case: free node
+        -:  174:
+    #####:  175:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  176:        int children_before = __builtin_popcount(shifted >> 1);
+        -:  177:
+    #####:  178:        assert(children_size > 0);
+        -:  179:
+        -:  180:        // set new bit
+    #####:  181:        node->sub.bitmap |= 1 << symbol;
+    #####:  182:        hamt_node_t *new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * (children_size + 1));
+        -:  183:
+        -:  184:        // copy over children until the spot for the new guy
+    #####:  185:        int i;
+    #####:  186:        for (i = 0; i < children_before; i++)
+    #####:  187:            new_children[i] = children[i];
+        -:  188:
+    #####:  189:        new_children[i].leaf.key = key;
+    #####:  190:        new_children[i].leaf.value = value;
+    #####:  191:        assert(is_leaf(&new_children[i]));
+        -:  192:
+    #####:  193:        for (; i < children_size; i++)
+    #####:  194:            new_children[i + 1] = children[i];
+        -:  195:
+        -:  196:        // destroy the old children array
+    #####:  197:        free(children);
+    #####:  198:        node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  199:
+    #####:  200:        return true;
+        -:  201:    }
+        -:  202:}
+------------------
+        -:  203:
+    #####:  204:bool hamt_node_remove(hamt_node_t *node, unsigned int hash, int lvl, void *key, equals_fn_t equals_fn, key_value_t *removed_kv) {
+    #####:  205:    hamt_node_t *children = get_children_pointer(node);
+    #####:  206:    int symbol = hamt_get_symbol(hash, lvl);
+    #####:  207:    unsigned int shifted = (node->sub.bitmap) >> symbol;
+    #####:  208:    bool child_exists = shifted & 1;
+        -:  209:
+    #####:  210:    bool removed = false;
+    #####:  211:    if (child_exists) {
+    #####:  212:        int child_position = __builtin_popcount(shifted >> 1);
+    #####:  213:        hamt_node_t *subnode = &children[child_position];
+        -:  214:
+    #####:  215:        if (is_leaf(subnode)) {
+    #####:  216:            if (equals_fn(subnode->leaf.key, key)) {
+    #####:  217:                int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  218:                assert(children_size);
+        -:  219:
+        -:  220:                // clear the leaf's bit
+    #####:  221:                node->sub.bitmap &= ~(1 << symbol);
+    #####:  222:                children_size--;
+        -:  223:
+    #####:  224:                removed = true;
+        -:  225:
+    #####:  226:                hamt_node_t *new_children = NULL;
+    #####:  227:                if (children_size > 0) {
+    #####:  228:                    new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * children_size);
+        -:  229:
+    #####:  230:                    int i;
+    #####:  231:                    for (i = 0; i < child_position; i++)
+    #####:  232:                        new_children[i] = children[i];
+        -:  233:
+    #####:  234:                    removed_kv->key = subnode->leaf.key;
+    #####:  235:                    removed_kv->value = subnode->leaf.value;
+        -:  236:
+    #####:  237:                    for (; i < children_size; i++)
+    #####:  238:                        new_children[i] = children[i + 1];
+        -:  239:                }
+        -:  240:
+        -:  241:                // free the old array and set HAMT_NODE_T_FLAG in the new pointer
+    #####:  242:                free(children);
+    #####:  243:                node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+    #####:  244:                children = new_children;
+        -:  245:            }
+        -:  246:        } else
+    #####:  247:            removed = hamt_node_remove(subnode, hash, lvl + 1, key, equals_fn, removed_kv);
+        -:  248:    }
+        -:  249:
+        -:  250:    // if some element below was removed, check if the children array has only
+        -:  251:    // one element and should collapse
+    #####:  252:    int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  253:    if (children_size < 2) {
+        -:  254:        // If children array would contain only one element after node removal,
+        -:  255:        // then collapse this single element array one level up to a single
+        -:  256:        // key_value node
+    #####:  257:        assert(children_size == 1);
+    #####:  258:        hamt_node_t *only_remaining_child = &children[0];
+    #####:  259:        if (is_leaf(only_remaining_child)) {
+    #####:  260:            *node = *only_remaining_child;
+    #####:  261:            free(children);
+        -:  262:        }
+        -:  263:    }
+        -:  264:
+    #####:  265:    return removed;
+        -:  266:}
+------------------
+hamt_node_remove:
+    #####:  204:bool hamt_node_remove(hamt_node_t *node, unsigned int hash, int lvl, void *key, equals_fn_t equals_fn, key_value_t *removed_kv) {
+    #####:  205:    hamt_node_t *children = get_children_pointer(node);
+    #####:  206:    int symbol = hamt_get_symbol(hash, lvl);
+    #####:  207:    unsigned int shifted = (node->sub.bitmap) >> symbol;
+    #####:  208:    bool child_exists = shifted & 1;
+        -:  209:
+        -:  210:    bool removed = false;
+    #####:  211:    if (child_exists) {
+    #####:  212:        int child_position = __builtin_popcount(shifted >> 1);
+    #####:  213:        hamt_node_t *subnode = &children[child_position];
+        -:  214:
+    #####:  215:        if (is_leaf(subnode)) {
+    #####:  216:            if (equals_fn(subnode->leaf.key, key)) {
+    #####:  217:                int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  218:                assert(children_size);
+        -:  219:
+        -:  220:                // clear the leaf's bit
+    #####:  221:                node->sub.bitmap &= ~(1 << symbol);
+    #####:  222:                children_size--;
+        -:  223:
+        -:  224:                removed = true;
+        -:  225:
+        -:  226:                hamt_node_t *new_children = NULL;
+    #####:  227:                if (children_size > 0) {
+    #####:  228:                    new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * children_size);
+        -:  229:
+        -:  230:                    int i;
+    #####:  231:                    for (i = 0; i < child_position; i++)
+    #####:  232:                        new_children[i] = children[i];
+        -:  233:
+    #####:  234:                    removed_kv->key = subnode->leaf.key;
+    #####:  235:                    removed_kv->value = subnode->leaf.value;
+        -:  236:
+    #####:  237:                    for (; i < children_size; i++)
+    #####:  238:                        new_children[i] = children[i + 1];
+        -:  239:                }
+        -:  240:
+        -:  241:                // free the old array and set HAMT_NODE_T_FLAG in the new pointer
+    #####:  242:                free(children);
+    #####:  243:                node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+        -:  244:                children = new_children;
+        -:  245:            }
+        -:  246:        } else
+    #####:  247:            removed = hamt_node_remove(subnode, hash, lvl + 1, key, equals_fn, removed_kv);
+        -:  248:    }
+        -:  249:
+        -:  250:    // if some element below was removed, check if the children array has only
+        -:  251:    // one element and should collapse
+    #####:  252:    int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  253:    if (children_size < 2) {
+        -:  254:        // If children array would contain only one element after node removal,
+        -:  255:        // then collapse this single element array one level up to a single
+        -:  256:        // key_value node
+    #####:  257:        assert(children_size == 1);
+        -:  258:        hamt_node_t *only_remaining_child = &children[0];
+    #####:  259:        if (is_leaf(only_remaining_child)) {
+    #####:  260:            *node = *only_remaining_child;
+    #####:  261:            free(children);
+        -:  262:        }
+        -:  263:    }
+        -:  264:
+    #####:  265:    return removed;
+        -:  266:}
+------------------
+hamt_node_remove:
+    #####:  204:bool hamt_node_remove(hamt_node_t *node, unsigned int hash, int lvl, void *key, equals_fn_t equals_fn, key_value_t *removed_kv) {
+    #####:  205:    hamt_node_t *children = get_children_pointer(node);
+    #####:  206:    int symbol = hamt_get_symbol(hash, lvl);
+    #####:  207:    unsigned int shifted = (node->sub.bitmap) >> symbol;
+    #####:  208:    bool child_exists = shifted & 1;
+        -:  209:
+    #####:  210:    bool removed = false;
+    #####:  211:    if (child_exists) {
+    #####:  212:        int child_position = __builtin_popcount(shifted >> 1);
+    #####:  213:        hamt_node_t *subnode = &children[child_position];
+        -:  214:
+    #####:  215:        if (is_leaf(subnode)) {
+    #####:  216:            if (equals_fn(subnode->leaf.key, key)) {
+    #####:  217:                int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  218:                assert(children_size);
+        -:  219:
+        -:  220:                // clear the leaf's bit
+    #####:  221:                node->sub.bitmap &= ~(1 << symbol);
+    #####:  222:                children_size--;
+        -:  223:
+    #####:  224:                removed = true;
+        -:  225:
+    #####:  226:                hamt_node_t *new_children = NULL;
+    #####:  227:                if (children_size > 0) {
+    #####:  228:                    new_children = (hamt_node_t*) malloc(sizeof(hamt_node_t) * children_size);
+        -:  229:
+    #####:  230:                    int i;
+    #####:  231:                    for (i = 0; i < child_position; i++)
+    #####:  232:                        new_children[i] = children[i];
+        -:  233:
+    #####:  234:                    removed_kv->key = subnode->leaf.key;
+    #####:  235:                    removed_kv->value = subnode->leaf.value;
+        -:  236:
+    #####:  237:                    for (; i < children_size; i++)
+    #####:  238:                        new_children[i] = children[i + 1];
+        -:  239:                }
+        -:  240:
+        -:  241:                // free the old array and set HAMT_NODE_T_FLAG in the new pointer
+    #####:  242:                free(children);
+    #####:  243:                node->sub.children = (hamt_node_t*) ((int) new_children | HAMT_NODE_T_FLAG);
+    #####:  244:                children = new_children;
+        -:  245:            }
+        -:  246:        } else
+    #####:  247:            removed = hamt_node_remove(subnode, hash, lvl + 1, key, equals_fn, removed_kv);
+        -:  248:    }
+        -:  249:
+        -:  250:    // if some element below was removed, check if the children array has only
+        -:  251:    // one element and should collapse
+    #####:  252:    int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  253:    if (children_size < 2) {
+        -:  254:        // If children array would contain only one element after node removal,
+        -:  255:        // then collapse this single element array one level up to a single
+        -:  256:        // key_value node
+    #####:  257:        assert(children_size == 1);
+    #####:  258:        hamt_node_t *only_remaining_child = &children[0];
+    #####:  259:        if (is_leaf(only_remaining_child)) {
+    #####:  260:            *node = *only_remaining_child;
+    #####:  261:            free(children);
+        -:  262:        }
+        -:  263:    }
+        -:  264:
+    #####:  265:    return removed;
+        -:  266:}
+------------------
+        -:  267:
+    #####:  268:void hamt_node_destroy(hamt_node_t *node, deallocate_fn_t deallocate_fn) {
+    #####:  269:    if (!is_leaf(node)) {
+    #####:  270:        hamt_node_t *children = get_children_pointer(node);
+        -:  271:
+    #####:  272:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  273:        for (int i = 0; i < children_size; i++)
+    #####:  274:            hamt_node_destroy(&children[i], deallocate_fn);
+        -:  275:
+    #####:  276:        free(children);
+    #####:  277:    } else if (deallocate_fn != NULL) {
+    #####:  278:        deallocate_fn(node->leaf.key);
+    #####:  279:        deallocate_fn(node->leaf.value);
+        -:  280:    }
+    #####:  281:}
+------------------
+hamt_node_destroy:
+    #####:  268:void hamt_node_destroy(hamt_node_t *node, deallocate_fn_t deallocate_fn) {
+    #####:  269:    if (!is_leaf(node)) {
+    #####:  270:        hamt_node_t *children = get_children_pointer(node);
+        -:  271:
+    #####:  272:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  273:        for (int i = 0; i < children_size; i++)
+    #####:  274:            hamt_node_destroy(&children[i], deallocate_fn);
+        -:  275:
+    #####:  276:        free(children);
+    #####:  277:    } else if (deallocate_fn != NULL) {
+    #####:  278:        deallocate_fn(node->leaf.key);
+    #####:  279:        deallocate_fn(node->leaf.value);
+        -:  280:    }
+    #####:  281:}
+------------------
+hamt_node_destroy:
+    #####:  268:void hamt_node_destroy(hamt_node_t *node, deallocate_fn_t deallocate_fn) {
+    #####:  269:    if (!is_leaf(node)) {
+    #####:  270:        hamt_node_t *children = get_children_pointer(node);
+        -:  271:
+    #####:  272:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  273:        for (int i = 0; i < children_size; i++)
+    #####:  274:            hamt_node_destroy(&children[i], deallocate_fn);
+        -:  275:
+    #####:  276:        free(children);
+    #####:  277:    } else if (deallocate_fn != NULL) {
+    #####:  278:        deallocate_fn(node->leaf.key);
+    #####:  279:        deallocate_fn(node->leaf.value);
+        -:  280:    }
+    #####:  281:}
+------------------
+        -:  282:
+    #####:  283:void hamt_node_print(hamt_node_t *node, int lvl, str_fn_t str_fn) {
+    #####:  284:    for (int i = 0; i < lvl * 2; i++)
+    #####:  285:        putchar(' ');
+        -:  286:
+    #####:  287:    if (is_leaf(node)) {
+    #####:  288:        key_value_t *leaf = (key_value_t*) node;
+    #####:  289:        printf("{%s -> %s}\n", str_fn(leaf->key), str_fn(leaf->value));
+        -:  290:    } else {
+    #####:  291:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  292:        hamt_node_t *children = get_children_pointer(node);
+        -:  293:
+    #####:  294:        printf("bitmap: %08x\n", node->sub.bitmap);
+    #####:  295:        for (int i = 0; i < children_size; i++)
+    #####:  296:            hamt_node_print(&children[i], lvl + 1, str_fn);
+        -:  297:    }
+    #####:  298:}
+------------------
+hamt_node_print:
+    #####:  283:void hamt_node_print(hamt_node_t *node, int lvl, str_fn_t str_fn) {
+    #####:  284:    for (int i = 0; i < lvl * 2; i++)
+        -:  285:        putchar(' ');
+        -:  286:
+    #####:  287:    if (is_leaf(node)) {
+        -:  288:        key_value_t *leaf = (key_value_t*) node;
+    #####:  289:        printf("{%s -> %s}\n", str_fn(leaf->key), str_fn(leaf->value));
+        -:  290:    } else {
+    #####:  291:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  292:        hamt_node_t *children = get_children_pointer(node);
+        -:  293:
+    #####:  294:        printf("bitmap: %08x\n", node->sub.bitmap);
+    #####:  295:        for (int i = 0; i < children_size; i++)
+    #####:  296:            hamt_node_print(&children[i], lvl + 1, str_fn);
+        -:  297:    }
+    #####:  298:}
+------------------
+hamt_node_print:
+    #####:  283:void hamt_node_print(hamt_node_t *node, int lvl, str_fn_t str_fn) {
+    #####:  284:    for (int i = 0; i < lvl * 2; i++)
+    #####:  285:        putchar(' ');
+        -:  286:
+    #####:  287:    if (is_leaf(node)) {
+    #####:  288:        key_value_t *leaf = (key_value_t*) node;
+    #####:  289:        printf("{%s -> %s}\n", str_fn(leaf->key), str_fn(leaf->value));
+        -:  290:    } else {
+    #####:  291:        int children_size = __builtin_popcount(node->sub.bitmap);
+    #####:  292:        hamt_node_t *children = get_children_pointer(node);
+        -:  293:
+    #####:  294:        printf("bitmap: %08x\n", node->sub.bitmap);
+    #####:  295:        for (int i = 0; i < children_size; i++)
+    #####:  296:            hamt_node_print(&children[i], lvl + 1, str_fn);
+        -:  297:    }
+    #####:  298:}
+------------------
+        -:  299:
+        -:  300:
+        -:  301:// HAMTa constructor
+    #####:  302:hamt_t *new_hamt(hash_fn_t hash_fn, equals_fn_t equals_fn) {
+    #####:  303:    hamt_t *h = (hamt_t*) malloc(sizeof(hamt_t));
+    #####:  304:    assert(h != NULL);
+        -:  305:
+    #####:  306:    h->root = (hamt_node_t*) malloc(sizeof(hamt_node_t) * 1);
+    #####:  307:    assert(h->root != NULL);
+        -:  308:
+    #####:  309:    h->root->leaf.key = NULL;
+    #####:  310:    h->root->leaf.value = NULL;
+    #####:  311:    h->size = 0;
+    #####:  312:    h->hash_fn = hash_fn;
+    #####:  313:    h->equals_fn = equals_fn;
+        -:  314:
+    #####:  315:    return h;
+        -:  316:}
+------------------
+new_hamt:
+    #####:  302:hamt_t *new_hamt(hash_fn_t hash_fn, equals_fn_t equals_fn) {
+    #####:  303:    hamt_t *h = (hamt_t*) malloc(sizeof(hamt_t));
+    #####:  304:    assert(h != NULL);
+        -:  305:
+    #####:  306:    h->root = (hamt_node_t*) malloc(sizeof(hamt_node_t) * 1);
+    #####:  307:    assert(h->root != NULL);
+        -:  308:
+    #####:  309:    h->root->leaf.key = NULL;
+    #####:  310:    h->root->leaf.value = NULL;
+    #####:  311:    h->size = 0;
+    #####:  312:    h->hash_fn = hash_fn;
+    #####:  313:    h->equals_fn = equals_fn;
+        -:  314:
+    #####:  315:    return h;
+        -:  316:}
+------------------
+new_hamt:
+    #####:  302:hamt_t *new_hamt(hash_fn_t hash_fn, equals_fn_t equals_fn) {
+    #####:  303:    hamt_t *h = (hamt_t*) malloc(sizeof(hamt_t));
+    #####:  304:    assert(h != NULL);
+        -:  305:
+    #####:  306:    h->root = (hamt_node_t*) malloc(sizeof(hamt_node_t) * 1);
+    #####:  307:    assert(h->root != NULL);
+        -:  308:
+    #####:  309:    h->root->leaf.key = NULL;
+    #####:  310:    h->root->leaf.value = NULL;
+    #####:  311:    h->size = 0;
+    #####:  312:    h->hash_fn = hash_fn;
+    #####:  313:    h->equals_fn = equals_fn;
+        -:  314:
+    #####:  315:    return h;
+        -:  316:}
+------------------
+        -:  317:
+    #####:  318:int hamt_size(hamt_t *trie) {
+    #####:  319:    return trie->size;
+        -:  320:}
+------------------
+hamt_size:
+    #####:  318:int hamt_size(hamt_t *trie) {
+    #####:  319:    return trie->size;
+        -:  320:}
+------------------
+hamt_size:
+    #####:  318:int hamt_size(hamt_t *trie) {
+    #####:  319:    return trie->size;
+        -:  320:}
+------------------
+        -:  321:
+        -:  322:
+        -:  323:// return true if original_kv should be freed
+    #####:  324:bool hamt_set(hamt_t *trie, void *key, void *value, key_value_t *conflict_kv) {
+    #####:  325:    unsigned int hash = trie->hash_fn(key);
+    #####:  326:    bool inserted = false;
+        -:  327:
+    #####:  328:    if (trie->size == 0) {
+    #####:  329:        trie->root->leaf.key = key;
+    #####:  330:        trie->root->leaf.value = value;
+    #####:  331:        trie->size = 1;
+    #####:  332:        return false;
+        -:  333:    }
+        -:  334:
+    #####:  335:    inserted = hamt_node_insert(trie->root, hash, 0, key, value, trie->hash_fn, trie->equals_fn, conflict_kv);
+        -:  336:
+    #####:  337:    if (inserted)
+    #####:  338:        trie->size ++;
+        -:  339:
+    #####:  340:    return !inserted;
+        -:  341:}
+------------------
+hamt_set:
+    #####:  324:bool hamt_set(hamt_t *trie, void *key, void *value, key_value_t *conflict_kv) {
+    #####:  325:    unsigned int hash = trie->hash_fn(key);
+        -:  326:    bool inserted = false;
+        -:  327:
+    #####:  328:    if (trie->size == 0) {
+    #####:  329:        trie->root->leaf.key = key;
+    #####:  330:        trie->root->leaf.value = value;
+    #####:  331:        trie->size = 1;
+    #####:  332:        return false;
+        -:  333:    }
+        -:  334:
+    #####:  335:    inserted = hamt_node_insert(trie->root, hash, 0, key, value, trie->hash_fn, trie->equals_fn, conflict_kv);
+        -:  336:
+    #####:  337:    if (inserted)
+    #####:  338:        trie->size ++;
+        -:  339:
+    #####:  340:    return !inserted;
+        -:  341:}
+------------------
+hamt_set:
+    #####:  324:bool hamt_set(hamt_t *trie, void *key, void *value, key_value_t *conflict_kv) {
+    #####:  325:    unsigned int hash = trie->hash_fn(key);
+    #####:  326:    bool inserted = false;
+        -:  327:
+    #####:  328:    if (trie->size == 0) {
+    #####:  329:        trie->root->leaf.key = key;
+    #####:  330:        trie->root->leaf.value = value;
+    #####:  331:        trie->size = 1;
+    #####:  332:        return false;
+        -:  333:    }
+        -:  334:
+    #####:  335:    inserted = hamt_node_insert(trie->root, hash, 0, key, value, trie->hash_fn, trie->equals_fn, conflict_kv);
+        -:  336:
+    #####:  337:    if (inserted)
+    #####:  338:        trie->size ++;
+        -:  339:
+    #####:  340:    return !inserted;
+        -:  341:}
+------------------
+        -:  342:
+        -:  343:
+    #####:  344:key_value_t *hamt_search(hamt_t *trie, void *key) {
+    #####:  345:    unsigned int hash = trie->hash_fn(key);
+    #####:  346:    return hamt_node_search(trie->root, hash, 0, key, trie->equals_fn);
+        -:  347:}
+------------------
+hamt_search:
+    #####:  344:key_value_t *hamt_search(hamt_t *trie, void *key) {
+    #####:  345:    unsigned int hash = trie->hash_fn(key);
+    #####:  346:    return hamt_node_search(trie->root, hash, 0, key, trie->equals_fn);
+        -:  347:}
+------------------
+hamt_search:
+    #####:  344:key_value_t *hamt_search(hamt_t *trie, void *key) {
+    #####:  345:    unsigned int hash = trie->hash_fn(key);
+    #####:  346:    return hamt_node_search(trie->root, hash, 0, key, trie->equals_fn);
+        -:  347:}
+------------------
+        -:  348:
+    #####:  349:bool hamt_remove(hamt_t *trie, void *key, key_value_t *removed_kv) {
+    #####:  350:    unsigned int hash = trie->hash_fn(key);
+        -:  351:
+    #####:  352:    if (trie->size == 0)
+        -:  353:        return false;
+        -:  354:
+    #####:  355:    bool removed = false;
+    #####:  356:    if (trie->size == 1) {
+    #####:  357:        assert(is_leaf(trie->root));
+    #####:  358:        removed_kv->key = trie->root->leaf.key;
+    #####:  359:        removed_kv->value = trie->root->leaf.value;
+    #####:  360:        removed = true;
+        -:  361:    } else
+    #####:  362:        removed = hamt_node_remove(trie->root, hash, 0, key, trie->equals_fn, removed_kv);
+        -:  363:
+    #####:  364:    if (removed)
+    #####:  365:        trie->size--;
+        -:  366:
+        -:  367:    return removed;
+        -:  368:}
+------------------
+hamt_remove:
+    #####:  349:bool hamt_remove(hamt_t *trie, void *key, key_value_t *removed_kv) {
+    #####:  350:    unsigned int hash = trie->hash_fn(key);
+        -:  351:
+    #####:  352:    if (trie->size == 0)
+        -:  353:        return false;
+        -:  354:
+        -:  355:    bool removed = false;
+    #####:  356:    if (trie->size == 1) {
+    #####:  357:        assert(is_leaf(trie->root));
+    #####:  358:        removed_kv->key = trie->root->leaf.key;
+    #####:  359:        removed_kv->value = trie->root->leaf.value;
+        -:  360:        removed = true;
+        -:  361:    } else
+    #####:  362:        removed = hamt_node_remove(trie->root, hash, 0, key, trie->equals_fn, removed_kv);
+        -:  363:
+    #####:  364:    if (removed)
+    #####:  365:        trie->size--;
+        -:  366:
+        -:  367:    return removed;
+        -:  368:}
+------------------
+hamt_remove:
+    #####:  349:bool hamt_remove(hamt_t *trie, void *key, key_value_t *removed_kv) {
+    #####:  350:    unsigned int hash = trie->hash_fn(key);
+        -:  351:
+    #####:  352:    if (trie->size == 0)
+        -:  353:        return false;
+        -:  354:
+    #####:  355:    bool removed = false;
+    #####:  356:    if (trie->size == 1) {
+    #####:  357:        assert(is_leaf(trie->root));
+    #####:  358:        removed_kv->key = trie->root->leaf.key;
+    #####:  359:        removed_kv->value = trie->root->leaf.value;
+    #####:  360:        removed = true;
+        -:  361:    } else
+    #####:  362:        removed = hamt_node_remove(trie->root, hash, 0, key, trie->equals_fn, removed_kv);
+        -:  363:
+    #####:  364:    if (removed)
+    #####:  365:        trie->size--;
+        -:  366:
+        -:  367:    return removed;
+        -:  368:}
+------------------
+        -:  369:
+    #####:  370:void hamt_destroy(hamt_t *trie, deallocate_fn_t deallocate_fn) {
+    #####:  371:    if (trie->size > 0)
+    #####:  372:        hamt_node_destroy(trie->root, deallocate_fn);
+    #####:  373:    free(trie->root);
+    #####:  374:    free(trie);
+    #####:  375:}
+------------------
+hamt_destroy:
+    #####:  370:void hamt_destroy(hamt_t *trie, deallocate_fn_t deallocate_fn) {
+    #####:  371:    if (trie->size > 0)
+    #####:  372:        hamt_node_destroy(trie->root, deallocate_fn);
+    #####:  373:    free(trie->root);
+    #####:  374:    free(trie);
+    #####:  375:}
+------------------
+hamt_destroy:
+    #####:  370:void hamt_destroy(hamt_t *trie, deallocate_fn_t deallocate_fn) {
+    #####:  371:    if (trie->size > 0)
+    #####:  372:        hamt_node_destroy(trie->root, deallocate_fn);
+    #####:  373:    free(trie->root);
+    #####:  374:    free(trie);
+    #####:  375:}
+------------------
+        -:  376:
+    #####:  377:void hamt_print(hamt_t *trie, str_fn_t str_fn) {
+    #####:  378:    if (trie->size > 0)
+    #####:  379:        hamt_node_print(trie->root, 0, str_fn);
+        -:  380:    else
+    #####:  381:        printf("{}\n");
+    #####:  382:    printf("---\n\n");
+    #####:  383:}
+------------------
+hamt_print:
+    #####:  377:void hamt_print(hamt_t *trie, str_fn_t str_fn) {
+    #####:  378:    if (trie->size > 0)
+    #####:  379:        hamt_node_print(trie->root, 0, str_fn);
+        -:  380:    else
+        -:  381:        printf("{}\n");
+        -:  382:    printf("---\n\n");
+    #####:  383:}
+------------------
+hamt_print:
+    #####:  377:void hamt_print(hamt_t *trie, str_fn_t str_fn) {
+    #####:  378:    if (trie->size > 0)
+    #####:  379:        hamt_node_print(trie->root, 0, str_fn);
+        -:  380:    else
+    #####:  381:        printf("{}\n");
+    #####:  382:    printf("---\n\n");
+    #####:  383:}
+------------------

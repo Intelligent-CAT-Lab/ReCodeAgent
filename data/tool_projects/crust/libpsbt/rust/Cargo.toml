@@ -1,0 +1,15 @@
+[package]
+name = "libpsbt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thiserror = "1.0"
+base64 = "0.21"
+
+[lib]
+path = "src/lib.rs"
+
+[[test]]
+name = "test"
+path = "src/bin/test.rs"

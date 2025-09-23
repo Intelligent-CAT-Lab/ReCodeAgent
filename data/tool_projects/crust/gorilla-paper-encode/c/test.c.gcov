@@ -1,0 +1,41 @@
+        -:    0:Source:custom_tests/test.c
+        -:    1:/* Author: kun_tsai  GuangZhou 2023 */
+        -:    2:#include <stdio.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <string.h>
+        -:    5:#include <assert.h>
+        -:    6:#include "../gorilla.h"
+        -:    7:
+        1:    8:void test_float_encoding()
+        -:    9:{
+        1:   10:    u8 buffer[1024] = {0};
+        1:   11:    u32 length = 0;
+        1:   12:    f64 arr[8] = {2300.0, 2400.0, 2500.0, 2600.0, 2700.0, 2800.0, 2900.0, 3000};
+        1:   13:    f64 de_arr[64] = {0};
+        1:   14:    u32 de_len = 0;
+        -:   15:
+        -:   16:    float_encoder_t encode;
+        -:   17:    float_decoder_t decode;
+        1:   18:    float_encoder_init(&encode);
+        -:   19:
+        9:   20:    for (int i = 0; i < 8; i++) {
+        8:   21:        float_encode_write(&encode, arr[i]);
+        -:   22:    }
+        1:   23:    float_encode_flush(&encode, buffer, &length);
+        -:   24:
+       1*:   25:    assert(length > 0); // Ensure data was actually written
+        -:   26:
+        1:   27:    float_decode_block(&decode, buffer, length, de_arr, &de_len);
+        -:   28:
+       1*:   29:    assert(de_len == 8); // Ensure correct number of elements decoded
+        9:   30:    for (int i = 0; i < 8; i++) {
+       8*:   31:        assert(de_arr[i] == arr[i]); // Ensure values match
+        -:   32:    }
+        1:   33:}
+        -:   34:
+        1:   35:int main()
+        -:   36:{
+        1:   37:    test_float_encoding();
+        1:   38:    printf("All tests passed!\n");
+        1:   39:    return 0;
+        -:   40:}

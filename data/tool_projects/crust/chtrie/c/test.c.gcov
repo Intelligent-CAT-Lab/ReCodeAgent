@@ -1,0 +1,103 @@
+        -:    0:Source:tests/test.c
+        -:    1:#include <stdio.h>
+        -:    2:#include <assert.h>
+        -:    3:#include "../src/chtrie.h"
+        -:    4:
+        -:    5:#define fatal(s) do { perror(s); exit(-1); } while (0)
+        -:    6:#define N 65536
+        -:    7:#define M 256
+        -:    8:
+        -:    9:static char *dict1[] = { "", "the", "a", "an" };
+        -:   10:static char *dict2[] = { "he", "she", "his", "hers" };
+        -:   11:static char *dict3[] = { "this", "that" };
+        -:   12:static char *stop[] = { "the", "an", "a" };
+        -:   13:
+        -:   14:static chtrie *tr;
+        -:   15:
+        -:   16:static int term[N];    /* is `i` a termination node */
+        -:   17:static int nchild[N];  /* number of children of `i` */
+        -:   18:
+        -:   19:static void add(char *s);
+        -:   20:static void del(char *s);
+        -:   21:static int query(char *s);
+        -:   22:
+        1:   23:int main(void)
+        -:   24:{
+        1:   25:    if (!(tr = chtrie_alloc(N, M)))
+    #####:   26:        fatal("chtrie_alloc");
+        -:   27:
+        -:   28:    // Add words to the trie
+        5:   29:    for (size_t i = 0; i < sizeof dict1 / sizeof dict1[0]; i++)
+        4:   30:        add(dict1[i]);
+        5:   31:    for (size_t i = 0; i < sizeof dict2 / sizeof dict2[0]; i++)
+        4:   32:        add(dict2[i]);
+        4:   33:    for (size_t i = 0; i < sizeof stop / sizeof stop[0]; i++)
+        3:   34:        del(stop[i]);
+        3:   35:    for (size_t i = 0; i < sizeof dict3 / sizeof dict3[0]; i++)
+        2:   36:        add(dict3[i]);
+        -:   37:
+        -:   38:    // Test cases and expected results
+        1:   39:    char *test_cases[] = {
+        -:   40:        "hello", "the", "his", "he", "his", "go",
+        -:   41:        "he", "a", "an", "this", "that", "hey", "she", "hers"
+        -:   42:    };
+        1:   43:    int expected_results[] = {
+        -:   44:        0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1
+        -:   45:    };
+        -:   46:
+        1:   47:    size_t num_tests = sizeof test_cases / sizeof test_cases[0];
+       15:   48:    for (size_t i = 0; i < num_tests; i++) {
+       14:   49:        int result = query(test_cases[i]);
+       14:   50:        printf("Query: %s, Result: %d, Expected: %d\n",
+        -:   51:               test_cases[i], result, expected_results[i]);
+      14*:   52:        assert(result == expected_results[i]);
+        -:   53:    }
+        -:   54:
+        1:   55:    chtrie_free(tr);
+        1:   56:    printf("All tests passed!\n");
+        1:   57:    return 0;
+        -:   58:}
+        -:   59:
+       10:   60:static void add(char *s)
+        -:   61:{
+       10:   62:    int it = 0;
+       36:   63:    while (*s) {
+       26:   64:        if (chtrie_walk(tr, it, (unsigned char)*s, 0) == -1)
+       20:   65:            nchild[it]++;
+       26:   66:        if ((it = chtrie_walk(tr, it, (unsigned char)*s, 1)) == -1)
+    #####:   67:            fatal("chtrie_walk");
+       26:   68:        s++;
+        -:   69:    }
+       10:   70:    term[it] = 1;
+       10:   71:}
+        -:   72:
+        3:   73:static void del(char *s)
+        -:   74:{
+        -:   75:    static int nodes[N], symbs[N], n;    /* trace the path */
+        3:   76:    int it = 0;
+        -:   77:
+        3:   78:    n = 0;
+        9:   79:    while (it >= 0 && *s) {
+        6:   80:        nodes[n] = it;
+        6:   81:        symbs[n] = *s;
+        6:   82:        n++;
+        6:   83:        it = chtrie_walk(tr, it, (unsigned char)*s++, 0);
+        -:   84:    }
+        3:   85:    if (it < 0 || !term[it])
+    #####:   86:        return;
+        3:   87:    term[it] = 0;
+        8:   88:    while (it > 0 && !term[it] && nchild[it] == 0) {
+        5:   89:        n--;
+        5:   90:        chtrie_del(tr, nodes[n], symbs[n]);
+        5:   91:        it = nodes[n];
+        5:   92:        nchild[it]--;
+        -:   93:    }
+        -:   94:}
+        -:   95:
+       14:   96:static int query(char *s)
+        -:   97:{
+       14:   98:    int it = 0;
+       51:   99:    while (it >= 0 && *s)
+       37:  100:        it = chtrie_walk(tr, it, (unsigned char)*s++, 0);
+       14:  101:    return it >= 0 && term[it];
+        -:  102:}

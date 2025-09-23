@@ -1,0 +1,717 @@
+        -:    0:Source:src/test/unit_tests/01_dht.c
+        -:    1:
+        -:    2:#include <stdbool.h>
+        -:    3:#include "../../dht.h"
+        -:    4:#include <stdio.h>
+        -:    5:#include <assert.h>
+        -:    6:
+        -:    7:int main(int argc, char **argv);
+        -:    8:bool uninitialise_test();
+        -:    9:bool initialised_test();
+        -:   10:bool get_size_test_1();
+        -:   11:bool get_size_test_2();
+        -:   12:bool get_size_test_3();
+        -:   13:bool get_size_test_4();
+        -:   14:bool get_size_test_5();
+        -:   15:bool check_bound_test_5();
+        -:   16:bool check_bound_test_4();
+        -:   17:bool check_bound_test_3();
+        -:   18:bool check_bound_test_2();
+        -:   19:bool check_bound_test_1();
+        -:   20:bool read_write_1();
+        -:   21:bool read_write_2();
+        -:   22:bool read_write_3();
+        -:   23:bool read_write_4();
+        -:   24:bool read_write_5();
+        -:   25:bool read_write_6();
+        -:   26:bool read_write_7();
+        -:   27:bool read_write_8();
+        -:   28:bool read_write_9();
+        -:   29:bool read_write_10();
+        -:   30:bool read_write_11();
+        -:   31:bool read_write_12();
+        -:   32:bool write_remap_read_1();
+        -:   33:bool write_remap_read_2();
+        -:   34:bool write_remap_read_3();
+        -:   35:bool write_remap_read_4();
+        -:   36:bool write_remap_read_5();
+        -:   37:
+        -:   38:/* all functions in an array for looping */
+        -:   39:#define TEST_COUNT 29
+        -:   40:bool (*tests[])() = {
+        -:   41:	uninitialise_test, /* 1 */
+        -:   42:	initialised_test, /* 2 */
+        -:   43:	get_size_test_1, /* 3 */
+        -:   44:	get_size_test_2, /* 4 */
+        -:   45:	get_size_test_3, /* 5 */
+        -:   46:	get_size_test_4, /* 6 */
+        -:   47:	get_size_test_5, /* 7 */
+        -:   48:	check_bound_test_1, /* 8 */
+        -:   49:	check_bound_test_2, /* 9 */
+        -:   50:	check_bound_test_3, /* 10 */
+        -:   51:	check_bound_test_4, /* 11 */
+        -:   52:	check_bound_test_5, /* 12 */
+        -:   53:	read_write_1, /* 13 */
+        -:   54:	read_write_2, /* 14 */
+        -:   55:	read_write_3, /* 15 */
+        -:   56:	read_write_4, /* 16 */
+        -:   57:	read_write_5, /* 17 */
+        -:   58:	read_write_6, /* 18 */
+        -:   59:	read_write_7, /* 19 */
+        -:   60:	read_write_8, /* 20 */
+        -:   61:	read_write_9, /* 21 */
+        -:   62:	read_write_10, /* 22 */
+        -:   63:	read_write_11, /* 23 */
+        -:   64:	read_write_12, /* 24 */
+        -:   65:	write_remap_read_1, /* 25 */
+        -:   66:	write_remap_read_2, /* 26 */
+        -:   67:	write_remap_read_3, /* 27 */
+        -:   68:	write_remap_read_4, /* 28 */
+        -:   69:	write_remap_read_5 /* 29 */
+        -:   70:};
+        -:   71:
+        1:   72:int main(int argc, char **argv) {
+        -:   73:
+        -:   74:	int i, passed, failed;
+        -:   75:	bool result;
+        -:   76:
+        1:   77:	passed = 0;
+        1:   78:	failed = 0;
+        -:   79:
+       30:   80:	for (i = 0; i < TEST_COUNT; i++) {
+        -:   81:		/* run test */
+       29:   82:		result = tests[i]();
+       29:   83:		printf("Test %i of %i.", (i + 1), TEST_COUNT);
+       29:   84:		if (result) {
+       29:   85:			printf(" PASSED\n");
+       29:   86:			passed++;
+        -:   87:		}
+        -:   88:		else {
+    #####:   89:			printf(" FAILED!\n");
+    #####:   90:			failed++;
+        -:   91:		}
+        -:   92:	}
+        -:   93:
+        1:   94:	printf("finished. %i passed. %i failed.\n", passed, failed);
+        -:   95:	
+        1:   96:	if (failed == 0)
+        1:   97:		return 1;
+        -:   98:	else
+    #####:   99:		return 0;
+        -:  100:}
+        -:  101:
+        1:  102:bool uninitialise_test() {
+        -:  103:
+        -:  104:	bool b;
+        -:  105:
+        1:  106:	dht_init();
+        -:  107:
+        -:  108:	/* this should return false. no table initialised yet */
+        1:  109:	b = dht_is_initialised();
+        -:  110:
+        1:  111:	return (!b);
+        -:  112:}
+        -:  113:
+        -:  114:
+        1:  115:bool initialised_test() {
+        -:  116:
+        -:  117:	bool b;
+        -:  118:
+        1:  119:	dht_init();
+        -:  120:
+        1:  121:	dht_init_table(0, 10, false);
+        -:  122:	
+        -:  123:	/* this should return true. no table initialised yet */
+        1:  124:	b = dht_is_initialised();
+        -:  125:
+        1:  126:	return b;
+        -:  127:
+        -:  128:}
+        -:  129:
+        1:  130:bool get_size_test_1() {
+        -:  131:
+        -:  132:	int size;
+        -:  133:	bool ok;
+        -:  134:
+        1:  135:	dht_init();
+        1:  136:	ok = dht_init_table(0, 10, false);
+        -:  137:
+        1:  138:	if (!ok) {
+    #####:  139:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  140:		return false;
+        -:  141:	}
+        -:  142:
+        1:  143:	size = dht_get_size();
+        -:  144:
+        1:  145:	return (size == 10);
+        -:  146:}
+        -:  147:
+        1:  148:bool get_size_test_2() {
+        -:  149:
+        -:  150:	int size;
+        -:  151:	bool ok;
+        -:  152:
+        1:  153:	dht_init();
+        1:  154:	ok = dht_init_table(0, 254, false);
+        -:  155:	
+        1:  156:	if (!ok) {
+    #####:  157:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  158:		return false;
+        -:  159:	}
+        -:  160:
+        1:  161:	size = dht_get_size();
+        -:  162:
+        1:  163:	return (size == 254);
+        -:  164:}
+        -:  165:
+        1:  166:bool get_size_test_3() {
+        -:  167:
+        -:  168:	int size;
+        -:  169:	bool ok;
+        -:  170:
+        1:  171:	dht_init();
+        1:  172:	ok = dht_init_table(1, 5, false);
+        -:  173:	
+        1:  174:	if (!ok) {
+    #####:  175:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  176:		return false;
+        -:  177:	}
+        -:  178:
+        1:  179:	size = dht_get_size();
+        -:  180:
+        1:  181:	return (size == 4);
+        -:  182:}
+        -:  183:
+        1:  184:bool get_size_test_4() {
+        -:  185:
+        -:  186:	int size;
+        -:  187:	bool ok;
+        -:  188:
+        1:  189:	dht_init();
+        1:  190:	ok = dht_init_table(6, 11, false);
+        -:  191:	
+        1:  192:	if (!ok) {
+    #####:  193:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  194:		return false;
+        -:  195:	}
+        -:  196:
+        1:  197:	size = dht_get_size();
+        -:  198:
+        1:  199:	return (size == 5);
+        -:  200:}
+        -:  201:
+        1:  202:bool get_size_test_5() {
+        -:  203:
+        -:  204:	int size;
+        -:  205:	bool ok;
+        -:  206:
+        1:  207:	dht_init();
+        1:  208:	ok = dht_init_table(1065, 1109, false);
+        -:  209:
+        1:  210:	if (!ok) {
+    #####:  211:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  212:		return false;
+        -:  213:	}
+        -:  214:
+        1:  215:	size = dht_get_size();
+        -:  216:
+        1:  217:	return (size == 44);
+        -:  218:}
+        -:  219:
+        1:  220:bool check_bound_test_1() {
+        -:  221:
+        -:  222:	bool ok;
+        1:  223:	dht_init();
+        1:  224:	ok = dht_init_table(1065, 1109, false);
+        -:  225:	
+        1:  226:	if (!ok) {
+    #####:  227:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  228:		return false;
+        -:  229:	}
+        -:  230:
+        1:  231:	return (dht_get_lower_bound() == 1065);
+        -:  232:
+        -:  233:}
+        -:  234:
+        1:  235:bool check_bound_test_2() {
+        -:  236:
+        -:  237:	bool ok;
+        1:  238:	dht_init();
+        1:  239:	ok = dht_init_table(62, 1109, false);
+        -:  240:	
+        1:  241:	if (!ok) {
+    #####:  242:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  243:		return false;
+        -:  244:	}
+        -:  245:
+        1:  246:	return (dht_get_lower_bound() == 62);
+        -:  247:
+        -:  248:}
+        -:  249:
+        1:  250:bool check_bound_test_3() {
+        -:  251:
+        -:  252:	bool ok;
+        1:  253:	dht_init();
+        1:  254:	ok = dht_init_table(0, 1109, false);
+        -:  255:	
+        1:  256:	if (!ok) {
+    #####:  257:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  258:		return false;
+        -:  259:	}
+        -:  260:
+        1:  261:	return (dht_get_lower_bound() == 0);
+        -:  262:
+        -:  263:}
+        -:  264:
+        1:  265:bool check_bound_test_4() {
+        -:  266:
+        -:  267:	bool ok;
+        1:  268:	dht_init();
+        1:  269:	ok = dht_init_table(1065, 1109, false);
+        -:  270:	
+        1:  271:	if (!ok) {
+    #####:  272:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  273:		return false;
+        -:  274:	}
+        -:  275:
+        1:  276:	return (dht_get_upper_bound() == 1109);
+        -:  277:
+        -:  278:}
+        -:  279:
+        1:  280:bool check_bound_test_5() {
+        -:  281:
+        -:  282:	bool ok;
+        1:  283:	dht_init();
+        1:  284:	ok = dht_init_table(0, 2, false);
+        -:  285:	
+        1:  286:	if (!ok) {
+    #####:  287:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  288:		return false;
+        -:  289:	}
+        -:  290:
+        1:  291:	return (dht_get_upper_bound() == 2);
+        -:  292:
+        -:  293:}
+        -:  294:
+        1:  295:bool read_write_1() {
+        -:  296:	
+        -:  297:
+        -:  298:	void *j;
+        -:  299:
+        -:  300:	bool ok;
+        1:  301:	dht_init();
+        1:  302:	ok = dht_init_table(0, 20, false);
+        -:  303:	
+        1:  304:	if (!ok) {
+    #####:  305:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  306:		return false;
+        -:  307:	}
+        -:  308:
+        -:  309:	/* expect null */
+        1:  310:	j = dht_read(14);
+        -:  311:
+        1:  312:	return (j == NULL);
+        -:  313:
+        -:  314:}
+        -:  315:
+        1:  316:bool read_write_2() {
+        -:  317:	
+        -:  318:
+        -:  319:	void *j;
+        -:  320:
+        -:  321:	bool ok;
+        1:  322:	dht_init();
+        1:  323:	ok = dht_init_table(0, 20, false);
+        -:  324:	
+        1:  325:	if (!ok) {
+    #####:  326:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  327:		return false;
+        -:  328:	}
+        -:  329:
+        -:  330:	/* expect null */
+        1:  331:	j = dht_read(0);
+        -:  332:
+        1:  333:	return (j == NULL);
+        -:  334:
+        -:  335:}
+        -:  336:
+        1:  337:bool read_write_3() {
+        -:  338:	
+        -:  339:
+        -:  340:	void *j;
+        -:  341:
+        -:  342:	bool ok;
+        1:  343:	dht_init();
+        1:  344:	ok = dht_init_table(0, 20, false);
+        -:  345:	
+        1:  346:	if (!ok) {
+    #####:  347:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  348:		return false;
+        -:  349:	}
+        -:  350:
+        -:  351:	/* expect null */
+        1:  352:	j = dht_read(1);
+        -:  353:
+        1:  354:	return (j == NULL);
+        -:  355:
+        -:  356:}
+        -:  357:
+        1:  358:bool read_write_4() {
+        -:  359:	
+        -:  360:
+        -:  361:	void *j;
+        -:  362:
+        -:  363:	bool ok;
+        1:  364:	dht_init();
+        1:  365:	ok = dht_init_table(0, 20, false);
+        -:  366:	
+        1:  367:	if (!ok) {
+    #####:  368:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  369:		return false;
+        -:  370:	}
+        -:  371:
+        -:  372:	/* expect null */
+        1:  373:	j = dht_read(2);
+        -:  374:
+        1:  375:	return (j == NULL);
+        -:  376:
+        -:  377:}
+        -:  378:
+        1:  379:bool read_write_5() {
+        -:  380:	
+        -:  381:	void *j;
+        -:  382:
+        -:  383:	bool ok;
+        1:  384:	dht_init();
+        1:  385:	ok = dht_init_table(1, 20, false);
+        -:  386:	
+        1:  387:	if (!ok) {
+    #####:  388:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  389:		return false;
+        -:  390:	}
+        -:  391:
+        -:  392:	/* expect null */
+        1:  393:	j = dht_read(3);
+        -:  394:
+        1:  395:	return (j == NULL);
+        -:  396:
+        -:  397:}
+        -:  398:
+        1:  399:bool read_write_6() {
+        -:  400:	
+        -:  401:
+        -:  402:	void *j;
+        -:  403:
+        -:  404:	bool ok;
+        1:  405:	dht_init();
+        1:  406:	ok = dht_init_table(0, 20, false);
+        -:  407:	
+        1:  408:	if (!ok) {
+    #####:  409:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  410:		return false;
+        -:  411:	}
+        -:  412:
+        -:  413:	/* expect null */
+        1:  414:	j = dht_read(7);
+        -:  415:
+        1:  416:	return (j == NULL);
+        -:  417:
+        -:  418:}
+        -:  419:
+        1:  420:bool read_write_7() {
+        -:  421:	
+        -:  422:
+        -:  423:	void *j;
+        -:  424:
+        -:  425:	bool ok;
+        1:  426:	dht_init();
+        1:  427:	ok = dht_init_table(0, 20, false);
+        -:  428:	
+        1:  429:	if (!ok) {
+    #####:  430:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  431:		return false;
+        -:  432:	}
+        -:  433:
+        -:  434:	/* expect null */
+        1:  435:	j = dht_read(16);
+        -:  436:
+        1:  437:	return (j == NULL);
+        -:  438:
+        -:  439:}
+        -:  440:
+        1:  441:bool read_write_8() {
+        -:  442:	
+        -:  443:
+        -:  444:	void *j;
+        -:  445:
+        -:  446:	bool ok;
+        1:  447:	dht_init();
+        1:  448:	ok = dht_init_table(0, 20, false);
+        -:  449:	
+        1:  450:	if (!ok) {
+    #####:  451:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  452:		return false;
+        -:  453:	}
+        -:  454:
+        -:  455:	/* expect null */
+        1:  456:	j = dht_read(17);
+        -:  457:
+        1:  458:	return (j == NULL);
+        -:  459:
+        -:  460:}
+        -:  461:
+        1:  462:bool read_write_9() {
+        -:  463:	
+        -:  464:
+        -:  465:	void *j;
+        -:  466:
+        -:  467:	bool ok;
+        1:  468:	dht_init();
+        1:  469:	ok = dht_init_table(0, 20, false);
+        -:  470:	
+        1:  471:	if (!ok) {
+    #####:  472:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  473:		return false;
+        -:  474:	}
+        -:  475:
+        -:  476:	/* expect null */
+        1:  477:	j = dht_read(18);
+        -:  478:
+        1:  479:	return (j == NULL);
+        -:  480:
+        -:  481:}
+        -:  482:
+        1:  483:bool read_write_10() {
+        -:  484:	
+        -:  485:
+        1:  486:	int i = 65, b;
+        -:  487:	void *j;
+        -:  488:
+        -:  489:	bool ok;
+        1:  490:	dht_init();
+        1:  491:	ok = dht_init_table(0, 20, false);
+        -:  492:	
+        1:  493:	if (!ok) {
+    #####:  494:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  495:		return false;
+        -:  496:	}
+        -:  497:
+        -:  498:	/* expect null */
+        1:  499:	j = &i;
+        1:  500:	dht_write(19, j);
+        1:  501:	j = dht_read(19);
+        -:  502:
+        1:  503:	b = *((int*)j);
+        1:  504:	return (b == i);
+        -:  505:
+        -:  506:}
+        -:  507:
+        1:  508:bool read_write_11() {
+        -:  509:	
+        -:  510:
+        1:  511:	int i = 72, b;
+        -:  512:	void *j;
+        -:  513:	
+        -:  514:
+        -:  515:	bool ok;
+        1:  516:	dht_init();
+        1:  517:	ok = dht_init_table(0, 20, false);
+        -:  518:	
+        1:  519:	if (!ok) {
+    #####:  520:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  521:		return false;
+        -:  522:	}
+        -:  523:
+        -:  524:	/* expect null */
+        1:  525:	j = &i;
+        1:  526:	dht_write(19, j);
+        1:  527:	j = dht_read(19);
+        -:  528:
+        1:  529:	b = *((int*)j);
+        1:  530:	return (b == i);
+        -:  531:
+        -:  532:}
+        -:  533:
+        1:  534:bool read_write_12() {
+        -:  535:	
+        -:  536:
+        1:  537:	int i = 65, b;
+        -:  538:	void *j;
+        -:  539:
+        -:  540:	bool ok;
+        1:  541:	dht_init();
+        1:  542:	ok = dht_init_table(0, 20, false);
+        -:  543:	
+        1:  544:	if (!ok) {
+    #####:  545:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  546:		return false;
+        -:  547:	}
+        -:  548:
+        -:  549:	/* expect null */
+        1:  550:	j = &i;
+        1:  551:	dht_write(19, j);
+        1:  552:	j = dht_read(19);
+        -:  553:
+        1:  554:	b = *((int*)j);
+        1:  555:	return (b == i);
+        -:  556:
+        -:  557:}
+        -:  558:
+        1:  559:bool write_remap_read_1() {
+        -:  560:
+        1:  561:	int i = 65, b;
+        -:  562:	void *j;
+        -:  563:
+        -:  564:	bool ok;
+        1:  565:	dht_init();
+        1:  566:	ok = dht_init_table(0, 20, false);
+        -:  567:	
+        1:  568:	if (!ok) {
+    #####:  569:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  570:		return false;
+        -:  571:	}
+        -:  572:
+        -:  573:	/* expect null */
+        1:  574:	j = &i;
+        1:  575:	dht_write(13, j);
+        -:  576:
+        1:  577:	ok = dht_init_table(9, 14, true);
+        -:  578:	
+        1:  579:	if (!ok) {
+    #####:  580:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  581:		return false;
+        -:  582:	}
+        -:  583:
+        1:  584:	j = dht_read(13);
+        -:  585:
+        1:  586:	b = *((int*)j);
+        1:  587:	return (b == i);
+        -:  588:
+        -:  589:}
+        -:  590:
+        1:  591:bool write_remap_read_2() {
+        -:  592:
+        1:  593:	int i = 101, b;
+        -:  594:	void *j;
+        -:  595:
+        -:  596:	bool ok;
+        1:  597:	dht_init();
+        1:  598:	ok = dht_init_table(1, 6, false);
+        -:  599:	
+        1:  600:	if (!ok) {
+    #####:  601:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  602:		return false;
+        -:  603:	}
+        -:  604:
+        -:  605:	/* expect null */
+        1:  606:	j = &i;
+        1:  607:	dht_write(5, j);
+        -:  608:
+        1:  609:	ok = dht_init_table(2, 14, true);
+        -:  610:	
+        1:  611:	if (!ok) {
+    #####:  612:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  613:		return false;
+        -:  614:	}
+        -:  615:
+        1:  616:	j = dht_read(5);
+        -:  617:
+        1:  618:	b = *((int*)j);
+        1:  619:	return (b == i);
+        -:  620:
+        -:  621:}
+        -:  622:
+        1:  623:bool write_remap_read_3() {
+        -:  624:
+        1:  625:	int i = 1, b;
+        -:  626:	void *j;
+        -:  627:
+        -:  628:	bool ok;
+        1:  629:	dht_init();
+        1:  630:	ok = dht_init_table(101, 1600, false);
+        -:  631:	
+        1:  632:	if (!ok) {
+    #####:  633:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  634:		return false;
+        -:  635:	}
+        -:  636:
+        -:  637:	/* expect null */
+        1:  638:	j = &i;
+        1:  639:	dht_write(171, j);
+        -:  640:
+        1:  641:	ok = dht_init_table(100, 172, true);
+        -:  642:	
+        1:  643:	if (!ok) {
+    #####:  644:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  645:		return false;
+        -:  646:	}
+        -:  647:
+        1:  648:	j = dht_read(171);
+        -:  649:
+        1:  650:	b = *((int*)j);
+        1:  651:	return (b == i);
+        -:  652:
+        -:  653:}
+        -:  654:
+        1:  655:bool write_remap_read_4() {
+        -:  656:
+        1:  657:	int i = 65, b;
+        -:  658:	void *j;
+        -:  659:
+        -:  660:	bool ok;
+        1:  661:	dht_init();
+        1:  662:	ok = dht_init_table(0, 20, false);
+        -:  663:	
+        1:  664:	if (!ok) {
+    #####:  665:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  666:		return false;
+        -:  667:	}
+        -:  668:
+        -:  669:	/* expect null */
+        1:  670:	j = &i;
+        1:  671:	dht_write(0, j);
+        -:  672:
+        1:  673:	ok = dht_init_table(0, 4, true);
+        -:  674:	
+        1:  675:	if (!ok) {
+    #####:  676:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  677:		return false;
+        -:  678:	}
+        -:  679:
+        1:  680:	j = dht_read(0);
+        -:  681:
+        1:  682:	b = *((int*)j);
+        1:  683:	return (b == i);
+        -:  684:
+        -:  685:}
+        -:  686:
+        1:  687:bool write_remap_read_5() {
+        -:  688:
+        1:  689:	int i = 65;
+        -:  690:	void *j;
+        -:  691:
+        -:  692:	bool ok;
+        1:  693:	dht_init();
+        1:  694:	ok = dht_init_table(0, 20, false);
+        -:  695:	
+        1:  696:	if (!ok) {
+    #####:  697:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  698:		return false;
+        -:  699:	}
+        -:  700:
+        -:  701:	/* expect null */
+        1:  702:	j = &i;
+        1:  703:	dht_write(0, j);
+        -:  704:
+        1:  705:	ok = dht_init_table(0, 4, false);
+        -:  706:	
+        1:  707:	if (!ok) {
+    #####:  708:		printf("> malloc fail causes fail not logic fail.\n");
+    #####:  709:		return false;
+        -:  710:	}
+        -:  711:
+        1:  712:	j = dht_read(0);
+        -:  713:
+        1:  714:	return (j == NULL);
+        -:  715:
+        -:  716:}

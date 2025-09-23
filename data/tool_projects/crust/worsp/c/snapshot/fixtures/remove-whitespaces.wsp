@@ -1,0 +1,1 @@
+(print (remove-whitespaces "foo   bar"))

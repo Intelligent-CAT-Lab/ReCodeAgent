@@ -1,0 +1,405 @@
+        -:    0:Source:tests/clog_test_c.c
+        -:    0:Graph:clog_test.gcno
+        -:    0:Data:clog_test.gcda
+        -:    0:Runs:1
+        -:    1:/* Quick and dirty tests for the logger. */
+        -:    2:
+        -:    3:#if __STDC_VERSION__ >= 199901L
+        -:    4:#define _XOPEN_SOURCE 600
+        -:    5:#else
+        -:    6:#define _XOPEN_SOURCE 500
+        -:    7:#endif /* __STDC_VERSION__ */
+        -:    8:
+        -:    9:#include <sys/time.h>
+        -:   10:#include <stdio.h>
+        -:   11:#include <string.h>
+        -:   12:#include <unistd.h>
+        -:   13:
+        -:   14:#define CLOG_MAIN
+        -:   15:#include "../src/clog.h"
+        -:   16:
+        -:   17:#include "../tests/clog_test_c.h"
+        -:   18:
+        -:   19:#define THIS_FILE "clog_test_c.c"
+        -:   20:#define TEST_FILE "clog_test.out"
+        -:   21:
+        -:   22:char error_text[16384];
+        -:   23:
+        1:   24:void error(const char *fmt, ...)
+        -:   25:{
+        -:   26:    va_list ap;
+        1:   27:    va_start(ap, fmt);
+        1:   28:    vsnprintf(error_text, 16384, fmt, ap);
+        1:   29:    error_text[16383] = 0;
+        1:   30:}
+        -:   31:
+        1:   32:int test_double_init()
+        -:   33:{
+       1*:   34:    CHECK_CALL(clog_init_path(0, TEST_FILE));
+        1:   35:    if (clog_init_path(0, TEST_FILE) == 0) {
+    #####:   36:        return 1;
+        -:   37:    }
+        1:   38:    clog_free(0);
+        1:   39:    return 0;
+        -:   40:}
+        -:   41:
+        1:   42:int test_file_write()
+        -:   43:{
+        1:   44:    FILE *f = NULL;
+        -:   45:    char buf[256];
+        -:   46:
+        -:   47:    /* Write to the log */
+       1*:   48:    CHECK_CALL(clog_init_path(0, TEST_FILE));
+       1*:   49:    CHECK_CALL(clog_set_fmt(0, "%f: %l: %m\n"));
+        1:   50:    clog_debug(CLOG(0), "Hello, %s!", "world");
+        1:   51:    clog_free(0);
+        -:   52:
+        -:   53:    /* Verify what was written */
+        1:   54:    f = fopen(TEST_FILE, "r");
+        1:   55:    if (!f) {
+    #####:   56:        return 1;
+        -:   57:    }
+        -:   58:
+        1:   59:    if (fgets(buf, 256, f) == NULL) {
+    #####:   60:        fclose(f);
+    #####:   61:        return 1;
+        -:   62:    }
+        1:   63:    fclose(f);
+       1*:   64:    CHECK_CALL(strcmp(buf, THIS_FILE ": DEBUG: Hello, world!\n"));
+        -:   65:
+        1:   66:    return 0;
+        -:   67:}
+        -:   68:
+        1:   69:int test_file_write_nonexistent()
+        -:   70:{
+        -:   71:    /* Expected to fail, so success is bad */
+        1:   72:    if (clog_init_path(0, "path-doesnt-exist/log.out") == 0) {
+    #####:   73:        return 1;
+        -:   74:    }
+        1:   75:    if (_clog_loggers[0] != NULL) {
+    #####:   76:        return 1;
+        -:   77:    }
+        -:   78:
+        1:   79:    return 0;
+        -:   80:}
+        -:   81:
+        1:   82:int test_fd_write()
+        -:   83:{
+        -:   84:    char buf[1024];
+        -:   85:    int fd[2];
+        -:   86:    size_t bytes;
+        -:   87:
+       1*:   88:    CHECK_CALL(pipe(fd));
+       1*:   89:    CHECK_CALL(clog_init_fd(0, fd[1]));
+       1*:   90:    CHECK_CALL(clog_set_fmt(0, "%f: %l: %m\n"));
+        1:   91:    clog_debug(CLOG(0), "Hello, %s!", "world");
+        1:   92:    clog_free(0);
+        1:   93:    close(fd[1]);
+        -:   94:
+        1:   95:    bytes = read(fd[0], buf, 1024);
+        1:   96:    if (bytes <= 0) {
+    #####:   97:        close(fd[0]);
+    #####:   98:        return 1;
+        -:   99:    }
+        1:  100:    buf[bytes] = 0;
+        1:  101:    close(fd[0]);
+       1*:  102:    CHECK_CALL(strcmp(buf, THIS_FILE ": DEBUG: Hello, world!\n"));
+        -:  103:
+        1:  104:    return 0;
+        -:  105:}
+        -:  106:
+        1:  107:int test_all_levels()
+        -:  108:{
+        -:  109:    char buf[1024];
+        -:  110:    int fd[2];
+        -:  111:    size_t bytes;
+        -:  112:
+       1*:  113:    CHECK_CALL(pipe(fd));
+       1*:  114:    CHECK_CALL(clog_init_fd(0, fd[1]));
+       1*:  115:    CHECK_CALL(clog_set_fmt(0, "%f: %l: %m\n"));
+        1:  116:    clog_debug(CLOG(0), "Hello, %s!", "world");
+        1:  117:    clog_info(CLOG(0), "Hello, %s!", "world");
+        1:  118:    clog_warn(CLOG(0), "Hello, %s!", "world");
+        1:  119:    clog_error(CLOG(0), "Hello, %s!", "world");
+        1:  120:    clog_free(0);
+        1:  121:    close(fd[1]);
+        -:  122:
+        1:  123:    bytes = read(fd[0], buf, 1024);
+        1:  124:    if (bytes <= 0) {
+    #####:  125:        close(fd[0]);
+    #####:  126:        return 1;
+        -:  127:    }
+        1:  128:    buf[bytes] = 0;
+        1:  129:    close(fd[0]);
+       1*:  130:    CHECK_CALL(strcmp(buf,
+        -:  131:        THIS_FILE ": DEBUG: Hello, world!\n"
+        -:  132:        THIS_FILE ": INFO: Hello, world!\n"
+        -:  133:        THIS_FILE ": WARN: Hello, world!\n"
+        -:  134:        THIS_FILE ": ERROR: Hello, world!\n"
+        -:  135:    ));
+        -:  136:
+        1:  137:    return 0;
+        -:  138:}
+        -:  139:
+        1:  140:int test_level_filtering()
+        -:  141:{
+        -:  142:    char buf[1024];
+        -:  143:    int fd[2];
+        -:  144:    size_t bytes;
+        -:  145:
+        -:  146:    /* Write to log with level == WARN */
+       1*:  147:    CHECK_CALL(pipe(fd));
+       1*:  148:    CHECK_CALL(clog_init_fd(0, fd[1]));
+       1*:  149:    CHECK_CALL(clog_set_fmt(0, "%f: %l: %m\n"));
+       1*:  150:    CHECK_CALL(clog_set_level(0, CLOG_WARN));
+        1:  151:    clog_debug(CLOG(0), "Hello, %s!", "world");
+        1:  152:    clog_info(CLOG(0), "Hello, %s!", "world");
+        1:  153:    clog_warn(CLOG(0), "Hello, %s!", "world");
+        1:  154:    clog_error(CLOG(0), "Hello, %s!", "world");
+        1:  155:    clog_free(0);
+        1:  156:    close(fd[1]);
+        -:  157:
+        -:  158:    /* Should receive only messages >= WARN */
+        1:  159:    bytes = read(fd[0], buf, 1024);
+        1:  160:    if (bytes <= 0) {
+    #####:  161:        close(fd[0]);
+    #####:  162:        return 1;
+        -:  163:    }
+        1:  164:    buf[bytes] = 0;
+        1:  165:    close(fd[0]);
+       1*:  166:    CHECK_CALL(strcmp(buf,
+        -:  167:        THIS_FILE ": WARN: Hello, world!\n"
+        -:  168:        THIS_FILE ": ERROR: Hello, world!\n"
+        -:  169:    ));
+        -:  170:
+        1:  171:    return 0;
+        -:  172:}
+        -:  173:
+        1:  174:int test_multiple_loggers()
+        -:  175:{
+        -:  176:    char buf[1024];
+        -:  177:    size_t bytes;
+        -:  178:    int id;
+        -:  179:
+       17:  180:    for (id = 0; id < CLOG_MAX_LOGGERS; id++) {
+        -:  181:        int fd[2];
+        -:  182:        char exp[256];
+      16*:  183:        CHECK_CALL(pipe(fd));
+      16*:  184:        CHECK_CALL(clog_init_fd(id, fd[1]));
+      16*:  185:        CHECK_CALL(clog_set_fmt(id, "%f: %l: %m\n"));
+       16:  186:        clog_debug(CLOG(id), "Hello, %d!", id);
+       16:  187:        close(fd[1]);
+       16:  188:        bytes = read(fd[0], buf, 1024);
+       16:  189:        if (bytes <= 0) {
+    #####:  190:            close(fd[0]);
+    #####:  191:            return 1;
+        -:  192:        }
+       16:  193:        buf[bytes] = 0;
+       16:  194:        close(fd[0]);
+       16:  195:        snprintf(exp, 256, "%s: DEBUG: Hello, %d!\n", THIS_FILE, id);
+      16*:  196:        CHECK_CALL(strcmp(buf, exp));
+        -:  197:    }
+       17:  198:    for (id = 0; id < CLOG_MAX_LOGGERS; id++) {
+       16:  199:        clog_free(id);
+        -:  200:    }
+        -:  201:
+        1:  202:    return 0;
+        -:  203:}
+        -:  204:
+        1:  205:int test_bad_format()
+        -:  206:{
+        -:  207:    char too_long[300];
+        1:  208:    memset(too_long, 'a', 299);
+        1:  209:    too_long[299] = 0;
+        -:  210:
+       1*:  211:    CHECK_CALL(clog_init_path(0, "clog_test.out"));
+        1:  212:    if (clog_set_fmt(0, too_long) == 0) {
+    #####:  213:        return 1;
+        -:  214:    }
+        1:  215:    clog_free(0);
+        1:  216:    return 0;
+        -:  217:}
+        -:  218:
+        1:  219:int test_long_message()
+        -:  220:{
+        1:  221:    FILE *f = NULL;
+        -:  222:    char buf[51000];
+        -:  223:    char message[50000];
+        -:  224:    char exp[51000];
+        1:  225:    memset(message, 'b', 49999);
+        1:  226:    message[49999] = 0;
+        -:  227:
+        -:  228:    /* Write to the log */
+       1*:  229:    CHECK_CALL(clog_init_path(0, TEST_FILE));
+       1*:  230:    CHECK_CALL(clog_set_fmt(0, "%f: %l: %m\n"));
+        1:  231:    clog_debug(CLOG(0), message);
+        1:  232:    clog_free(0);
+        -:  233:
+        -:  234:    /* Verify what was written */
+        1:  235:    f = fopen(TEST_FILE, "r");
+        1:  236:    if (!f) {
+    #####:  237:        return 1;
+        -:  238:    }
+        -:  239:
+        1:  240:    if (fgets(buf, 51000, f) == NULL) {
+    #####:  241:        fclose(f);
+    #####:  242:        return 1;
+        -:  243:    }
+        1:  244:    fclose(f);
+        -:  245:
+        1:  246:    snprintf(exp, 51000, "%s: DEBUG: %s\n", THIS_FILE, message);
+       1*:  247:    CHECK_CALL(strcmp(buf, exp));
+        1:  248:    return 0;
+        -:  249:}
+        -:  250:
+        1:  251:int test_performance()
+        -:  252:{
+        1:  253:    const int MICROS_PER_SEC = 1000000;
+        1:  254:    const size_t NUM_MESSAGES = 200000;
+        -:  255:    unsigned long start_time, end_time;
+        -:  256:    struct timeval tv;
+        1:  257:    size_t messages = 0;
+        -:  258:    double run_time;
+        -:  259:    unsigned long messages_per_second;
+        -:  260:
+        -:  261:    /* Init */
+       1*:  262:    CHECK_CALL(clog_init_path(0, TEST_FILE));
+        -:  263:
+        -:  264:    /* Run test */
+       1*:  265:    CHECK_CALL(gettimeofday(&tv, NULL));
+        1:  266:    start_time = tv.tv_sec * MICROS_PER_SEC + tv.tv_usec;
+   200001:  267:    for (messages = 0; messages < NUM_MESSAGES; messages++) {
+   200000:  268:        clog_debug(CLOG(0), "Hello, %s!", "high-performing world");
+        -:  269:    }
+       1*:  270:    CHECK_CALL(gettimeofday(&tv, NULL));
+        1:  271:    end_time = tv.tv_sec * MICROS_PER_SEC + tv.tv_usec;
+        1:  272:    clog_free(0);
+        -:  273:
+        -:  274:    /* Goal: 100,000 messages per second. */
+        1:  275:    run_time = (end_time - start_time) / (double) MICROS_PER_SEC;
+        1:  276:    messages_per_second = messages / run_time;
+        1:  277:    error("  Target 100000 msgs/sec, got %lu.\n", messages_per_second);
+        1:  278:    if (messages_per_second < 100000) {
+        1:  279:        return 1;
+        -:  280:    }
+        -:  281:
+    #####:  282:    return 0;
+        -:  283:}
+        -:  284:
+        1:  285:int test_reuse_logger_id()
+        -:  286:{
+        -:  287:    int i;
+        -:  288:
+        -:  289:    // Create and then free the same logger twice.
+        -:  290:    // Reproduces https://github.com/mmueller/clog/issues/7
+        3:  291:    for (i = 0; i < 2; i++) {
+        -:  292:        char buf[1024];
+        -:  293:        int fd[2];
+        -:  294:        size_t bytes;
+       2*:  295:        CHECK_CALL(pipe(fd));
+       2*:  296:        CHECK_CALL(clog_init_fd(0, fd[1]));
+       2*:  297:        CHECK_CALL(clog_set_fmt(0, "%f: %l: %m\n"));
+        2:  298:        clog_debug(CLOG(0), "Hello, %s!", "world");
+        2:  299:        clog_free(0);
+        2:  300:        close(fd[1]);
+        -:  301:
+        2:  302:        bytes = read(fd[0], buf, 1024);
+        2:  303:        if (bytes <= 0) {
+    #####:  304:            close(fd[0]);
+    #####:  305:            return 1;
+        -:  306:        }
+        2:  307:        buf[bytes] = 0;
+        2:  308:        close(fd[0]);
+       2*:  309:        CHECK_CALL(strcmp(buf, THIS_FILE ": DEBUG: Hello, world!\n"));
+        -:  310:    }
+        -:  311:
+        1:  312:    return 0;
+        -:  313:}
+        -:  314:
+        -:  315:typedef int (*test_function_t)();
+        -:  316:
+        -:  317:typedef struct {
+        -:  318:    const char *name;
+        -:  319:    test_function_t function;
+        -:  320:    int pass;
+        -:  321:} test_case;
+        -:  322:
+        -:  323:#define TEST_CASE(name) { #name, name, -1 }
+        -:  324:
+        1:  325:int main(int argc, char *argv[])
+        -:  326:{
+        1:  327:    test_case tests[] = {
+        -:  328:        // C tests
+        -:  329:        TEST_CASE(test_double_init),
+        -:  330:        TEST_CASE(test_file_write),
+        -:  331:        TEST_CASE(test_file_write_nonexistent),
+        -:  332:        TEST_CASE(test_fd_write),
+        -:  333:        TEST_CASE(test_all_levels),
+        -:  334:        TEST_CASE(test_level_filtering),
+        -:  335:        TEST_CASE(test_multiple_loggers),
+        -:  336:        TEST_CASE(test_bad_format),
+        -:  337:        TEST_CASE(test_long_message),
+        -:  338:        TEST_CASE(test_reuse_logger_id),
+        -:  339:
+        -:  340:        // // C++ tests
+        -:  341:        // TEST_CASE(test_cpp_hello),
+        -:  342:
+        -:  343:        // Performance tests
+        -:  344:        TEST_CASE(test_performance)
+        -:  345:    };
+        -:  346:
+        1:  347:    const size_t num_tests = sizeof(tests) / sizeof(test_case);
+        1:  348:    const char *test_name = NULL;
+        1:  349:    int pass = 0, fail = 0;
+        -:  350:    size_t i, j;
+        -:  351:
+        1:  352:    if (argc > 1) {
+    #####:  353:        test_name = argv[1];
+        -:  354:    }
+        -:  355:
+       12:  356:    for (i = 0; i < num_tests; i++) {
+      11*:  357:        if (test_name && strcmp(tests[i].name, test_name) != 0) {
+    #####:  358:            continue;
+        -:  359:        }
+       11:  360:        if (unlink(TEST_FILE) == -1 && errno != ENOENT) {
+    #####:  361:            perror("unlink");
+        -:  362:        }
+       11:  363:        printf("%s: ", tests[i].name);
+       11:  364:        if (tests[i].function() == 0) {
+       10:  365:            tests[i].pass = 1;
+       10:  366:            pass++;
+       10:  367:            printf("OK\n");
+        -:  368:        } else {
+        1:  369:            tests[i].pass = 0;
+        1:  370:            fail++;
+        1:  371:            printf("FAIL\n");
+        -:  372:        }
+       11:  373:        if (strlen(error_text)) {
+        1:  374:            printf("%s", error_text);
+        -:  375:        }
+        -:  376:
+        -:  377:        /* Restore global state in case test didn't clean up */
+      187:  378:        for (j = 0; j < CLOG_MAX_LOGGERS; j++) {
+      176:  379:            _clog_loggers[j] = NULL;
+        -:  380:        }
+       11:  381:        error_text[0] = '\0';
+        -:  382:    }
+        1:  383:    printf("\n");
+       1*:  384:    if (pass == 0 && fail == 0) {
+    #####:  385:        printf("No such test: %s\n", test_name);
+    #####:  386:        return 1;
+        -:  387:    } else {
+        1:  388:        printf("%d successes, %d failures.\n", pass, fail);
+        -:  389:    }
+        -:  390:
+        1:  391:    if (fail > 0) {
+        1:  392:        printf("Failing cases:\n");
+       12:  393:        for (i = 0; i < num_tests; ++i) {
+       11:  394:            if (tests[i].pass == 0) {
+        1:  395:                printf("    %s\n", tests[i].name);
+        -:  396:            }
+        -:  397:        }
+        -:  398:    }
+        -:  399:
+        1:  400:    return fail ? 1 : 0;
+        -:  401:}

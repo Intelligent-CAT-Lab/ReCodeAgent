@@ -1,0 +1,17 @@
+(defun string-ref (str index) (progn (list-ref (split str "") index)))
+
+(defun splice (str start end)
+  (progn
+    (= result "")
+    (= index start)
+    (while (not (eq index end))
+      (progn
+        (= result (+ result (string-ref str index)))
+        (= index (+ index 1))
+      )
+    )
+    (progn result)
+  )
+)
+
+(print (splice "foobar" 2 4))
