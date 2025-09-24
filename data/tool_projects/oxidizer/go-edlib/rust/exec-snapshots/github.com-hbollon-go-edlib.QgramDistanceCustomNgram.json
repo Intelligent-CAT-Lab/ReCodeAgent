@@ -1,0 +1,450 @@
+[
+    {
+        "inputs": [
+            {},
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            }
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            },
+            {}
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            },
+            {}
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            },
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            },
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1,
+                "de": 1
+            }
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1
+            },
+            {
+                "ef": 1,
+                "ff": 1,
+                "fg": 1,
+                "gg": 1,
+                "gh": 1,
+                "hh": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ab": 1,
+                "bc": 1,
+                "cd": 1
+            },
+            {
+                "ef": 1,
+                "ff": 1,
+                "fg": 1,
+                "gg": 1,
+                "gh": 1,
+                "hh": 1
+            }
+        ],
+        "return_value": 9
+    },
+    {
+        "inputs": [
+            {
+                "AT": 1,
+                "CR": 1,
+                "RA": 1,
+                "TE": 1
+            },
+            {
+                "AC": 1,
+                "CE": 1,
+                "RA": 1,
+                "TR": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AT": 1,
+                "CR": 1,
+                "RA": 1,
+                "TE": 1
+            },
+            {
+                "AC": 1,
+                "CE": 1,
+                "RA": 1,
+                "TR": 1
+            }
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            {
+                "AR": 1,
+                "HA": 1,
+                "MA": 1,
+                "RT": 1,
+                "TH": 1
+            },
+            {
+                "AR": 1,
+                "HT": 1,
+                "MA": 1,
+                "RH": 1,
+                "TA": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AR": 1,
+                "HA": 1,
+                "MA": 1,
+                "RT": 1,
+                "TH": 1
+            },
+            {
+                "AR": 1,
+                "HT": 1,
+                "MA": 1,
+                "RH": 1,
+                "TA": 1
+            }
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            {
+                "DI": 1,
+                "IX": 1,
+                "ON": 1,
+                "XO": 1
+            },
+            {
+                "CK": 1,
+                "DI": 1,
+                "IC": 1,
+                "KS": 1,
+                "NX": 1,
+                "ON": 1,
+                "SO": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "DI": 1,
+                "IX": 1,
+                "ON": 1,
+                "XO": 1
+            },
+            {
+                "CK": 1,
+                "DI": 1,
+                "IC": 1,
+                "KS": 1,
+                "NX": 1,
+                "ON": 1,
+                "SO": 1
+            }
+        ],
+        "return_value": 7
+    },
+    {
+        "inputs": [
+            {
+                "Ra": 1,
+                "ad": 2,
+                "di": 1,
+                "ea": 1,
+                "he": 1,
+                "io": 1,
+                "oh": 1
+            },
+            {
+                "Ra": 1,
+                "ad": 2,
+                "di": 1,
+                "ea": 1,
+                "he": 1,
+                "io": 1,
+                "oh": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Ra": 1,
+                "ad": 2,
+                "di": 1,
+                "ea": 1,
+                "he": 1,
+                "io": 1,
+                "oh": 1
+            },
+            {
+                "Ra": 1,
+                "ad": 2,
+                "di": 1,
+                "ea": 1,
+                "he": 1,
+                "io": 1,
+                "oh": 1
+            }
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "AB": 1,
+                "BC": 1,
+                "CD": 1
+            },
+            {
+                "AB": 1,
+                "BC": 1,
+                "CE": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AB": 1,
+                "BC": 1,
+                "CD": 1
+            },
+            {
+                "AB": 1,
+                "BC": 1,
+                "CE": 1
+            }
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            {
+                "Ra": 1,
+                "ad": 2,
+                "di": 1,
+                "ea": 1,
+                "he": 1,
+                "io": 1,
+                "oh": 1
+            },
+            {
+                " J": 1,
+                " R": 1,
+                "Ca": 1,
+                "Je": 1,
+                "Ra": 1,
+                "ae": 1,
+                "ar": 1,
+                "e ": 1,
+                "en": 1,
+                "ep": 1,
+                "ly": 1,
+                "ps": 1,
+                "rl": 1,
+                "se": 1,
+                "y ": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Ra": 1,
+                "ad": 2,
+                "di": 1,
+                "ea": 1,
+                "he": 1,
+                "io": 1,
+                "oh": 1
+            },
+            {
+                " J": 1,
+                " R": 1,
+                "Ca": 1,
+                "Je": 1,
+                "Ra": 1,
+                "ae": 1,
+                "ar": 1,
+                "e ": 1,
+                "en": 1,
+                "ep": 1,
+                "ly": 1,
+                "ps": 1,
+                "rl": 1,
+                "se": 1,
+                "y ": 1
+            }
+        ],
+        "return_value": 21
+    },
+    {
+        "inputs": [
+            {
+                " h": 1,
+                " l": 1,
+                " m": 1,
+                "I ": 1,
+                "e ": 1,
+                "es": 1,
+                "ho": 1,
+                "ie": 1,
+                "lo": 1,
+                "mo": 1,
+                "or": 2,
+                "ov": 2,
+                "r ": 1,
+                "ro": 1,
+                "rr": 1,
+                "ve": 1,
+                "vi": 1
+            },
+            {
+                " a": 1,
+                " h": 1,
+                " i": 1,
+                " m": 1,
+                " o": 1,
+                "Li": 1,
+                "a ": 1,
+                "gh": 1,
+                "ho": 1,
+                "ht": 1,
+                "ie": 1,
+                "ig": 1,
+                "is": 1,
+                "mo": 1,
+                "or": 2,
+                "ou": 1,
+                "ov": 1,
+                "r ": 1,
+                "ro": 1,
+                "rr": 1,
+                "s ": 2,
+                "t ": 1,
+                "ts": 1,
+                "ut": 1,
+                "vi": 1
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                " h": 1,
+                " l": 1,
+                " m": 1,
+                "I ": 1,
+                "e ": 1,
+                "es": 1,
+                "ho": 1,
+                "ie": 1,
+                "lo": 1,
+                "mo": 1,
+                "or": 2,
+                "ov": 2,
+                "r ": 1,
+                "ro": 1,
+                "rr": 1,
+                "ve": 1,
+                "vi": 1
+            },
+            {
+                " a": 1,
+                " h": 1,
+                " i": 1,
+                " m": 1,
+                " o": 1,
+                "Li": 1,
+                "a ": 1,
+                "gh": 1,
+                "ho": 1,
+                "ht": 1,
+                "ie": 1,
+                "ig": 1,
+                "is": 1,
+                "mo": 1,
+                "or": 2,
+                "ou": 1,
+                "ov": 1,
+                "r ": 1,
+                "ro": 1,
+                "rr": 1,
+                "s ": 2,
+                "t ": 1,
+                "ts": 1,
+                "ut": 1,
+                "vi": 1
+            }
+        ],
+        "return_value": 22
+    }
+]

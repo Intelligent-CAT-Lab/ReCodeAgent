@@ -1,0 +1,276 @@
+[
+    {
+        "inputs": [
+            "Radiohead",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Radiohead",
+            2
+        ],
+        "return_value": {
+            "Ra": 1,
+            "ad": 2,
+            "di": 1,
+            "ea": 1,
+            "he": 1,
+            "io": 1,
+            "oh": 1
+        }
+    },
+    {
+        "inputs": [
+            "ABCD",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCD",
+            2
+        ],
+        "return_value": {
+            "AB": 1,
+            "BC": 1,
+            "CD": 1
+        }
+    },
+    {
+        "inputs": [
+            "ABCE",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCE",
+            2
+        ],
+        "return_value": {
+            "AB": 1,
+            "BC": 1,
+            "CE": 1
+        }
+    },
+    {
+        "inputs": [
+            "Carly Rae Jepsen",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Carly Rae Jepsen",
+            2
+        ],
+        "return_value": {
+            " J": 1,
+            " R": 1,
+            "Ca": 1,
+            "Je": 1,
+            "Ra": 1,
+            "ae": 1,
+            "ar": 1,
+            "e ": 1,
+            "en": 1,
+            "ep": 1,
+            "ly": 1,
+            "ps": 1,
+            "rl": 1,
+            "se": 1,
+            "y ": 1
+        }
+    },
+    {
+        "inputs": [
+            "I love horror movies",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "I love horror movies",
+            2
+        ],
+        "return_value": {
+            " h": 1,
+            " l": 1,
+            " m": 1,
+            "I ": 1,
+            "e ": 1,
+            "es": 1,
+            "ho": 1,
+            "ie": 1,
+            "lo": 1,
+            "mo": 1,
+            "or": 2,
+            "ov": 2,
+            "r ": 1,
+            "ro": 1,
+            "rr": 1,
+            "ve": 1,
+            "vi": 1
+        }
+    },
+    {
+        "inputs": [
+            "Lights out is a horror movie",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Lights out is a horror movie",
+            2
+        ],
+        "return_value": {
+            " a": 1,
+            " h": 1,
+            " i": 1,
+            " m": 1,
+            " o": 1,
+            "Li": 1,
+            "a ": 1,
+            "gh": 1,
+            "ho": 1,
+            "ht": 1,
+            "ie": 1,
+            "ig": 1,
+            "is": 1,
+            "mo": 1,
+            "or": 2,
+            "ou": 1,
+            "ov": 1,
+            "r ": 1,
+            "ro": 1,
+            "rr": 1,
+            "s ": 2,
+            "t ": 1,
+            "ts": 1,
+            "ut": 1,
+            "vi": 1
+        }
+    },
+    {
+        "inputs": [
+            "love horror movies",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "love horror movies",
+            2
+        ],
+        "return_value": {
+            " h": 1,
+            " m": 1,
+            "e ": 1,
+            "es": 1,
+            "ho": 1,
+            "ie": 1,
+            "lo": 1,
+            "mo": 1,
+            "or": 2,
+            "ov": 2,
+            "r ": 1,
+            "ro": 1,
+            "rr": 1,
+            "ve": 1,
+            "vi": 1
+        }
+    },
+    {
+        "inputs": [
+            "Lights out horror movie",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Lights out horror movie",
+            2
+        ],
+        "return_value": {
+            " h": 1,
+            " m": 1,
+            " o": 1,
+            "Li": 1,
+            "gh": 1,
+            "ho": 1,
+            "ht": 1,
+            "ie": 1,
+            "ig": 1,
+            "mo": 1,
+            "or": 2,
+            "ou": 1,
+            "ov": 1,
+            "r ": 1,
+            "ro": 1,
+            "rr": 1,
+            "s ": 1,
+            "t ": 1,
+            "ts": 1,
+            "ut": 1,
+            "vi": 1
+        }
+    },
+    {
+        "inputs": [
+            "\u79c1\u306e\u540d\u524d\u306f\u30b8\u30e7\u30f3\u3067\u3059",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u79c1\u306e\u540d\u524d\u306f\u30b8\u30e7\u30f3\u3067\u3059",
+            2
+        ],
+        "return_value": {
+            "\u3067\u3059": 1,
+            "\u306e\u540d": 1,
+            "\u306f\u30b8": 1,
+            "\u30b8\u30e7": 1,
+            "\u30e7\u30f3": 1,
+            "\u30f3\u3067": 1,
+            "\u524d\u306f": 1,
+            "\u540d\u524d": 1,
+            "\u79c1\u306e": 1
+        }
+    },
+    {
+        "inputs": [
+            "\u79c1\u306e\u540d\u524d\u306f\u30b8\u30e7\u30f3\u30fb\u30c9\u30a5\u3067\u3059",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u79c1\u306e\u540d\u524d\u306f\u30b8\u30e7\u30f3\u30fb\u30c9\u30a5\u3067\u3059",
+            2
+        ],
+        "return_value": {
+            "\u3067\u3059": 1,
+            "\u306e\u540d": 1,
+            "\u306f\u30b8": 1,
+            "\u30a5\u3067": 1,
+            "\u30b8\u30e7": 1,
+            "\u30c9\u30a5": 1,
+            "\u30e7\u30f3": 1,
+            "\u30f3\u30fb": 1,
+            "\u30fb\u30c9": 1,
+            "\u524d\u306f": 1,
+            "\u540d\u524d": 1,
+            "\u79c1\u306e": 1
+        }
+    },
+    {
+        "inputs": [
+            "\ud83d\ude42\ud83d\ude04\ud83d\ude42\ud83d\ude04 \ud83d\ude04\ud83d\ude42\ud83d\ude04",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\ud83d\ude42\ud83d\ude04\ud83d\ude42\ud83d\ude04 \ud83d\ude04\ud83d\ude42\ud83d\ude04",
+            2
+        ],
+        "return_value": {
+            " \ud83d\ude04": 1,
+            "\ud83d\ude04 ": 1,
+            "\ud83d\ude04\ud83d\ude42": 2,
+            "\ud83d\ude42\ud83d\ude04": 3
+        }
+    }
+]

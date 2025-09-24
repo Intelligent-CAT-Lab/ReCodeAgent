@@ -1,0 +1,810 @@
+{
+    "BasePath": "/mnt/transpile/benchmarks/gohistogram",
+    "Functions": {
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).Add": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 28,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).Add",
+            "UsedFunctions": [
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).trim"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [
+                "github.com/VividCortex/gohistogram.Histogram"
+            ],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).CDF": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 67,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).CDF",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "bins",
+                    "total"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).Count": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 109,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).Count",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "total"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).Mean": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 79,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).Mean",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).Quantile": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 52,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).Quantile",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count",
+                    "value"
+                ]
+            },
+            "Implements": [
+                "github.com/VividCortex/gohistogram.Histogram"
+            ],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).String": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 148,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).String",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [
+                "github.com/VividCortex/gohistogram.Histogram"
+            ],
+            "UsedPackages": [
+                "fmt",
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).Variance": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 94,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).Variance",
+            "UsedFunctions": [
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count",
+                    "value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.NumericHistogram).trim": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 114,
+            "Col": 28,
+            "Id": "(*github.com/VividCortex/gohistogram.NumericHistogram).trim",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "bins",
+                    "maxbins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count",
+                    "value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).Add": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 50,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Add",
+            "UsedFunctions": [
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).trim",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).scaleDown"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [
+                "github.com/VividCortex/gohistogram.Histogram"
+            ],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).CDF": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 92,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).CDF",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "bins",
+                    "total"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).Count": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 134,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Count",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "total"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).Mean": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 104,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Mean",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).Quantile": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 77,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Quantile",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count",
+                    "value"
+                ]
+            },
+            "Implements": [
+                "github.com/VividCortex/gohistogram.Histogram"
+            ],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).String": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 178,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).String",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "value",
+                    "count"
+                ]
+            },
+            "Implements": [
+                "github.com/VividCortex/gohistogram.Histogram"
+            ],
+            "UsedPackages": [
+                "fmt",
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).Variance": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 119,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Variance",
+            "UsedFunctions": [
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "total",
+                    "bins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count",
+                    "value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).scaleDown": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 42,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).scaleDown",
+            "UsedFunctions": [
+                "github.com/VividCortex/gohistogram.ewma"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "bins",
+                    "alpha"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/VividCortex/gohistogram.WeightedHistogram).trim": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 138,
+            "Col": 29,
+            "Id": "(*github.com/VividCortex/gohistogram.WeightedHistogram).trim",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "bins",
+                    "total",
+                    "maxbins"
+                ],
+                "github.com/VividCortex/gohistogram.bin": [
+                    "count",
+                    "value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.Example": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "example.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.Example",
+            "UsedFunctions": [
+                "github.com/VividCortex/gohistogram.NewHistogram",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Add",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Quantile",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).CDF",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Count",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Mean",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Variance",
+                "github.com/VividCortex/gohistogram.NewWeightedHistogram",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Add",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Quantile",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).CDF",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Count",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Mean",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Variance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.WeightedHistogram"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.NewHistogram": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 20,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.NewHistogram",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.NumericHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.NumericHistogram": [
+                    "bins",
+                    "maxbins",
+                    "total"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.NewWeightedHistogram": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 28,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.NewWeightedHistogram",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/VividCortex/gohistogram.WeightedHistogram",
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "UsedFields": {
+                "github.com/VividCortex/gohistogram.WeightedHistogram": [
+                    "bins",
+                    "maxbins",
+                    "total",
+                    "alpha"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/VividCortex/gohistogram"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.ewma": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 37,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.ewma",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram/cmd.main": {
+            "Package": "github.com/VividCortex/gohistogram/cmd",
+            "FilePath": "cmd/main.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram/cmd.main",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Globals": {},
+    "Constants": {},
+    "Types": {
+        "github.com/VividCortex/gohistogram.Histogram": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "histogram.go",
+            "LineNo": 7,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.Histogram",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Add": [
+                    1,
+                    3
+                ],
+                "Quantile": [
+                    4,
+                    6
+                ],
+                "String": [
+                    7,
+                    10
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.NumericHistogram": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "numerichistogram.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.NumericHistogram",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Add",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Quantile",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).CDF",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Mean",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Variance",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).Count",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).trim",
+                "(*github.com/VividCortex/gohistogram.NumericHistogram).String"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/VividCortex/gohistogram.Histogram": {
+                    "Add": "(*github.com/VividCortex/gohistogram.NumericHistogram).Add",
+                    "Quantile": "(*github.com/VividCortex/gohistogram.NumericHistogram).Quantile",
+                    "String": "(*github.com/VividCortex/gohistogram.NumericHistogram).String"
+                }
+            },
+            "DependentTypes": [
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "bins": [
+                    1,
+                    1
+                ],
+                "maxbins": [
+                    2,
+                    2
+                ],
+                "total": [
+                    3,
+                    3
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.WeightedHistogram": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "weightedhistogram.go",
+            "LineNo": 12,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.WeightedHistogram",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).scaleDown",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Add",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Quantile",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).CDF",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Mean",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Variance",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).Count",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).trim",
+                "(*github.com/VividCortex/gohistogram.WeightedHistogram).String"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/VividCortex/gohistogram.Histogram": {
+                    "Add": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Add",
+                    "Quantile": "(*github.com/VividCortex/gohistogram.WeightedHistogram).Quantile",
+                    "String": "(*github.com/VividCortex/gohistogram.WeightedHistogram).String"
+                }
+            },
+            "DependentTypes": [
+                "github.com/VividCortex/gohistogram.bin"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "alpha": [
+                    4,
+                    4
+                ],
+                "bins": [
+                    1,
+                    1
+                ],
+                "maxbins": [
+                    2,
+                    2
+                ],
+                "total": [
+                    3,
+                    3
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/VividCortex/gohistogram.bin": {
+            "Package": "github.com/VividCortex/gohistogram",
+            "FilePath": "histogram.go",
+            "LineNo": 20,
+            "Col": 6,
+            "Id": "github.com/VividCortex/gohistogram.bin",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "count": [
+                    2,
+                    2
+                ],
+                "value": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        }
+    },
+    "ModuleName": "github.com/VividCortex/gohistogram"
+}

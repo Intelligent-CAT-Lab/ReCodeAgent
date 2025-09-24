@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            "AB",
+            ""
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AB",
+            ""
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "",
+            "AB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "",
+            "AB"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "AB",
+            "AB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AB",
+            "AB"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "ABCD",
+            "ACBAD"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCD",
+            "ACBAD"
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            "ABCDGH",
+            "AEDFHR"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCDGH",
+            "AEDFHR"
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            "AGGTAB",
+            "GXTXAYB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AGGTAB",
+            "GXTXAYB"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            "XMJYAUZ",
+            "MZJAWXU"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "XMJYAUZ",
+            "MZJAWXU"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            "abcd",
+            "effgghh"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcd",
+            "effgghh"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "CAT",
+            "CUT"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "CAT",
+            "CUT"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "ACB",
+            "AB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ACB",
+            "AB"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "ABC",
+            "ACD"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABC",
+            "ACD"
+        ],
+        "return_value": 2
+    }
+]

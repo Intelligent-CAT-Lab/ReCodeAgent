@@ -1,0 +1,169 @@
+[
+    {
+        "inputs": [
+            "AB",
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "AB",
+            ""
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "",
+            "AB"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "",
+            "AB"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "AB",
+            "AB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AB",
+            "AB"
+        ],
+        "return_value": [
+            "AB"
+        ]
+    },
+    {
+        "inputs": [
+            "ABCD",
+            "ACBAD"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCD",
+            "ACBAD"
+        ],
+        "return_value": [
+            "ABD",
+            "ACD"
+        ]
+    },
+    {
+        "inputs": [
+            "ABCDGH",
+            "AEDFHR"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCDGH",
+            "AEDFHR"
+        ],
+        "return_value": [
+            "ADH"
+        ]
+    },
+    {
+        "inputs": [
+            "AGGTAB",
+            "GXTXAYB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AGGTAB",
+            "GXTXAYB"
+        ],
+        "return_value": [
+            "GTAB"
+        ]
+    },
+    {
+        "inputs": [
+            "XMJYAUZ",
+            "MZJAWXU"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "XMJYAUZ",
+            "MZJAWXU"
+        ],
+        "return_value": [
+            "MJAU"
+        ]
+    },
+    {
+        "inputs": [
+            "AZBYCWDX",
+            "ZAYBWCXD"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AZBYCWDX",
+            "ZAYBWCXD"
+        ],
+        "return_value": [
+            "ZBCX",
+            "AYCX",
+            "ZYWX",
+            "ZBWX",
+            "AYWX",
+            "AYCD",
+            "ZYCD",
+            "ABCD",
+            "AYWD",
+            "ABWX",
+            "ZBCD",
+            "ABWD",
+            "ZYWD",
+            "ZBWD",
+            "ABCX",
+            "ZYCX"
+        ]
+    },
+    {
+        "inputs": [
+            "AATCC",
+            "ACACG"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AATCC",
+            "ACACG"
+        ],
+        "return_value": [
+            "AAC",
+            "ACC"
+        ]
+    },
+    {
+        "inputs": [
+            "\u60a8\u597d\u5973\u58eb \u4f60\u597d\u5417\uff1f",
+            "\u5148\u751f \u4f60\u597d\u5417\uff1f"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u60a8\u597d\u5973\u58eb \u4f60\u597d\u5417\uff1f",
+            "\u5148\u751f \u4f60\u597d\u5417\uff1f"
+        ],
+        "return_value": [
+            " \u4f60\u597d\u5417\uff1f"
+        ]
+    },
+    {
+        "inputs": [
+            " \u662fab\u662fcde22f123g",
+            "222222\u662fab\u662fcd123"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " \u662fab\u662fcde22f123g",
+            "222222\u662fab\u662fcd123"
+        ],
+        "return_value": [
+            "\u662fab\u662fcd123"
+        ]
+    }
+]

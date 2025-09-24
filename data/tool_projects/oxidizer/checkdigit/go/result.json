@@ -1,0 +1,1105 @@
+{
+    "BasePath": "/mnt/transpile/benchmarks/checkdigit",
+    "Functions": {
+        "(*github.com/osamingo/checkdigit.damm).Generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "damm.go",
+            "LineNo": 18,
+            "Col": 16,
+            "Id": "(*github.com/osamingo/checkdigit.damm).Generate",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/osamingo/checkdigit.ErrInvalidArgument"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.damm"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.damm": [
+                    "matrix"
+                ]
+            },
+            "Implements": [
+                "github.com/osamingo/checkdigit.Provider",
+                "github.com/osamingo/checkdigit.Generator"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/osamingo/checkdigit.gtin).Generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "gtin.go",
+            "LineNo": 19,
+            "Col": 16,
+            "Id": "(*github.com/osamingo/checkdigit.gtin).Generate",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/osamingo/checkdigit.ErrInvalidArgument"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [
+                "github.com/osamingo/checkdigit.Provider",
+                "github.com/osamingo/checkdigit.Generator"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/osamingo/checkdigit.isbn10).Generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "isbn.go",
+            "LineNo": 33,
+            "Col": 20,
+            "Id": "(*github.com/osamingo/checkdigit.isbn10).Generate",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/osamingo/checkdigit.ErrInvalidArgument"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.isbn10"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Provider",
+                "github.com/osamingo/checkdigit.Generator"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/osamingo/checkdigit.isbn13).Generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "isbn.go",
+            "LineNo": 63,
+            "Col": 20,
+            "Id": "(*github.com/osamingo/checkdigit.isbn13).Generate",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/osamingo/checkdigit.ErrInvalidArgument"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.isbn13"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Provider",
+                "github.com/osamingo/checkdigit.Generator"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/osamingo/checkdigit.luhn).Generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "luhn.go",
+            "LineNo": 16,
+            "Col": 16,
+            "Id": "(*github.com/osamingo/checkdigit.luhn).Generate",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/osamingo/checkdigit.ErrInvalidArgument"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.luhn"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Provider",
+                "github.com/osamingo/checkdigit.Generator"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/osamingo/checkdigit.verhoeff).Generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "verhoeff.go",
+            "LineNo": 20,
+            "Col": 20,
+            "Id": "(*github.com/osamingo/checkdigit.verhoeff).Generate",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/osamingo/checkdigit.ErrInvalidArgument"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.verhoeff"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.verhoeff": [
+                    "inverse",
+                    "multiplication",
+                    "permutation"
+                ]
+            },
+            "Implements": [
+                "github.com/osamingo/checkdigit.Provider",
+                "github.com/osamingo/checkdigit.Generator"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/osamingo/checkdigit.damm).Verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "damm.go",
+            "LineNo": 8,
+            "Col": 15,
+            "Id": "(github.com/osamingo/checkdigit.damm).Verify",
+            "UsedFunctions": [
+                "(*github.com/osamingo/checkdigit.damm).Generate"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.damm"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Verifier"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/osamingo/checkdigit.gtin).Verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "gtin.go",
+            "LineNo": 9,
+            "Col": 15,
+            "Id": "(github.com/osamingo/checkdigit.gtin).Verify",
+            "UsedFunctions": [
+                "(*github.com/osamingo/checkdigit.gtin).Generate"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit"
+                ]
+            },
+            "Implements": [
+                "github.com/osamingo/checkdigit.Verifier"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/osamingo/checkdigit.isbn10).Verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "isbn.go",
+            "LineNo": 7,
+            "Col": 19,
+            "Id": "(github.com/osamingo/checkdigit.isbn10).Verify",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.isNotNumber"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.isbn10"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Verifier"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/osamingo/checkdigit.isbn13).Verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "isbn.go",
+            "LineNo": 53,
+            "Col": 19,
+            "Id": "(github.com/osamingo/checkdigit.isbn13).Verify",
+            "UsedFunctions": [
+                "(*github.com/osamingo/checkdigit.isbn13).Generate"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.isbn13"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Verifier"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/osamingo/checkdigit.luhn).Verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "luhn.go",
+            "LineNo": 6,
+            "Col": 15,
+            "Id": "(github.com/osamingo/checkdigit.luhn).Verify",
+            "UsedFunctions": [
+                "(*github.com/osamingo/checkdigit.luhn).Generate"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.luhn"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Verifier"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/osamingo/checkdigit.verhoeff).Verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "verhoeff.go",
+            "LineNo": 10,
+            "Col": 19,
+            "Id": "(github.com/osamingo/checkdigit.verhoeff).Verify",
+            "UsedFunctions": [
+                "(*github.com/osamingo/checkdigit.verhoeff).Generate"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.verhoeff"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/osamingo/checkdigit.Verifier"
+            ],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.Example": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "example.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.Example",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.takeProvider",
+                "github.com/osamingo/checkdigit.generate",
+                "github.com/osamingo/checkdigit.verify"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit",
+                "errors"
+            ],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        },
+        "github.com/osamingo/checkdigit.NewDamm": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 53,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewDamm",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.damm",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.damm": [
+                    "matrix"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewEAN13": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 118,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewEAN13",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewEAN8": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 110,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewEAN8",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewISBN10": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 100,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewISBN10",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.isbn10",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewISBN13": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 105,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewISBN13",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.isbn13",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewITF": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 142,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewITF",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewJAN13": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 134,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewJAN13",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewJAN8": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 126,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewJAN8",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewLuhn": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 48,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewLuhn",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.luhn",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewSSCC": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 158,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewSSCC",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewUPC": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 150,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewUPC",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.gtin",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.gtin": [
+                    "digit",
+                    "posCorr"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.NewVerhoeff": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 71,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.NewVerhoeff",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.verhoeff",
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {
+                "github.com/osamingo/checkdigit.verhoeff": [
+                    "multiplication",
+                    "permutation",
+                    "inverse"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.generate": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "example.go",
+            "LineNo": 56,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.generate",
+            "UsedFunctions": [
+                "(*github.com/osamingo/checkdigit.isbn13).Generate",
+                "(*github.com/osamingo/checkdigit.verhoeff).Generate",
+                "(*github.com/osamingo/checkdigit.damm).Generate",
+                "(*github.com/osamingo/checkdigit.luhn).Generate",
+                "(*github.com/osamingo/checkdigit.isbn10).Generate",
+                "(*github.com/osamingo/checkdigit.gtin).Generate"
+            ],
+            "UsedInterfaceMethods": {
+                "github.com/osamingo/checkdigit.Provider": [
+                    "Generate"
+                ]
+            },
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit",
+                "fmt",
+                "os",
+                "io"
+            ],
+            "UsedLibraryAPIs": [
+                "os.Stderr",
+                "os.File",
+                "io.Writer"
+            ]
+        },
+        "github.com/osamingo/checkdigit.isNotNumber": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 43,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.isNotNumber",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.takeProvider": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "example.go",
+            "LineNo": 25,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.takeProvider",
+            "UsedFunctions": [
+                "github.com/osamingo/checkdigit.NewLuhn",
+                "github.com/osamingo/checkdigit.NewVerhoeff",
+                "github.com/osamingo/checkdigit.NewDamm",
+                "github.com/osamingo/checkdigit.NewISBN10",
+                "github.com/osamingo/checkdigit.NewISBN13",
+                "github.com/osamingo/checkdigit.NewEAN8",
+                "github.com/osamingo/checkdigit.NewEAN13",
+                "github.com/osamingo/checkdigit.NewJAN8",
+                "github.com/osamingo/checkdigit.NewJAN13",
+                "github.com/osamingo/checkdigit.NewITF",
+                "github.com/osamingo/checkdigit.NewUPC",
+                "github.com/osamingo/checkdigit.NewSSCC"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "github.com/osamingo/checkdigit"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ReplaceAll",
+                "strings.ToLower"
+            ]
+        },
+        "github.com/osamingo/checkdigit.verify": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "example.go",
+            "LineNo": 70,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.verify",
+            "UsedFunctions": [
+                "(github.com/osamingo/checkdigit.damm).Verify",
+                "(github.com/osamingo/checkdigit.isbn10).Verify",
+                "(github.com/osamingo/checkdigit.luhn).Verify",
+                "(github.com/osamingo/checkdigit.verhoeff).Verify",
+                "(github.com/osamingo/checkdigit.isbn13).Verify",
+                "(github.com/osamingo/checkdigit.gtin).Verify"
+            ],
+            "UsedInterfaceMethods": {
+                "github.com/osamingo/checkdigit.Provider": [
+                    "Verify"
+                ]
+            },
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/osamingo/checkdigit.Provider"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/osamingo/checkdigit",
+                "fmt",
+                "os",
+                "io"
+            ],
+            "UsedLibraryAPIs": [
+                "os.Stderr",
+                "os.File",
+                "io.Writer"
+            ]
+        },
+        "github.com/osamingo/checkdigit/cmd.main": {
+            "Package": "github.com/osamingo/checkdigit/cmd",
+            "FilePath": "cmd/main.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit/cmd.main",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Globals": {
+        "github.com/osamingo/checkdigit.ErrInvalidArgument": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 41,
+            "Col": 5,
+            "Id": "github.com/osamingo/checkdigit.ErrInvalidArgument",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        }
+    },
+    "Constants": {},
+    "Types": {
+        "github.com/osamingo/checkdigit.Generator": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 14,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.Generator",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Generate": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.Provider": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 19,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.Provider",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Generate": [
+                    2,
+                    2
+                ],
+                "Verify": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.Verifier": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "checkdigit.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.Verifier",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Verify": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.damm": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "damm.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.damm",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/osamingo/checkdigit.damm).Verify",
+                "(*github.com/osamingo/checkdigit.damm).Generate"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/osamingo/checkdigit.Generator": {
+                    "Generate": "(*github.com/osamingo/checkdigit.damm).Generate"
+                },
+                "github.com/osamingo/checkdigit.Provider": {
+                    "Generate": "(*github.com/osamingo/checkdigit.damm).Generate",
+                    "Verify": "(github.com/osamingo/checkdigit.damm).Verify"
+                },
+                "github.com/osamingo/checkdigit.Verifier": {
+                    "Verify": "(github.com/osamingo/checkdigit.damm).Verify"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "matrix": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.gtin": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "gtin.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.gtin",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/osamingo/checkdigit.gtin).Verify",
+                "(*github.com/osamingo/checkdigit.gtin).Generate"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/osamingo/checkdigit.Generator": {
+                    "Generate": "(*github.com/osamingo/checkdigit.gtin).Generate"
+                },
+                "github.com/osamingo/checkdigit.Provider": {
+                    "Generate": "(*github.com/osamingo/checkdigit.gtin).Generate",
+                    "Verify": "(github.com/osamingo/checkdigit.gtin).Verify"
+                },
+                "github.com/osamingo/checkdigit.Verifier": {
+                    "Verify": "(github.com/osamingo/checkdigit.gtin).Verify"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "digit": [
+                    1,
+                    1
+                ],
+                "posCorr": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.isbn10": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "isbn.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.isbn10",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/osamingo/checkdigit.isbn10).Verify",
+                "(*github.com/osamingo/checkdigit.isbn10).Generate"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/osamingo/checkdigit.Generator": {
+                    "Generate": "(*github.com/osamingo/checkdigit.isbn10).Generate"
+                },
+                "github.com/osamingo/checkdigit.Provider": {
+                    "Generate": "(*github.com/osamingo/checkdigit.isbn10).Generate",
+                    "Verify": "(github.com/osamingo/checkdigit.isbn10).Verify"
+                },
+                "github.com/osamingo/checkdigit.Verifier": {
+                    "Verify": "(github.com/osamingo/checkdigit.isbn10).Verify"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.isbn13": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "isbn.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.isbn13",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/osamingo/checkdigit.isbn13).Verify",
+                "(*github.com/osamingo/checkdigit.isbn13).Generate"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/osamingo/checkdigit.Generator": {
+                    "Generate": "(*github.com/osamingo/checkdigit.isbn13).Generate"
+                },
+                "github.com/osamingo/checkdigit.Provider": {
+                    "Generate": "(*github.com/osamingo/checkdigit.isbn13).Generate",
+                    "Verify": "(github.com/osamingo/checkdigit.isbn13).Verify"
+                },
+                "github.com/osamingo/checkdigit.Verifier": {
+                    "Verify": "(github.com/osamingo/checkdigit.isbn13).Verify"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.luhn": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "luhn.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.luhn",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/osamingo/checkdigit.luhn).Verify",
+                "(*github.com/osamingo/checkdigit.luhn).Generate"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/osamingo/checkdigit.Generator": {
+                    "Generate": "(*github.com/osamingo/checkdigit.luhn).Generate"
+                },
+                "github.com/osamingo/checkdigit.Provider": {
+                    "Generate": "(*github.com/osamingo/checkdigit.luhn).Generate",
+                    "Verify": "(github.com/osamingo/checkdigit.luhn).Verify"
+                },
+                "github.com/osamingo/checkdigit.Verifier": {
+                    "Verify": "(github.com/osamingo/checkdigit.luhn).Verify"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/osamingo/checkdigit.verhoeff": {
+            "Package": "github.com/osamingo/checkdigit",
+            "FilePath": "verhoeff.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/osamingo/checkdigit.verhoeff",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/osamingo/checkdigit.verhoeff).Verify",
+                "(*github.com/osamingo/checkdigit.verhoeff).Generate"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/osamingo/checkdigit.Generator": {
+                    "Generate": "(*github.com/osamingo/checkdigit.verhoeff).Generate"
+                },
+                "github.com/osamingo/checkdigit.Provider": {
+                    "Generate": "(*github.com/osamingo/checkdigit.verhoeff).Generate",
+                    "Verify": "(github.com/osamingo/checkdigit.verhoeff).Verify"
+                },
+                "github.com/osamingo/checkdigit.Verifier": {
+                    "Verify": "(github.com/osamingo/checkdigit.verhoeff).Verify"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "inverse": [
+                    3,
+                    3
+                ],
+                "multiplication": [
+                    1,
+                    1
+                ],
+                "permutation": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        }
+    },
+    "ModuleName": "github.com/osamingo/checkdigit"
+}

@@ -1,0 +1,158 @@
+[
+    {
+        "inputs": [
+            2,
+            4
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            2,
+            4
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            -25,
+            -42
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            -25,
+            -42
+        ],
+        "return_value": -25
+    },
+    {
+        "inputs": [
+            4,
+            7
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4,
+            7
+        ],
+        "return_value": 7
+    },
+    {
+        "inputs": [
+            0,
+            -2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            -2
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            0,
+            -1
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            -1
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            0,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            0,
+            1
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            1
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            5,
+            5
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            5,
+            5
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            0,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            2
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            0,
+            3
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            3
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            6,
+            6
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            6,
+            6
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            5,
+            8
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            5,
+            8
+        ],
+        "return_value": 8
+    },
+    {
+        "inputs": [
+            0,
+            -3
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            -3
+        ],
+        "return_value": 0
+    }
+]

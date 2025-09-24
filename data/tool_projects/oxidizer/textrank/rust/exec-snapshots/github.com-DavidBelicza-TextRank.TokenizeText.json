@@ -1,0 +1,1725 @@
+[
+    {
+        "inputs": [
+            "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop. And you did just that. Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions. GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions. Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock. And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows. Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes. My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen. All extraneous non-system applets, indicators and tray icons hide down here. This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox. TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach. The extension moves legacy tray icons from the bottom left of Gnome Shell to the right-hand side of the top panel. A well-stocked settings panel lets you adjust icon opacity, color, padding, size and tray position. Dive into the settings to adjust the sizing, styling and positioning of icons. Like the popular daily stimulant of choice, the Caffeine GNOME extension keeps your computer awake. It couldn\u2019t be simpler to use: just click the empty mug icon. An empty cup means you\u2019re using normal auto suspend rules \u2013 e.g., a screensaver \u2013 while a freshly brewed cup of coffee means auto suspend and screensaver are turned off. The Caffeine GNOME extension supports GNOME Shell 3.4 or later. Familiar with applications like Guake and Tilda? If so, you\u2019ll instantly see the appeal of the (superbly named) Drop Down Terminal GNOME extension. When installed just tap the key above the tab key (though it can be changed to almost any key you wish) to get instant access to the command line. Want to speed up using workspaces? This simple tool lets you do just that. Once installed you can quickly switch between workspaces by scrolling over the top panel - no need to enter the Activities Overlay!",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop. And you did just that. Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions. GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions. Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock. And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows. Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes. My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen. All extraneous non-system applets, indicators and tray icons hide down here. This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox. TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach. The extension moves legacy tray icons from the bottom left of Gnome Shell to the right-hand side of the top panel. A well-stocked settings panel lets you adjust icon opacity, color, padding, size and tray position. Dive into the settings to adjust the sizing, styling and positioning of icons. Like the popular daily stimulant of choice, the Caffeine GNOME extension keeps your computer awake. It couldn\u2019t be simpler to use: just click the empty mug icon. An empty cup means you\u2019re using normal auto suspend rules \u2013 e.g., a screensaver \u2013 while a freshly brewed cup of coffee means auto suspend and screensaver are turned off. The Caffeine GNOME extension supports GNOME Shell 3.4 or later. Familiar with applications like Guake and Tilda? If so, you\u2019ll instantly see the appeal of the (superbly named) Drop Down Terminal GNOME extension. When installed just tap the key above the tab key (though it can be changed to almost any key you wish) to get instant access to the command line. Want to speed up using workspaces? This simple tool lets you do just that. Once installed you can quickly switch between workspaces by scrolling over the top panel - no need to enter the Activities Overlay!",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+                    "words": [
+                        "over",
+                        "the",
+                        "past",
+                        "fortnight",
+                        "we",
+                        "asked",
+                        "you",
+                        "to",
+                        "nominate",
+                        "your",
+                        "top",
+                        "extensions",
+                        "for",
+                        "the",
+                        "gnome",
+                        "desktop"
+                    ]
+                },
+                {
+                    "original": " And you did just that.",
+                    "words": [
+                        "and",
+                        "you",
+                        "did",
+                        "just",
+                        "that"
+                    ]
+                },
+                {
+                    "original": " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions.",
+                    "words": [
+                        "having",
+                        "now",
+                        "sifted",
+                        "through",
+                        "the",
+                        "hundreds",
+                        "of",
+                        "entries",
+                        "we",
+                        "re",
+                        "ready",
+                        "to",
+                        "reveal",
+                        "your",
+                        "favourite",
+                        "gnome",
+                        "shell",
+                        "extensions"
+                    ]
+                },
+                {
+                    "original": " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+                    "words": [
+                        "gnome",
+                        "3",
+                        "which",
+                        "is",
+                        "more",
+                        "commonly",
+                        "used",
+                        "with",
+                        "the",
+                        "gnome",
+                        "shell",
+                        "has",
+                        "an",
+                        "extension",
+                        "framework",
+                        "that",
+                        "lets",
+                        "developers",
+                        "and",
+                        "users",
+                        "extend",
+                        "build",
+                        "on",
+                        "and",
+                        "shape",
+                        "how",
+                        "the",
+                        "desktop",
+                        "looks",
+                        "acts",
+                        "and",
+                        "functions"
+                    ]
+                },
+                {
+                    "original": " Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock.",
+                    "words": [
+                        "dash",
+                        "to",
+                        "dock",
+                        "takes",
+                        "the",
+                        "gnome",
+                        "dash",
+                        "\u2014",
+                        "this",
+                        "is",
+                        "the",
+                        "\u2018favourites",
+                        "bar",
+                        "that",
+                        "appears",
+                        "on",
+                        "the",
+                        "left-hand",
+                        "side",
+                        "of",
+                        "the",
+                        "screen",
+                        "in",
+                        "the",
+                        "activities",
+                        "overlay",
+                        "\u2014",
+                        "and",
+                        "transforms",
+                        "it",
+                        "into",
+                        "a",
+                        "desktop",
+                        "dock"
+                    ]
+                },
+                {
+                    "original": " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows.",
+                    "words": [
+                        "and",
+                        "just",
+                        "like",
+                        "plank",
+                        "docky",
+                        "or",
+                        "awn",
+                        "you",
+                        "can",
+                        "add",
+                        "app",
+                        "launchers",
+                        "rearrange",
+                        "them",
+                        "and",
+                        "use",
+                        "them",
+                        "to",
+                        "minimise",
+                        "restore",
+                        "and",
+                        "switch",
+                        "between",
+                        "app",
+                        "windows"
+                    ]
+                },
+                {
+                    "original": " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+                    "words": [
+                        "dash",
+                        "to",
+                        "dock",
+                        "has",
+                        "many",
+                        "of",
+                        "the",
+                        "common",
+                        "\u201cdock\u201d",
+                        "features",
+                        "you",
+                        "d",
+                        "expect",
+                        "including",
+                        "autohide",
+                        "and",
+                        "intellihide",
+                        "a",
+                        "fixed-width",
+                        "mode",
+                        "adjustable",
+                        "icon",
+                        "size",
+                        "and",
+                        "custom",
+                        "themes"
+                    ]
+                },
+                {
+                    "original": " My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen.",
+                    "words": [
+                        "my",
+                        "biggest",
+                        "pet",
+                        "peeve",
+                        "with",
+                        "gnome",
+                        "shell",
+                        "is",
+                        "its",
+                        "legacy",
+                        "app",
+                        "tray",
+                        "that",
+                        "hides",
+                        "in",
+                        "the",
+                        "bottom",
+                        "left",
+                        "of",
+                        "the",
+                        "screen"
+                    ]
+                },
+                {
+                    "original": " All extraneous non-system applets, indicators and tray icons hide down here.",
+                    "words": [
+                        "all",
+                        "extraneous",
+                        "non-system",
+                        "applets",
+                        "indicators",
+                        "and",
+                        "tray",
+                        "icons",
+                        "hide",
+                        "down",
+                        "here"
+                    ]
+                },
+                {
+                    "original": " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox.",
+                    "words": [
+                        "this",
+                        "makes",
+                        "it",
+                        "a",
+                        "little",
+                        "harder",
+                        "to",
+                        "use",
+                        "applications",
+                        "that",
+                        "rely",
+                        "on",
+                        "a",
+                        "system",
+                        "tray",
+                        "presence",
+                        "like",
+                        "skype",
+                        "franz",
+                        "telegram",
+                        "and",
+                        "dropbox"
+                    ]
+                },
+                {
+                    "original": " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach.",
+                    "words": [
+                        "topicons",
+                        "plus",
+                        "is",
+                        "the",
+                        "quick",
+                        "way",
+                        "to",
+                        "put",
+                        "gnome",
+                        "system",
+                        "tray",
+                        "icons",
+                        "back",
+                        "where",
+                        "they",
+                        "belong:",
+                        "on",
+                        "show",
+                        "and",
+                        "in",
+                        "reach"
+                    ]
+                },
+                {
+                    "original": " The extension moves legacy tray icons from the bottom left of Gnome Shell to the right-hand side of the top panel.",
+                    "words": [
+                        "the",
+                        "extension",
+                        "moves",
+                        "legacy",
+                        "tray",
+                        "icons",
+                        "from",
+                        "the",
+                        "bottom",
+                        "left",
+                        "of",
+                        "gnome",
+                        "shell",
+                        "to",
+                        "the",
+                        "right-hand",
+                        "side",
+                        "of",
+                        "the",
+                        "top",
+                        "panel"
+                    ]
+                },
+                {
+                    "original": " A well-stocked settings panel lets you adjust icon opacity, color, padding, size and tray position.",
+                    "words": [
+                        "a",
+                        "well-stocked",
+                        "settings",
+                        "panel",
+                        "lets",
+                        "you",
+                        "adjust",
+                        "icon",
+                        "opacity",
+                        "color",
+                        "padding",
+                        "size",
+                        "and",
+                        "tray",
+                        "position"
+                    ]
+                },
+                {
+                    "original": " Dive into the settings to adjust the sizing, styling and positioning of icons.",
+                    "words": [
+                        "dive",
+                        "into",
+                        "the",
+                        "settings",
+                        "to",
+                        "adjust",
+                        "the",
+                        "sizing",
+                        "styling",
+                        "and",
+                        "positioning",
+                        "of",
+                        "icons"
+                    ]
+                },
+                {
+                    "original": " Like the popular daily stimulant of choice, the Caffeine GNOME extension keeps your computer awake.",
+                    "words": [
+                        "like",
+                        "the",
+                        "popular",
+                        "daily",
+                        "stimulant",
+                        "of",
+                        "choice",
+                        "the",
+                        "caffeine",
+                        "gnome",
+                        "extension",
+                        "keeps",
+                        "your",
+                        "computer",
+                        "awake"
+                    ]
+                },
+                {
+                    "original": " It couldn\u2019t be simpler to use: just click the empty mug icon.",
+                    "words": [
+                        "it",
+                        "couldn",
+                        "t",
+                        "be",
+                        "simpler",
+                        "to",
+                        "use:",
+                        "just",
+                        "click",
+                        "the",
+                        "empty",
+                        "mug",
+                        "icon"
+                    ]
+                },
+                {
+                    "original": " An empty cup means you\u2019re using normal auto suspend rules \u2013 e.",
+                    "words": [
+                        "an",
+                        "empty",
+                        "cup",
+                        "means",
+                        "you",
+                        "re",
+                        "using",
+                        "normal",
+                        "auto",
+                        "suspend",
+                        "rules",
+                        "\u2013",
+                        "e"
+                    ]
+                },
+                {
+                    "original": "g.",
+                    "words": [
+                        "g"
+                    ]
+                },
+                {
+                    "original": ", a screensaver \u2013 while a freshly brewed cup of coffee means auto suspend and screensaver are turned off.",
+                    "words": [
+                        "a",
+                        "screensaver",
+                        "\u2013",
+                        "while",
+                        "a",
+                        "freshly",
+                        "brewed",
+                        "cup",
+                        "of",
+                        "coffee",
+                        "means",
+                        "auto",
+                        "suspend",
+                        "and",
+                        "screensaver",
+                        "are",
+                        "turned",
+                        "off"
+                    ]
+                },
+                {
+                    "original": " The Caffeine GNOME extension supports GNOME Shell 3.",
+                    "words": [
+                        "the",
+                        "caffeine",
+                        "gnome",
+                        "extension",
+                        "supports",
+                        "gnome",
+                        "shell",
+                        "3"
+                    ]
+                },
+                {
+                    "original": "4 or later.",
+                    "words": [
+                        "4",
+                        "or",
+                        "later"
+                    ]
+                },
+                {
+                    "original": " Familiar with applications like Guake and Tilda?",
+                    "words": [
+                        "familiar",
+                        "with",
+                        "applications",
+                        "like",
+                        "guake",
+                        "and",
+                        "tilda"
+                    ]
+                },
+                {
+                    "original": " If so, you\u2019ll instantly see the appeal of the (superbly named) Drop Down Terminal GNOME extension.",
+                    "words": [
+                        "if",
+                        "so",
+                        "you",
+                        "ll",
+                        "instantly",
+                        "see",
+                        "the",
+                        "appeal",
+                        "of",
+                        "the",
+                        "superbly",
+                        "named",
+                        "drop",
+                        "down",
+                        "terminal",
+                        "gnome",
+                        "extension"
+                    ]
+                },
+                {
+                    "original": " When installed just tap the key above the tab key (though it can be changed to almost any key you wish) to get instant access to the command line.",
+                    "words": [
+                        "when",
+                        "installed",
+                        "just",
+                        "tap",
+                        "the",
+                        "key",
+                        "above",
+                        "the",
+                        "tab",
+                        "key",
+                        "though",
+                        "it",
+                        "can",
+                        "be",
+                        "changed",
+                        "to",
+                        "almost",
+                        "any",
+                        "key",
+                        "you",
+                        "wish",
+                        "to",
+                        "get",
+                        "instant",
+                        "access",
+                        "to",
+                        "the",
+                        "command",
+                        "line"
+                    ]
+                },
+                {
+                    "original": " Want to speed up using workspaces?",
+                    "words": [
+                        "want",
+                        "to",
+                        "speed",
+                        "up",
+                        "using",
+                        "workspaces"
+                    ]
+                },
+                {
+                    "original": " This simple tool lets you do just that.",
+                    "words": [
+                        "this",
+                        "simple",
+                        "tool",
+                        "lets",
+                        "you",
+                        "do",
+                        "just",
+                        "that"
+                    ]
+                },
+                {
+                    "original": " Once installed you can quickly switch between workspaces by scrolling over the top panel - no need to enter the Activities Overlay!",
+                    "words": [
+                        "once",
+                        "installed",
+                        "you",
+                        "can",
+                        "quickly",
+                        "switch",
+                        "between",
+                        "workspaces",
+                        "by",
+                        "scrolling",
+                        "over",
+                        "the",
+                        "top",
+                        "panel",
+                        "-",
+                        "no",
+                        "need",
+                        "to",
+                        "enter",
+                        "the",
+                        "activities",
+                        "overlay"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+                    "words": [
+                        "over",
+                        "the",
+                        "past",
+                        "fortnight",
+                        "we",
+                        "asked",
+                        "you",
+                        "to",
+                        "nominate",
+                        "your",
+                        "top",
+                        "extensions",
+                        "for",
+                        "the",
+                        "gnome",
+                        "desktop"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "And you did just that. Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions. GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "And you did just that. Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions. GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "And you did just that.",
+                    "words": [
+                        "and",
+                        "you",
+                        "did",
+                        "just",
+                        "that"
+                    ]
+                },
+                {
+                    "original": " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions.",
+                    "words": [
+                        "having",
+                        "now",
+                        "sifted",
+                        "through",
+                        "the",
+                        "hundreds",
+                        "of",
+                        "entries",
+                        "we",
+                        "re",
+                        "ready",
+                        "to",
+                        "reveal",
+                        "your",
+                        "favourite",
+                        "gnome",
+                        "shell",
+                        "extensions"
+                    ]
+                },
+                {
+                    "original": " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+                    "words": [
+                        "gnome",
+                        "3",
+                        "which",
+                        "is",
+                        "more",
+                        "commonly",
+                        "used",
+                        "with",
+                        "the",
+                        "gnome",
+                        "shell",
+                        "has",
+                        "an",
+                        "extension",
+                        "framework",
+                        "that",
+                        "lets",
+                        "developers",
+                        "and",
+                        "users",
+                        "extend",
+                        "build",
+                        "on",
+                        "and",
+                        "shape",
+                        "how",
+                        "the",
+                        "desktop",
+                        "looks",
+                        "acts",
+                        "and",
+                        "functions"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock. And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows. Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock. And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows. Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock.",
+                    "words": [
+                        "dash",
+                        "to",
+                        "dock",
+                        "takes",
+                        "the",
+                        "gnome",
+                        "dash",
+                        "\u2014",
+                        "this",
+                        "is",
+                        "the",
+                        "\u2018favourites",
+                        "bar",
+                        "that",
+                        "appears",
+                        "on",
+                        "the",
+                        "left-hand",
+                        "side",
+                        "of",
+                        "the",
+                        "screen",
+                        "in",
+                        "the",
+                        "activities",
+                        "overlay",
+                        "\u2014",
+                        "and",
+                        "transforms",
+                        "it",
+                        "into",
+                        "a",
+                        "desktop",
+                        "dock"
+                    ]
+                },
+                {
+                    "original": " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows.",
+                    "words": [
+                        "and",
+                        "just",
+                        "like",
+                        "plank",
+                        "docky",
+                        "or",
+                        "awn",
+                        "you",
+                        "can",
+                        "add",
+                        "app",
+                        "launchers",
+                        "rearrange",
+                        "them",
+                        "and",
+                        "use",
+                        "them",
+                        "to",
+                        "minimise",
+                        "restore",
+                        "and",
+                        "switch",
+                        "between",
+                        "app",
+                        "windows"
+                    ]
+                },
+                {
+                    "original": " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+                    "words": [
+                        "dash",
+                        "to",
+                        "dock",
+                        "has",
+                        "many",
+                        "of",
+                        "the",
+                        "common",
+                        "\u201cdock\u201d",
+                        "features",
+                        "you",
+                        "d",
+                        "expect",
+                        "including",
+                        "autohide",
+                        "and",
+                        "intellihide",
+                        "a",
+                        "fixed-width",
+                        "mode",
+                        "adjustable",
+                        "icon",
+                        "size",
+                        "and",
+                        "custom",
+                        "themes"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen. All extraneous non-system applets, indicators and tray icons hide down here. This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox. TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach. The extension moves legacy tray icons from the bottom left of Gnome Shell to the right-hand side of the top panel. A well-stocked settings panel lets you adjust icon opacity, color, padding, size and tray position. Dive into the settings to adjust the sizing, styling and positioning of icons. Like the popular daily stimulant of choice, the Caffeine GNOME extension keeps your computer awake.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen. All extraneous non-system applets, indicators and tray icons hide down here. This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox. TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach. The extension moves legacy tray icons from the bottom left of Gnome Shell to the right-hand side of the top panel. A well-stocked settings panel lets you adjust icon opacity, color, padding, size and tray position. Dive into the settings to adjust the sizing, styling and positioning of icons. Like the popular daily stimulant of choice, the Caffeine GNOME extension keeps your computer awake.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen.",
+                    "words": [
+                        "my",
+                        "biggest",
+                        "pet",
+                        "peeve",
+                        "with",
+                        "gnome",
+                        "shell",
+                        "is",
+                        "its",
+                        "legacy",
+                        "app",
+                        "tray",
+                        "that",
+                        "hides",
+                        "in",
+                        "the",
+                        "bottom",
+                        "left",
+                        "of",
+                        "the",
+                        "screen"
+                    ]
+                },
+                {
+                    "original": " All extraneous non-system applets, indicators and tray icons hide down here.",
+                    "words": [
+                        "all",
+                        "extraneous",
+                        "non-system",
+                        "applets",
+                        "indicators",
+                        "and",
+                        "tray",
+                        "icons",
+                        "hide",
+                        "down",
+                        "here"
+                    ]
+                },
+                {
+                    "original": " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox.",
+                    "words": [
+                        "this",
+                        "makes",
+                        "it",
+                        "a",
+                        "little",
+                        "harder",
+                        "to",
+                        "use",
+                        "applications",
+                        "that",
+                        "rely",
+                        "on",
+                        "a",
+                        "system",
+                        "tray",
+                        "presence",
+                        "like",
+                        "skype",
+                        "franz",
+                        "telegram",
+                        "and",
+                        "dropbox"
+                    ]
+                },
+                {
+                    "original": " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach.",
+                    "words": [
+                        "topicons",
+                        "plus",
+                        "is",
+                        "the",
+                        "quick",
+                        "way",
+                        "to",
+                        "put",
+                        "gnome",
+                        "system",
+                        "tray",
+                        "icons",
+                        "back",
+                        "where",
+                        "they",
+                        "belong:",
+                        "on",
+                        "show",
+                        "and",
+                        "in",
+                        "reach"
+                    ]
+                },
+                {
+                    "original": " The extension moves legacy tray icons from the bottom left of Gnome Shell to the right-hand side of the top panel.",
+                    "words": [
+                        "the",
+                        "extension",
+                        "moves",
+                        "legacy",
+                        "tray",
+                        "icons",
+                        "from",
+                        "the",
+                        "bottom",
+                        "left",
+                        "of",
+                        "gnome",
+                        "shell",
+                        "to",
+                        "the",
+                        "right-hand",
+                        "side",
+                        "of",
+                        "the",
+                        "top",
+                        "panel"
+                    ]
+                },
+                {
+                    "original": " A well-stocked settings panel lets you adjust icon opacity, color, padding, size and tray position.",
+                    "words": [
+                        "a",
+                        "well-stocked",
+                        "settings",
+                        "panel",
+                        "lets",
+                        "you",
+                        "adjust",
+                        "icon",
+                        "opacity",
+                        "color",
+                        "padding",
+                        "size",
+                        "and",
+                        "tray",
+                        "position"
+                    ]
+                },
+                {
+                    "original": " Dive into the settings to adjust the sizing, styling and positioning of icons.",
+                    "words": [
+                        "dive",
+                        "into",
+                        "the",
+                        "settings",
+                        "to",
+                        "adjust",
+                        "the",
+                        "sizing",
+                        "styling",
+                        "and",
+                        "positioning",
+                        "of",
+                        "icons"
+                    ]
+                },
+                {
+                    "original": " Like the popular daily stimulant of choice, the Caffeine GNOME extension keeps your computer awake.",
+                    "words": [
+                        "like",
+                        "the",
+                        "popular",
+                        "daily",
+                        "stimulant",
+                        "of",
+                        "choice",
+                        "the",
+                        "caffeine",
+                        "gnome",
+                        "extension",
+                        "keeps",
+                        "your",
+                        "computer",
+                        "awake"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "It couldn\u2019t be simpler to use: just click the empty mug icon. An empty cup means you\u2019re using normal auto suspend rules \u2013 e.g., a screensaver \u2013 while a freshly brewed cup of coffee means auto suspend and screensaver are turned off. The Caffeine GNOME extension supports GNOME Shell 3.4 or later. Familiar with applications like Guake and Tilda? If so, you\u2019ll instantly see the appeal of the (superbly named) Drop Down Terminal GNOME extension. When installed just tap the key above the tab key (though it can be changed to almost any key you wish) to get instant access to the command line. Want to speed up using workspaces? This simple tool lets you do just that. Once installed you can quickly switch between workspaces by scrolling over the top panel - no need to enter the Activities Overlay!",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "It couldn\u2019t be simpler to use: just click the empty mug icon. An empty cup means you\u2019re using normal auto suspend rules \u2013 e.g., a screensaver \u2013 while a freshly brewed cup of coffee means auto suspend and screensaver are turned off. The Caffeine GNOME extension supports GNOME Shell 3.4 or later. Familiar with applications like Guake and Tilda? If so, you\u2019ll instantly see the appeal of the (superbly named) Drop Down Terminal GNOME extension. When installed just tap the key above the tab key (though it can be changed to almost any key you wish) to get instant access to the command line. Want to speed up using workspaces? This simple tool lets you do just that. Once installed you can quickly switch between workspaces by scrolling over the top panel - no need to enter the Activities Overlay!",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "It couldn\u2019t be simpler to use: just click the empty mug icon.",
+                    "words": [
+                        "it",
+                        "couldn",
+                        "t",
+                        "be",
+                        "simpler",
+                        "to",
+                        "use:",
+                        "just",
+                        "click",
+                        "the",
+                        "empty",
+                        "mug",
+                        "icon"
+                    ]
+                },
+                {
+                    "original": " An empty cup means you\u2019re using normal auto suspend rules \u2013 e.",
+                    "words": [
+                        "an",
+                        "empty",
+                        "cup",
+                        "means",
+                        "you",
+                        "re",
+                        "using",
+                        "normal",
+                        "auto",
+                        "suspend",
+                        "rules",
+                        "\u2013",
+                        "e"
+                    ]
+                },
+                {
+                    "original": "g.",
+                    "words": [
+                        "g"
+                    ]
+                },
+                {
+                    "original": ", a screensaver \u2013 while a freshly brewed cup of coffee means auto suspend and screensaver are turned off.",
+                    "words": [
+                        "a",
+                        "screensaver",
+                        "\u2013",
+                        "while",
+                        "a",
+                        "freshly",
+                        "brewed",
+                        "cup",
+                        "of",
+                        "coffee",
+                        "means",
+                        "auto",
+                        "suspend",
+                        "and",
+                        "screensaver",
+                        "are",
+                        "turned",
+                        "off"
+                    ]
+                },
+                {
+                    "original": " The Caffeine GNOME extension supports GNOME Shell 3.",
+                    "words": [
+                        "the",
+                        "caffeine",
+                        "gnome",
+                        "extension",
+                        "supports",
+                        "gnome",
+                        "shell",
+                        "3"
+                    ]
+                },
+                {
+                    "original": "4 or later.",
+                    "words": [
+                        "4",
+                        "or",
+                        "later"
+                    ]
+                },
+                {
+                    "original": " Familiar with applications like Guake and Tilda?",
+                    "words": [
+                        "familiar",
+                        "with",
+                        "applications",
+                        "like",
+                        "guake",
+                        "and",
+                        "tilda"
+                    ]
+                },
+                {
+                    "original": " If so, you\u2019ll instantly see the appeal of the (superbly named) Drop Down Terminal GNOME extension.",
+                    "words": [
+                        "if",
+                        "so",
+                        "you",
+                        "ll",
+                        "instantly",
+                        "see",
+                        "the",
+                        "appeal",
+                        "of",
+                        "the",
+                        "superbly",
+                        "named",
+                        "drop",
+                        "down",
+                        "terminal",
+                        "gnome",
+                        "extension"
+                    ]
+                },
+                {
+                    "original": " When installed just tap the key above the tab key (though it can be changed to almost any key you wish) to get instant access to the command line.",
+                    "words": [
+                        "when",
+                        "installed",
+                        "just",
+                        "tap",
+                        "the",
+                        "key",
+                        "above",
+                        "the",
+                        "tab",
+                        "key",
+                        "though",
+                        "it",
+                        "can",
+                        "be",
+                        "changed",
+                        "to",
+                        "almost",
+                        "any",
+                        "key",
+                        "you",
+                        "wish",
+                        "to",
+                        "get",
+                        "instant",
+                        "access",
+                        "to",
+                        "the",
+                        "command",
+                        "line"
+                    ]
+                },
+                {
+                    "original": " Want to speed up using workspaces?",
+                    "words": [
+                        "want",
+                        "to",
+                        "speed",
+                        "up",
+                        "using",
+                        "workspaces"
+                    ]
+                },
+                {
+                    "original": " This simple tool lets you do just that.",
+                    "words": [
+                        "this",
+                        "simple",
+                        "tool",
+                        "lets",
+                        "you",
+                        "do",
+                        "just",
+                        "that"
+                    ]
+                },
+                {
+                    "original": " Once installed you can quickly switch between workspaces by scrolling over the top panel - no need to enter the Activities Overlay!",
+                    "words": [
+                        "once",
+                        "installed",
+                        "you",
+                        "can",
+                        "quickly",
+                        "switch",
+                        "between",
+                        "workspaces",
+                        "by",
+                        "scrolling",
+                        "over",
+                        "the",
+                        "top",
+                        "panel",
+                        "-",
+                        "no",
+                        "need",
+                        "to",
+                        "enter",
+                        "the",
+                        "activities",
+                        "overlay"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "This is the right sentence. This sentence without end mark",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "This is the right sentence. This sentence without end mark",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": {
+            "parsedSentences": [
+                {
+                    "original": "This is the right sentence.",
+                    "words": [
+                        "this",
+                        "is",
+                        "the",
+                        "right",
+                        "sentence"
+                    ]
+                },
+                {
+                    "original": " This sentence without end mark",
+                    "words": [
+                        "this",
+                        "sentence",
+                        "without",
+                        "end",
+                        "mark"
+                    ]
+                }
+            ]
+        }
+    }
+]

@@ -1,0 +1,3776 @@
+{
+    "BasePath": "/mnt/transpile/benchmarks/stats",
+    "Functions": {
+        "(*github.com/montanaflynn/stats.Description).String": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "describe.go",
+            "LineNo": 68,
+            "Col": 23,
+            "Id": "(*github.com/montanaflynn/stats.Description).String",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Description",
+                "github.com/montanaflynn/stats.descriptionPercentile"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Description": [
+                    "Count",
+                    "Mean",
+                    "Std",
+                    "Max",
+                    "Min",
+                    "DescriptionPercentiles",
+                    "AllowedNaN"
+                ],
+                "github.com/montanaflynn/stats.descriptionPercentile": [
+                    "Percentile",
+                    "Value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "fmt",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).AutoCorrelation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 91,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).AutoCorrelation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.AutoCorrelation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Correlation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 86,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Correlation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Correlation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Covariance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 141,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Covariance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Covariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).CovariancePopulation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 146,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).CovariancePopulation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.CovariancePopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).CumulativeSum": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 28,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).CumulativeSum",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.CumulativeSum"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Entropy": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 162,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Entropy",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Entropy"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).GeometricMean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 40,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).GeometricMean",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.GeometricMean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Get": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 7,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Get",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).HarmonicMean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 43,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).HarmonicMean",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.HarmonicMean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).InterQuartileRange": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 106,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).InterQuartileRange",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.InterQuartileRange"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Len": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 10,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Len",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Less": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 13,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Less",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Max": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 22,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Max",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Max"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Mean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 31,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Mean",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Median": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 34,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Median",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Median"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).MedianAbsoluteDeviation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 46,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).MedianAbsoluteDeviation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.MedianAbsoluteDeviation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).MedianAbsoluteDeviationPopulation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 51,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).MedianAbsoluteDeviationPopulation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.MedianAbsoluteDeviationPopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Midhinge": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 111,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Midhinge",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Midhinge"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Min": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 19,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Min",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Min"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Mode": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 37,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Mode",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Mode"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Pearson": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 96,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Pearson",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Pearson"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Percentile": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 76,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Percentile",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Percentile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).PercentileNearestRank": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 81,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).PercentileNearestRank",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.PercentileNearestRank"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).PopulationVariance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 131,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).PopulationVariance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.PopulationVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Quartile": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 101,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Quartile",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Quartile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).QuartileOutliers": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 71,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).QuartileOutliers",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.QuartileOutliers"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.Outliers"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Quartiles": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 167,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Quartiles",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Quartile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Sample": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 121,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Sample",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Sample"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).SampleVariance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 136,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).SampleVariance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.SampleVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Sigmoid": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 151,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Sigmoid",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Sigmoid"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).SoftMax": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 157,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).SoftMax",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.SoftMax"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).StandardDeviation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 56,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).StandardDeviation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.StandardDeviation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).StandardDeviationPopulation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 61,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).StandardDeviationPopulation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.StandardDeviationPopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).StandardDeviationSample": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 66,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).StandardDeviationSample",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.StandardDeviationSample"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Sum": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 25,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Sum",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Sum"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Swap": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 16,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Swap",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Trimean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 116,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Trimean",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Trimean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.Float64Data).Variance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 126,
+            "Col": 22,
+            "Id": "(github.com/montanaflynn/stats.Float64Data).Variance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Variance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.statsError).Error": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 7,
+            "Col": 21,
+            "Id": "(github.com/montanaflynn/stats.statsError).Error",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.statsError": [
+                    "err"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/montanaflynn/stats.statsError).String": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 11,
+            "Col": 21,
+            "Id": "(github.com/montanaflynn/stats.statsError).String",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.statsError": [
+                    "err"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.AutoCorrelation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "correlation.go",
+            "LineNo": 38,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.AutoCorrelation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ChebyshevDistance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "distances.go",
+            "LineNo": 20,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.ChebyshevDistance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.validateData"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Abs"
+            ]
+        },
+        "github.com/montanaflynn/stats.Correlation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "correlation.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Correlation",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.StandardDeviationPopulation",
+                "github.com/montanaflynn/stats.CovariancePopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.SizeErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.Covariance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "variance.go",
+            "LineNo": 53,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Covariance",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.Mean",
+                "(github.com/montanaflynn/stats.Float64Data).Get"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.SizeErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.CovariancePopulation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "variance.go",
+            "LineNo": 81,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.CovariancePopulation",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.Mean",
+                "(github.com/montanaflynn/stats.Float64Data).Get"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.SizeErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.CumulativeSum": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "cumulative_sum.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.CumulativeSum",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInput"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Describe": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "describe.go",
+            "LineNo": 23,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Describe",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.DescribePercentileFunc"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.Description"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.DescribePercentileFunc": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "describe.go",
+            "LineNo": 29,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.DescribePercentileFunc",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.StandardDeviation",
+                "github.com/montanaflynn/stats.Max",
+                "github.com/montanaflynn/stats.Min",
+                "github.com/montanaflynn/stats.Mean",
+                "github.com/montanaflynn/stats.PercentileNearestRank",
+                "github.com/montanaflynn/stats.Percentile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrEmptyInput"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.Description",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.descriptionPercentile"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Description": [
+                    "AllowedNaN",
+                    "Count",
+                    "Std",
+                    "Max",
+                    "Min",
+                    "Mean",
+                    "DescriptionPercentiles"
+                ],
+                "github.com/montanaflynn/stats.descriptionPercentile": [
+                    "Percentile",
+                    "Value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Entropy": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "entropy.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Entropy",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.normalize",
+                "(github.com/montanaflynn/stats.Float64Data).Get",
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Log"
+            ]
+        },
+        "github.com/montanaflynn/stats.EuclideanDistance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "distances.go",
+            "LineNo": 36,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.EuclideanDistance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.validateData"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Sqrt"
+            ]
+        },
+        "github.com/montanaflynn/stats.Example": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "examples.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Example",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Min",
+                "github.com/montanaflynn/stats.Max",
+                "github.com/montanaflynn/stats.Sum",
+                "github.com/montanaflynn/stats.CumulativeSum",
+                "github.com/montanaflynn/stats.Mean",
+                "github.com/montanaflynn/stats.Median",
+                "github.com/montanaflynn/stats.Mode",
+                "github.com/montanaflynn/stats.PopulationVariance",
+                "github.com/montanaflynn/stats.SampleVariance",
+                "github.com/montanaflynn/stats.MedianAbsoluteDeviationPopulation",
+                "github.com/montanaflynn/stats.StandardDeviationPopulation",
+                "github.com/montanaflynn/stats.StandardDeviationSample",
+                "github.com/montanaflynn/stats.Percentile",
+                "github.com/montanaflynn/stats.PercentileNearestRank",
+                "github.com/montanaflynn/stats.LinearRegression",
+                "github.com/montanaflynn/stats.ExponentialRegression",
+                "github.com/montanaflynn/stats.LogarithmicRegression",
+                "github.com/montanaflynn/stats.Sample",
+                "github.com/montanaflynn/stats.Quartile",
+                "github.com/montanaflynn/stats.InterQuartileRange",
+                "github.com/montanaflynn/stats.Midhinge",
+                "github.com/montanaflynn/stats.Trimean",
+                "github.com/montanaflynn/stats.QuartileOutliers",
+                "github.com/montanaflynn/stats.GeometricMean",
+                "github.com/montanaflynn/stats.HarmonicMean",
+                "github.com/montanaflynn/stats.Round",
+                "github.com/montanaflynn/stats.ChebyshevDistance",
+                "github.com/montanaflynn/stats.ManhattanDistance",
+                "github.com/montanaflynn/stats.EuclideanDistance",
+                "github.com/montanaflynn/stats.MinkowskiDistance",
+                "github.com/montanaflynn/stats.Correlation",
+                "github.com/montanaflynn/stats.AutoCorrelation",
+                "github.com/montanaflynn/stats.Sigmoid",
+                "github.com/montanaflynn/stats.SoftMax",
+                "github.com/montanaflynn/stats.Entropy",
+                "github.com/montanaflynn/stats.ProbGeom",
+                "github.com/montanaflynn/stats.ExpGeom",
+                "github.com/montanaflynn/stats.VarGeom",
+                "github.com/montanaflynn/stats.Describe"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.Coordinate",
+                "github.com/montanaflynn/stats.Series",
+                "github.com/montanaflynn/stats.Quartiles",
+                "github.com/montanaflynn/stats.Outliers",
+                "github.com/montanaflynn/stats.Description"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Coordinate": [
+                    "X",
+                    "Y"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ExpGeom": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "geometric_distribution.go",
+            "LineNo": 27,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.ExpGeom",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrNegative"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.ExpReg": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 29,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.ExpReg",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.ExponentialRegression"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Coordinate",
+                "github.com/montanaflynn/stats.Series"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ExponentialRegression": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "regression.go",
+            "LineNo": 50,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.ExponentialRegression",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.YCoordErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Series",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Coordinate"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Coordinate": [
+                    "Y",
+                    "X"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "math",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Pow",
+                "math.Log",
+                "math.Exp"
+            ]
+        },
+        "github.com/montanaflynn/stats.GeometricMean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "mean.go",
+            "LineNo": 18,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.GeometricMean",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.HarmonicMean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "mean.go",
+            "LineNo": 40,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.HarmonicMean",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.NegativeErr",
+                "github.com/montanaflynn/stats.ZeroErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.InterQuartileRange": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "quartile.go",
+            "LineNo": 45,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.InterQuartileRange",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.Quartile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Quartiles": [
+                    "Q3",
+                    "Q1"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.LinReg": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 24,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.LinReg",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.LinearRegression"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Coordinate",
+                "github.com/montanaflynn/stats.Series"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.LinearRegression": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "regression.go",
+            "LineNo": 14,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.LinearRegression",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Series",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Coordinate"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Coordinate": [
+                    "X",
+                    "Y"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.LoadRawData": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "load.go",
+            "LineNo": 12,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.LoadRawData",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "bufio",
+                "strconv",
+                "github.com/montanaflynn/stats",
+                "time",
+                "io"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Fields",
+                "bufio.NewScanner",
+                "(*bufio.Scanner).Text",
+                "(*bufio.Scanner).Scan",
+                "strconv.ParseFloat",
+                "time.Duration",
+                "io.Reader",
+                "bufio.Scanner"
+            ]
+        },
+        "github.com/montanaflynn/stats.LogReg": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 34,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.LogReg",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.LogarithmicRegression"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Coordinate",
+                "github.com/montanaflynn/stats.Series"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.LogarithmicRegression": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "regression.go",
+            "LineNo": 85,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.LogarithmicRegression",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Series",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Coordinate"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Coordinate": [
+                    "X",
+                    "Y"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "math",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Log",
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.ManhattanDistance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "distances.go",
+            "LineNo": 50,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.ManhattanDistance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.validateData"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Abs"
+            ]
+        },
+        "github.com/montanaflynn/stats.Max": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "max.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Max",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "(github.com/montanaflynn/stats.Float64Data).Get"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.Mean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "mean.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Mean",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "(github.com/montanaflynn/stats.Float64Data).Sum"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.Median": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "median.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Median",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.sortedCopy",
+                "github.com/montanaflynn/stats.Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.MedianAbsoluteDeviation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "deviation.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.MedianAbsoluteDeviation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.MedianAbsoluteDeviationPopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.MedianAbsoluteDeviationPopulation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "deviation.go",
+            "LineNo": 11,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.MedianAbsoluteDeviationPopulation",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.copyslice",
+                "github.com/montanaflynn/stats.Median"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Abs"
+            ]
+        },
+        "github.com/montanaflynn/stats.Midhinge": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "quartile.go",
+            "LineNo": 55,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Midhinge",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.Quartile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Quartiles": [
+                    "Q1",
+                    "Q3"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.Min": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "min.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Min",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "(github.com/montanaflynn/stats.Float64Data).Get"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.MinkowskiDistance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "distances.go",
+            "LineNo": 78,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.MinkowskiDistance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.validateData"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.InfValue"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Abs",
+                "math.Pow",
+                "math.IsInf"
+            ]
+        },
+        "github.com/montanaflynn/stats.Mode": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "mode.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Mode",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.sortedCopyDif"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Ncr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 239,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Ncr",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NormBoxMullerRvs": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 23,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormBoxMullerRvs",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "time",
+                "math/rand",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "time.Now",
+                "(time.Time).UnixNano",
+                "math/rand.Seed",
+                "math/rand.Float64",
+                "math.Log",
+                "math.Sqrt",
+                "math.Cos",
+                "math.Sin",
+                "time.Time"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormCdf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 52,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormCdf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Sqrt",
+                "math.Erf"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormEntropy": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 180,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormEntropy",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Sqrt",
+                "math.Log"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormFit": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 187,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormFit",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Pow",
+                "math.Sqrt"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormInterval": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 221,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormInterval",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.NormPpf"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NormIsf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 137,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormIsf",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.NormPpf"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NormLogCdf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 57,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormLogCdf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Sqrt",
+                "math.Erf",
+                "math.Log"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormLogPdf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 47,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormLogPdf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Pow",
+                "math.Sqrt",
+                "math.Log"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormLogSf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 67,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormLogSf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Sqrt",
+                "math.Erf",
+                "math.Log"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormMean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 206,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormMean",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NormMedian": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 201,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormMedian",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NormMoment": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 146,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormMoment",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Ncr",
+                "github.com/montanaflynn/stats.factorial"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormPdf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 42,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormPdf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Pow",
+                "math.Sqrt"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormPpf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 75,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormPpf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Inf",
+                "math.Log",
+                "math.Sqrt",
+                "math.Erfc",
+                "math.Exp"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormPpfRvs": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 12,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormPpfRvs",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.NormPpf"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "time",
+                "math/rand",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "time.Now",
+                "(time.Time).UnixNano",
+                "math/rand.Seed",
+                "math/rand.Float64",
+                "time.Time"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormSf": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 62,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormSf",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Sqrt",
+                "math.Erf"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormStats": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 162,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormStats",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ContainsAny",
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.NormStd": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 216,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormStd",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NormVar": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 211,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.NormVar",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.Pearson": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "correlation.go",
+            "LineNo": 33,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Pearson",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Correlation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Percentile": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "percentile.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Percentile",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.sortedCopy",
+                "github.com/montanaflynn/stats.Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.BoundsErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.PercentileNearestRank": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "percentile.go",
+            "LineNo": 54,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.PercentileNearestRank",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.sortedCopy"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.BoundsErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Ceil"
+            ]
+        },
+        "github.com/montanaflynn/stats.PopulationVariance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "variance.go",
+            "LineNo": 31,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.PopulationVariance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats._variance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.ProbGeom": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "geometric_distribution.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.ProbGeom",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrBounds"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.Quartile": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "quartile.go",
+            "LineNo": 13,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Quartile",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.sortedCopy",
+                "github.com/montanaflynn/stats.Median"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Quartiles": [
+                    "Q1",
+                    "Q2",
+                    "Q3"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.QuartileOutliers": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "outlier.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.QuartileOutliers",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.sortedCopy",
+                "github.com/montanaflynn/stats.Quartile",
+                "github.com/montanaflynn/stats.InterQuartileRange"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Outliers",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Outliers": [
+                    "Mild",
+                    "Extreme"
+                ],
+                "github.com/montanaflynn/stats.Quartiles": [
+                    "Q1",
+                    "Q3"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Round": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "round.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Round",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.NaNErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "math.IsNaN",
+                "math.NaN",
+                "math.Pow",
+                "math.Modf",
+                "math.Ceil",
+                "math.Floor"
+            ]
+        },
+        "github.com/montanaflynn/stats.Sample": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "sample.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Sample",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.unixnano"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.BoundsErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math/rand"
+            ],
+            "UsedLibraryAPIs": [
+                "math/rand.Seed",
+                "math/rand.Intn",
+                "math/rand.Perm"
+            ]
+        },
+        "github.com/montanaflynn/stats.SampleVariance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "variance.go",
+            "LineNo": 42,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.SampleVariance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats._variance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.Sigmoid": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "sigmoid.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Sigmoid",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInput"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Exp"
+            ]
+        },
+        "github.com/montanaflynn/stats.SoftMax": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "softmax.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.SoftMax",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.Max"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInput"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Exp"
+            ]
+        },
+        "github.com/montanaflynn/stats.StableSample": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "sample.go",
+            "LineNo": 50,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.StableSample",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.unixnano"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.BoundsErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math/rand",
+                "sort"
+            ],
+            "UsedLibraryAPIs": [
+                "math/rand.Seed",
+                "math/rand.Perm"
+            ]
+        },
+        "github.com/montanaflynn/stats.StandardDeviation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "deviation.go",
+            "LineNo": 27,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.StandardDeviation",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.StandardDeviationPopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.StandardDeviationPopulation": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "deviation.go",
+            "LineNo": 32,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.StandardDeviationPopulation",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.PopulationVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Sqrt"
+            ]
+        },
+        "github.com/montanaflynn/stats.StandardDeviationSample": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "deviation.go",
+            "LineNo": 46,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.StandardDeviationSample",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.SampleVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Sqrt"
+            ]
+        },
+        "github.com/montanaflynn/stats.StdDevP": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 14,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.StdDevP",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.StandardDeviationPopulation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.StdDevS": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 19,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.StdDevS",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.StandardDeviationSample"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Sum": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "sum.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Sum",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.Trimean": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "quartile.go",
+            "LineNo": 65,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Trimean",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.sortedCopy",
+                "github.com/montanaflynn/stats.Quartile"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError",
+                "github.com/montanaflynn/stats.Quartiles"
+            ],
+            "UsedFields": {
+                "github.com/montanaflynn/stats.Quartiles": [
+                    "Q1",
+                    "Q2",
+                    "Q3"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.VarGeom": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "geometric_distribution.go",
+            "LineNo": 37,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.VarGeom",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrNegative"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN",
+                "math.Pow"
+            ]
+        },
+        "github.com/montanaflynn/stats.VarP": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.VarP",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.PopulationVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.VarS": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.VarS",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.SampleVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Variance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "variance.go",
+            "LineNo": 26,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Variance",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.PopulationVariance"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats._variance": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "variance.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats._variance",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "github.com/montanaflynn/stats.Mean"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.NaN"
+            ]
+        },
+        "github.com/montanaflynn/stats.copyslice": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "util.go",
+            "LineNo": 20,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.copyslice",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.factorial": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "norm.go",
+            "LineNo": 230,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.factorial",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.factorial"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.float64ToInt": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "util.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.float64ToInt",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.Round"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.normalize": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "entropy.go",
+            "LineNo": 22,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.normalize",
+            "UsedFunctions": [
+                "(github.com/montanaflynn/stats.Float64Data).Sum",
+                "(github.com/montanaflynn/stats.Float64Data).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.sortedCopy": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "util.go",
+            "LineNo": 27,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.sortedCopy",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.copyslice"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats",
+                "sort"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.sortedCopyDif": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "util.go",
+            "LineNo": 36,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.sortedCopyDif",
+            "UsedFunctions": [
+                "github.com/montanaflynn/stats.copyslice"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "sort",
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.unixnano": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "util.go",
+            "LineNo": 15,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.unixnano",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "time"
+            ],
+            "UsedLibraryAPIs": [
+                "time.Now",
+                "(time.Time).UTC",
+                "(time.Time).UnixNano",
+                "time.Time"
+            ]
+        },
+        "github.com/montanaflynn/stats.validateData": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "distances.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.validateData",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.EmptyInputErr",
+                "github.com/montanaflynn/stats.SizeErr"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.Float64Data",
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/montanaflynn/stats"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats/cmd.main": {
+            "Package": "github.com/montanaflynn/stats/cmd",
+            "FilePath": "cmd/main.go",
+            "LineNo": 7,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats/cmd.main",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Globals": {
+        "github.com/montanaflynn/stats.BoundsErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 44,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.BoundsErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrBounds"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.EmptyInput": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 48,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.EmptyInput",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrEmptyInput"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.EmptyInputErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 40,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.EmptyInputErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrEmptyInput"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrBounds": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 28,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrBounds",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrEmptyInput": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 20,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrEmptyInput",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrInfValue": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 32,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrInfValue",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrNaN": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 22,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrNaN",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrNegative": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 24,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrNegative",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrSize": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 30,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrSize",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrYCoord": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 34,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrYCoord",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ErrZero": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 26,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ErrZero",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.InfValue": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 46,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.InfValue",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrInfValue"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NaNErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 41,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.NaNErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrNaN"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.NegativeErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 42,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.NegativeErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrNegative"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.SizeErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 45,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.SizeErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrSize"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.YCoordErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 47,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.YCoordErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrYCoord"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.ZeroErr": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "legacy.go",
+            "LineNo": 43,
+            "Col": 2,
+            "Id": "github.com/montanaflynn/stats.ZeroErr",
+            "UsedFunctions": [],
+            "UsedGlobals": [
+                "github.com/montanaflynn/stats.ErrZero"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/montanaflynn/stats.statsError"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Constants": {},
+    "Types": {
+        "github.com/montanaflynn/stats.Coordinate": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "regression.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Coordinate",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "X": [
+                    1,
+                    1
+                ],
+                "Y": [
+                    2,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Description": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "describe.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Description",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/montanaflynn/stats.Description).String"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/montanaflynn/stats.descriptionPercentile"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "AllowedNaN": [
+                    7,
+                    7
+                ],
+                "Count": [
+                    1,
+                    1
+                ],
+                "DescriptionPercentiles": [
+                    6,
+                    6
+                ],
+                "Max": [
+                    4,
+                    4
+                ],
+                "Mean": [
+                    2,
+                    2
+                ],
+                "Min": [
+                    5,
+                    5
+                ],
+                "Std": [
+                    3,
+                    3
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Float64Data": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "data.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Float64Data",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": true,
+            "ExplicitMethods": [
+                "(github.com/montanaflynn/stats.Float64Data).Get",
+                "(github.com/montanaflynn/stats.Float64Data).Len",
+                "(github.com/montanaflynn/stats.Float64Data).Less",
+                "(github.com/montanaflynn/stats.Float64Data).Swap",
+                "(github.com/montanaflynn/stats.Float64Data).Min",
+                "(github.com/montanaflynn/stats.Float64Data).Max",
+                "(github.com/montanaflynn/stats.Float64Data).Sum",
+                "(github.com/montanaflynn/stats.Float64Data).CumulativeSum",
+                "(github.com/montanaflynn/stats.Float64Data).Mean",
+                "(github.com/montanaflynn/stats.Float64Data).Median",
+                "(github.com/montanaflynn/stats.Float64Data).Mode",
+                "(github.com/montanaflynn/stats.Float64Data).GeometricMean",
+                "(github.com/montanaflynn/stats.Float64Data).HarmonicMean",
+                "(github.com/montanaflynn/stats.Float64Data).MedianAbsoluteDeviation",
+                "(github.com/montanaflynn/stats.Float64Data).MedianAbsoluteDeviationPopulation",
+                "(github.com/montanaflynn/stats.Float64Data).StandardDeviation",
+                "(github.com/montanaflynn/stats.Float64Data).StandardDeviationPopulation",
+                "(github.com/montanaflynn/stats.Float64Data).StandardDeviationSample",
+                "(github.com/montanaflynn/stats.Float64Data).QuartileOutliers",
+                "(github.com/montanaflynn/stats.Float64Data).Percentile",
+                "(github.com/montanaflynn/stats.Float64Data).PercentileNearestRank",
+                "(github.com/montanaflynn/stats.Float64Data).Correlation",
+                "(github.com/montanaflynn/stats.Float64Data).AutoCorrelation",
+                "(github.com/montanaflynn/stats.Float64Data).Pearson",
+                "(github.com/montanaflynn/stats.Float64Data).Quartile",
+                "(github.com/montanaflynn/stats.Float64Data).InterQuartileRange",
+                "(github.com/montanaflynn/stats.Float64Data).Midhinge",
+                "(github.com/montanaflynn/stats.Float64Data).Trimean",
+                "(github.com/montanaflynn/stats.Float64Data).Sample",
+                "(github.com/montanaflynn/stats.Float64Data).Variance",
+                "(github.com/montanaflynn/stats.Float64Data).PopulationVariance",
+                "(github.com/montanaflynn/stats.Float64Data).SampleVariance",
+                "(github.com/montanaflynn/stats.Float64Data).Covariance",
+                "(github.com/montanaflynn/stats.Float64Data).CovariancePopulation",
+                "(github.com/montanaflynn/stats.Float64Data).Sigmoid",
+                "(github.com/montanaflynn/stats.Float64Data).SoftMax",
+                "(github.com/montanaflynn/stats.Float64Data).Entropy",
+                "(github.com/montanaflynn/stats.Float64Data).Quartiles"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Outliers": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "outlier.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Outliers",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/montanaflynn/stats.Float64Data"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Extreme": [
+                    2,
+                    2
+                ],
+                "Mild": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Quartiles": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "quartile.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Quartiles",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Q1": [
+                    1,
+                    1
+                ],
+                "Q2": [
+                    2,
+                    2
+                ],
+                "Q3": [
+                    3,
+                    3
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.Series": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "regression.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.Series",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": true,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/montanaflynn/stats.Coordinate"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.descriptionPercentile": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "describe.go",
+            "LineNo": 17,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.descriptionPercentile",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Percentile": [
+                    1,
+                    1
+                ],
+                "Value": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/montanaflynn/stats.statsError": {
+            "Package": "github.com/montanaflynn/stats",
+            "FilePath": "errors.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/montanaflynn/stats.statsError",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(github.com/montanaflynn/stats.statsError).Error",
+                "(github.com/montanaflynn/stats.statsError).String"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "err": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        }
+    },
+    "ModuleName": "github.com/montanaflynn/stats"
+}

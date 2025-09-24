@@ -1,0 +1,52 @@
+[
+    {
+        "inputs": [
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            1
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            1
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            2
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            3
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            3
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            4
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4
+        ],
+        "return_value": 24
+    }
+]

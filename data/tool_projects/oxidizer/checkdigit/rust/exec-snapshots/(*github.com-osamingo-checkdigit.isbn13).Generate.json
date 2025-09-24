@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            {},
+            "978000271270"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271270"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            {},
+            "aaaaaaaaaaaa"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "aaaaaaaaaaaa"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "978000271209"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271209"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            {},
+            "978000271509"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271509"
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            {},
+            "978000271330"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271330"
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            {},
+            "978000271252"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271252"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            {},
+            "978000271217"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271217"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {},
+            "978000271363"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271363"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            {},
+            "978000271236"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "978000271236"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            {},
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            ""
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "0026515628"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "0026515628"
+        ],
+        "return_value": null
+    }
+]

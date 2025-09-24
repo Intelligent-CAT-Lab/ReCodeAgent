@@ -1,0 +1,112 @@
+[
+    {
+        "inputs": [
+            "2"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "2"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "4"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "4"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "5"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "5"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "6"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "6"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "3"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "3"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "8"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "8"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "1"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "1"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "0"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "0"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "9"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "9"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            "a"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "a"
+        ],
+        "return_value": true
+    },
+    {
+        "inputs": [
+            "7"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "7"
+        ],
+        "return_value": false
+    }
+]

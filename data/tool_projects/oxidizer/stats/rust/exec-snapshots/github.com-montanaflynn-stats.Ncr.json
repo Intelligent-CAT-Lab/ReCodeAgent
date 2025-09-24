@@ -1,0 +1,62 @@
+[
+    {
+        "inputs": [
+            4,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4,
+            0
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            4,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4,
+            2
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            4,
+            4
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4,
+            4
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            4,
+            1
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4,
+            1
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            4,
+            3
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4,
+            3
+        ],
+        "return_value": 4
+    }
+]

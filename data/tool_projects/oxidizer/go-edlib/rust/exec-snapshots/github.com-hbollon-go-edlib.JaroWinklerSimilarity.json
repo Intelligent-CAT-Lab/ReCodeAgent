@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            "",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "",
+            "abcde"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            ""
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            ""
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "abcde"
+        ],
+        "return_value": 1065353216
+    },
+    {
+        "inputs": [
+            "abcd",
+            "effgghh"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcd",
+            "effgghh"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "TRACE",
+            "TRACE"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "TRACE",
+            "TRACE"
+        ],
+        "return_value": 1065353216
+    },
+    {
+        "inputs": [
+            "CRATE",
+            "TRACE"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "CRATE",
+            "TRACE"
+        ],
+        "return_value": 1060879292
+    },
+    {
+        "inputs": [
+            "TRATE",
+            "TRACE"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "TRATE",
+            "TRACE"
+        ],
+        "return_value": 1063787342
+    },
+    {
+        "inputs": [
+            "DIXON",
+            "DICKSONX"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "DIXON",
+            "DICKSONX"
+        ],
+        "return_value": 1062221469
+    },
+    {
+        "inputs": [
+            "MARTHA",
+            "MARHTA"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "MARTHA",
+            "MARHTA"
+        ],
+        "return_value": 1064700768
+    },
+    {
+        "inputs": [
+            "jellyfish",
+            "smellyfish"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "jellyfish",
+            "smellyfish"
+        ],
+        "return_value": 1063613357
+    },
+    {
+        "inputs": [
+            "\u3053\u306b\u3093\u3061",
+            "\u3053\u3093\u306b\u3061\u306f"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u3053\u306b\u3093\u3061",
+            "\u3053\u3093\u306b\u3061\u306f"
+        ],
+        "return_value": 1063088291
+    }
+]

@@ -1,0 +1,662 @@
+[
+    {
+        "inputs": [
+            {
+                "original": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+                "words": [
+                    "over",
+                    "the",
+                    "past",
+                    "fortnight",
+                    "we",
+                    "asked",
+                    "you",
+                    "to",
+                    "nominate",
+                    "your",
+                    "top",
+                    "extensions",
+                    "for",
+                    "the",
+                    "gnome",
+                    "desktop"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+                "words": [
+                    "over",
+                    "the",
+                    "past",
+                    "fortnight",
+                    "we",
+                    "asked",
+                    "you",
+                    "to",
+                    "nominate",
+                    "your",
+                    "top",
+                    "extensions",
+                    "for",
+                    "the",
+                    "gnome",
+                    "desktop"
+                ]
+            }
+        ],
+        "return_value": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+    },
+    {
+        "inputs": [
+            {
+                "original": " And you did just that.",
+                "words": [
+                    "and",
+                    "you",
+                    "did",
+                    "just",
+                    "that"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " And you did just that.",
+                "words": [
+                    "and",
+                    "you",
+                    "did",
+                    "just",
+                    "that"
+                ]
+            }
+        ],
+        "return_value": " And you did just that."
+    },
+    {
+        "inputs": [
+            {
+                "original": " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions.",
+                "words": [
+                    "having",
+                    "now",
+                    "sifted",
+                    "through",
+                    "the",
+                    "hundreds",
+                    "of",
+                    "entries",
+                    "we",
+                    "re",
+                    "ready",
+                    "to",
+                    "reveal",
+                    "your",
+                    "favourite",
+                    "gnome",
+                    "shell",
+                    "extensions"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions.",
+                "words": [
+                    "having",
+                    "now",
+                    "sifted",
+                    "through",
+                    "the",
+                    "hundreds",
+                    "of",
+                    "entries",
+                    "we",
+                    "re",
+                    "ready",
+                    "to",
+                    "reveal",
+                    "your",
+                    "favourite",
+                    "gnome",
+                    "shell",
+                    "extensions"
+                ]
+            }
+        ],
+        "return_value": " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions."
+    },
+    {
+        "inputs": [
+            {
+                "original": " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+                "words": [
+                    "gnome",
+                    "3",
+                    "which",
+                    "is",
+                    "more",
+                    "commonly",
+                    "used",
+                    "with",
+                    "the",
+                    "gnome",
+                    "shell",
+                    "has",
+                    "an",
+                    "extension",
+                    "framework",
+                    "that",
+                    "lets",
+                    "developers",
+                    "and",
+                    "users",
+                    "extend",
+                    "build",
+                    "on",
+                    "and",
+                    "shape",
+                    "how",
+                    "the",
+                    "desktop",
+                    "looks",
+                    "acts",
+                    "and",
+                    "functions"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+                "words": [
+                    "gnome",
+                    "3",
+                    "which",
+                    "is",
+                    "more",
+                    "commonly",
+                    "used",
+                    "with",
+                    "the",
+                    "gnome",
+                    "shell",
+                    "has",
+                    "an",
+                    "extension",
+                    "framework",
+                    "that",
+                    "lets",
+                    "developers",
+                    "and",
+                    "users",
+                    "extend",
+                    "build",
+                    "on",
+                    "and",
+                    "shape",
+                    "how",
+                    "the",
+                    "desktop",
+                    "looks",
+                    "acts",
+                    "and",
+                    "functions"
+                ]
+            }
+        ],
+        "return_value": " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions."
+    },
+    {
+        "inputs": [
+            {
+                "original": " Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock.",
+                "words": [
+                    "dash",
+                    "to",
+                    "dock",
+                    "takes",
+                    "the",
+                    "gnome",
+                    "dash",
+                    "\u2014",
+                    "this",
+                    "is",
+                    "the",
+                    "\u2018favourites",
+                    "bar",
+                    "that",
+                    "appears",
+                    "on",
+                    "the",
+                    "left-hand",
+                    "side",
+                    "of",
+                    "the",
+                    "screen",
+                    "in",
+                    "the",
+                    "activities",
+                    "overlay",
+                    "\u2014",
+                    "and",
+                    "transforms",
+                    "it",
+                    "into",
+                    "a",
+                    "desktop",
+                    "dock"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock.",
+                "words": [
+                    "dash",
+                    "to",
+                    "dock",
+                    "takes",
+                    "the",
+                    "gnome",
+                    "dash",
+                    "\u2014",
+                    "this",
+                    "is",
+                    "the",
+                    "\u2018favourites",
+                    "bar",
+                    "that",
+                    "appears",
+                    "on",
+                    "the",
+                    "left-hand",
+                    "side",
+                    "of",
+                    "the",
+                    "screen",
+                    "in",
+                    "the",
+                    "activities",
+                    "overlay",
+                    "\u2014",
+                    "and",
+                    "transforms",
+                    "it",
+                    "into",
+                    "a",
+                    "desktop",
+                    "dock"
+                ]
+            }
+        ],
+        "return_value": " Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock."
+    },
+    {
+        "inputs": [
+            {
+                "original": " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows.",
+                "words": [
+                    "and",
+                    "just",
+                    "like",
+                    "plank",
+                    "docky",
+                    "or",
+                    "awn",
+                    "you",
+                    "can",
+                    "add",
+                    "app",
+                    "launchers",
+                    "rearrange",
+                    "them",
+                    "and",
+                    "use",
+                    "them",
+                    "to",
+                    "minimise",
+                    "restore",
+                    "and",
+                    "switch",
+                    "between",
+                    "app",
+                    "windows"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows.",
+                "words": [
+                    "and",
+                    "just",
+                    "like",
+                    "plank",
+                    "docky",
+                    "or",
+                    "awn",
+                    "you",
+                    "can",
+                    "add",
+                    "app",
+                    "launchers",
+                    "rearrange",
+                    "them",
+                    "and",
+                    "use",
+                    "them",
+                    "to",
+                    "minimise",
+                    "restore",
+                    "and",
+                    "switch",
+                    "between",
+                    "app",
+                    "windows"
+                ]
+            }
+        ],
+        "return_value": " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows."
+    },
+    {
+        "inputs": [
+            {
+                "original": " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+                "words": [
+                    "dash",
+                    "to",
+                    "dock",
+                    "has",
+                    "many",
+                    "of",
+                    "the",
+                    "common",
+                    "\u201cdock\u201d",
+                    "features",
+                    "you",
+                    "d",
+                    "expect",
+                    "including",
+                    "autohide",
+                    "and",
+                    "intellihide",
+                    "a",
+                    "fixed-width",
+                    "mode",
+                    "adjustable",
+                    "icon",
+                    "size",
+                    "and",
+                    "custom",
+                    "themes"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+                "words": [
+                    "dash",
+                    "to",
+                    "dock",
+                    "has",
+                    "many",
+                    "of",
+                    "the",
+                    "common",
+                    "\u201cdock\u201d",
+                    "features",
+                    "you",
+                    "d",
+                    "expect",
+                    "including",
+                    "autohide",
+                    "and",
+                    "intellihide",
+                    "a",
+                    "fixed-width",
+                    "mode",
+                    "adjustable",
+                    "icon",
+                    "size",
+                    "and",
+                    "custom",
+                    "themes"
+                ]
+            }
+        ],
+        "return_value": " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes."
+    },
+    {
+        "inputs": [
+            {
+                "original": " My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen.",
+                "words": [
+                    "my",
+                    "biggest",
+                    "pet",
+                    "peeve",
+                    "with",
+                    "gnome",
+                    "shell",
+                    "is",
+                    "its",
+                    "legacy",
+                    "app",
+                    "tray",
+                    "that",
+                    "hides",
+                    "in",
+                    "the",
+                    "bottom",
+                    "left",
+                    "of",
+                    "the",
+                    "screen"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen.",
+                "words": [
+                    "my",
+                    "biggest",
+                    "pet",
+                    "peeve",
+                    "with",
+                    "gnome",
+                    "shell",
+                    "is",
+                    "its",
+                    "legacy",
+                    "app",
+                    "tray",
+                    "that",
+                    "hides",
+                    "in",
+                    "the",
+                    "bottom",
+                    "left",
+                    "of",
+                    "the",
+                    "screen"
+                ]
+            }
+        ],
+        "return_value": " My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen."
+    },
+    {
+        "inputs": [
+            {
+                "original": " All extraneous non-system applets, indicators and tray icons hide down here.",
+                "words": [
+                    "all",
+                    "extraneous",
+                    "non-system",
+                    "applets",
+                    "indicators",
+                    "and",
+                    "tray",
+                    "icons",
+                    "hide",
+                    "down",
+                    "here"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " All extraneous non-system applets, indicators and tray icons hide down here.",
+                "words": [
+                    "all",
+                    "extraneous",
+                    "non-system",
+                    "applets",
+                    "indicators",
+                    "and",
+                    "tray",
+                    "icons",
+                    "hide",
+                    "down",
+                    "here"
+                ]
+            }
+        ],
+        "return_value": " All extraneous non-system applets, indicators and tray icons hide down here."
+    },
+    {
+        "inputs": [
+            {
+                "original": " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox.",
+                "words": [
+                    "this",
+                    "makes",
+                    "it",
+                    "a",
+                    "little",
+                    "harder",
+                    "to",
+                    "use",
+                    "applications",
+                    "that",
+                    "rely",
+                    "on",
+                    "a",
+                    "system",
+                    "tray",
+                    "presence",
+                    "like",
+                    "skype",
+                    "franz",
+                    "telegram",
+                    "and",
+                    "dropbox"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox.",
+                "words": [
+                    "this",
+                    "makes",
+                    "it",
+                    "a",
+                    "little",
+                    "harder",
+                    "to",
+                    "use",
+                    "applications",
+                    "that",
+                    "rely",
+                    "on",
+                    "a",
+                    "system",
+                    "tray",
+                    "presence",
+                    "like",
+                    "skype",
+                    "franz",
+                    "telegram",
+                    "and",
+                    "dropbox"
+                ]
+            }
+        ],
+        "return_value": " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox."
+    },
+    {
+        "inputs": [
+            {
+                "original": " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach.",
+                "words": [
+                    "topicons",
+                    "plus",
+                    "is",
+                    "the",
+                    "quick",
+                    "way",
+                    "to",
+                    "put",
+                    "gnome",
+                    "system",
+                    "tray",
+                    "icons",
+                    "back",
+                    "where",
+                    "they",
+                    "belong:",
+                    "on",
+                    "show",
+                    "and",
+                    "in",
+                    "reach"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "original": " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach.",
+                "words": [
+                    "topicons",
+                    "plus",
+                    "is",
+                    "the",
+                    "quick",
+                    "way",
+                    "to",
+                    "put",
+                    "gnome",
+                    "system",
+                    "tray",
+                    "icons",
+                    "back",
+                    "where",
+                    "they",
+                    "belong:",
+                    "on",
+                    "show",
+                    "and",
+                    "in",
+                    "reach"
+                ]
+            }
+        ],
+        "return_value": " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach."
+    }
+]

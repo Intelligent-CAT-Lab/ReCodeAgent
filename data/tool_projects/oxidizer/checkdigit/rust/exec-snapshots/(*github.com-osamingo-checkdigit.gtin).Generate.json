@@ -1,0 +1,182 @@
+[
+    {
+        "inputs": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "4996871"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "4996871"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            {
+                "digit": 13,
+                "posCorr": true
+            },
+            "456995111617"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 13,
+                "posCorr": true
+            },
+            "456995111617"
+        ],
+        "return_value": 9
+    },
+    {
+        "inputs": [
+            {
+                "digit": 14,
+                "posCorr": false
+            },
+            "1456995111617"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 14,
+                "posCorr": false
+            },
+            "1456995111617"
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            {
+                "digit": 12,
+                "posCorr": true
+            },
+            "01234567890"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 12,
+                "posCorr": true
+            },
+            "01234567890"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            {
+                "digit": 18,
+                "posCorr": false
+            },
+            "04569951110000001"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 18,
+                "posCorr": false
+            },
+            "04569951110000001"
+        ],
+        "return_value": 6
+    },
+    {
+        "inputs": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "9638507"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "9638507"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            {
+                "digit": 13,
+                "posCorr": true
+            },
+            "590123412345"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 13,
+                "posCorr": true
+            },
+            "590123412345"
+        ],
+        "return_value": 7
+    },
+    {
+        "inputs": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "9638112"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "9638112"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "aaaaaaa"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            "aaaaaaa"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {
+                "digit": 8,
+                "posCorr": true
+            },
+            ""
+        ],
+        "return_value": null
+    }
+]

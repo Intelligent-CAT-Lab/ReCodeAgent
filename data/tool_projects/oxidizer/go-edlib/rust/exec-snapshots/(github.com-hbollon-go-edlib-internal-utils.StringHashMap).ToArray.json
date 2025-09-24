@@ -1,0 +1,234 @@
+[
+    {
+        "inputs": [
+            {
+                "a": {},
+                "b": {},
+                "c": {},
+                "d": {},
+                "e": {},
+                "f": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "a": {},
+                "b": {},
+                "c": {},
+                "d": {},
+                "e": {},
+                "f": {}
+            }
+        ],
+        "return_value": [
+            "a",
+            "b",
+            "c",
+            "f",
+            "d",
+            "e"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "d": {},
+                "e": {},
+                "f": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "d": {},
+                "e": {},
+                "f": {}
+            }
+        ],
+        "return_value": [
+            "d",
+            "e",
+            "f"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "ABD": {},
+                "ACD": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ABD": {},
+                "ACD": {}
+            }
+        ],
+        "return_value": [
+            "ABD",
+            "ACD"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "ADH": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ADH": {}
+            }
+        ],
+        "return_value": [
+            "ADH"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "GTAB": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "GTAB": {}
+            }
+        ],
+        "return_value": [
+            "GTAB"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "MJAU": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "MJAU": {}
+            }
+        ],
+        "return_value": [
+            "MJAU"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "ABCD": {},
+                "ABCX": {},
+                "ABWD": {},
+                "ABWX": {},
+                "AYCD": {},
+                "AYCX": {},
+                "AYWD": {},
+                "AYWX": {},
+                "ZBCD": {},
+                "ZBCX": {},
+                "ZBWD": {},
+                "ZBWX": {},
+                "ZYCD": {},
+                "ZYCX": {},
+                "ZYWD": {},
+                "ZYWX": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ABCD": {},
+                "ABCX": {},
+                "ABWD": {},
+                "ABWX": {},
+                "AYCD": {},
+                "AYCX": {},
+                "AYWD": {},
+                "AYWX": {},
+                "ZBCD": {},
+                "ZBCX": {},
+                "ZBWD": {},
+                "ZBWX": {},
+                "ZYCD": {},
+                "ZYCX": {},
+                "ZYWD": {},
+                "ZYWX": {}
+            }
+        ],
+        "return_value": [
+            "ZBCX",
+            "AYCX",
+            "ZYWX",
+            "ZBWX",
+            "AYWX",
+            "AYCD",
+            "ZYCD",
+            "ABCD",
+            "AYWD",
+            "ABWX",
+            "ZBCD",
+            "ABWD",
+            "ZYWD",
+            "ZBWD",
+            "ABCX",
+            "ZYCX"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "AAC": {},
+                "ACC": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AAC": {},
+                "ACC": {}
+            }
+        ],
+        "return_value": [
+            "AAC",
+            "ACC"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                " \u4f60\u597d\u5417\uff1f": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                " \u4f60\u597d\u5417\uff1f": {}
+            }
+        ],
+        "return_value": [
+            " \u4f60\u597d\u5417\uff1f"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "\u662fab\u662fcd123": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "\u662fab\u662fcd123": {}
+            }
+        ],
+        "return_value": [
+            "\u662fab\u662fcd123"
+        ]
+    }
+]

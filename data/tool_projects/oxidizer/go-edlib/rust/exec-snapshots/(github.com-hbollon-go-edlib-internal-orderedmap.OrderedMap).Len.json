@@ -1,0 +1,554 @@
+[
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test1",
+                    "Value": 1084227584
+                },
+                {
+                    "Key": "test2",
+                    "Value": 1073741824
+                },
+                {
+                    "Key": "test3",
+                    "Value": 1082130432
+                },
+                {
+                    "Key": "test4",
+                    "Value": 1077936128
+                },
+                {
+                    "Key": "test5",
+                    "Value": 1086324736
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test1",
+                    "Value": 1084227584
+                },
+                {
+                    "Key": "test2",
+                    "Value": 1073741824
+                },
+                {
+                    "Key": "test3",
+                    "Value": 1082130432
+                },
+                {
+                    "Key": "test4",
+                    "Value": 1077936128
+                },
+                {
+                    "Key": "test5",
+                    "Value": 1086324736
+                }
+            ]
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test5",
+                    "Value": 1086324736
+                },
+                {
+                    "Key": "test2",
+                    "Value": 1073741824
+                },
+                {
+                    "Key": "test3",
+                    "Value": 1082130432
+                },
+                {
+                    "Key": "test4",
+                    "Value": 1077936128
+                },
+                {
+                    "Key": "test1",
+                    "Value": 1084227584
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test5",
+                    "Value": 1086324736
+                },
+                {
+                    "Key": "test2",
+                    "Value": 1073741824
+                },
+                {
+                    "Key": "test3",
+                    "Value": 1082130432
+                },
+                {
+                    "Key": "test4",
+                    "Value": 1077936128
+                },
+                {
+                    "Key": "test1",
+                    "Value": 1084227584
+                }
+            ]
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test5",
+                    "Value": 1086324736
+                },
+                {
+                    "Key": "test1",
+                    "Value": 1084227584
+                },
+                {
+                    "Key": "test3",
+                    "Value": 1082130432
+                },
+                {
+                    "Key": "test4",
+                    "Value": 1077936128
+                },
+                {
+                    "Key": "test2",
+                    "Value": 1073741824
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test5",
+                    "Value": 1086324736
+                },
+                {
+                    "Key": "test1",
+                    "Value": 1084227584
+                },
+                {
+                    "Key": "test3",
+                    "Value": 1082130432
+                },
+                {
+                    "Key": "test4",
+                    "Value": 1077936128
+                },
+                {
+                    "Key": "test2",
+                    "Value": 1073741824
+                }
+            ]
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "test",
+                    "Value": 0
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "test",
+                    "Value": 0
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "tester",
+                    "Value": 0
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "tester",
+                    "Value": 0
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "",
+                    "Value": 0
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tests",
+                    "Value": 0
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tests",
+                    "Value": 0
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tests",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tests",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "testing",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "testing",
+                    "Value": 1058162981
+                }
+            ]
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "testing",
+                    "Value": 1060559726
+                }
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            [
+                {
+                    "Key": "test",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "tester",
+                    "Value": 1058162981
+                },
+                {
+                    "Key": "testing",
+                    "Value": 1060559726
+                }
+            ]
+        ],
+        "return_value": 3
+    }
+]

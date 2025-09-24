@@ -1,0 +1,156 @@
+[
+    {
+        "inputs": [
+            "",
+            "abcde",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "",
+            "abcde",
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            "",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "",
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            "abcde",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "abcde",
+            0
+        ],
+        "return_value": 1065353216
+    },
+    {
+        "inputs": [
+            "abcd",
+            "effgghh",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcd",
+            "effgghh",
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "CRATE",
+            "TRACE",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "CRATE",
+            "TRACE",
+            0
+        ],
+        "return_value": 1058642330
+    },
+    {
+        "inputs": [
+            "MARTHA",
+            "MARHTA",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "MARTHA",
+            "MARHTA",
+            0
+        ],
+        "return_value": 1059760811
+    },
+    {
+        "inputs": [
+            "DIXON",
+            "DICKSONX",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "DIXON",
+            "DICKSONX",
+            0
+        ],
+        "return_value": 1056964608
+    },
+    {
+        "inputs": [
+            "jellyfish",
+            "smellyfish",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "jellyfish",
+            "smellyfish",
+            0
+        ],
+        "return_value": 1061997773
+    },
+    {
+        "inputs": [
+            "abcde",
+            "\u0431\u0432\u0433\u0434\u0436",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "\u0431\u0432\u0433\u0434\u0436",
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            "fghjk",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "fghjk",
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "\u3053\u306b\u3093\u3061",
+            "\u3053\u3093\u306b\u3061\u306f",
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u3053\u306b\u3093\u3061",
+            "\u3053\u3093\u306b\u3061\u306f",
+            0
+        ],
+        "return_value": 1053609165
+    }
+]

@@ -1,0 +1,366 @@
+[
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            },
+            "supplemental"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "supplemental"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "generation"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "generation"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "suffix"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "suffix"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "lnprefix"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "lnprefix"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "supplemental"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "supplemental"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "salutation"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "salutation"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "nonname"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            "nonname"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera",
+                    "*|*",
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "supplemental"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "supplemental"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "generation"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "generation"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "suffix"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "suffix"
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "lnprefix"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "lnprefix"
+        ],
+        "return_value": -1
+    }
+]

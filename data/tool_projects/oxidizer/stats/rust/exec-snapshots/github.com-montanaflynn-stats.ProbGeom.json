@@ -1,0 +1,44 @@
+[
+    {
+        "inputs": [
+            1,
+            10000,
+            4602678819172646912
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            1,
+            10000,
+            4602678819172646912
+        ],
+        "return_value": 4602678819172646912
+    },
+    {
+        "inputs": [
+            -1,
+            4,
+            4602678819172646912
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            -1,
+            4,
+            4602678819172646912
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            1,
+            2,
+            4602678819172646912
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            1,
+            2,
+            4602678819172646912
+        ],
+        "return_value": 4598175219545276416
+    }
+]

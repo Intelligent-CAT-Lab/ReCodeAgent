@@ -1,0 +1,697 @@
+{
+    "BasePath": "/mnt/transpile/benchmarks/gonameparts",
+    "Functions": {
+        "(*github.com/polera/gonameparts.NameParts).buildFullName": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 62,
+            "Col": 21,
+            "Id": "(*github.com/polera/gonameparts.NameParts).buildFullName",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.NameParts"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.NameParts": [
+                    "Salutation",
+                    "FirstName",
+                    "MiddleName",
+                    "LastName",
+                    "Generation",
+                    "Suffix",
+                    "FullName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Join"
+            ]
+        },
+        "(*github.com/polera/gonameparts.NameParts).slot": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 42,
+            "Col": 21,
+            "Id": "(*github.com/polera/gonameparts.NameParts).slot",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.NameParts"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.NameParts": [
+                    "Salutation",
+                    "Generation",
+                    "Suffix",
+                    "MiddleName",
+                    "LastName",
+                    "FirstName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/polera/gonameparts.nameString).cleaned": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 15,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).cleaned",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).split"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Replace",
+                "strings.Trim"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).find": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 120,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).find",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).searchParts"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/polera/gonameparts.salutations",
+                "github.com/polera/gonameparts.generations",
+                "github.com/polera/gonameparts.suffixes",
+                "github.com/polera/gonameparts.lnPrefixes",
+                "github.com/polera/gonameparts.nonName",
+                "github.com/polera/gonameparts.supplementalInfo"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/polera/gonameparts.nameString).findNotSlotted": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 190,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).findNotSlotted",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "SplitName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/polera/gonameparts.nameString).fixMisplacedApostrophe": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 76,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).fixMisplacedApostrophe",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).split"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "SplitName",
+                    "FullName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Trim",
+                "strings.Join"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).hasAliases": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 110,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).hasAliases",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/polera/gonameparts.nonName"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "FullName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ToUpper",
+                "strings.Contains",
+                "strings.HasSuffix"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).hasComma": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 42,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).hasComma",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).split"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ContainsAny"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).looksCorporate": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 38,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).looksCorporate",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).searchParts"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [
+                "github.com/polera/gonameparts.corpEntity"
+            ],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/polera/gonameparts.nameString).normalize": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 146,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).normalize",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).hasAliases",
+                "(*github.com/polera/gonameparts.nameString).splitAliases",
+                "(*github.com/polera/gonameparts.nameString).find",
+                "(*github.com/polera/gonameparts.nameString).slotNickname",
+                "(*github.com/polera/gonameparts.nameString).fixMisplacedApostrophe",
+                "(*github.com/polera/gonameparts.nameString).hasComma",
+                "(*github.com/polera/gonameparts.nameString).cleaned"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "SplitName",
+                    "FullName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings",
+                "sort"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Join",
+                "strings.SplitN",
+                "(sort.StringSlice).Swap",
+                "sort.StringSlice"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).searchParts": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 27,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).searchParts",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).cleaned"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ToUpper"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).slotNickname": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 51,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).slotNickname",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).split"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "SplitName",
+                    "Nickname",
+                    "FullName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Join"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).split": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 140,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).split",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "FullName",
+                    "SplitName"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "github.com/polera/gonameparts"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Fields"
+            ]
+        },
+        "(*github.com/polera/gonameparts.nameString).splitAliases": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 176,
+            "Col": 22,
+            "Id": "(*github.com/polera/gonameparts.nameString).splitAliases",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).split"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.nameString": [
+                    "FullName",
+                    "Aliases"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ToUpper",
+                "strings.Join",
+                "strings.Split"
+            ]
+        },
+        "github.com/polera/gonameparts.Parse": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 96,
+            "Col": 6,
+            "Id": "github.com/polera/gonameparts.Parse",
+            "UsedFunctions": [
+                "(*github.com/polera/gonameparts.nameString).normalize",
+                "(*github.com/polera/gonameparts.nameString).looksCorporate",
+                "(*github.com/polera/gonameparts.nameString).find",
+                "(*github.com/polera/gonameparts.NameParts).slot",
+                "(*github.com/polera/gonameparts.NameParts).buildFullName",
+                "(*github.com/polera/gonameparts.nameString).findNotSlotted",
+                "github.com/polera/gonameparts.Parse"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/polera/gonameparts.nameString",
+                "github.com/polera/gonameparts.NameParts"
+            ],
+            "UsedFields": {
+                "github.com/polera/gonameparts.NameParts": [
+                    "ProvidedName",
+                    "Nickname",
+                    "Aliases"
+                ],
+                "github.com/polera/gonameparts.nameString": [
+                    "FullName",
+                    "Nickname",
+                    "SplitName",
+                    "Aliases"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/polera/gonameparts",
+                "strings",
+                "sort"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Join",
+                "sort.IntSlice",
+                "sort.Interface"
+            ]
+        },
+        "github.com/polera/gonameparts/cmd.main": {
+            "Package": "github.com/polera/gonameparts/cmd",
+            "FilePath": "cmd/main.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/polera/gonameparts/cmd.main",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Globals": {
+        "github.com/polera/gonameparts.corpEntity": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 22,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.corpEntity",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.generations": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 18,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.generations",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.lnPrefixes": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 20,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.lnPrefixes",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.nonName": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 21,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.nonName",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.salutations": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 17,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.salutations",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.suffixes": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 19,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.suffixes",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.supplementalInfo": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 23,
+            "Col": 2,
+            "Id": "github.com/polera/gonameparts.supplementalInfo",
+            "UsedFunctions": [],
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedInterfaceMethods": {},
+            "UsedFields": {},
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Constants": {},
+    "Types": {
+        "github.com/polera/gonameparts.NameParts": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "nameparts.go",
+            "LineNo": 29,
+            "Col": 6,
+            "Id": "github.com/polera/gonameparts.NameParts",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/polera/gonameparts.NameParts).slot",
+                "(*github.com/polera/gonameparts.NameParts).buildFullName"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/polera/gonameparts.NameParts"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Aliases": [
+                    10,
+                    10
+                ],
+                "FirstName": [
+                    4,
+                    4
+                ],
+                "FullName": [
+                    2,
+                    2
+                ],
+                "Generation": [
+                    7,
+                    7
+                ],
+                "LastName": [
+                    6,
+                    6
+                ],
+                "MiddleName": [
+                    5,
+                    5
+                ],
+                "Nickname": [
+                    9,
+                    9
+                ],
+                "ProvidedName": [
+                    1,
+                    1
+                ],
+                "Salutation": [
+                    3,
+                    3
+                ],
+                "Suffix": [
+                    8,
+                    8
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/polera/gonameparts.nameString": {
+            "Package": "github.com/polera/gonameparts",
+            "FilePath": "namestring.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/polera/gonameparts.nameString",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/polera/gonameparts.nameString).cleaned",
+                "(*github.com/polera/gonameparts.nameString).searchParts",
+                "(*github.com/polera/gonameparts.nameString).looksCorporate",
+                "(*github.com/polera/gonameparts.nameString).hasComma",
+                "(*github.com/polera/gonameparts.nameString).slotNickname",
+                "(*github.com/polera/gonameparts.nameString).fixMisplacedApostrophe",
+                "(*github.com/polera/gonameparts.nameString).hasAliases",
+                "(*github.com/polera/gonameparts.nameString).find",
+                "(*github.com/polera/gonameparts.nameString).split",
+                "(*github.com/polera/gonameparts.nameString).normalize",
+                "(*github.com/polera/gonameparts.nameString).splitAliases",
+                "(*github.com/polera/gonameparts.nameString).findNotSlotted"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Aliases": [
+                    4,
+                    4
+                ],
+                "FullName": [
+                    1,
+                    1
+                ],
+                "Nickname": [
+                    3,
+                    3
+                ],
+                "SplitName": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        }
+    },
+    "ModuleName": "github.com/polera/gonameparts"
+}

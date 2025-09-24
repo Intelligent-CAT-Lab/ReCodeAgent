@@ -1,0 +1,56 @@
+[
+    {
+        "inputs": [
+            {
+                "Count": 3,
+                "Mean": 4611686018427387904,
+                "Std": 4605529566940507198,
+                "Max": 4613937818241073152,
+                "Min": 4607182418800017408,
+                "DescriptionPercentiles": [
+                    {
+                        "Percentile": 4627730092099895296,
+                        "Value": 9221120237041090561
+                    },
+                    {
+                        "Percentile": 4632233691727265792,
+                        "Value": 4609434218613702656
+                    },
+                    {
+                        "Percentile": 4634978072750194688,
+                        "Value": 4612811918334230528
+                    }
+                ],
+                "AllowedNaN": true
+            },
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Count": 3,
+                "Mean": 4611686018427387904,
+                "Std": 4605529566940507198,
+                "Max": 4613937818241073152,
+                "Min": 4607182418800017408,
+                "DescriptionPercentiles": [
+                    {
+                        "Percentile": 4627730092099895296,
+                        "Value": 9221120237041090561
+                    },
+                    {
+                        "Percentile": 4632233691727265792,
+                        "Value": 4609434218613702656
+                    },
+                    {
+                        "Percentile": 4634978072750194688,
+                        "Value": 4612811918334230528
+                    }
+                ],
+                "AllowedNaN": true
+            },
+            2
+        ],
+        "return_value": "count\t3\nmean\t2.00\nstd\t0.82\nmax\t3.00\nmin\t1.00\n25.00%\tNaN\n50.00%\t1.50\n75.00%\t2.50\nNaN OK\ttrue"
+    }
+]

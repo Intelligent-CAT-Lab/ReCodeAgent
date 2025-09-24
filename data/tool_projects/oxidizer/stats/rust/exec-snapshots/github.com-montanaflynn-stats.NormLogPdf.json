@@ -1,0 +1,16 @@
+[
+    {
+        "inputs": [
+            0,
+            0,
+            4607182418800017408
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            0,
+            4607182418800017408
+        ],
+        "return_value": 13829824318871486132
+    }
+]

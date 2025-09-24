@@ -1,0 +1,782 @@
+[
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "WIFE OF",
+                "HUSBAND OF",
+                "SON OF",
+                "DAUGHTER OF",
+                "DECEASED",
+                "FICTITIOUS"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "WIFE OF",
+                "HUSBAND OF",
+                "SON OF",
+                "DAUGHTER OF",
+                "DECEASED",
+                "FICTITIOUS"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "NA",
+                "CORP",
+                "CO",
+                "INC",
+                "ASSOCIATES",
+                "SERVICE",
+                "LLC",
+                "LLP",
+                "PARTNERS",
+                "R/A",
+                "C/O",
+                "COUNTY",
+                "STATE",
+                "BANK",
+                "GROUP",
+                "MUTUAL",
+                "FARGO"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "NA",
+                "CORP",
+                "CO",
+                "INC",
+                "ASSOCIATES",
+                "SERVICE",
+                "LLC",
+                "LLP",
+                "PARTNERS",
+                "R/A",
+                "C/O",
+                "COUNTY",
+                "STATE",
+                "BANK",
+                "GROUP",
+                "MUTUAL",
+                "FARGO"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "JR",
+                "SR",
+                "I",
+                "II",
+                "III",
+                "IV",
+                "V",
+                "VI",
+                "VII",
+                "VIII",
+                "IX",
+                "X",
+                "1ST",
+                "2ND",
+                "3RD",
+                "4TH",
+                "5TH",
+                "6TH",
+                "7TH",
+                "8TH",
+                "9TH",
+                "10TH",
+                "FIRST",
+                "SECOND",
+                "THIRD",
+                "FOURTH",
+                "FIFTH",
+                "SIXTH",
+                "SEVENTH",
+                "EIGHTH",
+                "NINTH",
+                "TENTH"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "JR",
+                "SR",
+                "I",
+                "II",
+                "III",
+                "IV",
+                "V",
+                "VI",
+                "VII",
+                "VIII",
+                "IX",
+                "X",
+                "1ST",
+                "2ND",
+                "3RD",
+                "4TH",
+                "5TH",
+                "6TH",
+                "7TH",
+                "8TH",
+                "9TH",
+                "10TH",
+                "FIRST",
+                "SECOND",
+                "THIRD",
+                "FOURTH",
+                "FIFTH",
+                "SIXTH",
+                "SEVENTH",
+                "EIGHTH",
+                "NINTH",
+                "TENTH"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "ESQ",
+                "PHD",
+                "MD"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "ESQ",
+                "PHD",
+                "MD"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "DE",
+                "DA",
+                "DI",
+                "LA",
+                "DU",
+                "DEL",
+                "DEI",
+                "VDA",
+                "DELLO",
+                "DELLA",
+                "DEGLI",
+                "DELLE",
+                "VAN",
+                "VON",
+                "DER",
+                "DEN",
+                "HEER",
+                "TEN",
+                "TER",
+                "VANDE",
+                "VANDEN",
+                "VANDER",
+                "VOOR",
+                "VER",
+                "AAN",
+                "MC",
+                "BEN",
+                "SAN",
+                "SAINZ",
+                "BIN",
+                "LI",
+                "LE",
+                "DES",
+                "AM",
+                "AUS'M",
+                "VOM",
+                "ZUM",
+                "ZUR",
+                "TEN",
+                "IBN"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "DE",
+                "DA",
+                "DI",
+                "LA",
+                "DU",
+                "DEL",
+                "DEI",
+                "VDA",
+                "DELLO",
+                "DELLA",
+                "DEGLI",
+                "DELLE",
+                "VAN",
+                "VON",
+                "DER",
+                "DEN",
+                "HEER",
+                "TEN",
+                "TER",
+                "VANDE",
+                "VANDEN",
+                "VANDER",
+                "VOOR",
+                "VER",
+                "AAN",
+                "MC",
+                "BEN",
+                "SAN",
+                "SAINZ",
+                "BIN",
+                "LI",
+                "LE",
+                "DES",
+                "AM",
+                "AUS'M",
+                "VOM",
+                "ZUM",
+                "ZUR",
+                "TEN",
+                "IBN"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "WIFE OF",
+                "HUSBAND OF",
+                "SON OF",
+                "DAUGHTER OF",
+                "DECEASED",
+                "FICTITIOUS"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "WIFE OF",
+                "HUSBAND OF",
+                "SON OF",
+                "DAUGHTER OF",
+                "DECEASED",
+                "FICTITIOUS"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "MR",
+                "MS",
+                "MRS",
+                "DR",
+                "MISS",
+                "DOCTOR",
+                "CORP",
+                "SGT",
+                "PVT",
+                "JUDGE",
+                "CAPT",
+                "COL",
+                "MAJ",
+                "LT",
+                "LIEUTENANT",
+                "PRM",
+                "PATROLMAN",
+                "HON",
+                "OFFICER",
+                "REV",
+                "PRES",
+                "PRESIDENT",
+                "GOV",
+                "GOVERNOR",
+                "VICE PRESIDENT",
+                "VP",
+                "MAYOR",
+                "SIR",
+                "MADAM",
+                "HONORABLE"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "MR",
+                "MS",
+                "MRS",
+                "DR",
+                "MISS",
+                "DOCTOR",
+                "CORP",
+                "SGT",
+                "PVT",
+                "JUDGE",
+                "CAPT",
+                "COL",
+                "MAJ",
+                "LT",
+                "LIEUTENANT",
+                "PRM",
+                "PATROLMAN",
+                "HON",
+                "OFFICER",
+                "REV",
+                "PRES",
+                "PRESIDENT",
+                "GOV",
+                "GOVERNOR",
+                "VICE PRESIDENT",
+                "VP",
+                "MAYOR",
+                "SIR",
+                "MADAM",
+                "HONORABLE"
+            ]
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "A.K.A",
+                "AKA",
+                "A/K/A",
+                "F.K.A",
+                "FKA",
+                "F/K/A",
+                "N/K/A"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            },
+            [
+                "A.K.A",
+                "AKA",
+                "A/K/A",
+                "F.K.A",
+                "FKA",
+                "F/K/A",
+                "N/K/A"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera",
+                    "*|*",
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            [
+                "WIFE OF",
+                "HUSBAND OF",
+                "SON OF",
+                "DAUGHTER OF",
+                "DECEASED",
+                "FICTITIOUS"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            [
+                "WIFE OF",
+                "HUSBAND OF",
+                "SON OF",
+                "DAUGHTER OF",
+                "DECEASED",
+                "FICTITIOUS"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            [
+                "NA",
+                "CORP",
+                "CO",
+                "INC",
+                "ASSOCIATES",
+                "SERVICE",
+                "LLC",
+                "LLP",
+                "PARTNERS",
+                "R/A",
+                "C/O",
+                "COUNTY",
+                "STATE",
+                "BANK",
+                "GROUP",
+                "MUTUAL",
+                "FARGO"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            [
+                "NA",
+                "CORP",
+                "CO",
+                "INC",
+                "ASSOCIATES",
+                "SERVICE",
+                "LLC",
+                "LLP",
+                "PARTNERS",
+                "R/A",
+                "C/O",
+                "COUNTY",
+                "STATE",
+                "BANK",
+                "GROUP",
+                "MUTUAL",
+                "FARGO"
+            ]
+        ],
+        "return_value": -1
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            [
+                "JR",
+                "SR",
+                "I",
+                "II",
+                "III",
+                "IV",
+                "V",
+                "VI",
+                "VII",
+                "VIII",
+                "IX",
+                "X",
+                "1ST",
+                "2ND",
+                "3RD",
+                "4TH",
+                "5TH",
+                "6TH",
+                "7TH",
+                "8TH",
+                "9TH",
+                "10TH",
+                "FIRST",
+                "SECOND",
+                "THIRD",
+                "FOURTH",
+                "FIFTH",
+                "SIXTH",
+                "SEVENTH",
+                "EIGHTH",
+                "NINTH",
+                "TENTH"
+            ]
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            [
+                "JR",
+                "SR",
+                "I",
+                "II",
+                "III",
+                "IV",
+                "V",
+                "VI",
+                "VII",
+                "VIII",
+                "IX",
+                "X",
+                "1ST",
+                "2ND",
+                "3RD",
+                "4TH",
+                "5TH",
+                "6TH",
+                "7TH",
+                "8TH",
+                "9TH",
+                "10TH",
+                "FIRST",
+                "SECOND",
+                "THIRD",
+                "FOURTH",
+                "FIFTH",
+                "SIXTH",
+                "SEVENTH",
+                "EIGHTH",
+                "NINTH",
+                "TENTH"
+            ]
+        ],
+        "return_value": -1
+    }
+]

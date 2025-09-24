@@ -1,0 +1,380 @@
+[
+    {
+        "inputs": [
+            {
+                "ProvidedName": "President George Herbert Walker Bush",
+                "FullName": "",
+                "Salutation": "President",
+                "FirstName": "George",
+                "MiddleName": "Herbert Walker",
+                "LastName": "Bush",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "President George Herbert Walker Bush",
+                "FullName": "President George Herbert Walker Bush",
+                "Salutation": "President",
+                "FirstName": "George",
+                "MiddleName": "Herbert Walker",
+                "LastName": "Bush",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": " James K. Polera",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "K.",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": " James K. Polera",
+                "FullName": "James K. Polera",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "K.",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "James Polera a.k.a James K. Polera",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": [
+                    {
+                        "ProvidedName": " James K. Polera",
+                        "FullName": "James K. Polera",
+                        "Salutation": "",
+                        "FirstName": "James",
+                        "MiddleName": "K.",
+                        "LastName": "Polera",
+                        "Generation": "",
+                        "Suffix": "",
+                        "Nickname": "",
+                        "Aliases": null
+                    }
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "James Polera a.k.a James K. Polera",
+                "FullName": "James Polera",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": [
+                    {
+                        "ProvidedName": " James K. Polera",
+                        "FullName": "James K. Polera",
+                        "Salutation": "",
+                        "FirstName": "James",
+                        "MiddleName": "K.",
+                        "LastName": "Polera",
+                        "Generation": "",
+                        "Suffix": "",
+                        "Nickname": "",
+                        "Aliases": null
+                    }
+                ]
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "K\u00f6nig Ludwig",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "K\u00f6nig",
+                "MiddleName": "",
+                "LastName": "Ludwig",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "K\u00f6nig Ludwig",
+                "FullName": "K\u00f6nig Ludwig",
+                "Salutation": "",
+                "FirstName": "K\u00f6nig",
+                "MiddleName": "",
+                "LastName": "Ludwig",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "Dr. James\tPolera\tEsq.",
+                "FullName": "",
+                "Salutation": "Dr.",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "Esq.",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "Dr. James\tPolera\tEsq.",
+                "FullName": "Dr. James Polera Esq.",
+                "Salutation": "Dr.",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "Esq.",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "I am a Popsicle",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "I",
+                "MiddleName": "I am",
+                "LastName": "",
+                "Generation": "I",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "I am a Popsicle",
+                "FullName": "I I am I",
+                "Salutation": "",
+                "FirstName": "I",
+                "MiddleName": "I am",
+                "LastName": "",
+                "Generation": "I",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "Alan Hon",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "Alan",
+                "MiddleName": "",
+                "LastName": "Hon",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "Alan Hon",
+                "FullName": "Alan Hon",
+                "Salutation": "",
+                "FirstName": "Alan",
+                "MiddleName": "",
+                "LastName": "Hon",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "Jessica Aka",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "Jessica",
+                "MiddleName": "",
+                "LastName": "Aka",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "Jessica Aka",
+                "FullName": "Jessica Aka",
+                "Salutation": "",
+                "FirstName": "Jessica",
+                "MiddleName": "",
+                "LastName": "Aka",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "James Polera'",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "James Polera'",
+                "FullName": "James Polera",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "Mr.",
+                "FullName": "",
+                "Salutation": "Mr.",
+                "FirstName": "",
+                "MiddleName": "",
+                "LastName": "",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "Mr.",
+                "FullName": "Mr.",
+                "Salutation": "Mr.",
+                "FirstName": "",
+                "MiddleName": "",
+                "LastName": "",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "ProvidedName": "James Polera",
+                "FullName": "",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ProvidedName": "James Polera",
+                "FullName": "James Polera",
+                "Salutation": "",
+                "FirstName": "James",
+                "MiddleName": "",
+                "LastName": "Polera",
+                "Generation": "",
+                "Suffix": "",
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": null
+    }
+]

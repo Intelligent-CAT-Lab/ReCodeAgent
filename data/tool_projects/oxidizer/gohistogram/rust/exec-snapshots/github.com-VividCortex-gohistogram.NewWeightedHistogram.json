@@ -1,0 +1,19 @@
+[
+    {
+        "inputs": [
+            160,
+            4607182418800017408
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            160,
+            4607182418800017408
+        ],
+        "return_value": {
+            "bins": [],
+            "maxbins": 160,
+            "total": 0,
+            "alpha": 4607182418800017408
+        }
+    }
+]

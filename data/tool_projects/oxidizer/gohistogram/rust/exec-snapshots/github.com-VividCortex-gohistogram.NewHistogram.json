@@ -1,0 +1,16 @@
+[
+    {
+        "inputs": [
+            160
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            160
+        ],
+        "return_value": {
+            "bins": [],
+            "maxbins": 160,
+            "total": 0
+        }
+    }
+]

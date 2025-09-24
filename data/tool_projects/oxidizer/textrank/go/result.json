@@ -1,0 +1,2278 @@
+{
+    "BasePath": "/mnt/transpile/benchmarks/TextRank",
+    "Functions": {
+        "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingHits": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 73,
+            "Col": 26,
+            "Id": "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingHits",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmChain",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "ConnectionLeft",
+                    "Qty",
+                    "ConnectionRight"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Algorithm"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 57,
+            "Col": 26,
+            "Id": "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingRelation",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmChain",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Relation",
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "Qty"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Algorithm"
+            ],
+            "UsedPackages": [
+                "math",
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Abs"
+            ]
+        },
+        "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingHits": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 36,
+            "Col": 28,
+            "Id": "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingHits",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmDefault",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "Qty"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Algorithm"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 25,
+            "Col": 28,
+            "Id": "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingRelation",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmDefault",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Relation"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Algorithm"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.LanguageDefault).FindRootWord": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 57,
+            "Col": 30,
+            "Id": "(*github.com/DavidBelicza/TextRank.LanguageDefault).FindRootWord",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.LanguageDefault"
+            ],
+            "UsedFields": {},
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Language"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.LanguageDefault).IsStopWord": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 38,
+            "Col": 30,
+            "Id": "(*github.com/DavidBelicza/TextRank.LanguageDefault).IsStopWord",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.LanguageDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.LanguageDefault": [
+                    "languages",
+                    "defaultLang"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Language"
+            ],
+            "UsedPackages": [
+                "unicode/utf8",
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": [
+                "unicode/utf8.RuneCountInString"
+            ]
+        },
+        "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetActiveLanguage": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 63,
+            "Col": 30,
+            "Id": "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetActiveLanguage",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.LanguageDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.LanguageDefault": [
+                    "defaultLang"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Language"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetWords": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 69,
+            "Col": 30,
+            "Id": "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetWords",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.LanguageDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.LanguageDefault": [
+                    "languages"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Language"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetOriginal": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "text.go",
+            "LineNo": 42,
+            "Col": 39,
+            "Id": "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetOriginal",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.ParsedSentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.ParsedSentence": [
+                    "original"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetWords": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "text.go",
+            "LineNo": 36,
+            "Col": 39,
+            "Id": "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetWords",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.ParsedSentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.ParsedSentence": [
+                    "words"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Rank).AddNewWord": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 82,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Rank).AddNewWord",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words",
+                    "WordValID"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "ID",
+                    "SentenceIDs",
+                    "ConnectionLeft",
+                    "ConnectionRight",
+                    "Token",
+                    "Qty",
+                    "Weight"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Rank).GetWordData": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 145,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Rank).GetWordData",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Rank).IsWordExist": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 75,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Rank).IsWordExist",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "WordValID"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Rank).UpdateRightConnection": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 138,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Rank).UpdateRightConnection",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "ConnectionRight"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Rank).UpdateWord": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 108,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Rank).UpdateWord",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "WordValID",
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "SentenceIDs",
+                    "Qty",
+                    "ConnectionLeft"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Relation).AddRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "relation.go",
+            "LineNo": 31,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.Relation).AddRelation",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.Relation).updateRelation",
+                "(*github.com/DavidBelicza/TextRank.Relation).extendRelation",
+                "(*github.com/DavidBelicza/TextRank.Relation).createRelation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Relation"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Relation).createRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "relation.go",
+            "LineNo": 74,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.Relation).createRelation",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Score": [
+                    "Qty",
+                    "Weight",
+                    "SentenceIDs"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Relation).extendRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "relation.go",
+            "LineNo": 62,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.Relation).extendRelation",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.Relation).extendRelation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Score": [
+                    "Qty",
+                    "Weight",
+                    "SentenceIDs"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Relation).updateRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "relation.go",
+            "LineNo": 47,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.Relation).updateRelation",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.Relation).updateRelation"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Score": [
+                    "Qty",
+                    "Weight",
+                    "SentenceIDs"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.RuleDefault).IsSentenceSeparator": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rule.go",
+            "LineNo": 42,
+            "Col": 23,
+            "Id": "(*github.com/DavidBelicza/TextRank.RuleDefault).IsSentenceSeparator",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.RuleDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.RuleDefault": [
+                    "sentenceSeparators"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Rule"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.RuleDefault).IsWordSeparator": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rule.go",
+            "LineNo": 28,
+            "Col": 23,
+            "Id": "(*github.com/DavidBelicza/TextRank.RuleDefault).IsWordSeparator",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.RuleDefault).IsSentenceSeparator"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.RuleDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.RuleDefault": [
+                    "wordSeparators"
+                ]
+            },
+            "Implements": [
+                "github.com/DavidBelicza/TextRank.Rule"
+            ],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Text).Append": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "text.go",
+            "LineNo": 16,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Text).Append",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Text",
+                "github.com/DavidBelicza/TextRank.ParsedSentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.ParsedSentence": [
+                    "original",
+                    "words"
+                ],
+                "github.com/DavidBelicza/TextRank.Text": [
+                    "parsedSentences"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.Text).GetSentences": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "text.go",
+            "LineNo": 31,
+            "Col": 19,
+            "Id": "(*github.com/DavidBelicza/TextRank.Text).GetSentences",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Text",
+                "github.com/DavidBelicza/TextRank.ParsedSentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Text": [
+                    "parsedSentences"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).FindPhrases": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 101,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).FindPhrases",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindPhrases"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Phrase"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByPhraseChain": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 167,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByPhraseChain",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindSentencesByPhrases"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByRelationWeight": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 117,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByRelationWeight",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindSentences"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [
+                "github.com/DavidBelicza/TextRank.ByRelation"
+            ],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByWordQtyWeight": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 128,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByWordQtyWeight",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindSentences"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [
+                "github.com/DavidBelicza/TextRank.ByQty"
+            ],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesFrom": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 178,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesFrom",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindSentencesFrom"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).FindSingleWords": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 109,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).FindSingleWords",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindSingleWords"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.SingleWord"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).GetRankData": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 91,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).GetRankData",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).Populate": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 67,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).Populate",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.TokenizeText",
+                "(*github.com/DavidBelicza/TextRank.Text).GetSentences",
+                "github.com/DavidBelicza/TextRank.TextToRank"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Language",
+                "github.com/DavidBelicza/TextRank.Rule",
+                "github.com/DavidBelicza/TextRank.Text",
+                "github.com/DavidBelicza/TextRank.ParsedSentence",
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(*github.com/DavidBelicza/TextRank.TextRank).Ranking": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 84,
+            "Col": 27,
+            "Id": "(*github.com/DavidBelicza/TextRank.TextRank).Ranking",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.Calculate"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Algorithm",
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Calculate": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "ranking.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Calculate",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.updateRanks"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Algorithm"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Example": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "examples.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Example",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.NewTextRank",
+                "github.com/DavidBelicza/TextRank.NewDefaultRule",
+                "github.com/DavidBelicza/TextRank.NewDefaultLanguage",
+                "github.com/DavidBelicza/TextRank.NewDefaultAlgorithm",
+                "(*github.com/DavidBelicza/TextRank.TextRank).Populate",
+                "(*github.com/DavidBelicza/TextRank.TextRank).Ranking",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindPhrases",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSingleWords",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByRelationWeight",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByWordQtyWeight",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesFrom",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByPhraseChain"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.RuleDefault",
+                "github.com/DavidBelicza/TextRank.LanguageDefault",
+                "github.com/DavidBelicza/TextRank.AlgorithmDefault",
+                "github.com/DavidBelicza/TextRank.Language",
+                "github.com/DavidBelicza/TextRank.Rule",
+                "github.com/DavidBelicza/TextRank.Algorithm",
+                "github.com/DavidBelicza/TextRank.Phrase",
+                "github.com/DavidBelicza/TextRank.SingleWord",
+                "github.com/DavidBelicza/TextRank.Sentence"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.FindPhrases": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 31,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.FindPhrases",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Phrase",
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Word",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Phrase": [
+                    "Weight",
+                    "LeftID",
+                    "RightID",
+                    "Left",
+                    "Right",
+                    "Qty"
+                ],
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Relation",
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "ID",
+                    "Token"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "sort",
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.FindSentences": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 105,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.FindSentences",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.FindSingleWords",
+                "github.com/DavidBelicza/TextRank.FindPhrases"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [
+                "github.com/DavidBelicza/TextRank.ByQty",
+                "github.com/DavidBelicza/TextRank.ByRelation"
+            ],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence",
+                "github.com/DavidBelicza/TextRank.SingleWord",
+                "github.com/DavidBelicza/TextRank.Word",
+                "github.com/DavidBelicza/TextRank.Phrase",
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Phrase": [
+                    "LeftID",
+                    "RightID"
+                ],
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "SentenceMap",
+                    "Words",
+                    "Relation"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Sentence": [
+                    "ID",
+                    "Value"
+                ],
+                "github.com/DavidBelicza/TextRank.SingleWord": [
+                    "ID"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "SentenceIDs"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.FindSentencesByPhrases": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 152,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.FindSentencesByPhrases",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence",
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "WordValID",
+                    "Relation",
+                    "SentenceMap"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node"
+                ],
+                "github.com/DavidBelicza/TextRank.Sentence": [
+                    "ID",
+                    "Value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "sort",
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.FindSentencesFrom": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 192,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.FindSentencesFrom",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Sentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "SentenceMap"
+                ],
+                "github.com/DavidBelicza/TextRank.Sentence": [
+                    "ID",
+                    "Value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.FindSingleWords": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 72,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.FindSingleWords",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.SingleWord",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words"
+                ],
+                "github.com/DavidBelicza/TextRank.SingleWord": [
+                    "ID",
+                    "Word",
+                    "Weight",
+                    "Qty"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "ID",
+                    "Token",
+                    "Weight",
+                    "Qty"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "sort",
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewAlgorithmChain": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 51,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewAlgorithmChain",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmChain"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewAlgorithmDefault": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 19,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewAlgorithmDefault",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmDefault"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewChainAlgorithm": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 51,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewChainAlgorithm",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.NewAlgorithmChain"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmChain"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewDefaultAlgorithm": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 42,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewDefaultAlgorithm",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.NewAlgorithmDefault"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.AlgorithmDefault"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewDefaultLanguage": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 32,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewDefaultLanguage",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.NewLanguage"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.LanguageDefault"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewDefaultRule": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 22,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewDefaultRule",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.NewRule"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.RuleDefault"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewLanguage": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 23,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewLanguage",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.getDefaultEnglish",
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetWords"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.LanguageDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.LanguageDefault": [
+                    "defaultLang",
+                    "languages"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewRank": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 59,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewRank",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Relation"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Max",
+                    "Min",
+                    "Relation",
+                    "SentenceMap",
+                    "Words",
+                    "WordValID"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Max",
+                    "Min",
+                    "Node"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewRule": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rule.go",
+            "LineNo": 18,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewRule",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.RuleDefault"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.RuleDefault": [
+                    "wordSeparators",
+                    "sentenceSeparators"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.NewTextRank": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 11,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.NewTextRank",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.NewRank"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.TextRank",
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.TextRank": [
+                    "rank"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.TextToRank": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "builder.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.TextToRank",
+            "UsedFunctions": [
+                "github.com/DavidBelicza/TextRank.addSentence",
+                "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetWords",
+                "github.com/DavidBelicza/TextRank.addWord"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.ParsedSentence",
+                "github.com/DavidBelicza/TextRank.Language",
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.TokenizeText": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "tokenizer.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.TokenizeText",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.RuleDefault).IsSentenceSeparator",
+                "github.com/DavidBelicza/TextRank.findWords",
+                "(*github.com/DavidBelicza/TextRank.Text).Append"
+            ],
+            "UsedInterfaceMethods": {
+                "github.com/DavidBelicza/TextRank.Rule": [
+                    "IsSentenceSeparator"
+                ]
+            },
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rule",
+                "github.com/DavidBelicza/TextRank.Text"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.addSentence": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "builder.go",
+            "LineNo": 34,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.addSentence",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetOriginal"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.ParsedSentence"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "SentenceMap"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.addWord": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "builder.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.addWord",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).IsStopWord",
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).FindRootWord",
+                "(*github.com/DavidBelicza/TextRank.Rank).IsWordExist",
+                "(*github.com/DavidBelicza/TextRank.Rank).AddNewWord",
+                "(*github.com/DavidBelicza/TextRank.Relation).AddRelation",
+                "(*github.com/DavidBelicza/TextRank.Rank).UpdateRightConnection",
+                "(*github.com/DavidBelicza/TextRank.Rank).UpdateWord"
+            ],
+            "UsedInterfaceMethods": {
+                "github.com/DavidBelicza/TextRank.Language": [
+                    "IsStopWord",
+                    "FindRootWord"
+                ]
+            },
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Language",
+                "github.com/DavidBelicza/TextRank.Relation"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Relation"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.findWords": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "tokenizer.go",
+            "LineNo": 33,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.findWords",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.RuleDefault).IsWordSeparator"
+            ],
+            "UsedInterfaceMethods": {
+                "github.com/DavidBelicza/TextRank.Rule": [
+                    "IsWordSeparator"
+                ]
+            },
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rule"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank",
+                "strings"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.ToLower"
+            ]
+        },
+        "github.com/DavidBelicza/TextRank.getDefaultEnglish": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "stop_word.go",
+            "LineNo": 3,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.getDefaultEnglish",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.normalize": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "ranking.go",
+            "LineNo": 64,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.normalize",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.updateRanks": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "ranking.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.updateRanks",
+            "UsedFunctions": [
+                "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingHits",
+                "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingHits",
+                "github.com/DavidBelicza/TextRank.normalize",
+                "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingRelation",
+                "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingRelation"
+            ],
+            "UsedInterfaceMethods": {
+                "github.com/DavidBelicza/TextRank.Algorithm": [
+                    "WeightingHits",
+                    "WeightingRelation"
+                ]
+            },
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/DavidBelicza/TextRank.Rank",
+                "github.com/DavidBelicza/TextRank.Algorithm",
+                "github.com/DavidBelicza/TextRank.Word",
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "UsedFields": {
+                "github.com/DavidBelicza/TextRank.Rank": [
+                    "Words",
+                    "Max",
+                    "Min",
+                    "Relation"
+                ],
+                "github.com/DavidBelicza/TextRank.Relation": [
+                    "Node",
+                    "Max",
+                    "Min"
+                ],
+                "github.com/DavidBelicza/TextRank.Score": [
+                    "Qty",
+                    "Weight",
+                    "SentenceIDs"
+                ],
+                "github.com/DavidBelicza/TextRank.Word": [
+                    "ID",
+                    "Weight"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/DavidBelicza/TextRank"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank/cmd.main": {
+            "Package": "github.com/DavidBelicza/TextRank/cmd",
+            "FilePath": "cmd/main.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank/cmd.main",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Globals": {},
+    "Constants": {
+        "github.com/DavidBelicza/TextRank.ByQty": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 98,
+            "Col": 7,
+            "Id": "github.com/DavidBelicza/TextRank.ByQty",
+            "UsedTypes": [],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.ByRelation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 101,
+            "Col": 7,
+            "Id": "github.com/DavidBelicza/TextRank.ByRelation",
+            "UsedTypes": [],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Types": {
+        "github.com/DavidBelicza/TextRank.Algorithm": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Algorithm",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "WeightingHits": [
+                    1,
+                    1
+                ],
+                "WeightingRelation": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.AlgorithmChain": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 48,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.AlgorithmChain",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingRelation",
+                "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingHits"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/DavidBelicza/TextRank.Algorithm": {
+                    "WeightingHits": "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingHits",
+                    "WeightingRelation": "(*github.com/DavidBelicza/TextRank.AlgorithmChain).WeightingRelation"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.AlgorithmDefault": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "algorithm.go",
+            "LineNo": 16,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.AlgorithmDefault",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingRelation",
+                "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingHits"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/DavidBelicza/TextRank.Algorithm": {
+                    "WeightingHits": "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingHits",
+                    "WeightingRelation": "(*github.com/DavidBelicza/TextRank.AlgorithmDefault).WeightingRelation"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Language": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 7,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Language",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "FindRootWord": [
+                    2,
+                    2
+                ],
+                "IsStopWord": [
+                    1,
+                    1
+                ],
+                "SetActiveLanguage": [
+                    3,
+                    3
+                ],
+                "SetWords": [
+                    4,
+                    4
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.LanguageDefault": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "language.go",
+            "LineNo": 16,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.LanguageDefault",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).IsStopWord",
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).FindRootWord",
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetActiveLanguage",
+                "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetWords"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/DavidBelicza/TextRank.Language": {
+                    "FindRootWord": "(*github.com/DavidBelicza/TextRank.LanguageDefault).FindRootWord",
+                    "IsStopWord": "(*github.com/DavidBelicza/TextRank.LanguageDefault).IsStopWord",
+                    "SetActiveLanguage": "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetActiveLanguage",
+                    "SetWords": "(*github.com/DavidBelicza/TextRank.LanguageDefault).SetWords"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "defaultLang": [
+                    1,
+                    1
+                ],
+                "languages": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.ParsedSentence": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "text.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.ParsedSentence",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetWords",
+                "(*github.com/DavidBelicza/TextRank.ParsedSentence).GetOriginal"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "original": [
+                    1,
+                    1
+                ],
+                "words": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Phrase": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 20,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Phrase",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Left": [
+                    3,
+                    3
+                ],
+                "LeftID": [
+                    1,
+                    1
+                ],
+                "Qty": [
+                    6,
+                    6
+                ],
+                "Right": [
+                    4,
+                    4
+                ],
+                "RightID": [
+                    2,
+                    2
+                ],
+                "Weight": [
+                    5,
+                    5
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Rank": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 19,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Rank",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.Rank).IsWordExist",
+                "(*github.com/DavidBelicza/TextRank.Rank).AddNewWord",
+                "(*github.com/DavidBelicza/TextRank.Rank).UpdateWord",
+                "(*github.com/DavidBelicza/TextRank.Rank).UpdateRightConnection",
+                "(*github.com/DavidBelicza/TextRank.Rank).GetWordData"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/DavidBelicza/TextRank.Relation",
+                "github.com/DavidBelicza/TextRank.Word"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Max": [
+                    1,
+                    1
+                ],
+                "Min": [
+                    2,
+                    2
+                ],
+                "Relation": [
+                    3,
+                    3
+                ],
+                "SentenceMap": [
+                    4,
+                    4
+                ],
+                "WordValID": [
+                    6,
+                    6
+                ],
+                "Words": [
+                    5,
+                    5
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Relation": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "relation.go",
+            "LineNo": 11,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Relation",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.Relation).AddRelation",
+                "(*github.com/DavidBelicza/TextRank.Relation).updateRelation",
+                "(*github.com/DavidBelicza/TextRank.Relation).extendRelation",
+                "(*github.com/DavidBelicza/TextRank.Relation).createRelation"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/DavidBelicza/TextRank.Score"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Max": [
+                    1,
+                    1
+                ],
+                "Min": [
+                    2,
+                    2
+                ],
+                "Node": [
+                    3,
+                    3
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Rule": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rule.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Rule",
+            "IsEnum": null,
+            "IsInterface": true,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "IsSentenceSeparator": [
+                    2,
+                    2
+                ],
+                "IsWordSeparator": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.RuleDefault": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rule.go",
+            "LineNo": 12,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.RuleDefault",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.RuleDefault).IsWordSeparator",
+                "(*github.com/DavidBelicza/TextRank.RuleDefault).IsSentenceSeparator"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {
+                "github.com/DavidBelicza/TextRank.Rule": {
+                    "IsSentenceSeparator": "(*github.com/DavidBelicza/TextRank.RuleDefault).IsSentenceSeparator",
+                    "IsWordSeparator": "(*github.com/DavidBelicza/TextRank.RuleDefault).IsWordSeparator"
+                }
+            },
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "sentenceSeparators": [
+                    2,
+                    2
+                ],
+                "wordSeparators": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Score": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "relation.go",
+            "LineNo": 24,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Score",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Qty": [
+                    1,
+                    1
+                ],
+                "SentenceIDs": [
+                    3,
+                    3
+                ],
+                "Weight": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Sentence": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 92,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Sentence",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "ID": [
+                    1,
+                    1
+                ],
+                "Value": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.SingleWord": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "sorting.go",
+            "LineNo": 63,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.SingleWord",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "ID": [
+                    1,
+                    1
+                ],
+                "Qty": [
+                    4,
+                    4
+                ],
+                "Weight": [
+                    3,
+                    3
+                ],
+                "Word": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Text": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "text.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Text",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.Text).Append",
+                "(*github.com/DavidBelicza/TextRank.Text).GetSentences"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/DavidBelicza/TextRank.ParsedSentence"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "parsedSentences": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.TextRank": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "textrank.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.TextRank",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [
+                "(*github.com/DavidBelicza/TextRank.TextRank).Populate",
+                "(*github.com/DavidBelicza/TextRank.TextRank).Ranking",
+                "(*github.com/DavidBelicza/TextRank.TextRank).GetRankData",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindPhrases",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSingleWords",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByRelationWeight",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByWordQtyWeight",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesByPhraseChain",
+                "(*github.com/DavidBelicza/TextRank.TextRank).FindSentencesFrom"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/DavidBelicza/TextRank.Rank"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "rank": [
+                    1,
+                    1
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/DavidBelicza/TextRank.Word": {
+            "Package": "github.com/DavidBelicza/TextRank",
+            "FilePath": "rank.go",
+            "LineNo": 48,
+            "Col": 6,
+            "Id": "github.com/DavidBelicza/TextRank.Word",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "ConnectionLeft": [
+                    3,
+                    3
+                ],
+                "ConnectionRight": [
+                    4,
+                    4
+                ],
+                "ID": [
+                    1,
+                    1
+                ],
+                "Qty": [
+                    6,
+                    6
+                ],
+                "SentenceIDs": [
+                    2,
+                    2
+                ],
+                "Token": [
+                    5,
+                    5
+                ],
+                "Weight": [
+                    7,
+                    7
+                ]
+            },
+            "UsedLibraryAPIs": []
+        }
+    },
+    "ModuleName": "github.com/DavidBelicza/TextRank"
+}

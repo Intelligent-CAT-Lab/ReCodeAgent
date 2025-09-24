@@ -1,0 +1,1 @@
+{"filepath": "example.rs", "imports": [], "type": "Function", "code": "pub fn example() -> Result<()> {\n    let provider = take_provider(\"isbn10\")?;\n\n    generate(&*provider, \"xyz\")?;\n\n    if !verify(&*provider, \"abc\") {\n        return Err(anyhow!(\"failed to verify\"));\n    }\n\n    Ok(())\n}\n", "id": "github.com/osamingo/checkdigit.Example"}

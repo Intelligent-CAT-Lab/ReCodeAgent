@@ -1,0 +1,156 @@
+[
+    {
+        "inputs": [
+            "",
+            "abcde",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "",
+            "abcde",
+            2
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            "",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "",
+            2
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcde",
+            "abcde",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "abcde",
+            2
+        ],
+        "return_value": 1065353216
+    },
+    {
+        "inputs": [
+            "abcd",
+            "effgghh",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcd",
+            "effgghh",
+            2
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "CRATE",
+            "TRACE",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "CRATE",
+            "TRACE",
+            2
+        ],
+        "return_value": 1048576000
+    },
+    {
+        "inputs": [
+            "MARTHA",
+            "MARHTA",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "MARTHA",
+            "MARHTA",
+            2
+        ],
+        "return_value": 1053609164
+    },
+    {
+        "inputs": [
+            "DIXON",
+            "DICKSONX",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "DIXON",
+            "DICKSONX",
+            2
+        ],
+        "return_value": 1052389004
+    },
+    {
+        "inputs": [
+            "Radiohead",
+            "Radiohead",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Radiohead",
+            "Radiohead",
+            2
+        ],
+        "return_value": 1065353216
+    },
+    {
+        "inputs": [
+            "ABCD",
+            "ABCE",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ABCD",
+            "ABCE",
+            2
+        ],
+        "return_value": 1059760810
+    },
+    {
+        "inputs": [
+            "Radiohead",
+            "Carly Rae Jepsen",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Radiohead",
+            "Carly Rae Jepsen",
+            2
+        ],
+        "return_value": 1027223184
+    },
+    {
+        "inputs": [
+            "I love horror movies",
+            "Lights out is a horror movie",
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "I love horror movies",
+            "Lights out is a horror movie",
+            2
+        ],
+        "return_value": 1056165692
+    }
+]

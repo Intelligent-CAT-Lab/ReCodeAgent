@@ -1,0 +1,92 @@
+[
+    {
+        "inputs": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            0
+        ],
+        "return_value": "testing"
+    },
+    {
+        "inputs": [
+            "test",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "test",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            0
+        ],
+        "return_value": "test"
+    },
+    {
+        "inputs": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            4
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            4
+        ],
+        "return_value": null
+    }
+]

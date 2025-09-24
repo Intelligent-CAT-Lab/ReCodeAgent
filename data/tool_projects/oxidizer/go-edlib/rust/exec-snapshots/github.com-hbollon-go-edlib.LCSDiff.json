@@ -1,0 +1,70 @@
+[
+    {
+        "inputs": [
+            "AB",
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "AB",
+            ""
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "",
+            "AB"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "",
+            "AB"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "AB",
+            "AB"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "AB",
+            "AB"
+        ],
+        "return_value": [
+            "AB"
+        ]
+    },
+    {
+        "inputs": [
+            "computer",
+            "houseboat"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "computer",
+            "houseboat"
+        ],
+        "return_value": [
+            " h c o m p u s e b o a t e r",
+            " + -   - -   + + + + +   - -"
+        ]
+    },
+    {
+        "inputs": [
+            "\u60a8\u597d\u5973\u58eb \u4f60\u597d\u5417\uff1f",
+            "\u5148\u751f \u4f60\u597d\u5417\uff1f"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u60a8\u597d\u5973\u58eb \u4f60\u597d\u5417\uff1f",
+            "\u5148\u751f \u4f60\u597d\u5417\uff1f"
+        ],
+        "return_value": [
+            " \u5148 \u751f \u60a8 \u597d \u5973 \u58eb   \u4f60 \u597d \u5417 \uff1f",
+            " + + - - - -          "
+        ]
+    }
+]

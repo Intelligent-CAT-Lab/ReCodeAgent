@@ -1,0 +1,1191 @@
+{
+    "BasePath": "/mnt/transpile/benchmarks/go-edlib",
+    "Functions": {
+        "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Len": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 17,
+            "Col": 21,
+            "Id": "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Len",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Less": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 20,
+            "Col": 21,
+            "Id": "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Less",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap",
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair"
+            ],
+            "UsedFields": {
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair": [
+                    "Value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).SortByValues": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 37,
+            "Col": 21,
+            "Id": "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).SortByValues",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "sort",
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": [
+                "sort.Interface"
+            ]
+        },
+        "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Swap": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 23,
+            "Col": 21,
+            "Id": "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Swap",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap",
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).ToArray": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 26,
+            "Col": 21,
+            "Id": "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).ToArray",
+            "UsedFunctions": [
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Len"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap",
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair"
+            ],
+            "UsedFields": {
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair": [
+                    "Key"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).AddAll": {
+            "Package": "github.com/hbollon/go-edlib/internal/utils",
+            "FilePath": "internal/utils/utils.go",
+            "LineNo": 40,
+            "Col": 24,
+            "Id": "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).AddAll",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/utils.StringHashMap"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).ToArray": {
+            "Package": "github.com/hbollon/go-edlib/internal/utils",
+            "FilePath": "internal/utils/utils.go",
+            "LineNo": 47,
+            "Col": 24,
+            "Id": "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).ToArray",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/utils.StringHashMap"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.CosineSimilarity": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "cosine.go",
+            "LineNo": 13,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.CosineSimilarity",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.ShingleSlice",
+                "github.com/hbollon/go-edlib.union",
+                "github.com/hbollon/go-edlib.find",
+                "github.com/hbollon/go-edlib.sum"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "github.com/hbollon/go-edlib",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Split",
+                "math.Sqrt"
+            ]
+        },
+        "github.com/hbollon/go-edlib.DamerauLevenshteinDistance": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "levenshtein.go",
+            "LineNo": 108,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.DamerauLevenshteinDistance",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib/internal/utils.Min"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.FuzzySearch": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 92,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.FuzzySearch",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.StringsSimilarity"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.FuzzySearchSet": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 137,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.FuzzySearchSet",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.StringsSimilarity",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).ToArray",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Len",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).SortByValues"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm",
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap",
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair"
+            ],
+            "UsedFields": {
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair": [
+                    "Value",
+                    "Key"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.FuzzySearchSetThreshold": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 160,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.FuzzySearchSetThreshold",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.StringsSimilarity",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).ToArray",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Len",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).SortByValues"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm",
+                "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap",
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair"
+            ],
+            "UsedFields": {
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair": [
+                    "Key",
+                    "Value"
+                ]
+            },
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "github.com/hbollon/go-edlib/internal/orderedmap"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.FuzzySearchThreshold": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 114,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.FuzzySearchThreshold",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.StringsSimilarity"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.HammingDistance": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "hamming.go",
+            "LineNo": 11,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.HammingDistance",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "errors",
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        },
+        "github.com/hbollon/go-edlib.JaccardSimilarity": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "jaccard.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.JaccardSimilarity",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.ShingleSlice",
+                "github.com/hbollon/go-edlib.union"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "strings",
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": [
+                "strings.Split"
+            ]
+        },
+        "github.com/hbollon/go-edlib.JaroSimilarity": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "jaro.go",
+            "LineNo": 7,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.JaroSimilarity",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib/internal/utils.Max",
+                "github.com/hbollon/go-edlib/internal/utils.Min"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.JaroWinklerSimilarity": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "jaro.go",
+            "LineNo": 66,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.JaroWinklerSimilarity",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.JaroSimilarity",
+                "github.com/hbollon/go-edlib/internal/utils.Min"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.LCS": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.LCS",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib.lcsProcess"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils",
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.LCSBacktrack": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 50,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.LCSBacktrack",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib.lcsProcess",
+                "github.com/hbollon/go-edlib.processLCSBacktrack"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "errors",
+                "github.com/hbollon/go-edlib/internal/utils",
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        },
+        "github.com/hbollon/go-edlib.LCSBacktrackAll": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 80,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.LCSBacktrackAll",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib.lcsProcess",
+                "github.com/hbollon/go-edlib.processLCSBacktrackAll",
+                "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).ToArray"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/utils.StringHashMap"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "errors",
+                "github.com/hbollon/go-edlib/internal/utils",
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        },
+        "github.com/hbollon/go-edlib.LCSDiff": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 120,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.LCSDiff",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib.lcsProcess",
+                "github.com/hbollon/go-edlib.processLCSDiff"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "errors",
+                "github.com/hbollon/go-edlib/internal/utils",
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        },
+        "github.com/hbollon/go-edlib.LCSEditDistance": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 163,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.LCSEditDistance",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.LCS"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.LevenshteinDistance": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "levenshtein.go",
+            "LineNo": 8,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.LevenshteinDistance",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib/internal/utils.Min"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.OSADamerauLevenshteinDistance": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "levenshtein.go",
+            "LineNo": 54,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.OSADamerauLevenshteinDistance",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal",
+                "github.com/hbollon/go-edlib.OSADamerauLevenshteinDistance",
+                "github.com/hbollon/go-edlib/internal/utils.Min"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils",
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.QgramDistance": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "qgram.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.QgramDistance",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.Shingle"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Abs"
+            ]
+        },
+        "github.com/hbollon/go-edlib.QgramDistanceCustomNgram": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "qgram.go",
+            "LineNo": 32,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.QgramDistanceCustomNgram",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "math"
+            ],
+            "UsedLibraryAPIs": [
+                "math.Abs"
+            ]
+        },
+        "github.com/hbollon/go-edlib.QgramSimilarity": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "qgram.go",
+            "LineNo": 51,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.QgramSimilarity",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.Shingle",
+                "github.com/hbollon/go-edlib.QgramDistanceCustomNgram"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Shingle": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "shingle.go",
+            "LineNo": 6,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.Shingle",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.ShingleSlice": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "shingle.go",
+            "LineNo": 21,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.ShingleSlice",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.SorensenDiceCoefficient": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "sorensen_dice.go",
+            "LineNo": 5,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.SorensenDiceCoefficient",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.Shingle"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.StringsSimilarity": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 45,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.StringsSimilarity",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.LevenshteinDistance",
+                "github.com/hbollon/go-edlib.matchingIndex",
+                "github.com/hbollon/go-edlib.DamerauLevenshteinDistance",
+                "github.com/hbollon/go-edlib.OSADamerauLevenshteinDistance",
+                "github.com/hbollon/go-edlib.LCSEditDistance",
+                "github.com/hbollon/go-edlib.HammingDistance",
+                "github.com/hbollon/go-edlib.JaroSimilarity",
+                "github.com/hbollon/go-edlib.JaroWinklerSimilarity",
+                "github.com/hbollon/go-edlib.CosineSimilarity",
+                "github.com/hbollon/go-edlib.JaccardSimilarity",
+                "github.com/hbollon/go-edlib.SorensenDiceCoefficient",
+                "github.com/hbollon/go-edlib.QgramSimilarity"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [
+                "github.com/hbollon/go-edlib.Levenshtein",
+                "github.com/hbollon/go-edlib.DamerauLevenshtein",
+                "github.com/hbollon/go-edlib.OSADamerauLevenshtein",
+                "github.com/hbollon/go-edlib.Lcs",
+                "github.com/hbollon/go-edlib.Hamming",
+                "github.com/hbollon/go-edlib.Jaro",
+                "github.com/hbollon/go-edlib.JaroWinkler",
+                "github.com/hbollon/go-edlib.Cosine",
+                "github.com/hbollon/go-edlib.Jaccard",
+                "github.com/hbollon/go-edlib.SorensenDice",
+                "github.com/hbollon/go-edlib.Qgram"
+            ],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "errors"
+            ],
+            "UsedLibraryAPIs": [
+                "errors.New"
+            ]
+        },
+        "github.com/hbollon/go-edlib.find": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "cosine.go",
+            "LineNo": 90,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.find",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Equal"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.lcsProcess": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 26,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.lcsProcess",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib/internal/utils.Max"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.matchingIndex": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 79,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.matchingIndex",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.processLCSBacktrack": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 63,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.processLCSBacktrack",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.processLCSBacktrack"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.processLCSBacktrackAll": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 93,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.processLCSBacktrackAll",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.processLCSBacktrackAll",
+                "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).AddAll"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib/internal/utils.StringHashMap"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "github.com/hbollon/go-edlib/internal/utils"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.processLCSDiff": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "lcs.go",
+            "LineNo": 134,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.processLCSDiff",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.processLCSDiff"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.sum": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "cosine.go",
+            "LineNo": 100,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.sum",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.union": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "cosine.go",
+            "LineNo": 69,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.union",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/cmd.main": {
+            "Package": "github.com/hbollon/go-edlib/cmd",
+            "FilePath": "cmd/main.go",
+            "LineNo": 9,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/cmd.main",
+            "UsedFunctions": [
+                "github.com/hbollon/go-edlib.FuzzySearchThreshold"
+            ],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [
+                "github.com/hbollon/go-edlib",
+                "fmt"
+            ],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/internal/utils.Equal": {
+            "Package": "github.com/hbollon/go-edlib/internal/utils",
+            "FilePath": "internal/utils/utils.go",
+            "LineNo": 23,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/internal/utils.Equal",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/internal/utils.Max": {
+            "Package": "github.com/hbollon/go-edlib/internal/utils",
+            "FilePath": "internal/utils/utils.go",
+            "LineNo": 15,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/internal/utils.Max",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/internal/utils.Min": {
+            "Package": "github.com/hbollon/go-edlib/internal/utils",
+            "FilePath": "internal/utils/utils.go",
+            "LineNo": 7,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/internal/utils.Min",
+            "UsedFunctions": [],
+            "UsedInterfaceMethods": {},
+            "UsedGlobals": [],
+            "UsedConstants": [],
+            "UsedTypes": [],
+            "UsedFields": {},
+            "Implements": [],
+            "UsedPackages": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Globals": {},
+    "Constants": {
+        "github.com/hbollon/go-edlib.Cosine": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 21,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Cosine",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.DamerauLevenshtein": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 15,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.DamerauLevenshtein",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Hamming": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 18,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Hamming",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Jaccard": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 22,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Jaccard",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Jaro": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 19,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Jaro",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.JaroWinkler": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 20,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.JaroWinkler",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Lcs": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 17,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Lcs",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Levenshtein": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 14,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Levenshtein",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.OSADamerauLevenshtein": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 16,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.OSADamerauLevenshtein",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.Qgram": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 24,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.Qgram",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib.SorensenDice": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 23,
+            "Col": 2,
+            "Id": "github.com/hbollon/go-edlib.SorensenDice",
+            "UsedTypes": [
+                "github.com/hbollon/go-edlib.Algorithm"
+            ],
+            "UsedConstants": [],
+            "UsedLibraryAPIs": []
+        }
+    },
+    "Types": {
+        "github.com/hbollon/go-edlib.Algorithm": {
+            "Package": "github.com/hbollon/go-edlib",
+            "FilePath": "string_analysis.go",
+            "LineNo": 10,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib.Algorithm",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": true,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 14,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": true,
+            "ExplicitMethods": [
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Len",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Less",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).Swap",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).ToArray",
+                "(github.com/hbollon/go-edlib/internal/orderedmap.OrderedMap).SortByValues"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [
+                "github.com/hbollon/go-edlib/internal/orderedmap.pair"
+            ],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/internal/orderedmap.pair": {
+            "Package": "github.com/hbollon/go-edlib/internal/orderedmap",
+            "FilePath": "internal/orderedmap/orderedmap.go",
+            "LineNo": 7,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/internal/orderedmap.pair",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": false,
+            "ExplicitMethods": [],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {
+                "Key": [
+                    1,
+                    1
+                ],
+                "Value": [
+                    2,
+                    2
+                ]
+            },
+            "UsedLibraryAPIs": []
+        },
+        "github.com/hbollon/go-edlib/internal/utils.StringHashMap": {
+            "Package": "github.com/hbollon/go-edlib/internal/utils",
+            "FilePath": "internal/utils/utils.go",
+            "LineNo": 4,
+            "Col": 6,
+            "Id": "github.com/hbollon/go-edlib/internal/utils.StringHashMap",
+            "IsEnum": null,
+            "IsInterface": false,
+            "NewTypeOrTypeAlias": true,
+            "ExplicitMethods": [
+                "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).AddAll",
+                "(github.com/hbollon/go-edlib/internal/utils.StringHashMap).ToArray"
+            ],
+            "ImplicitMethods": [],
+            "InterfaceImplementations": {},
+            "DependentTypes": [],
+            "EmbeddedTypes": [],
+            "FieldNameLineNos": {},
+            "UsedLibraryAPIs": []
+        }
+    },
+    "ModuleName": "github.com/hbollon/go-edlib"
+}

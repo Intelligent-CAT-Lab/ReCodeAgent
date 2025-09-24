@@ -1,0 +1,21 @@
+[
+    {
+        "inputs": [],
+        "execution_success": true,
+        "input_modifications": [],
+        "return_value": {
+            "rank": {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {},
+                "WordValID": {}
+            }
+        }
+    }
+]

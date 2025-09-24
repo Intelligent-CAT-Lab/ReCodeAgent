@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            "",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "",
+            "abcde"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            "abcde",
+            ""
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            ""
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            "abcde",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "abcde"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "ab",
+            "aa"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "aa"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            "ab",
+            "ba"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "ba"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            "ab",
+            "aaa"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "aaa"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "bbb",
+            "a"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "bbb",
+            "a"
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            "ca",
+            "abc"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ca",
+            "abc"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "a cat",
+            "an abct"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "a cat",
+            "an abct"
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            "dixon",
+            "dicksonx"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "dixon",
+            "dicksonx"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            "jellyfish",
+            "smellyfish"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "jellyfish",
+            "smellyfish"
+        ],
+        "return_value": 2
+    }
+]

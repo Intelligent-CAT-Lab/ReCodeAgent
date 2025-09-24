@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            "",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "",
+            "abcde"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            "abcde",
+            ""
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            ""
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            "abcde",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "abcde"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "ab",
+            "aa"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "aa"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            "ab",
+            "ba"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "ba"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "ab",
+            "aaa"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "aaa"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "bbb",
+            "a"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "bbb",
+            "a"
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            "kitten",
+            "sitting"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "kitten",
+            "sitting"
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            "distance",
+            "difference"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "distance",
+            "difference"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            "a cat",
+            "an abct"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "a cat",
+            "an abct"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            "\u3053\u306b\u3093\u3061",
+            "\u3053\u3093\u306b\u3061\u306f"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\u3053\u306b\u3093\u3061",
+            "\u3053\u3093\u306b\u3061\u306f"
+        ],
+        "return_value": 3
+    }
+]

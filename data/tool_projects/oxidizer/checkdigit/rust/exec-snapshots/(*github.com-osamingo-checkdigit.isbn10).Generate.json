@@ -1,0 +1,98 @@
+[
+    {
+        "inputs": [
+            {},
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            ""
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "9780002715096"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "9780002715096"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "15586"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "15586"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "155860832X"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "155860832X"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "aaaaaaaaa"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "aaaaaaaaa"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "002651562"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "002651562"
+        ],
+        "return_value": 8
+    },
+    {
+        "inputs": [
+            {},
+            "007231592"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "007231592"
+        ],
+        "return_value": 10
+    },
+    {
+        "inputs": [
+            {},
+            "155860832"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "155860832"
+        ],
+        "return_value": 10
+    }
+]
