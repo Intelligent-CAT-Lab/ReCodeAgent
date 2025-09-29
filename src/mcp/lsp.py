@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 MCP Server for Language Server Protocol operations using multilspy.
 
@@ -7,22 +6,57 @@ supporting multiple programming languages including Java, Python, Rust, C#,
 TypeScript, JavaScript, Go, Dart, and Ruby.
 """
 
-import asyncio
-import json
-from typing import Any, Dict, List, Optional, Union
+import psutil
+from typing import Any, Dict
 from pathlib import Path
 
 try:
     from multilspy import SyncLanguageServer
     from multilspy.multilspy_config import MultilspyConfig
     from multilspy.multilspy_logger import MultilspyLogger
-    from multilspy import multilspy_types
+    from multilspy.lsp_protocol_handler import server
 except ImportError:
     raise ImportError(
         "multilspy is required. Install with: pip install multilspy"
     )
 
 from fastmcp import FastMCP
+
+
+def safe_signal_process_tree(self, process, terminate=True):
+    """Safe version of _signal_process_tree that ignores NoSuchProcess errors."""
+    signal_method = "terminate" if terminate else "kill"
+
+    parent = None
+    try:
+        parent = psutil.Process(process.pid)
+    except (psutil.NoSuchProcess, psutil.AccessDenied, Exception):
+        parent = None
+
+    if parent and parent.is_running():
+        try:
+            children = parent.children(recursive=True)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            children = []
+
+        for child in children:
+            try:
+                getattr(child, signal_method)()
+            except (psutil.NoSuchProcess, psutil.AccessDenied, Exception):
+                pass
+
+        try:
+            getattr(parent, signal_method)()
+        except (psutil.NoSuchProcess, psutil.AccessDenied, Exception):
+            pass
+    else:
+        try:
+            getattr(process, signal_method)()
+        except Exception:
+            pass
+
+# Monkey-patch the class
+server.LanguageServerHandler._signal_process_tree = safe_signal_process_tree
 
 # Initialize the MCP server
 mcp = FastMCP("Language Server Protocol")
@@ -65,7 +99,7 @@ def initialize_lsp_server(
     Initialize a language server for a specific programming language and project.
     
     This tool sets up a language server instance that can be used for subsequent
-    LSP operations like go-to-definition, completions, etc.
+    LSP operations like go-to-definition, find-references, etc.
     
     Args:
         language: Programming language. Supported values: "java", "python", "rust", 
@@ -145,8 +179,7 @@ def request_definition(
         lsp_server = _get_or_create_lsp_server(language, project_root)
         
         with lsp_server.start_server():
-            with lsp_server.open_file(file_path):
-                result = lsp_server.request_definition(file_path, line, column)
+            result = lsp_server.request_definition(file_path, line, column)
             
         return {
             "success": True,
@@ -196,8 +229,7 @@ def request_references(
         lsp_server = _get_or_create_lsp_server(language, project_root)
         
         with lsp_server.start_server():
-            with lsp_server.open_file(file_path):
-                result = lsp_server.request_references(file_path, line, column)
+            result = lsp_server.request_references(file_path, line, column)
             
         return {
             "success": True,
@@ -244,8 +276,7 @@ def request_document_symbols(
         lsp_server = _get_or_create_lsp_server(language, project_root)
         
         with lsp_server.start_server():
-            with lsp_server.open_file(relative_file_path):
-                result = lsp_server.request_document_symbols(relative_file_path)
+            result = lsp_server.request_document_symbols(relative_file_path)
             
         return {
             "success": True,
@@ -292,9 +323,8 @@ def request_hover(
         lsp_server = _get_or_create_lsp_server(language, project_root)
         
         with lsp_server.start_server():
-            with lsp_server.open_file(relative_file_path):
-                result = lsp_server.request_hover(relative_file_path, line, column)
-            
+            result = lsp_server.request_hover(relative_file_path, line, column)
+        
         return {
             "success": True,
             "hover_info": result,
@@ -353,95 +383,6 @@ def request_workspace_symbol(
             "success": False,
             "error": f"Failed to get workspace symbols: {str(e)}",
             "query": query
-        }
-
-
-@mcp.tool()
-def open_file(
-    language: str,
-    project_root: str,
-    relative_file_path: str
-) -> Dict[str, Any]:
-    """
-    Open a file in the Language Server.
-    
-    This is required before making any requests to the Language Server for a specific file.
-    The file remains open until the server is cleaned up or restarted.
-    
-    Args:
-        language: Programming language of the file
-        project_root: Absolute path to the project root directory
-        relative_file_path: Relative path to the code file from project root
-        
-    Returns:
-        Dictionary containing operation status
-        
-    Example:
-        open_file("java", "/path/to/project", "src/Main.java")
-    """
-    try:
-        lsp_server = _get_or_create_lsp_server(language, project_root)
-        
-        with lsp_server.start_server():
-            with lsp_server.open_file(relative_file_path):
-                # File is now open in the language server
-                pass
-            
-        return {
-            "success": True,
-            "message": f"File {relative_file_path} opened successfully",
-            "file_path": relative_file_path
-        }
-        
-    except Exception as e:
-        return {
-            "success": False,
-            "error": f"Failed to open file: {str(e)}",
-            "file_path": relative_file_path
-        }
-
-
-@mcp.tool()
-def get_open_file_text(
-    language: str,
-    project_root: str,
-    relative_file_path: str
-) -> Dict[str, Any]:
-    """
-    Get the contents of the given opened file as per the Language Server.
-    
-    This tool retrieves the current content of a file that has been opened in the
-    language server, which may include any modifications made through the LSP.
-    
-    Args:
-        language: Programming language of the file
-        project_root: Absolute path to the project root directory
-        relative_file_path: Relative path to the code file from project root
-        
-    Returns:
-        Dictionary containing the file content or error information
-        
-    Example:
-        get_open_file_text("go", "/path/to/project", "main.go")
-    """
-    try:
-        lsp_server = _get_or_create_lsp_server(language, project_root)
-        
-        with lsp_server.start_server():
-            with lsp_server.open_file(relative_file_path):
-                content = lsp_server.get_open_file_text(relative_file_path)
-            
-        return {
-            "success": True,
-            "content": content,
-            "file_path": relative_file_path
-        }
-        
-    except Exception as e:
-        return {
-            "success": False,
-            "error": f"Failed to get file content: {str(e)}",
-            "file_path": relative_file_path
         }
 
 
