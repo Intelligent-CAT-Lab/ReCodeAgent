@@ -8,6 +8,7 @@ RM = rm -f
 
 # Directories
 SRC_DIR = src
+TEST_DIR = tests
 
 # Sources and Headers
 SOURCES = avalanche.c  # Compiled in current directory
@@ -31,14 +32,14 @@ matrix_test: $(TEST_OBJECTS) avalanche.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(TEST_OBJECTS) avalanche.o
 
 # Rule to compile test source file in the current directory
-matrix_test.o: src/matrix_test.c
+matrix_test.o: $(TEST_DIR)/matrix_test.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # FNV-1a Binaries (Coverage stats in the current directory)
-fnv_32: src/fnv_1a.c avalanche.o $(HEADERS)
+fnv_32: $(TEST_DIR)/fnv_1a.c avalanche.o $(HEADERS)
 	$(CC) $(CFLAGS) -o $@ $< avalanche.o
 
-fnv_mw: src/fnv_1a.c avalanche.o $(HEADERS)
+fnv_mw: $(TEST_DIR)/fnv_1a.c avalanche.o $(HEADERS)
 	$(CC) $(CFLAGS) -DMULTI_WORD -o $@ $< avalanche.o
 
 # Clean rule
