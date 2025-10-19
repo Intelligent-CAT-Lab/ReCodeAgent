@@ -1,0 +1,249 @@
+templates:
+  recodeagent:
+    analyzer: |-
+      # C to Rust Translation High-Level Design Script
+
+      ## Overview
+
+      This script guides you through the process of creating a high-level design for a Rust translation of a C project. The goal is a 1:1 translation, unless otherwise described in the {translation_requirements} parameter described below.
+
+      ## Parameters
+
+      The following are parameters for this script.
+
+      - **source_project_root**: {{ source_project_root }}
+      - **target_translation_root**: {{ target_translation_root }}
+      - **translation_requirements**: 
+      - **planning_dir**: {{ planning_dir }}
+
+      ## Steps
+
+      ### 1. Create Planning Directory
+
+      Setup a directory to organize planning-related documents.
+
+      **Constraints:**
+      - You MUST check if the planning directory exists and is not empty
+      - If the planning directory is not empty, you MUST ask the user how to proceed
+      - You MUST use the 'mkdir' command to make directories
+      - You MUST create {planning_dir} in the current working directory if it does not exist
+
+      ### 2. Understand the C Project Design
+
+      Analyze the source files of the C project to understand the functionality it provides.
+
+      **Constraints:**
+      - You MUST create a research document at {planning_dir}/c-project-research.md
+      - The document MUST have the following sections
+        - Overview
+        - Structs & Interfaces
+        - Data Models
+          - External Data Models (this covers data formats for data received from network I/O and file I/O)
+          - Internal Data Models (this covers data handled within the C project)
+        - Error Handling
+        - Dependencies
+      - You SHOULD focus only on the source files of the C project
+      - You SHOULD lookup documentation for any uncommon external dependencies (standard or 3rd party) in the C project to ensure you fully understand the functionality they provide
+
+      ### 3. (Optional) Understand Translated Rust Dependencies
+
+      If C files have already been translated in {rust_translation_root}, analyze its source code to understand the current state of the translation. Otherwise, proceed to the next step.
+
+      **Constraints:**
+      - You MUST look at {rust_translation_root}/Cargo.toml so that you know what external crates are used in the translation
+      - You MUST analyze the code of any crates you plan to use when translating the C project
+
+      ### 4. Research Rust Crates
+
+      Conduct research on relevant Rust crates that could inform the design of the translation of the C project.
+
+      **Constraints:**
+      - You MUST research the crates provided by the user in the translation_requirements
+      - You MUST determine the recommended and idiomatic usage pattern for each crate you intend to use by reading the crate's documentation
+      - You SHOULD lookup the documentation of each item in each crate you intend to use to see recommended usage patterns
+      - You MUST document research findings for each crate in separate markdown files in the {planning_dir}/crate_research/ directory
+      - You SHOULD consider different usage choices and weigh their trade-offs
+
+      ### 5. Create the Overall Rust Translation Design
+
+      Write an overall design document based on the information gathered in the previous steps.
+
+      **Constraints:**
+      - You MUST create an overall design document called {planning_dir}/rust-overall-design.md
+      - rust-overall-design.md must have the following sections
+        - Overview
+        - Translation Requirements
+        - C Source Files to Translate
+        - Rust Module Structure
+        - Rust Structs & Traits
+        - Rust Error Handling
+        - Rust 3rd Party Crates
+        - Rust Translated Crates
+      - The Structs & Traits design MUST support mocking in the same way as the C project
+      - The Translated Crates MUST list the items of already-translated crates that will be used in the translation
+    planning: |-
+      # C to Rust Translation Plan Script
+
+      ## Overview
+      This script guides you through the process of creating a plan to translate a C project into Rust. A high-level design for the translation has already been written. The translation will be "1:1", meaning each C item (an item is a function, method, struct, interface, test, or global variable) will have a Rust translation unless the translation requirements explicity require certain items to not be translated. The translation plan will translate sets of C items to Rust in a "bottom-up" order. To aid in developing the translation strategy, we will make a call graph.
+
+      ## Parameters
+
+      The following are parameters for this script.
+
+      - **source_project_root**: {{ source_project_root }}
+      - **target_translation_root**: {{ target_translation_root }}
+      - **planning_dir**: {{ planning_dir }}
+
+      ## Steps
+
+      ### 1. Verify Dependencies
+
+      Read the required documents to understand the design decisions made for the Rust translation.
+
+      **Constraints:**
+      - You MUST read the following file in its entirety: {planning_dir}/rust-overall-design.md
+
+      ### 2. Create a List of C Functions and Methods to Translate
+
+      Create a list of C functions and methods that will be translated.
+
+      **Constraints:**
+      - You MUST write a list of C functions and methods that will be translated under {planning_dir}/c-functions.md
+      - Each line in the file MUST have the following format: <c-file-name.c>:<c-item-name>
+      - Each <c-item-name> MUST follow the following convention:
+          - For methods: <reciever-type-name>.<method-name>
+          - For functions: <function-name>
+      - You MUST ONLY include functions and methods that will be translated, respecting the translation's requirements outlined in {planning_dir}/rust-overall-design.md
+
+      ### 3. Create the Call Graph
+
+      Create a file with the call graph.
+
+      **Constraints:**
+      - You MUST write the call graph to the file {planning_dir}/c-call-graph.md
+      - The call graph MUST ONLY cover functions and methods listed in {planning_dir}/c-functions.md
+      - Each line in {planning_dir}/c-call-graph.md MUST contain the functions and methods called by a single C function or method, and have the following format: <c-item-reference>: <c-item-reference>,<c-item-reference>,...
+      - Each <c-item-reference> MUST have the following format: <c-file-name.c>:<c-item-name>
+      - Each <c-item-name> MUST follow the following convention:
+          - For methods: <reciever-type-name>.<method-name>
+          - For functions: <function-name>
+      - Test functions MUST have their callees listed too
+
+      ### 4. Create the Translation Plan
+
+      Create a plan to incrementally implement, compile, and test the translation.
+
+      **Constraints:**
+      - You MUST create an implementation plan at {planning_dir}/implementation-plan.md
+      - You MUST include a checklist at the beginning of the implementation-plan.md file to track implementation progress
+      - The first step in the implementation plan MUST be the following:
+      ```
+      ### Step 1: Create skeleton project structure
+
+      **Description:** Create the file structure of the Rust translation under {rust_translation_root}. Implement all structs, traits, global variables, and constants. Write stubs for all functions, methods, and tests. If skeleton code already exists, ensure it is complete.
+
+      ```
+      - The remaining steps MUST follow a test-driven-development methodology, and priorize testing functions as soon as they are implemented
+      - The remaining steps MUST have the following information:
+        - Description
+        - Functions and methods to translate, written as a list of <c-item-reference>'s
+        - Tests to translate, written as a list of <c-item-reference>'s. If a test is already implemented, it MUST NOT be listed here
+      - The steps MUST be ordered such that all of the depenencies of the Rust source to implement are implemented before that step
+      - You MUST NOT include excessive implementation details that are already covered in the translation document because this creates redundancy and potential inconsistencies
+      - Each step MUST result in compilable code
+      - A step MAY NOT have tests to implement
+      - The plan MUST cover all tests, functions, and methods
+    translator: |-
+      # C to Rust Translation Execution Script
+
+      ## Overview
+
+      This script guides you through the process of executing an already-written plan for translating a C project to Rust.
+
+      ## Parameters
+
+      The following are parameters for this script.
+
+      - **source_project_root**: {{ source_project_root }}
+      - **target_translation_root**: {{ target_translation_root }}
+      - **planning_dir**: {{ planning_dir }}
+
+      ## Steps
+
+      ### 1. Verify Dependencies
+
+      Read the required documents to understand the design decisions made for the Rust translation.
+
+      **Constraints:**
+      - You MUST read the entire contents of the following documents into your context:
+        - {planning_dir}/implementation-plan.md
+        - {planning_dir}/rust-overall-design.md
+
+      ### 2. Read C Source Code
+
+      Read the C source code so that you have a reference for what you are translating.
+
+      **Constraints:**
+      - You MUST read in the C source files you are translating in their entirety. This is important so that you know what implement in the Rust translation.
+
+      ### 2. Execute the Implementation Plan
+
+      Execute the the steps in {planning_dir}/implementation-plan.md in order.
+
+      **Constraints:**
+      - You MUST execute the steps in implementation-plan.md in order
+      - After completing a step, you MUST mark it as completed in implementation-plan.md
+      - Before completing a step, you MUST make sure the codebase compiles and tests pass
+      - You MUST implement ALL functions and tests as indicated in the step
+      - You MUST ensure that the Rust functions and tests maintain the exact same functionality as the original C functions
+      - If you cannot implement all functions and tests, you MUST inform the user why they cannot be implemented, and then ask for directions on how to proceed
+      - If a Rust test already exists, you MUST NOT re-implement it
+      - You MUST NOT make any changes to Rust tests under bin/test.rs. You can only execute tests with `cargo test` to verify they pass
+    validator: |-
+      # C to Rust Translation Plan Script
+
+      ## Overview
+      You are an expert agent specializing in test generation and code repair. Based on the analysis from multiple expert agents regarding functional equivalence between {{ source_language }} and {{ target_language }} implementations of the given method/function, your task is to generate tests and repair the target implementation if necessary. Two code fragments in different programming languages are considered functionally equivalent if, when executed on the same input, they always have identical program states at all corresponding points reachable by program execution, and they both produce the same output upon termination.
+
+
+      ## Parameters
+
+      The following are parameters for this script.
+
+      - **source_project_root**: {{ source_project_root }}
+      - **target_translation_root**: {{ target_translation_root }}
+      - **planning_dir**: {{ planning_dir }}
+
+      ## Steps
+
+      ### 1. Verify Dependencies
+
+      Check for required tools and warn the user if they are missing.
+
+      **Constraints:**
+      - You MUST read the following file in its entirety: {planning_dir}/rust-overall-design.md
+      - You MUST verify the following tools are available in your context:
+      - Write
+      - Read
+      - Bash
+      - You MUST ONLY check for tool existence and MUST NOT attempt to run the tools because running tools during verification could cause unintended side effects, consume resources unnecessarily, or trigger actions before the user is ready
+      - You MUST inform the user about any missing tools with a clear message
+      - You MUST ask if the user wants to proceed anyway despite missing tools
+      - You MUST respect the user's decision to proceed or abort
+
+      ### 2. Validate the translated functions and methods
+
+      Validate the translated functions and methods by generating tests in both C and Rust, running them, and repairing the Rust code if necessary.
+
+      **Constraints:**
+      - Your tests should be generated in target file path as standalone files and stored with other tests (see how existing tests are stored). Here is some guide on how to properly store and execute tests for each language:
+          1. Rust: You can create a new test file which includes your tests. Make sure you execute tests using `cargo test`
+          2. Python: You can create a new test file which subclasses `unittest.TestCase` and includes your tests. Execute the tests with `python -m unittest` or `pytest`
+          3. Java: You can create a new test file which subclasses `TestCase` and includes your tests. Execute the tests with `mvn clean test -Drat.skip`
+          4. JavaScript: You can create a new test file which includes your tests. Make sure you execute tests using `node`
+          5. Go: You can create a new test file which includes your tests. Make sure you execute tests using `go`
+          6. C: You can create a new test file which includes your tests. Make sure you compile and run tests using `gcc`
+      - It is IMPORTANT to execute your generated tests in both languages to verify correctness. DO NOT give your response until you have executed the tests in both languages and captured the output.
+      - If you find that the target implementation is not functionally equivalent, provide a correct implementation in your response
+      - You MUST only do my instructions and DO NOT perform any additional analysis to determine functional equivalence. Terminate as soon as possible.
