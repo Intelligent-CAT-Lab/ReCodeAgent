@@ -33,6 +33,8 @@ templates:
       Analyze the source files of the C project to understand the functionality it provides.
 
       **Constraints:**
+      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the C project structure and get a list of source files
+      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each C source file
       - You MUST create a research document at {planning_dir}/c-project-research.md
       - The document MUST have the following sections
         - Overview
@@ -43,15 +45,20 @@ templates:
         - Error Handling
         - Dependencies
       - You SHOULD focus only on the source files of the C project
+      - You MUST use the 'mcp__c-language-server__*' server to get reliable information about the C code. For instance, use the hover tool to read documentation for specific items in the codebase
       - You SHOULD lookup documentation for any uncommon external dependencies (standard or 3rd party) in the C project to ensure you fully understand the functionality they provide
+      - To lookup documentation, you can use the WebFetch tool to fetch relevant information from the web. Alternatively, you can use the 'mcp__c-language-server__hover' tool to hover and read documentation for specific items in the codebase
 
       ### 3. (Optional) Understand Translated Rust Dependencies
 
       If C files have already been translated in {rust_translation_root}, analyze its source code to understand the current state of the translation. Otherwise, proceed to the next step.
 
       **Constraints:**
+      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the Rust project structure and get a list of source files
+      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each Rust source file
       - You MUST look at {rust_translation_root}/Cargo.toml so that you know what external crates are used in the translation
       - You MUST analyze the code of any crates you plan to use when translating the C project
+      - You MUST use the 'mcp__rust-language-server__*' server to get reliable information about the translated Rust code. For instance, use the hover tool to read documentation for specific items in the codebase
 
       ### 4. Research Rust Crates
 
@@ -63,6 +70,7 @@ templates:
       - You SHOULD lookup the documentation of each item in each crate you intend to use to see recommended usage patterns
       - You MUST document research findings for each crate in separate markdown files in the {planning_dir}/crate_research/ directory
       - You SHOULD consider different usage choices and weigh their trade-offs
+      - You MUST use the WebFetch tool to fetch relevant information from the web about each crate. Alternatively, you can use the 'mcp__rust-language-server__hover' tool to hover and read documentation for specific items in the crate's codebase
 
       ### 5. Create the Overall Rust Translation Design
 
@@ -199,7 +207,11 @@ templates:
       - You MUST ensure that the Rust functions and tests maintain the exact same functionality as the original C functions
       - If you cannot implement all functions and tests, you MUST inform the user why they cannot be implemented, and then ask for directions on how to proceed
       - If a Rust test already exists, you MUST NOT re-implement it
-      - You MUST NOT make any changes to Rust tests under bin/test.rs. You can only execute tests with `cargo test` to verify they pass
+      - You MUST NOT make any changes to Rust tests under bin/test.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
+      - You MUST immediately terminate when executing tests result in all tests pass. DO NOT make further changes to resolve warnings.
+      - If a test is not executed in the original C project, you MUST NOT implement it in Rust. If already implemented, you can terminate even if it fails.
+      - You MUST use the 'mcp__c-language-server__*' server to get reliable information about the C code when translating. For instance, use the hover tool to read documentation for specific items in the codebase
+      - You MUST use the 'mcp__rust-language-server__*' server to get reliable information about the Rust code when translating. For instance, use the hover tool to read documentation for specific items in the codebase
     validator: |-
       # C to Rust Translation Plan Script
 
@@ -219,18 +231,10 @@ templates:
 
       ### 1. Verify Dependencies
 
-      Check for required tools and warn the user if they are missing.
+      Read the required documents to understand the design decisions made for the Rust translation.
 
       **Constraints:**
-      - You MUST read the following file in its entirety: {planning_dir}/rust-overall-design.md
-      - You MUST verify the following tools are available in your context:
-      - Write
-      - Read
-      - Bash
-      - You MUST ONLY check for tool existence and MUST NOT attempt to run the tools because running tools during verification could cause unintended side effects, consume resources unnecessarily, or trigger actions before the user is ready
-      - You MUST inform the user about any missing tools with a clear message
-      - You MUST ask if the user wants to proceed anyway despite missing tools
-      - You MUST respect the user's decision to proceed or abort
+      - You MUST read the following file in its entirety: {planning_dir}/rust-overall-design.md, {planning_dir}/implementation-plan.md, and {planning_dir}/c-functions.md, {planning_dir}/c-call-graph.md
 
       ### 2. Validate the translated functions and methods
 
@@ -247,3 +251,7 @@ templates:
       - It is IMPORTANT to execute your generated tests in both languages to verify correctness. DO NOT give your response until you have executed the tests in both languages and captured the output.
       - If you find that the target implementation is not functionally equivalent, provide a correct implementation in your response
       - You MUST only do my instructions and DO NOT perform any additional analysis to determine functional equivalence. Terminate as soon as possible.
+      - To execute original tests under bin/test.rs, you can use the 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
+      - You MUST generate tests for every function and method listed in {planning_dir}/c-functions.md in separate files and execute them. DO NOT delete your generated tests after executing them
+      - You MUST use the 'mcp__c-language-server__*' server to get reliable information about the C code when generating tests. For instance, use the hover tool to read documentation for specific items in the codebase
+      - You MUST use the 'mcp__rust-language-server__*' server to get reliable information about the Rust code when generating tests. For instance, use the hover tool to read documentation for specific items in the codebase
