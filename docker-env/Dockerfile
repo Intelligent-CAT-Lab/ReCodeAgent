@@ -109,7 +109,44 @@ LABEL project_name=${PROJECT_NAME}
 # Copy project snapshot into image, but only specific data for the tool and project
 COPY ../.claude /workspace/.claude
 COPY ../configs/prompt_templates.yaml /workspace/configs/prompt_templates.yaml
-COPY ../data/tool_projects/${TOOL_NAME}/${PROJECT_NAME} /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}
+# First copy all project files to a temporary directory
+COPY ../data/tool_projects/${TOOL_NAME}/${PROJECT_NAME} /tmp/project_files
+
+# Create the target directory
+RUN mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}
+
+# Handle project directories based on tool type
+RUN if [ "${TOOL_NAME}" = "crust" ]; then \
+        # For crust: Copy both source and target languages inside project dir (default behavior) \
+        cp -r /tmp/project_files/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/; \
+    elif [ "${TOOL_NAME}" = "alphatrans" ]; then \
+        # For alphatrans: Copy only java and create an empty python dir \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/java && \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/python && \
+        cp -r /tmp/project_files/java/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/java/ || true; \
+    elif [ "${TOOL_NAME}" = "syzygy" ]; then \
+        # For syzygy: Create a rust dir and copy c as is \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/c && \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/rust && \
+        cp -r /tmp/project_files/c/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/c/ || true; \
+    elif [ "${TOOL_NAME}" = "skel" ]; then \
+        # For skel: Copy python and create empty javascript \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/python && \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/javascript && \
+        cp -r /tmp/project_files/python/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/python/ || true; \
+    elif [ "${TOOL_NAME}" = "oxidizer" ]; then \
+        # For oxidizer: Copy go and create empty rust dir \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/go && \
+        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/rust && \
+        cp -r /tmp/project_files/go/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/go/ || true; \
+    else \
+        # Default behavior for any other tool: copy everything \
+        cp -r /tmp/project_files/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/; \
+    fi && \
+    # Create planning directory for all tools \
+    mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning && \
+    # Clean up temporary directory \
+    rm -rf /tmp/project_files
 COPY ../scripts /workspace/scripts
 COPY ../src /workspace/src
 COPY ../.gitignore /workspace/.gitignore
@@ -165,7 +202,7 @@ RUN echo '{\n  "mcpServers": {' > /workspace/configs/claude_mcp_config.json && \
       "command": "mcp-language-server",\n\
       "args": [\n\
         "--workspace",\n\
-        "/workspace/data/tool_projects/'${TOOL_NAME}'/'${PROJECT_NAME}'/'${SOURCE_LANGUAGE}'",\n\
+        "/workspace/data/tool_projects/'${TOOL_NAME}'/'${PROJECT_NAME}'/'${TARGET_LANGUAGE}'",\n\
         "--lsp",\n\
         "typescript-language-server",\n\
         "--",\n\
