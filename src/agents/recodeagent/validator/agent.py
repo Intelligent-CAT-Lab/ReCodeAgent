@@ -76,7 +76,7 @@ class ValidatorAgent(RecodeAgent):
                 prompt=prompt,
                 feedback="",
                 agent_name="validator",
-                timeout=1000,  # 5 minutes timeout
+                timeout=self.configs["validator_timeout"],
             )
 
             # Process the result

@@ -233,6 +233,10 @@ source_project_root: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/${SOURCE_
 target_translation_root: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/${TARGET_LANGUAGE}\"\n\
 planning_dir: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning\"\n\
 extra_agent_args: [\"--output-format\", \"stream-json\", \"--verbose\", \"--settings\", \"/workspace/.claude/settings.local.json\"]\n\
+analyzer_timeout: 1000\n\
+planning_timeout: 1000\n\
+validator_timeout: 2000\n\
+translator_timeout: 2000\n\
 vendor: \"anthropic\"" > /workspace/configs/recodeagent_${TOOL_NAME}_${PROJECT_NAME}_${SOURCE_LANGUAGE}_${TARGET_LANGUAGE}.yaml
 
 

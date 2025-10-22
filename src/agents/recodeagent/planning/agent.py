@@ -74,7 +74,7 @@ class PlanningAgent(RecodeAgent):
                 prompt=prompt,
                 feedback="",
                 agent_name="planning",
-                timeout=1000,
+                timeout=self.configs["planning_timeout"],
             )
 
             # Process the result

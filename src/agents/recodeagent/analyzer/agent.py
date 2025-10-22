@@ -75,7 +75,7 @@ class AnalyzerAgent(RecodeAgent):
                 prompt=prompt,
                 feedback="",
                 agent_name="analyzer",
-                timeout=1000,
+                timeout=self.configs["analyzer_timeout"],
             )
 
             # Process the result

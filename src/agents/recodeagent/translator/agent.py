@@ -76,7 +76,7 @@ class TranslatorAgent(RecodeAgent):
                 prompt=prompt,
                 feedback="",
                 agent_name="translator",
-                timeout=1000,  # 10 minutes timeout - translation takes longer
+                timeout=self.configs["translator_timeout"],
             )
 
             # Process the result
