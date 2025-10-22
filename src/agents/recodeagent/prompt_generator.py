@@ -70,6 +70,8 @@ class PromptGenerator:
             "source_project_root": self.source_project_root,
             "target_translation_root": self.target_translation_root,
             "planning_dir": self.planning_dir,
+            "source_language": self.configs["source_language"],
+            "target_language": self.configs["target_language"],
         }
 
         # Render the template with the context

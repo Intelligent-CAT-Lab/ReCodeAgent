@@ -1,11 +1,11 @@
 templates:
   recodeagent:
     analyzer: |-
-      # C to Rust Translation High-Level Design Script
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation High-Level Design Script
 
       ## Overview
 
-      This script guides you through the process of creating a high-level design for a Rust translation of a C project. The goal is a 1:1 translation, unless otherwise described in the {translation_requirements} parameter described below.
+      This script guides you through the process of creating a high-level design for a {{ target_language.upper() }} translation of a {{ source_language.upper() }} project. The goal is a 1:1 translation, unless otherwise described in the {translation_requirements} parameter described below.
 
       ## Parameters
 
@@ -24,76 +24,72 @@ templates:
 
       **Constraints:**
       - You MUST check if the planning directory exists and is not empty
-      - If the planning directory is not empty, you MUST ask the user how to proceed
       - You MUST use the 'mkdir' command to make directories
-      - You MUST create {planning_dir} in the current working directory if it does not exist
 
-      ### 2. Understand the C Project Design
+      ### 2. Understand the {{ source_language.upper() }} Project Design
 
-      Analyze the source files of the C project to understand the functionality it provides.
+      Analyze the source files of the {{ source_language.upper() }} project to understand the functionality it provides.
 
       **Constraints:**
-      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the C project structure and get a list of source files
-      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each C source file
-      - You MUST create a research document at {planning_dir}/c-project-research.md
+      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the {{ source_language.upper() }} project structure and get a list of source files
+      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each {{ source_language.upper() }} source file
+      - You MUST create a research document at {{ planning_dir }}/{{ source_language }}-project-research.md
       - The document MUST have the following sections
         - Overview
         - Structs & Interfaces
         - Data Models
           - External Data Models (this covers data formats for data received from network I/O and file I/O)
-          - Internal Data Models (this covers data handled within the C project)
+          - Internal Data Models (this covers data handled within the {{ source_language.upper() }} project)
         - Error Handling
         - Dependencies
-      - You SHOULD focus only on the source files of the C project
-      - You MUST use the 'mcp__c-language-server__*' server to get reliable information about the C code. For instance, use the hover tool to read documentation for specific items in the codebase
-      - You SHOULD lookup documentation for any uncommon external dependencies (standard or 3rd party) in the C project to ensure you fully understand the functionality they provide
-      - To lookup documentation, you can use the WebFetch tool to fetch relevant information from the web. Alternatively, you can use the 'mcp__c-language-server__hover' tool to hover and read documentation for specific items in the codebase
+      - You MUST focus only on the source files of the {{ source_language.upper() }} project
+      - You MUST use the 'mcp__{{ source_language }}-language-server' to get reliable information about the {{ source_language.upper() }} code. For instance, use the hover tool to read documentation for specific symbols in the codebase
+      - You MUST lookup documentation for any uncommon external dependencies (standard or 3rd party) in the {{ source_language.upper() }} project to ensure you fully understand the functionality they provide
+      - To lookup documentation, you can use the 'WebFetch' tool to fetch relevant information from the web. Alternatively, you can use the 'mcp__{{ source_language }}-language-server__hover' tool to hover and read documentation for specific symbols in the codebase
 
-      ### 3. (Optional) Understand Translated Rust Dependencies
+      ### 3. (Optional) Understand Translated {{ target_language.upper() }} dependencies
 
-      If C files have already been translated in {rust_translation_root}, analyze its source code to understand the current state of the translation. Otherwise, proceed to the next step.
-
-      **Constraints:**
-      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the Rust project structure and get a list of source files
-      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each Rust source file
-      - You MUST look at {rust_translation_root}/Cargo.toml so that you know what external crates are used in the translation
-      - You MUST analyze the code of any crates you plan to use when translating the C project
-      - You MUST use the 'mcp__rust-language-server__*' server to get reliable information about the translated Rust code. For instance, use the hover tool to read documentation for specific items in the codebase
-
-      ### 4. Research Rust Crates
-
-      Conduct research on relevant Rust crates that could inform the design of the translation of the C project.
+      If {{ source_language.upper() }} files have already been translated in {{ target_translation_root }}, analyze its source code to understand the current state of the translation. Otherwise, proceed to the next step.
 
       **Constraints:**
-      - You MUST research the crates provided by the user in the translation_requirements
-      - You MUST determine the recommended and idiomatic usage pattern for each crate you intend to use by reading the crate's documentation
-      - You SHOULD lookup the documentation of each item in each crate you intend to use to see recommended usage patterns
-      - You MUST document research findings for each crate in separate markdown files in the {planning_dir}/crate_research/ directory
-      - You SHOULD consider different usage choices and weigh their trade-offs
-      - You MUST use the WebFetch tool to fetch relevant information from the web about each crate. Alternatively, you can use the 'mcp__rust-language-server__hover' tool to hover and read documentation for specific items in the crate's codebase
+      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the {{ target_language.upper() }} project structure and get a list of source files
+      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each {{ target_language.upper() }} source file
+      - If translating to RUST, you MUST look at {{ target_translation_root }}/Cargo.toml so that you know what external crates are used in the translation
+      - You MUST analyze the code of any libraries you plan to use when translating the {{ source_language.upper() }} project
+      - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the translated {{ target_language.upper() }} code. For instance, use the hover tool to read documentation for specific symbols in the codebase
 
-      ### 5. Create the Overall Rust Translation Design
+      ### 4. Research {{ target_language.upper() }} libraries
+
+      Conduct research on relevant {{ target_language.upper() }} libraries that could inform the design of the translation of the {{ source_language.upper() }} project.
+
+      **Constraints:**
+      - You MUST research the libraries provided by the user in the {translation_requirements} parameter
+      - You MUST determine the recommended and idiomatic usage pattern for each library you intend to use by reading the library's documentation
+      - You MUST lookup the documentation of each item in each library you intend to use to see recommended usage patterns
+      - You MUST document research findings for each library in separate markdown files in the {{ planning_dir }}/library_research/ directory
+      - You MUST consider different usage choices and weigh their trade-offs
+      - You MUST use the 'WebFetch' tool to fetch relevant information from the web about each library. Alternatively, you can use the 'mcp__{{ target_language }}-language-server__hover' tool to hover and read documentation for specific symbols in the library's codebase
+
+      ### 5. Create the Overall {{ target_language.upper() }} Translation Design
 
       Write an overall design document based on the information gathered in the previous steps.
 
       **Constraints:**
-      - You MUST create an overall design document called {planning_dir}/rust-overall-design.md
-      - rust-overall-design.md must have the following sections
+      - You MUST create an overall design document called {{ planning_dir }}/{{ target_language }}-overall-design.md
+      - {{ target_language }}-overall-design.md must have the following sections
         - Overview
         - Translation Requirements
-        - C Source Files to Translate
-        - Rust Module Structure
-        - Rust Structs & Traits
-        - Rust Error Handling
-        - Rust 3rd Party Crates
-        - Rust Translated Crates
-      - The Structs & Traits design MUST support mocking in the same way as the C project
-      - The Translated Crates MUST list the items of already-translated crates that will be used in the translation
+        - {{ source_language.upper() }} Source Files to Translate
+        - {{ target_language.upper() }} Module Structure
+        - {{ target_language.upper() }} Structs & Traits if applicable
+        - {{ target_language.upper() }} Error Handling
+        - {{ target_language.upper() }} 3rd Party Libraries
+        - {{ target_language.upper() }} Translated Libraries
     planning: |-
-      # C to Rust Translation Plan Script
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Plan Script
 
       ## Overview
-      This script guides you through the process of creating a plan to translate a C project into Rust. A high-level design for the translation has already been written. The translation will be "1:1", meaning each C item (an item is a function, method, struct, interface, test, or global variable) will have a Rust translation unless the translation requirements explicity require certain items to not be translated. The translation plan will translate sets of C items to Rust in a "bottom-up" order. To aid in developing the translation strategy, we will make a call graph.
+      This script guides you through the process of creating a plan to translate a {{ source_language.upper() }} project into {{ target_language.upper() }}. A high-level design for the translation has already been written. The translation will be "1:1", meaning each {{ source_language.upper() }} item (an item is a function, method, struct, interface, test, or global variable) will have a {{ target_language.upper() }} translation unless the translation requirements explicity require certain items to not be translated. The translation plan will translate sets of {{ source_language.upper() }} items to {{ target_language.upper() }} in a "bottom-up" order. To aid in developing the translation strategy, we will make a call graph.
 
       ## Parameters
 
@@ -107,33 +103,33 @@ templates:
 
       ### 1. Verify Dependencies
 
-      Read the required documents to understand the design decisions made for the Rust translation.
+      Read the required documents to understand the design decisions made for the {{ target_language.upper() }} translation.
 
       **Constraints:**
-      - You MUST read the following file in its entirety: {planning_dir}/rust-overall-design.md
+      - You MUST read the following file in its entirety: {{ planning_dir }}/{{ target_language }}-overall-design.md
 
-      ### 2. Create a List of C Functions and Methods to Translate
+      ### 2. Create a List of {{ source_language.upper() }} Functions and Methods to Translate
 
-      Create a list of C functions and methods that will be translated.
+      Create a list of {{ source_language.upper() }} functions and methods that will be translated.
 
       **Constraints:**
-      - You MUST write a list of C functions and methods that will be translated under {planning_dir}/c-functions.md
-      - Each line in the file MUST have the following format: <c-file-name.c>:<c-item-name>
-      - Each <c-item-name> MUST follow the following convention:
+      - You MUST write a list of {{ source_language.upper() }} functions and methods that will be translated under {{ planning_dir }}/{{ source_language }}-functions.md
+      - Each line in the file MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
+      - Each <{{ source_language }}-item-name> MUST follow the following convention:
           - For methods: <reciever-type-name>.<method-name>
           - For functions: <function-name>
-      - You MUST ONLY include functions and methods that will be translated, respecting the translation's requirements outlined in {planning_dir}/rust-overall-design.md
+      - You MUST ONLY include functions and methods that will be translated, respecting the translation's requirements outlined in {{ planning_dir }}/{{ target_language }}-overall-design.md
 
       ### 3. Create the Call Graph
 
       Create a file with the call graph.
 
       **Constraints:**
-      - You MUST write the call graph to the file {planning_dir}/c-call-graph.md
-      - The call graph MUST ONLY cover functions and methods listed in {planning_dir}/c-functions.md
-      - Each line in {planning_dir}/c-call-graph.md MUST contain the functions and methods called by a single C function or method, and have the following format: <c-item-reference>: <c-item-reference>,<c-item-reference>,...
-      - Each <c-item-reference> MUST have the following format: <c-file-name.c>:<c-item-name>
-      - Each <c-item-name> MUST follow the following convention:
+      - You MUST write the call graph to the file {{ planning_dir }}/{{ source_language }}-call-graph.md
+      - The call graph MUST ONLY cover functions and methods listed in {{ planning_dir }}/{{ source_language }}-functions.md
+      - Each line in {{ planning_dir }}/{{ source_language }}-call-graph.md MUST contain the functions and methods called by a single {{ source_language.upper() }} function or method, and have the following format: <{{ source_language }}-item-reference>: <{{ source_language }}-item-reference>,<{{ source_language }}-item-reference>,...
+      - Each <{{ source_language }}-item-reference> MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
+      - Each <{{ source_language }}-item-name> MUST follow the following convention:
           - For methods: <reciever-type-name>.<method-name>
           - For functions: <function-name>
       - Test functions MUST have their callees listed too
@@ -143,31 +139,31 @@ templates:
       Create a plan to incrementally implement, compile, and test the translation.
 
       **Constraints:**
-      - You MUST create an implementation plan at {planning_dir}/implementation-plan.md
+      - You MUST create an implementation plan at {{ planning_dir }}/implementation-plan.md
       - You MUST include a checklist at the beginning of the implementation-plan.md file to track implementation progress
       - The first step in the implementation plan MUST be the following:
       ```
       ### Step 1: Create skeleton project structure
 
-      **Description:** Create the file structure of the Rust translation under {rust_translation_root}. Implement all structs, traits, global variables, and constants. Write stubs for all functions, methods, and tests. If skeleton code already exists, ensure it is complete.
+      **Description:** Create the file structure of the {{ target_language.upper() }} translation under {{ target_translation_root }}. Implement all structs, traits, global variables, and constants. Write stubs for all functions, methods, and tests. If skeleton code already exists, ensure it is complete.
 
       ```
       - The remaining steps MUST follow a test-driven-development methodology, and priorize testing functions as soon as they are implemented
       - The remaining steps MUST have the following information:
         - Description
-        - Functions and methods to translate, written as a list of <c-item-reference>'s
-        - Tests to translate, written as a list of <c-item-reference>'s. If a test is already implemented, it MUST NOT be listed here
-      - The steps MUST be ordered such that all of the depenencies of the Rust source to implement are implemented before that step
+        - Functions and methods to translate, written as a list of <{{ source_language }}-item-reference>'s
+        - Tests to translate, written as a list of <{{ source_language }}-item-reference>'s. If a test is already implemented, it MUST NOT be listed here
+      - The steps MUST be ordered such that all of the depenencies of the {{ target_language.upper() }} source to implement are implemented before that step
       - You MUST NOT include excessive implementation details that are already covered in the translation document because this creates redundancy and potential inconsistencies
       - Each step MUST result in compilable code
       - A step MAY NOT have tests to implement
       - The plan MUST cover all tests, functions, and methods
     translator: |-
-      # C to Rust Translation Execution Script
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Execution Script
 
       ## Overview
 
-      This script guides you through the process of executing an already-written plan for translating a C project to Rust.
+      This script guides you through the process of executing an already-written plan for translating a {{ source_language.upper() }} project to {{ target_language.upper() }}.
 
       ## Parameters
 
@@ -181,42 +177,42 @@ templates:
 
       ### 1. Verify Dependencies
 
-      Read the required documents to understand the design decisions made for the Rust translation.
+      Read the required documents to understand the design decisions made for the {{ target_language.upper() }} translation.
 
       **Constraints:**
       - You MUST read the entire contents of the following documents into your context:
-        - {planning_dir}/implementation-plan.md
-        - {planning_dir}/rust-overall-design.md
+        - {{ planning_dir }}/implementation-plan.md
+        - {{ planning_dir }}/{{ target_language }}-overall-design.md
 
-      ### 2. Read C Source Code
+      ### 2. Read {{ source_language.upper() }} Source Code
 
-      Read the C source code so that you have a reference for what you are translating.
+      Read the {{ source_language.upper() }} source code so that you have a reference for what you are translating.
 
       **Constraints:**
-      - You MUST read in the C source files you are translating in their entirety. This is important so that you know what implement in the Rust translation.
+      - You MUST read in the {{ source_language.upper() }} source files you are translating in their entirety. This is important so that you know what implement in the {{ target_language.upper() }} translation.
 
       ### 2. Execute the Implementation Plan
 
-      Execute the the steps in {planning_dir}/implementation-plan.md in order.
+      Execute the steps in {{ planning_dir }}/implementation-plan.md in order.
 
       **Constraints:**
       - You MUST execute the steps in implementation-plan.md in order
       - After completing a step, you MUST mark it as completed in implementation-plan.md
       - Before completing a step, you MUST make sure the codebase compiles and tests pass
       - You MUST implement ALL functions and tests as indicated in the step
-      - You MUST ensure that the Rust functions and tests maintain the exact same functionality as the original C functions
+      - You MUST ensure that the {{ target_language.upper() }} functions and tests maintain the exact same functionality as the original {{ source_language.upper() }} functions
       - If you cannot implement all functions and tests, you MUST inform the user why they cannot be implemented, and then ask for directions on how to proceed
-      - If a Rust test already exists, you MUST NOT re-implement it
-      - You MUST NOT make any changes to Rust tests under bin/test.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
+      - If a {{ target_language.upper() }} test already exists, you MUST NOT re-implement it
+      - If translating projects from CRUST, you MUST NOT make any changes to {{ target_language.upper() }} tests under bin/test.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
       - You MUST immediately terminate when executing tests result in all tests pass. DO NOT make further changes to resolve warnings.
-      - If a test is not executed in the original C project, you MUST NOT implement it in Rust. If already implemented, you can terminate even if it fails.
-      - You MUST use the 'mcp__c-language-server__*' server to get reliable information about the C code when translating. For instance, use the hover tool to read documentation for specific items in the codebase
-      - You MUST use the 'mcp__rust-language-server__*' server to get reliable information about the Rust code when translating. For instance, use the hover tool to read documentation for specific items in the codebase
+      - If a test is not executed in the original {{ source_language.upper() }} project, you MUST NOT implement it in {{ target_language.upper() }}. If already implemented, you can terminate even if it fails.
+      - You MUST use the 'mcp__{{ source_language }}-language-server' to get reliable information about the {{ source_language.upper() }} code when translating. For instance, use the hover tool to read documentation for specific symbols in the codebase
+      - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the {{ target_language.upper() }} code when translating. For instance, use the hover tool to read documentation for specific symbols in the codebase
     validator: |-
-      # C to Rust Translation Plan Script
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Plan Script
 
       ## Overview
-      You are an expert agent specializing in test generation and code repair. Based on the analysis from multiple expert agents regarding functional equivalence between {{ source_language }} and {{ target_language }} implementations of the given method/function, your task is to generate tests and repair the target implementation if necessary. Two code fragments in different programming languages are considered functionally equivalent if, when executed on the same input, they always have identical program states at all corresponding points reachable by program execution, and they both produce the same output upon termination.
+      You are an expert agent specializing in test generation and code repair. Based on the analysis from multiple expert agents regarding functional equivalence between {{ source_language.upper() }} and {{ target_language.upper() }} implementations of the given method/function, your task is to generate tests and repair the target implementation if necessary. Two code fragments in different programming languages are considered functionally equivalent if, when executed on the same input, they always have identical program states at all corresponding points reachable by program execution, and they both produce the same output upon termination.
 
 
       ## Parameters
@@ -231,14 +227,14 @@ templates:
 
       ### 1. Verify Dependencies
 
-      Read the required documents to understand the design decisions made for the Rust translation.
+      Read the required documents to understand the design decisions made for the {{ target_language.upper() }} translation.
 
       **Constraints:**
-      - You MUST read the following file in its entirety: {planning_dir}/rust-overall-design.md, {planning_dir}/implementation-plan.md, and {planning_dir}/c-functions.md, {planning_dir}/c-call-graph.md
+      - You MUST read the following file in its entirety: {{ planning_dir }}/{{ target_language }}-overall-design.md, {{ planning_dir }}/implementation-plan.md, and {{ planning_dir }}/{{ source_language }}-functions.md, {{ planning_dir }}/{{ source_language }}-call-graph.md
 
       ### 2. Validate the translated functions and methods
 
-      Validate the translated functions and methods by generating tests in both C and Rust, running them, and repairing the Rust code if necessary.
+      Validate the translated functions and methods by generating tests in both {{ source_language.upper() }} and {{ target_language.upper() }}, running them, and repairing the {{ target_language.upper() }} code if necessary.
 
       **Constraints:**
       - Your tests should be generated in target file path as standalone files and stored with other tests (see how existing tests are stored). Here is some guide on how to properly store and execute tests for each language:
@@ -250,8 +246,8 @@ templates:
           6. C: You can create a new test file which includes your tests. Make sure you compile and run tests using `gcc`
       - It is IMPORTANT to execute your generated tests in both languages to verify correctness. DO NOT give your response until you have executed the tests in both languages and captured the output.
       - If you find that the target implementation is not functionally equivalent, provide a correct implementation in your response
-      - You MUST only do my instructions and DO NOT perform any additional analysis to determine functional equivalence. Terminate as soon as possible.
-      - To execute original tests under bin/test.rs, you can use the 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
-      - You MUST generate tests for every function and method listed in {planning_dir}/c-functions.md in separate files and execute them. DO NOT delete your generated tests after executing them
-      - You MUST use the 'mcp__c-language-server__*' server to get reliable information about the C code when generating tests. For instance, use the hover tool to read documentation for specific items in the codebase
-      - You MUST use the 'mcp__rust-language-server__*' server to get reliable information about the Rust code when generating tests. For instance, use the hover tool to read documentation for specific items in the codebase
+      - You MUST only do my instructions and DO NOT perform any additional analysis to determine functional equivalence. Terminate as soon as possible
+      - If translating projects from CRUST, you MUST NOT make any changes to {{ target_language.upper() }} tests under bin/test.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
+      - You MUST generate tests for every function and method listed in {{ planning_dir }}/{{ source_language }}-functions.md in separate files and execute them. DO NOT delete your generated tests after executing them
+      - You MUST use the 'mcp__{{ source_language }}-language-server' to get reliable information about the {{ source_language.upper() }} code when generating tests. For instance, use the hover tool to read documentation for specific symbols in the codebase
+      - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the {{ target_language.upper() }} code when generating tests. For instance, use the hover tool to read documentation for specific symbols in the codebase
