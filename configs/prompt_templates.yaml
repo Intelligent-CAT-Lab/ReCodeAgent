@@ -191,7 +191,7 @@ templates:
       **Constraints:**
       - You MUST read in the {{ source_language.upper() }} source files you are translating in their entirety. This is important so that you know what implement in the {{ target_language.upper() }} translation.
 
-      ### 2. Execute the Implementation Plan
+      ### 3. Execute the Implementation Plan
 
       Execute the steps in {{ planning_dir }}/implementation-plan.md in order.
 
@@ -209,7 +209,7 @@ templates:
       - You MUST use the 'mcp__{{ source_language }}-language-server' to get reliable information about the {{ source_language.upper() }} code when translating. For instance, use the hover tool to read documentation for specific symbols in the codebase
       - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the {{ target_language.upper() }} code when translating. For instance, use the hover tool to read documentation for specific symbols in the codebase
     validator: |-
-      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Plan Script
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Test Generation and Code Repair Script
 
       ## Overview
       You are an expert agent specializing in test generation and code repair. Based on the analysis from multiple expert agents regarding functional equivalence between {{ source_language.upper() }} and {{ target_language.upper() }} implementations of the given method/function, your task is to generate tests and repair the target implementation if necessary. Two code fragments in different programming languages are considered functionally equivalent if, when executed on the same input, they always have identical program states at all corresponding points reachable by program execution, and they both produce the same output upon termination.
