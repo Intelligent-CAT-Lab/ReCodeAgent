@@ -251,13 +251,18 @@ RUN echo '{\n  "mcpServers": {' > /workspace/configs/claude_mcp_config.json && \
       "command": "python",\n\
       "args": ["/workspace/src/mcp/mcp_project_analyzer/project_analyzer.py"],\n\
       "env": {}\n\
-    },\n\
+    }' >> /workspace/configs/claude_mcp_config.json && \
+    if [ "${TOOL_NAME}" = "crust" ]; then \
+        echo ',\n\
     "crust-test-runner": {\n\
       "command": "python",\n\
       "args": ["/workspace/src/mcp/mcp_crust_test_runner/test_runner.py"],\n\
       "env": {}\n\
-    }\n\
-  }\n}' >> /workspace/configs/claude_mcp_config.json
+    }' >> /workspace/configs/claude_mcp_config.json; \
+    fi && \
+    echo '\n\
+  }\n\
+}' >> /workspace/configs/claude_mcp_config.json
 
 # Generate recodeagent YAML config file with dynamic values
 RUN echo "agent_name: \"recodeagent\"\n\
