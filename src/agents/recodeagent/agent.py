@@ -19,6 +19,7 @@ import asyncio
 import logging
 import argparse
 import glob
+import time
 from pathlib import Path
 from typing import Dict, Any, Tuple, List, Optional
 
@@ -228,13 +229,21 @@ async def run_agents(
     if (not only_agents or "analyzer" in only_agents) and "analyzer" not in skip_agents:
         logger.info("Running Analyzer Agent")
         analyzer_agent = AnalyzerAgent(config)
+
+        # Start timing the execution
+        start_time = time.time()
         analyzer_success, analyzer_results = await analyzer_agent.run(project_details)
+        # Record execution time in seconds
+        execution_time = time.time() - start_time
 
         if not analyzer_success:
             logger.error("Analyzer Agent failed. Aborting.")
             return False
 
-        logger.info("Analyzer Agent completed successfully")
+        logger.info(f"Analyzer Agent completed successfully in {execution_time:.2f} seconds")
+
+        # Add execution time to the results dictionary
+        analyzer_results["execution_time_seconds"] = execution_time
         project_details["analyzer_results"] = analyzer_results
     else:
         logger.info("Skipping Analyzer Agent")
@@ -243,13 +252,21 @@ async def run_agents(
     if (not only_agents or "planning" in only_agents) and "planning" not in skip_agents:
         logger.info("Running Planning Agent")
         planning_agent = PlanningAgent(config)
+
+        # Start timing the execution
+        start_time = time.time()
         planning_success, planning_results = await planning_agent.run(project_details)
+        # Record execution time in seconds
+        execution_time = time.time() - start_time
 
         if not planning_success:
             logger.error("Planning Agent failed. Aborting.")
             return False
 
-        logger.info("Planning Agent completed successfully")
+        logger.info(f"Planning Agent completed successfully in {execution_time:.2f} seconds")
+
+        # Add execution time to the results dictionary
+        planning_results["execution_time_seconds"] = execution_time
         project_details["planning_results"] = planning_results
     else:
         logger.info("Skipping Planning Agent")
@@ -258,13 +275,21 @@ async def run_agents(
     if (not only_agents or "translator" in only_agents) and "translator" not in skip_agents:
         logger.info("Running Translator Agent")
         translator_agent = TranslatorAgent(config)
+
+        # Start timing the execution
+        start_time = time.time()
         translator_success, translator_results = await translator_agent.run(project_details)
+        # Record execution time in seconds
+        execution_time = time.time() - start_time
 
         if not translator_success:
             logger.error("Translator Agent failed. Aborting.")
             return False
 
-        logger.info("Translator Agent completed successfully")
+        logger.info(f"Translator Agent completed successfully in {execution_time:.2f} seconds")
+
+        # Add execution time to the results dictionary
+        translator_results["execution_time_seconds"] = execution_time
         project_details["translator_results"] = translator_results
     else:
         logger.info("Skipping Translator Agent")
@@ -273,13 +298,21 @@ async def run_agents(
     if (not only_agents or "validator" in only_agents) and "validator" not in skip_agents:
         logger.info("Running Validator Agent")
         validator_agent = ValidatorAgent(config)
+
+        # Start timing the execution
+        start_time = time.time()
         validator_success, validator_results = await validator_agent.run(project_details)
+        # Record execution time in seconds
+        execution_time = time.time() - start_time
 
         if not validator_success:
             logger.error("Validator Agent failed. Aborting.")
             return False
 
-        logger.info("Validator Agent completed successfully")
+        logger.info(f"Validator Agent completed successfully in {execution_time:.2f} seconds")
+
+        # Add execution time to the results dictionary
+        validator_results["execution_time_seconds"] = execution_time
         project_details["validator_results"] = validator_results
     else:
         logger.info("Skipping Validator Agent")
