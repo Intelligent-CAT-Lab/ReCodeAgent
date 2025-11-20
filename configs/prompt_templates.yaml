@@ -18,24 +18,17 @@ templates:
 
       ## Steps
 
-      ### 1. Create Planning Directory
-
-      Setup a directory to organize planning-related documents.
-
-      **Constraints:**
-      - You MUST check if the planning directory exists and is not empty
-      - You MUST use the 'mkdir' command to make directories
-
-      ### 2. Understand the {{ source_language.upper() }} Project Design
+      ### 1. Understand the {{ source_language.upper() }} Project Design
 
       Analyze the source files of the {{ source_language.upper() }} project to understand the functionality it provides.
 
       **Constraints:**
-      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the {{ source_language.upper() }} project structure and get a list of source files
+      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the {{ source_language.upper() }} project structure. **This directory tree is the SKELETON that you MUST enforce in the {{ target_language.upper() }} translation.**
       - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each {{ source_language.upper() }} source file
       - You MUST create a research document at {{ planning_dir }}/{{ source_language }}-project-research.md
       - The document MUST have the following sections
         - Overview
+        - Directory Structure (Include the exact output of 'mcp__project-analyzer__get_directory_tree')
         - Structs & Interfaces
         - Data Models
           - External Data Models (this covers data formats for data received from network I/O and file I/O)
@@ -47,18 +40,7 @@ templates:
       - You MUST lookup documentation for any uncommon external dependencies (standard or 3rd party) in the {{ source_language.upper() }} project to ensure you fully understand the functionality they provide
       - To lookup documentation, you can use the 'WebFetch' tool to fetch relevant information from the web. Alternatively, you can use the 'mcp__{{ source_language }}-language-server__hover' tool to hover and read documentation for specific symbols in the codebase
 
-      ### 3. (Optional) Understand Translated {{ target_language.upper() }} dependencies
-
-      If {{ source_language.upper() }} files have already been translated in {{ target_translation_root }}, analyze its source code to understand the current state of the translation. Otherwise, proceed to the next step.
-
-      **Constraints:**
-      - You MUST use the 'mcp__project-analyzer__get_directory_tree' tool to explore the {{ target_language.upper() }} project structure and get a list of source files
-      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to understand the structure of each {{ target_language.upper() }} source file
-      - If translating to RUST, you MUST look at {{ target_translation_root }}/Cargo.toml so that you know what external crates are used in the translation
-      - You MUST analyze the code of any libraries you plan to use when translating the {{ source_language.upper() }} project
-      - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the translated {{ target_language.upper() }} code. For instance, use the hover tool to read documentation for specific symbols in the codebase
-
-      ### 4. Research {{ target_language.upper() }} libraries
+      ### 2. Research {{ target_language.upper() }} libraries
 
       Conduct research on relevant {{ target_language.upper() }} libraries that could inform the design of the translation of the {{ source_language.upper() }} project.
 
@@ -70,7 +52,7 @@ templates:
       - You MUST consider different usage choices and weigh their trade-offs
       - You MUST use the 'WebFetch' tool to fetch relevant information from the web about each library. Alternatively, you can use the 'mcp__{{ target_language }}-language-server__hover' tool to hover and read documentation for specific symbols in the library's codebase
 
-      ### 5. Create the Overall {{ target_language.upper() }} Translation Design
+      ### 3. Create the Overall {{ target_language.upper() }} Translation Design
 
       Write an overall design document based on the information gathered in the previous steps.
 
@@ -81,6 +63,7 @@ templates:
         - Translation Requirements
         - {{ source_language.upper() }} Source Files to Translate
         - {{ target_language.upper() }} Module Structure
+          - **CRITICAL:** You MUST use the exact directory structure and file names as the {{ source_language.upper() }} skeleton obtained in Step 1 via 'mcp__project-analyzer__get_directory_tree', including all subdirectories and files for source and test .
         - {{ target_language.upper() }} Structs & Traits if applicable
         - {{ target_language.upper() }} Error Handling
         - {{ target_language.upper() }} 3rd Party Libraries
