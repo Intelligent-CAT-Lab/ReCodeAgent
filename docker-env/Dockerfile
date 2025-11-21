@@ -127,40 +127,6 @@ RUN if [ "${TOOL_NAME}" = "crust" ]; then \
         mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/java && \
         mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/python && \
         cp -r /tmp/project_files/java/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/java/ || true; \
-    elif [ "${TOOL_NAME}" = "syzygy" ]; then \
-        # Debug: Show what's in the tmp directory to help troubleshoot \
-        echo "Listing contents of /tmp/project_files:" && \
-        ls -la /tmp/project_files && \
-        # For syzygy: Create a rust dir and copy c as is \
-        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/c && \
-        mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/rust && \
-        cp -r /tmp/project_files/c/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/c/ || true && \
-        # For zopfli: copy only the tests/ directory and the two Python files \
-        if [ "${PROJECT_NAME}" = "zopfli" ]; then \
-            echo "Processing zopfli project" && \
-            # Copy tests directory - we know it exists \
-            if [ -d "/tmp/project_files/tests" ]; then \
-                echo "Found tests directory" && \
-                mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/tests && \
-                cp -r /tmp/project_files/tests/* /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/tests/ && \
-                echo "Copied tests directory"; \
-            else \
-                echo "ERROR: Tests directory not found in /tmp/project_files"; \
-            fi && \
-            # Copy Python files \
-            if ls /tmp/project_files/*.py 1> /dev/null 2>&1; then \
-                echo "Found Python files" && \
-                cp -f /tmp/project_files/*.py /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/ && \
-                echo "Copied Python files"; \
-            else \
-                echo "ERROR: Python files not found in /tmp/project_files"; \
-            fi && \
-            # Debug: Verify files were copied successfully \
-            echo "Listing files in destination directory:" && \
-            ls -la /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/ && \
-            echo "Listing tests directory:" && \
-            ls -la /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/tests/ || echo "Tests directory not found in destination"; \
-        fi; \
     elif [ "${TOOL_NAME}" = "skel" ]; then \
         # For skel: Copy python and create empty javascript \
         mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/python && \
