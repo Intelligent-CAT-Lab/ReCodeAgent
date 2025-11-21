@@ -63,7 +63,9 @@ templates:
         - Translation Requirements
         - {{ source_language.upper() }} Source Files to Translate
         - {{ target_language.upper() }} Module Structure
-          - **CRITICAL:** You MUST use the exact directory structure and file names as the {{ source_language.upper() }} skeleton obtained in Step 1 via 'mcp__project-analyzer__get_directory_tree', including all subdirectories and files for source and test .
+          - **CRITICAL:** You MUST use the exact directory structure and file names as the {{ source_language.upper() }} skeleton obtained in Step 1 via 'mcp__project-analyzer__get_directory_tree', including all subdirectories and files for source and test.
+          - You MUST use the following naming conventions to map {{ source_language }} file and directory names to {{ target_language }}:
+            - {{ source_language }} PascalCase file and directory names → {{ target_language }} PascalCase file and directory names
         - {{ target_language.upper() }} Structs & Traits if applicable
         - {{ target_language.upper() }} Error Handling
         - {{ target_language.upper() }} 3rd Party Libraries
@@ -93,9 +95,10 @@ templates:
 
       ### 2. Create a List of {{ source_language.upper() }} Functions and Methods to Translate
 
-      Create a list of {{ source_language.upper() }} functions and methods that will be translated.
+      Create a list of {{ source_language.upper() }} functions and methods that will be translated both from source files and from test files.
 
       **Constraints:**
+      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to extract methods, variables, and classes from each {{ source_language }} source file.
       - You MUST write a list of {{ source_language.upper() }} functions and methods that will be translated under {{ planning_dir }}/{{ source_language }}-functions.md
       - Each line in the file MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
       - Each <{{ source_language }}-item-name> MUST follow the following convention:
@@ -117,7 +120,58 @@ templates:
           - For functions: <function-name>
       - Test functions MUST have their callees listed too
 
-      ### 4. Create the Translation Plan
+      ### 4. Create Name Mapping File
+
+      Create a name mapping file that will be used to ensure consistent naming throughout translation.
+
+      **Constraints:**
+      - You MUST create a name mapping file at {{ planning_dir }}/name-mapping.json
+      - For each function and method listed in {{ planning_dir }}/{{ source_language }}-functions.md:
+        1. Extract the full {{ source_language }} name (including class/package if applicable)
+        2. Convert it to {{ target_language }} following naming conventions:
+           - {{ source_language }} camelCase methods → {{ target_language }} camelCase: `getOptionValue` → `getOptionValue`
+           - {{ source_language }} PascalCase classes → {{ target_language }} PascalCase: `CommandLine` → `CommandLine`
+           - {{ source_language }} camelCase variables → {{ target_language }} camelCase: `optionValue` → `optionValue`
+        3. Add the mapping to name-mapping.json
+      - The name-mapping.json MUST follow this structure:
+        ```json
+        {
+          "classes": {
+            "full.{{ source_language }}.ClassName": "full.{{ target_language }}.ClassName"
+          },
+          "methods": {
+            "full.{{ source_language }}.ClassName.methodName": "full.{{ target_language }}.ClassName.methodName"
+          },
+          "variables": {
+            "full.{{ source_language }}.ClassName.variableName": "full.{{ target_language }}.ClassName.variableName"
+          }
+        }
+        ```
+      - You MUST include ALL functions and methods from {{ planning_dir }}/{{ source_language }}-functions.md in the mapping
+
+      ### 5. Create Target Language Skeleton
+
+      Create skeleton files for the {{ target_language.upper() }} translation to validate structure and naming.
+
+      **Constraints:**
+      - You MUST create the directory structure and skeleton files for the {{ target_language.upper() }} project in {{ target_translation_root }}.
+      - For each class/module identified in the design and name-mapping.json, create a file with:
+        - Necessary imports
+        - Class declarations
+        - Method stubs (including `__init__` or constructor)
+        - Field/variable declarations
+      - You MUST not translate the body of the methods, only the signature.
+      - Use the name mappings from {{ planning_dir }}/name-mapping.json.
+      - You MUST use the following naming conventions to map {{ source_language }} file and directory names to {{ target_language }}:
+        - {{ source_language }} camelCase methods → {{ target_language }} camelCase: `getOptionValue` → `getOptionValue`
+        - {{ source_language }} PascalCase classes → {{ target_language }} PascalCase: `CommandLine` → `CommandLine`
+        - {{ source_language }} camelCase variables → {{ target_language }} camelCase: `optionValue` → `optionValue`
+      - You MUST validate the skeleton code to ensure it is correct, can be compiled, and there are no errors:
+        - For Python: Execute each file using `python3 <file_path>` to ensure it loads without syntax errors.
+        - For compiled languages: Attempt to compile the skeleton.
+      - If validation fails, you MUST fix the skeleton structure or imports until it passes.
+
+      ### 6. Create the Translation Plan
 
       Create a plan to incrementally implement, compile, and test the translation.
 
@@ -126,9 +180,9 @@ templates:
       - You MUST include a checklist at the beginning of the implementation-plan.md file to track implementation progress
       - The first step in the implementation plan MUST be the following:
       ```
-      ### Step 1: Create skeleton project structure
+      ### Step 1: Verify skeleton project structure and name mapping
 
-      **Description:** Create the file structure of the {{ target_language.upper() }} translation under {{ target_translation_root }}. Implement all structs, traits, global variables, and constants. Write stubs for all functions, methods, and tests. If skeleton code already exists, ensure it is complete.
+      **Description:** Verify that the file structure of the {{ target_language.upper() }} translation exists under {{ target_translation_root }} and matches the design. Verify that skeleton files (with stubs) exist for all classes/modules. Verify that name-mapping.json exists and contains all required mappings. Run the skeleton validation (e.g., `python3 file.py`) to ensure the environment is set up correctly.
 
       ```
       - The remaining steps MUST follow a test-driven-development methodology, and priorize testing functions as soon as they are implemented
@@ -136,6 +190,7 @@ templates:
         - Description
         - Functions and methods to translate, written as a list of <{{ source_language }}-item-reference>'s
         - Tests to translate, written as a list of <{{ source_language }}-item-reference>'s. If a test is already implemented, it MUST NOT be listed here
+      - Each step MUST explicitly reference the name-mapping.json file and require using the mapped names
       - The steps MUST be ordered such that all of the depenencies of the {{ target_language.upper() }} source to implement are implemented before that step
       - You MUST NOT include excessive implementation details that are already covered in the translation document because this creates redundancy and potential inconsistencies
       - Each step MUST result in compilable code
