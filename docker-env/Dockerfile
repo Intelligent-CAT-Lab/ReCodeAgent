@@ -70,7 +70,7 @@ RUN node -v && npm -v \
 RUN npm install -g \
     crc-32@1.2.2 \
     numjs@0.16.1 \
-    @anthropic-ai/claude-code@2.0.47
+    @anthropic-ai/claude-code@2.0.50
 
 # Install Python packages
 RUN pip install --no-cache-dir \
