@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
 # Install Go 1.24.4
 RUN wget https://go.dev/dl/go1.24.4.linux-amd64.tar.gz \
     && tar -C /usr/local -xzf go1.24.4.linux-amd64.tar.gz \
-    && rm go1.24.4.linux-amd64.tar.gz
+    && rm go1.24.4.linux-amd64.tar.gz \
+    && ls -la /usr/local/go/bin/go || (echo "Go binary not found at /usr/local/go/bin/go" && exit 1)
 
 # Install Rust 1.92.0 (nightly-2025-09-15)
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
@@ -34,13 +35,15 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
 RUN wget https://corretto.aws/downloads/latest/amazon-corretto-21-x64-linux-jdk.tar.gz \
     && tar -C /usr/local -xzf amazon-corretto-21-x64-linux-jdk.tar.gz \
     && rm amazon-corretto-21-x64-linux-jdk.tar.gz \
-    && mv /usr/local/amazon-corretto-* /usr/local/java
+    && mv /usr/local/amazon-corretto-* /usr/local/java \
+    && ls -la /usr/local/java/bin/java || (echo "Java binary not found at /usr/local/java/bin/java" && exit 1)
 
 # Install Maven 3.9.9
 RUN wget https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz \
     && tar -C /usr/local -xzf apache-maven-3.9.9-bin.tar.gz \
     && rm apache-maven-3.9.9-bin.tar.gz \
-    && mv /usr/local/apache-maven-3.9.9 /usr/local/maven
+    && mv /usr/local/apache-maven-3.9.9 /usr/local/maven \
+    && ls -la /usr/local/maven/bin/mvn || (echo "Maven binary not found at /usr/local/maven/bin/mvn" && exit 1)
 
 # Download & unpack exactly Node.js v22.16.0
 RUN curl -fsSL https://nodejs.org/dist/v22.16.0/node-v22.16.0-linux-x64.tar.xz \
@@ -48,7 +51,7 @@ RUN curl -fsSL https://nodejs.org/dist/v22.16.0/node-v22.16.0-linux-x64.tar.xz \
      && npm install -g npm@11.4.0
 
 # Update PATH to include all tools
-ENV PATH="/usr/local/go/bin:/root/.cargo/bin:/usr/local/java/bin:/usr/local/maven/bin:${NODE_PATH}/.bin:/go/bin:${PATH}"
+ENV PATH="/usr/local/go/bin:/root/.cargo/bin:/usr/local/java/bin:/usr/local/maven/bin:/go/bin:${PATH}"
 ENV JAVA_HOME="/usr/local/java"
 ENV MAVEN_HOME="/usr/local/maven"
 ENV GOPATH="/go"
@@ -110,10 +113,10 @@ LABEL tool_name=${TOOL_NAME}
 LABEL project_name=${PROJECT_NAME}
 
 # Copy project snapshot into image, but only specific data for the tool and project
-COPY ../.claude /workspace/.claude
-COPY ../configs/prompt_templates.yaml /workspace/configs/prompt_templates.yaml
+COPY .claude /workspace/.claude
+COPY configs/prompt_templates.yaml /workspace/configs/prompt_templates.yaml
 # First copy all project files to a temporary directory
-COPY ../data/tool_projects/${TOOL_NAME}/${PROJECT_NAME} /tmp/project_files
+COPY data/tool_projects/${TOOL_NAME}/${PROJECT_NAME} /tmp/project_files
 
 # Create the target directory
 RUN mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}
@@ -145,12 +148,12 @@ RUN if [ "${TOOL_NAME}" = "crust" ]; then \
     mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning && \
     # Clean up temporary directory \
     rm -rf /tmp/project_files
-COPY ../scripts /workspace/scripts
-COPY ../src /workspace/src
-COPY ../.gitignore /workspace/.gitignore
-COPY ../.gitattributes /workspace/.gitattributes
-COPY ../CLAUDE.local.md /workspace/CLAUDE.local.md
-COPY ../README.md /workspace/README.md
+COPY scripts /workspace/scripts
+COPY src /workspace/src
+COPY .gitignore /workspace/.gitignore
+COPY .gitattributes /workspace/.gitattributes
+COPY CLAUDE.local.md /workspace/CLAUDE.local.md
+COPY README.md /workspace/README.md
 
 # Generate configs directory
 RUN mkdir -p /workspace/configs
@@ -288,8 +291,12 @@ RUN git init --initial-branch=main \
     && git add . \
     && git commit -m "Initial commit with full project snapshot"
 
-# Configure shell with basic coloring
+# Configure shell with basic coloring and PATH
 RUN echo 'export TERM=xterm-256color' >> /root/.bashrc \
+    && echo 'export PATH="/usr/local/go/bin:/root/.cargo/bin:/usr/local/java/bin:/usr/local/maven/bin:/go/bin:$PATH"' >> /root/.bashrc \
+    && echo 'export JAVA_HOME="/usr/local/java"' >> /root/.bashrc \
+    && echo 'export GOPATH="/go"' >> /root/.bashrc \
+    && echo 'export GOROOT="/usr/local/go"' >> /root/.bashrc \
     && echo 'alias ls="ls --color=auto"' >> /root/.bashrc \
     && echo 'alias grep="grep --color=auto"' >> /root/.bashrc \
     && echo 'PS1="\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] "' >> /root/.bashrc
