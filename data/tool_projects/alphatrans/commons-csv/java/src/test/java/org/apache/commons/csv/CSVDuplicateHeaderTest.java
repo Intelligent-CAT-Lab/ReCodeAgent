@@ -765,6 +765,4 @@ public class CSVDuplicateHeaderTest {
      *     IllegalArgumentException
      * @throws IOException Signals that an I/O exception has occurred.
      */
-
-    
 }

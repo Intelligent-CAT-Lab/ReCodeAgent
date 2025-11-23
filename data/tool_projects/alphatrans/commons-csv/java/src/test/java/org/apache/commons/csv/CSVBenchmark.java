@@ -230,6 +230,4 @@
          bh.consume(count);
          return count;
      }
-
-    
-}
+ }

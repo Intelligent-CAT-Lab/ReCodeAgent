@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator;
-import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -46,9 +45,7 @@ public class CustomValidatorResourcesTest extends TestCase {
     protected void tearDown() {}
 
     /** Test creating a custom validator resources. */
-
-    @Test
-    public void testCustomResources_test0_decomposed()  {
+    public void testCustomResources() {
         InputStream in = null;
         try {
             in = this.getClass().getResourceAsStream("TestNumber-config.xml");

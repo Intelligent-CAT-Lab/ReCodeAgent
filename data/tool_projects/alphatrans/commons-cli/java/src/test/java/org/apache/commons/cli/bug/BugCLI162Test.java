@@ -111,18 +111,7 @@ public class BugCLI162Test {
     }
 
     @Test
-    public void testInfiniteLoop_test0_decomposed()  {
-        final Options options = new Options();
-    }
-
-    @Test
-    public void testInfiniteLoop_test1_decomposed()  {
-        final Options options = new Options();
-        options.addOption3("h", "help", false, "This is a looooong description");
-    }
-
-    @Test
-    public void testInfiniteLoop_test2_decomposed()  {
+    public void testInfiniteLoop() {
         final Options options = new Options();
         options.addOption3("h", "help", false, "This is a looooong description");
         formatter.printHelp2(
@@ -134,21 +123,7 @@ public class BugCLI162Test {
                 HelpFormatter.DEFAULT_LEFT_PAD,
                 HelpFormatter.DEFAULT_DESC_PAD,
                 null);
-    }
 
-    @Test
-    public void testInfiniteLoop_test3_decomposed()  {
-        final Options options = new Options();
-        options.addOption3("h", "help", false, "This is a looooong description");
-        formatter.printHelp2(
-                new PrintWriter(sw),
-                20,
-                "app",
-                null,
-                options,
-                HelpFormatter.DEFAULT_LEFT_PAD,
-                HelpFormatter.DEFAULT_DESC_PAD,
-                null);
         final String expected =
                 "usage: app"
                         + CR
@@ -168,45 +143,7 @@ public class BugCLI162Test {
     }
 
     @Test
-    public void testLongLineChunking_test0_decomposed()  {
-        final Options options = new Options();
-    }
-
-    @Test
-    public void testLongLineChunking_test1_decomposed()  {
-        final Options options = new Options();
-        options.addOption3(
-                "x",
-                "extralongarg",
-                false,
-                "This description has ReallyLongValuesThatAreLongerThanTheWidthOfTheColumns and"
-                    + " also other"
-                    + " ReallyLongValuesThatAreHugerAndBiggerThanTheWidthOfTheColumnsBob, yes. ");
-    }
-
-    @Test
-    public void testLongLineChunking_test2_decomposed()  {
-        final Options options = new Options();
-        options.addOption3(
-                "x",
-                "extralongarg",
-                false,
-                "This description has ReallyLongValuesThatAreLongerThanTheWidthOfTheColumns and"
-                    + " also other"
-                    + " ReallyLongValuesThatAreHugerAndBiggerThanTheWidthOfTheColumnsBob, yes. ");
-        formatter.printHelp2(
-                new PrintWriter(sw),
-                35,
-                this.getClass().getName(),
-                "Header",
-                options,
-                0,
-                5,
-                "Footer");
-    }
-
-    @Test
-    public void testLongLineChunking_test3_decomposed()  {
+    public void testLongLineChunking() {
         final Options options = new Options();
         options.addOption3(
                 "x",
@@ -269,33 +206,7 @@ public class BugCLI162Test {
     }
 
     @Test
-    public void testLongLineChunkingIndentIgnored_test0_decomposed()  {
-        final Options options = new Options();
-    }
-
-    @Test
-    public void testLongLineChunkingIndentIgnored_test1_decomposed()  {
-        final Options options = new Options();
-        options.addOption3("x", "extralongarg", false, "This description is Long.");
-    }
-
-    @Test
-    public void testLongLineChunkingIndentIgnored_test2_decomposed()  {
-        final Options options = new Options();
-        options.addOption3("x", "extralongarg", false, "This description is Long.");
-        formatter.printHelp2(
-                new PrintWriter(sw),
-                22,
-                this.getClass().getName(),
-                "Header",
-                options,
-                0,
-                5,
-                "Footer");
-    }
-
-    @Test
-    public void testLongLineChunkingIndentIgnored_test3_decomposed()  {
+    public void testLongLineChunkingIndentIgnored() {
         final Options options = new Options();
         options.addOption3("x", "extralongarg", false, "This description is Long.");
         formatter.printHelp2(

@@ -56,6 +56,4 @@ public class ModulusTenLuhnCheckDigitTest extends AbstractCheckDigitTest {
                     VALID_DINERS
                 };
     }
-
-    
 }

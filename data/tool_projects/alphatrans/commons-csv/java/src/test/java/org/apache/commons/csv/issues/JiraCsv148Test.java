@@ -24,51 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class JiraCsv148Test {
 
-    
-
-    /**
-     * The difference between withTrim()and withIgnoreSurroundingSpace()： difference: withTrim() can
-     * remove the leading and trailing spaces and newlines in quotation marks, while
-     * withIgnoreSurroundingSpace() cannot The same point: you can remove the leading and trailing
-     * spaces,tabs and other symbols.
-     */
-
     @Test
-    public void testWithIgnoreSurroundingSpacesEmpty_test0_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-    }
-
-    @Test
-    public void testWithIgnoreSurroundingSpacesEmpty_test1_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-    }
-
-    @Test
-    public void testWithIgnoreSurroundingSpacesEmpty_test2_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setIgnoreSurroundingSpaces(true);
-    }
-
-    @Test
-    public void testWithIgnoreSurroundingSpacesEmpty_test3_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setIgnoreSurroundingSpaces(true);
-        final CSVFormat format =
-                CSVFormat.DEFAULT
-                        .builder()
-                        .setQuoteMode(QuoteMode.ALL)
-                        .setIgnoreSurroundingSpaces(true)
-                        .build();
-    }
-
-    @Test
-    public void testWithIgnoreSurroundingSpacesEmpty_test4_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setIgnoreSurroundingSpaces(true);
+    public void testWithIgnoreSurroundingSpacesEmpty() {
         final CSVFormat format =
                 CSVFormat.DEFAULT
                         .builder()
@@ -90,38 +47,14 @@ public class JiraCsv148Test {
                         "  Multiple spaces on both sides     "));
     }
 
+    /**
+     * The difference between withTrim()and withIgnoreSurroundingSpace()： difference: withTrim() can
+     * remove the leading and trailing spaces and newlines in quotation marks, while
+     * withIgnoreSurroundingSpace() cannot The same point: you can remove the leading and trailing
+     * spaces,tabs and other symbols.
+     */
     @Test
-    public void testWithTrimEmpty_test0_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-    }
-
-    @Test
-    public void testWithTrimEmpty_test1_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-    }
-
-    @Test
-    public void testWithTrimEmpty_test2_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setTrim(true);
-    }
-
-    @Test
-    public void testWithTrimEmpty_test3_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setTrim(true);
-        final CSVFormat format =
-                CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setTrim(true).build();
-    }
-
-    @Test
-    public void testWithTrimEmpty_test4_decomposed()  {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL);
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setTrim(true);
+    public void testWithTrimEmpty() {
         final CSVFormat format =
                 CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).setTrim(true).build();
         assertEquals(

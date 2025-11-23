@@ -44,9 +44,8 @@ public class JiraCsv248Test {
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws ClassNotFoundException If the CSVRecord cannot be deserialized
      */
-
     @Test
-    public void testJiraCsv248_test0_decomposed() throws IOException , ClassNotFoundException {
+    public void testJiraCsv248() throws IOException, ClassNotFoundException {
         try (InputStream in = getTestInput();
                 final ObjectInputStream ois = new ObjectInputStream(in)) {
             final Object object = ois.readObject();

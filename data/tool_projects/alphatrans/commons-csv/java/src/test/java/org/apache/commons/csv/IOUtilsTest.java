@@ -26,7 +26,7 @@ import java.io.IOException;
 public class IOUtilsTest {
 
     @Test
-    public void testRethrow_test0_decomposed()  {
+    public void testRethrow() {
         assertThrowsExactly(IOException.class, () -> IOUtils.rethrow(new IOException()));
     }
 }

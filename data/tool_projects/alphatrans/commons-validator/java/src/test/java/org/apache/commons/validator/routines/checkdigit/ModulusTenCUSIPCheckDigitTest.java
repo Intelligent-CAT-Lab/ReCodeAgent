@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator.routines.checkdigit;
-import org.junit.Test;
 
 /**
  * ModulusTenCheckDigit CUSIP Test.
@@ -54,20 +53,16 @@ public class ModulusTenCUSIPCheckDigitTest extends AbstractCheckDigitTest {
 
     private static String invalidCheckDigits[] = {"DUS0421CW", "DUS0421CN", "DUS0421CE"};
 
-    
-
-    private static String validCheckDigits[] = {"DUS0421C5"};
-
-    @Test
-    public void testVALIDATOR_336_InvalidCheckDigits_test0_decomposed()  {
+    public void testVALIDATOR_336_InvalidCheckDigits() {
         for (int i = 0; i < invalidCheckDigits.length; i++) {
             String invalidCheckDigit = invalidCheckDigits[i];
             assertFalse("Should fail: " + invalidCheckDigit, routine.isValid(invalidCheckDigit));
         }
     }
 
-    @Test
-    public void testVALIDATOR_336_ValidCheckDigits_test0_decomposed()  {
+    private static String validCheckDigits[] = {"DUS0421C5"};
+
+    public void testVALIDATOR_336_ValidCheckDigits() {
         for (int i = 0; i < validCheckDigits.length; i++) {
             String validCheckDigit = validCheckDigits[i];
             assertTrue("Should fail: " + validCheckDigit, routine.isValid(validCheckDigit));

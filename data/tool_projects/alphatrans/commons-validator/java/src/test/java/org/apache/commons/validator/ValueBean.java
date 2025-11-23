@@ -34,6 +34,4 @@ public class ValueBean {
     public void setValue(String value) {
         this.value = value;
     }
-
-    
 }

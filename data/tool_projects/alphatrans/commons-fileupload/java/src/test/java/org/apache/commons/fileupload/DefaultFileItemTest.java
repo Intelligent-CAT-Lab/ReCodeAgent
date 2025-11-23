@@ -112,6 +112,4 @@ public class DefaultFileItemTest {
     }
 
     /** Test construction of content charset. */
-
-    
 }

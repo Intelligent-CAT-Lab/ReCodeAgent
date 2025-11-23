@@ -88,35 +88,17 @@ public class PerformanceTest {
     }
 
     @Test
-    public void testParseBigFileRepeat_test0_decomposed() throws Exception {
+    public void testParseBigFileRepeat() throws Exception {
         long bestTime = Long.MAX_VALUE;
         for (int i = 0; i < this.max; i++) {
             bestTime = Math.min(this.testParseBigFile(false), bestTime);
         }
-    }
-
-    @Test
-    public void testParseBigFileRepeat_test1_decomposed() throws Exception {
-        long bestTime = Long.MAX_VALUE;
-        for (int i = 0; i < this.max; i++) {
-            bestTime = Math.min(this.testParseBigFile(false), bestTime);
-        }
-        String.format("Best time out of %,d is %,d milliseconds.",this.max,bestTime);
-    }
-
-    @Test
-    public void testParseBigFileRepeat_test2_decomposed() throws Exception {
-        long bestTime = Long.MAX_VALUE;
-        for (int i = 0; i < this.max; i++) {
-            bestTime = Math.min(this.testParseBigFile(false), bestTime);
-        }
-        String.format("Best time out of %,d is %,d milliseconds.",this.max,bestTime);
         this.println(
                 String.format("Best time out of %,d is %,d milliseconds.", this.max, bestTime));
     }
 
     @Test
-    public void testReadBigFile_test0_decomposed() throws Exception {
+    public void testReadBigFile() throws Exception {
         long bestTime = Long.MAX_VALUE;
         long count;
         for (int i = 0; i < this.max; i++) {
@@ -130,42 +112,6 @@ public class PerformanceTest {
             this.println(
                     String.format("File read in %,d milliseconds: %,d lines.", totalMillis, count));
         }
-    }
-
-    @Test
-    public void testReadBigFile_test1_decomposed() throws Exception {
-        long bestTime = Long.MAX_VALUE;
-        long count;
-        for (int i = 0; i < this.max; i++) {
-            final long startMillis;
-            try (final BufferedReader in = this.createBufferedReader()) {
-                startMillis = System.currentTimeMillis();
-                count = this.readAll(in);
-            }
-            final long totalMillis = System.currentTimeMillis() - startMillis;
-            bestTime = Math.min(totalMillis, bestTime);
-            this.println(
-                    String.format("File read in %,d milliseconds: %,d lines.", totalMillis, count));
-        }
-        String.format("Best time out of %,d is %,d milliseconds.",this.max,bestTime);
-    }
-
-    @Test
-    public void testReadBigFile_test2_decomposed() throws Exception {
-        long bestTime = Long.MAX_VALUE;
-        long count;
-        for (int i = 0; i < this.max; i++) {
-            final long startMillis;
-            try (final BufferedReader in = this.createBufferedReader()) {
-                startMillis = System.currentTimeMillis();
-                count = this.readAll(in);
-            }
-            final long totalMillis = System.currentTimeMillis() - startMillis;
-            bestTime = Math.min(totalMillis, bestTime);
-            this.println(
-                    String.format("File read in %,d milliseconds: %,d lines.", totalMillis, count));
-        }
-        String.format("Best time out of %,d is %,d milliseconds.",this.max,bestTime);
         this.println(
                 String.format("Best time out of %,d is %,d milliseconds.", this.max, bestTime));
     }

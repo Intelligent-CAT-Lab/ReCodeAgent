@@ -186,6 +186,4 @@ public class MockPortletActionRequest {
     public void setCharacterEncoding(String characterEncoding) throws UnsupportedEncodingException {
         this.characterEncoding = characterEncoding;
     }
-
-    
 }

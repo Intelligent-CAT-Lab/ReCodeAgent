@@ -30,52 +30,52 @@ public class CSVFormatPredefinedTest {
     }
 
     @Test
-    public void testDefault_test0_decomposed()  {
+    public void testDefault() {
         test(CSVFormat.DEFAULT, "Default");
     }
 
     @Test
-    public void testExcel_test0_decomposed()  {
+    public void testExcel() {
         test(CSVFormat.EXCEL, "Excel");
     }
 
     @Test
-    public void testMongoDbCsv_test0_decomposed()  {
+    public void testMongoDbCsv() {
         test(CSVFormat.MONGODB_CSV, "MongoDBCsv");
     }
 
     @Test
-    public void testMongoDbTsv_test0_decomposed()  {
+    public void testMongoDbTsv() {
         test(CSVFormat.MONGODB_TSV, "MongoDBTsv");
     }
 
     @Test
-    public void testMySQL_test0_decomposed()  {
+    public void testMySQL() {
         test(CSVFormat.MYSQL, "MySQL");
     }
 
     @Test
-    public void testOracle_test0_decomposed()  {
+    public void testOracle() {
         test(CSVFormat.ORACLE, "Oracle");
     }
 
     @Test
-    public void testPostgreSqlCsv_test0_decomposed()  {
+    public void testPostgreSqlCsv() {
         test(CSVFormat.POSTGRESQL_CSV, "PostgreSQLCsv");
     }
 
     @Test
-    public void testPostgreSqlText_test0_decomposed()  {
+    public void testPostgreSqlText() {
         test(CSVFormat.POSTGRESQL_TEXT, "PostgreSQLText");
     }
 
     @Test
-    public void testRFC4180_test0_decomposed()  {
+    public void testRFC4180() {
         test(CSVFormat.RFC4180, "RFC4180");
     }
 
     @Test
-    public void testTDF_test0_decomposed()  {
+    public void testTDF() {
         test(CSVFormat.TDF, "TDF");
     }
 }

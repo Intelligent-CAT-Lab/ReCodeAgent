@@ -40,6 +40,4 @@ public class ISBN10CheckDigitTest extends AbstractCheckDigitTest {
         routine = ISBN10CheckDigit.ISBN10_CHECK_DIGIT;
         valid = new String[] {"1930110995", "020163385X", "1932394354", "1590596277"};
     }
-
-    
 }

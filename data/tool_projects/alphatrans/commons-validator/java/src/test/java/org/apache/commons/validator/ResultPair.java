@@ -29,6 +29,4 @@ public class ResultPair {
         this.item = item;
         this.valid = valid; // Whether the individual part of url is valid.
     }
-
-    
 }

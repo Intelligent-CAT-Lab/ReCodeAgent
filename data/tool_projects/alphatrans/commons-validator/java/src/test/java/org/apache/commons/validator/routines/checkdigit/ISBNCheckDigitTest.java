@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator.routines.checkdigit;
-import org.junit.Test;
 
 /**
  * ISBN-10/ISBN-13 Check Digit Test.
@@ -53,39 +52,33 @@ public class ISBNCheckDigitTest extends AbstractCheckDigitTest {
     }
 
     /** Set up routine & valid codes. */
-
-    @Test
-    public void testInvalidLength_test0_decomposed()  {
+    public void testInvalidLength() {
         assertFalse("isValid() Lth 9 ", routine.isValid("123456789"));
         assertFalse("isValid() Lth 11", routine.isValid("12345678901"));
         assertFalse("isValid() Lth 12", routine.isValid("123456789012"));
         assertFalse("isValid() Lth 14", routine.isValid("12345678901234"));
-    }
 
-    @Test
-    public void testInvalidLength_test1_decomposed()  {
-        assertFalse("isValid() Lth 9 ", routine.isValid("123456789"));
-        assertFalse("isValid() Lth 11", routine.isValid("12345678901"));
-        assertFalse("isValid() Lth 12", routine.isValid("123456789012"));
-        assertFalse("isValid() Lth 14", routine.isValid("12345678901234"));
         try {
             routine.calculate("12345678");
             fail("calculate() Lth 8 - expected exception");
         } catch (Exception e) {
             assertEquals("calculate() Lth 8", "Invalid ISBN Length = 8", e.getMessage());
         }
+
         try {
             routine.calculate("1234567890");
             fail("calculate() Lth 10 - expected exception");
         } catch (Exception e) {
             assertEquals("calculate() Lth 10", "Invalid ISBN Length = 10", e.getMessage());
         }
+
         try {
             routine.calculate("12345678901");
             fail("calculate() Lth 11 - expected exception");
         } catch (Exception e) {
             assertEquals("calculate() Lth 11", "Invalid ISBN Length = 11", e.getMessage());
         }
+
         try {
             routine.calculate("1234567890123");
             fail("calculate() Lth 13 - expected exception");

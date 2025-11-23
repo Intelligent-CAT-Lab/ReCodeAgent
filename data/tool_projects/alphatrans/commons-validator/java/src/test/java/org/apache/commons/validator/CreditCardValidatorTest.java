@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator;
-import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -40,9 +39,35 @@ public class CreditCardValidatorTest extends TestCase {
         super(name);
     }
 
-    
+    public void testIsValid() {
+        CreditCardValidator ccv = CreditCardValidator.CreditCardValidator1();
 
-    
+        assertFalse(ccv.isValid(null));
+        assertFalse(ccv.isValid(""));
+        assertFalse(ccv.isValid("123456789012")); // too short
+        assertFalse(ccv.isValid("12345678901234567890")); // too long
+        assertFalse(ccv.isValid("4417123456789112"));
+        assertFalse(ccv.isValid("4417q23456w89113"));
+        assertTrue(ccv.isValid(VALID_VISA));
+        assertTrue(ccv.isValid(VALID_SHORT_VISA));
+        assertTrue(ccv.isValid(VALID_AMEX));
+        assertTrue(ccv.isValid(VALID_MASTERCARD));
+        assertTrue(ccv.isValid(VALID_DISCOVER));
+
+        ccv = new CreditCardValidator(CreditCardValidator.AMEX);
+        assertFalse(ccv.isValid("4417123456789113"));
+    }
+
+    public void testAddAllowedCardType() {
+        CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.NONE);
+        assertFalse(ccv.isValid(VALID_VISA));
+        assertFalse(ccv.isValid(VALID_AMEX));
+        assertFalse(ccv.isValid(VALID_MASTERCARD));
+        assertFalse(ccv.isValid(VALID_DISCOVER));
+
+        ccv.addAllowedCardType(new DinersClub());
+        assertTrue(ccv.isValid(VALID_DINERS));
+    }
 
     /** Test a custom implementation of CreditCardType. */
     private class DinersClub implements CreditCardValidator.CreditCardType {
@@ -53,96 +78,5 @@ public class CreditCardValidatorTest extends TestCase {
             String prefix = card.substring(0, 3) + ",";
             return ((PREFIX.contains(prefix)) && (card.length() == 14));
         }
-    }
-
-    @Test
-    public void testIsValid_test0_decomposed()  {
-        CreditCardValidator ccv = CreditCardValidator.CreditCardValidator1();
-    }
-
-    @Test
-    public void testIsValid_test1_decomposed()  {
-        CreditCardValidator ccv = CreditCardValidator.CreditCardValidator1();
-        assertFalse(ccv.isValid(null));
-        assertFalse(ccv.isValid(""));
-        assertFalse(ccv.isValid("123456789012"));
-        assertFalse(ccv.isValid("12345678901234567890"));
-        assertFalse(ccv.isValid("4417123456789112"));
-        assertFalse(ccv.isValid("4417q23456w89113"));
-        assertTrue(ccv.isValid(VALID_VISA));
-        assertTrue(ccv.isValid(VALID_SHORT_VISA));
-        assertTrue(ccv.isValid(VALID_AMEX));
-        assertTrue(ccv.isValid(VALID_MASTERCARD));
-        assertTrue(ccv.isValid(VALID_DISCOVER));
-    }
-
-    @Test
-    public void testIsValid_test2_decomposed()  {
-        CreditCardValidator ccv = CreditCardValidator.CreditCardValidator1();
-        assertFalse(ccv.isValid(null));
-        assertFalse(ccv.isValid(""));
-        assertFalse(ccv.isValid("123456789012"));
-        assertFalse(ccv.isValid("12345678901234567890"));
-        assertFalse(ccv.isValid("4417123456789112"));
-        assertFalse(ccv.isValid("4417q23456w89113"));
-        assertTrue(ccv.isValid(VALID_VISA));
-        assertTrue(ccv.isValid(VALID_SHORT_VISA));
-        assertTrue(ccv.isValid(VALID_AMEX));
-        assertTrue(ccv.isValid(VALID_MASTERCARD));
-        assertTrue(ccv.isValid(VALID_DISCOVER));
-        ccv = new CreditCardValidator(CreditCardValidator.AMEX);
-    }
-
-    @Test
-    public void testIsValid_test3_decomposed()  {
-        CreditCardValidator ccv = CreditCardValidator.CreditCardValidator1();
-        assertFalse(ccv.isValid(null));
-        assertFalse(ccv.isValid(""));
-        assertFalse(ccv.isValid("123456789012"));
-        assertFalse(ccv.isValid("12345678901234567890"));
-        assertFalse(ccv.isValid("4417123456789112"));
-        assertFalse(ccv.isValid("4417q23456w89113"));
-        assertTrue(ccv.isValid(VALID_VISA));
-        assertTrue(ccv.isValid(VALID_SHORT_VISA));
-        assertTrue(ccv.isValid(VALID_AMEX));
-        assertTrue(ccv.isValid(VALID_MASTERCARD));
-        assertTrue(ccv.isValid(VALID_DISCOVER));
-        ccv = new CreditCardValidator(CreditCardValidator.AMEX);
-        assertFalse(ccv.isValid("4417123456789113"));
-    }
-
-    @Test
-    public void testAddAllowedCardType_test0_decomposed()  {
-        CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.NONE);
-    }
-
-    @Test
-    public void testAddAllowedCardType_test1_decomposed()  {
-        CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.NONE);
-        assertFalse(ccv.isValid(VALID_VISA));
-        assertFalse(ccv.isValid(VALID_AMEX));
-        assertFalse(ccv.isValid(VALID_MASTERCARD));
-        assertFalse(ccv.isValid(VALID_DISCOVER));
-    }
-
-    @Test
-    public void testAddAllowedCardType_test2_decomposed()  {
-        CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.NONE);
-        assertFalse(ccv.isValid(VALID_VISA));
-        assertFalse(ccv.isValid(VALID_AMEX));
-        assertFalse(ccv.isValid(VALID_MASTERCARD));
-        assertFalse(ccv.isValid(VALID_DISCOVER));
-        ccv.addAllowedCardType(new DinersClub());
-    }
-
-    @Test
-    public void testAddAllowedCardType_test3_decomposed()  {
-        CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.NONE);
-        assertFalse(ccv.isValid(VALID_VISA));
-        assertFalse(ccv.isValid(VALID_AMEX));
-        assertFalse(ccv.isValid(VALID_MASTERCARD));
-        assertFalse(ccv.isValid(VALID_DISCOVER));
-        ccv.addAllowedCardType(new DinersClub());
-        assertTrue(ccv.isValid(VALID_DINERS));
     }
 }

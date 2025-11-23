@@ -357,6 +357,4 @@ public class PerformanceTest {
         }
         show0();
     }
-
-    
 }

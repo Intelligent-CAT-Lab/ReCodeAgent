@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator;
-import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -38,13 +37,7 @@ public class ISBNValidatorTest extends TestCase {
         super(name);
     }
 
-    @Test
-    public void testIsValid_test0_decomposed() throws Exception {
-        ISBNValidator validator = new ISBNValidator();
-    }
-
-    @Test
-    public void testIsValid_test1_decomposed() throws Exception {
+    public void testIsValid() throws Exception {
         ISBNValidator validator = new ISBNValidator();
         assertFalse(validator.isValid(null));
         assertFalse(validator.isValid(""));
@@ -56,6 +49,7 @@ public class ISBNValidatorTest extends TestCase {
         assertFalse(validator.isValid("--1 930110 99 5"));
         assertFalse(validator.isValid("1 930110 99 5--"));
         assertFalse(validator.isValid("1 930110-99 5-"));
+
         assertTrue(validator.isValid(VALID_ISBN_RAW));
         assertTrue(validator.isValid(VALID_ISBN_DASHES));
         assertTrue(validator.isValid(VALID_ISBN_SPACES));

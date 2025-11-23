@@ -95,6 +95,4 @@ public class TypeBean {
     public void setCreditCard(String sCreditCard) {
         this.sCreditCard = sCreditCard;
     }
-
-    
 }

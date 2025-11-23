@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator;
-import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -31,32 +30,36 @@ public class GenericValidatorTest extends TestCase {
         super(name);
     }
 
-    @Test
-    public void testMinLength_test0_decomposed()  {
+    public void testMinLength() {
+
         assertTrue("Min=5 End=0", GenericValidator.minLength1("12345\n\r", 5, 0));
         assertFalse("Min=6 End=0", GenericValidator.minLength1("12345\n\r", 6, 0));
         assertFalse("Min=7 End=0", GenericValidator.minLength1("12345\n\r", 7, 0));
         assertFalse("Min=8 End=0", GenericValidator.minLength1("12345\n\r", 8, 0));
+
         assertTrue("Min=5 End=1", GenericValidator.minLength1("12345\n\r", 5, 1));
         assertTrue("Min=6 End=1", GenericValidator.minLength1("12345\n\r", 6, 1));
         assertFalse("Min=7 End=1", GenericValidator.minLength1("12345\n\r", 7, 1));
         assertFalse("Min=8 End=1", GenericValidator.minLength1("12345\n\r", 8, 1));
+
         assertTrue("Min=5 End=2", GenericValidator.minLength1("12345\n\r", 5, 2));
         assertTrue("Min=6 End=2", GenericValidator.minLength1("12345\n\r", 6, 2));
         assertTrue("Min=7 End=2", GenericValidator.minLength1("12345\n\r", 7, 2));
         assertFalse("Min=8 End=2", GenericValidator.minLength1("12345\n\r", 8, 2));
     }
 
-    @Test
-    public void testMaxLength_test0_decomposed()  {
+    public void testMaxLength() {
+
         assertFalse("Max=4 End=0", GenericValidator.maxLength1("12345\n\r", 4, 0));
         assertTrue("Max=5 End=0", GenericValidator.maxLength1("12345\n\r", 5, 0));
         assertTrue("Max=6 End=0", GenericValidator.maxLength1("12345\n\r", 6, 0));
         assertTrue("Max=7 End=0", GenericValidator.maxLength1("12345\n\r", 7, 0));
+
         assertFalse("Max=4 End=1", GenericValidator.maxLength1("12345\n\r", 4, 1));
         assertFalse("Max=5 End=1", GenericValidator.maxLength1("12345\n\r", 5, 1));
         assertTrue("Max=6 End=1", GenericValidator.maxLength1("12345\n\r", 6, 1));
         assertTrue("Max=7 End=1", GenericValidator.maxLength1("12345\n\r", 7, 1));
+
         assertFalse("Max=4 End=2", GenericValidator.maxLength1("12345\n\r", 4, 2));
         assertFalse("Max=5 End=2", GenericValidator.maxLength1("12345\n\r", 5, 2));
         assertFalse("Max=6 End=2", GenericValidator.maxLength1("12345\n\r", 6, 2));

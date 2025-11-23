@@ -105,6 +105,4 @@ public class DiskFileItemSerializeTest {
 
         return result;
     }
-
-    
 }

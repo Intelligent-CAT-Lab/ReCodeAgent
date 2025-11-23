@@ -72,25 +72,7 @@ public class BugCLI266Test {
     }
 
     @Test
-    public void testOptionComparatorDefaultOrder_test0_decomposed()  {
-        final HelpFormatter formatter = new HelpFormatter();
-    }
-
-    @Test
-    public void testOptionComparatorDefaultOrder_test1_decomposed()  {
-        final HelpFormatter formatter = new HelpFormatter();
-        final List<Option> options = new ArrayList<>(getOptions().getOptions());
-    }
-
-    @Test
-    public void testOptionComparatorDefaultOrder_test2_decomposed()  {
-        final HelpFormatter formatter = new HelpFormatter();
-        final List<Option> options = new ArrayList<>(getOptions().getOptions());
-        Collections.sort(options, formatter.getOptionComparator());
-    }
-
-    @Test
-    public void testOptionComparatorDefaultOrder_test3_decomposed()  {
+    public void testOptionComparatorDefaultOrder() {
         final HelpFormatter formatter = new HelpFormatter();
         final List<Option> options = new ArrayList<>(getOptions().getOptions());
         Collections.sort(options, formatter.getOptionComparator());
@@ -102,12 +84,7 @@ public class BugCLI266Test {
     }
 
     @Test
-    public void testOptionComparatorInsertedOrder_test0_decomposed()  {
-        final Collection<Option> options = getOptions().getOptions();
-    }
-
-    @Test
-    public void testOptionComparatorInsertedOrder_test1_decomposed()  {
+    public void testOptionComparatorInsertedOrder() {
         final Collection<Option> options = getOptions().getOptions();
         int i = 0;
         for (final Option o : options) {

@@ -28,44 +28,8 @@ import org.junit.Test;
 
 @SuppressWarnings("deprecation") // tests some deprecated classes
 public class BugCLI133Test {
-
     @Test
-    public void testOrder_test0_decomposed() throws ParseException {
-        final Option optionA = Option.Option1("a", "first");
-    }
-
-    @Test
-    public void testOrder_test1_decomposed() throws ParseException {
-        final Option optionA = Option.Option1("a", "first");
-        final Options opts = new Options();
-    }
-
-    @Test
-    public void testOrder_test2_decomposed() throws ParseException {
-        final Option optionA = Option.Option1("a", "first");
-        final Options opts = new Options();
-        opts.addOption0(optionA);
-    }
-
-    @Test
-    public void testOrder_test3_decomposed() throws ParseException {
-        final Option optionA = Option.Option1("a", "first");
-        final Options opts = new Options();
-        opts.addOption0(optionA);
-        final PosixParser posixParser = new PosixParser();
-    }
-
-    @Test
-    public void testOrder_test4_decomposed() throws ParseException {
-        final Option optionA = Option.Option1("a", "first");
-        final Options opts = new Options();
-        opts.addOption0(optionA);
-        final PosixParser posixParser = new PosixParser();
-        final CommandLine line = posixParser.parse0(opts, null);
-    }
-
-    @Test
-    public void testOrder_test5_decomposed() throws ParseException {
+    public void testOrder() throws ParseException {
         final Option optionA = Option.Option1("a", "first");
         final Options opts = new Options();
         opts.addOption0(optionA);

@@ -33,66 +33,7 @@ import java.util.List;
 public class JiraCsv249Test {
 
     @Test
-    public void testJiraCsv249_test0_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-    }
-
-    @Test
-    public void testJiraCsv249_test1_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setEscape0('\\');
-    }
-
-    @Test
-    public void testJiraCsv249_test2_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setEscape0('\\');
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setEscape0('\\').build();
-    }
-
-    @Test
-    public void testJiraCsv249_test3_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setEscape0('\\');
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setEscape0('\\').build();
-        final StringWriter stringWriter = new StringWriter();
-        try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
-            printer.printRecord1("foo \\", "bar");
-        }
-    }
-
-    @Test
-    public void testJiraCsv249_test4_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setEscape0('\\');
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setEscape0('\\').build();
-        final StringWriter stringWriter = new StringWriter();
-        try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
-            printer.printRecord1("foo \\", "bar");
-        }
-        final StringReader stringReader = new StringReader(stringWriter.toString());
-    }
-
-    @Test
-    public void testJiraCsv249_test5_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setEscape0('\\');
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setEscape0('\\').build();
-        final StringWriter stringWriter = new StringWriter();
-        try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
-            printer.printRecord1("foo \\", "bar");
-        }
-        final StringReader stringReader = new StringReader(stringWriter.toString());
-        final List<CSVRecord> records;
-        try (CSVParser parser = CSVParser.CSVParser1(stringReader, csvFormat)) {
-            records = parser.getRecords();
-        }
-    }
-
-    @Test
-    public void testJiraCsv249_test6_decomposed() throws IOException {
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setEscape0('\\');
+    public void testJiraCsv249() throws IOException {
         final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setEscape0('\\').build();
         final StringWriter stringWriter = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {

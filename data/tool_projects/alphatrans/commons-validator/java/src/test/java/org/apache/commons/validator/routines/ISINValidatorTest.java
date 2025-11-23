@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator.routines;
-import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -73,15 +72,13 @@ public class ISINValidatorTest extends TestCase {
         super(name);
     }
 
-    @Test
-    public void testIsValidTrue_test0_decomposed()  {
+    public void testIsValidTrue() {
         for (String f : validFormat) {
             assertTrue(f, VALIDATOR_TRUE.isValid(f));
         }
     }
 
-    @Test
-    public void testInvalidTrue_test0_decomposed()  {
+    public void testInvalidTrue() {
         for (String f : invalidFormat) {
             assertFalse(f, VALIDATOR_TRUE.isValid(f));
         }
@@ -90,15 +87,13 @@ public class ISINValidatorTest extends TestCase {
         }
     }
 
-    @Test
-    public void testIsValidFalse_test0_decomposed()  {
+    public void testIsValidFalse() {
         for (String f : validFormat) {
             assertTrue(f, VALIDATOR_FALSE.isValid(f));
         }
     }
 
-    @Test
-    public void testInvalidFalse_test0_decomposed()  {
+    public void testInvalidFalse() {
         for (String f : invalidFormat) {
             assertFalse(f, VALIDATOR_FALSE.isValid(f));
         }

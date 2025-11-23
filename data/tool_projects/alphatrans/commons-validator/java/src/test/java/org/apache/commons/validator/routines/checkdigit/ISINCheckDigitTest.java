@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.validator.routines.checkdigit;
-import org.junit.Test;
 
 /**
  * ISIN Check Digit Test.
@@ -66,8 +65,7 @@ public class ISINCheckDigitTest extends AbstractCheckDigitTest {
         "DK000976334H", // proper check digit is '4', see above
     };
 
-    @Test
-    public void testVALIDATOR_345_test0_decomposed()  {
+    public void testVALIDATOR_345() {
         for (int i = 0; i < invalidCheckDigits.length; i++) {
             String invalidCheckDigit = invalidCheckDigits[i];
             assertFalse("Should fail: " + invalidCheckDigit, routine.isValid(invalidCheckDigit));

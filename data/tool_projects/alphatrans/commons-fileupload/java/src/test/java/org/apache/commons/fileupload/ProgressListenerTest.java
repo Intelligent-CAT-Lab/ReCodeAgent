@@ -56,6 +56,4 @@ public class ProgressListenerTest {
     }
 
     /** Parse a very long file upload by using a progress listener. */
-
-    
 }

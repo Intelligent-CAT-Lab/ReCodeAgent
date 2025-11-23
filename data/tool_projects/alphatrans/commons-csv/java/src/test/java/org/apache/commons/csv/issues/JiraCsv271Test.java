@@ -30,17 +30,7 @@ import java.util.Arrays;
 public class JiraCsv271Test {
 
     @Test
-    public void testJiraCsv271_withArray_test0_decomposed() throws IOException {
-        final CSVFormat csvFormat = CSVFormat.DEFAULT;
-        final StringWriter stringWriter = new StringWriter();
-        try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
-            printer.print("a");
-            printer.printRecord1("b", "c");
-        }
-    }
-
-    @Test
-    public void testJiraCsv271_withArray_test1_decomposed() throws IOException {
+    public void testJiraCsv271_withArray() throws IOException {
         final CSVFormat csvFormat = CSVFormat.DEFAULT;
         final StringWriter stringWriter = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
@@ -51,17 +41,7 @@ public class JiraCsv271Test {
     }
 
     @Test
-    public void testJiraCsv271_withList_test0_decomposed() throws IOException {
-        final CSVFormat csvFormat = CSVFormat.DEFAULT;
-        final StringWriter stringWriter = new StringWriter();
-        try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
-            printer.print("a");
-            printer.printRecord0(Arrays.asList("b", "c"));
-        }
-    }
-
-    @Test
-    public void testJiraCsv271_withList_test1_decomposed() throws IOException {
+    public void testJiraCsv271_withList() throws IOException {
         final CSVFormat csvFormat = CSVFormat.DEFAULT;
         final StringWriter stringWriter = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {

@@ -470,6 +470,4 @@ public class MockHttpServletRequest {
             return in.read(b, off, len);
         }
     }
-
-    
 }

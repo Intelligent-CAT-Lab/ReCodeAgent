@@ -64,30 +64,11 @@ public class BugCLI265Test {
     }
 
     @Test
-    public void shouldParseConcatenatedShortOptions_test0_decomposed() throws Exception {
+    public void shouldParseConcatenatedShortOptions() throws Exception {
         final String[] concatenatedShortOptions = {"-t1", "-ab"};
-        final CommandLine commandLine = parser.parse0(options, concatenatedShortOptions);
-    }
 
-    @Test
-    public void shouldParseConcatenatedShortOptions_test1_decomposed() throws Exception {
-        final String[] concatenatedShortOptions = {"-t1", "-ab"};
         final CommandLine commandLine = parser.parse0(options, concatenatedShortOptions);
-        assertTrue(commandLine.hasOption2("t1"));
-    }
 
-    @Test
-    public void shouldParseConcatenatedShortOptions_test2_decomposed() throws Exception {
-        final String[] concatenatedShortOptions = {"-t1", "-ab"};
-        final CommandLine commandLine = parser.parse0(options, concatenatedShortOptions);
-        assertTrue(commandLine.hasOption2("t1"));
-        assertNull(commandLine.getOptionValue4("t1"));
-    }
-
-    @Test
-    public void shouldParseConcatenatedShortOptions_test3_decomposed() throws Exception {
-        final String[] concatenatedShortOptions = {"-t1", "-ab"};
-        final CommandLine commandLine = parser.parse0(options, concatenatedShortOptions);
         assertTrue(commandLine.hasOption2("t1"));
         assertNull(commandLine.getOptionValue4("t1"));
         assertTrue(commandLine.hasOption2("a"));
@@ -96,33 +77,11 @@ public class BugCLI265Test {
     }
 
     @Test
-    public void shouldParseShortOptionWithoutValue_test0_decomposed() throws Exception {
+    public void shouldParseShortOptionWithoutValue() throws Exception {
         final String[] twoShortOptions = {"-t1", "-last"};
-        final CommandLine commandLine = parser.parse0(options, twoShortOptions);
-    }
 
-    @Test
-    public void shouldParseShortOptionWithoutValue_test1_decomposed() throws Exception {
-        final String[] twoShortOptions = {"-t1", "-last"};
         final CommandLine commandLine = parser.parse0(options, twoShortOptions);
-        assertTrue(commandLine.hasOption2("t1"));
-    }
 
-    @Test
-    public void shouldParseShortOptionWithoutValue_test2_decomposed() throws Exception {
-        final String[] twoShortOptions = {"-t1", "-last"};
-        final CommandLine commandLine = parser.parse0(options, twoShortOptions);
-        assertTrue(commandLine.hasOption2("t1"));
-        assertNotEquals(
-                "Second option has been used as value for first option",
-                "-last",
-                commandLine.getOptionValue4("t1"));
-    }
-
-    @Test
-    public void shouldParseShortOptionWithoutValue_test3_decomposed() throws Exception {
-        final String[] twoShortOptions = {"-t1", "-last"};
-        final CommandLine commandLine = parser.parse0(options, twoShortOptions);
         assertTrue(commandLine.hasOption2("t1"));
         assertNotEquals(
                 "Second option has been used as value for first option",
@@ -132,22 +91,11 @@ public class BugCLI265Test {
     }
 
     @Test
-    public void shouldParseShortOptionWithValue_test0_decomposed() throws Exception {
+    public void shouldParseShortOptionWithValue() throws Exception {
         final String[] shortOptionWithValue = {"-t1", "path/to/my/db"};
-        final CommandLine commandLine = parser.parse0(options, shortOptionWithValue);
-    }
 
-    @Test
-    public void shouldParseShortOptionWithValue_test1_decomposed() throws Exception {
-        final String[] shortOptionWithValue = {"-t1", "path/to/my/db"};
         final CommandLine commandLine = parser.parse0(options, shortOptionWithValue);
-        assertEquals("path/to/my/db", commandLine.getOptionValue4("t1"));
-    }
 
-    @Test
-    public void shouldParseShortOptionWithValue_test2_decomposed() throws Exception {
-        final String[] shortOptionWithValue = {"-t1", "path/to/my/db"};
-        final CommandLine commandLine = parser.parse0(options, shortOptionWithValue);
         assertEquals("path/to/my/db", commandLine.getOptionValue4("t1"));
         assertFalse(commandLine.hasOption2("last"));
     }

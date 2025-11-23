@@ -28,6 +28,4 @@ public class Util {
      *
      * @return a list of {@link FileUpload} implementations
      */
-
-    
 }

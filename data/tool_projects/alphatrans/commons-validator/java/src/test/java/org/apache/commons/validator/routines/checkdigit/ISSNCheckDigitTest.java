@@ -63,6 +63,4 @@ public class ISSNCheckDigitTest extends AbstractCheckDigitTest {
         missingMessage = "Code is missing";
         zeroSum = "00000000";
     }
-
-    
 }

@@ -23,63 +23,19 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class DisablePartialMatchingTest {
-
     @Test
-    public void testDisablePartialMatching_test0_decomposed() throws Exception {
+    public void testDisablePartialMatching() throws Exception {
         final CommandLineParser parser = new DefaultParser(0, false, null);
-    }
 
-    @Test
-    public void testDisablePartialMatching_test1_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(0, false, null);
         final Options options = new Options();
-    }
 
-    @Test
-    public void testDisablePartialMatching_test2_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(0, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-    }
-
-    @Test
-    public void testDisablePartialMatching_test3_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(0, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-        options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
-    }
-
-    @Test
-    public void testDisablePartialMatching_test4_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(0, false, null);
-        final Options options = new Options();
         options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
         options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
         options.addOption0(
                 new Option(0, "o", "option", "Turn on option with argument.", true, null));
-    }
 
-    @Test
-    public void testDisablePartialMatching_test5_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(0, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-        options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
-        options.addOption0(
-                new Option(0, "o", "option", "Turn on option with argument.", true, null));
         final CommandLine line = parser.parse0(options, new String[] {"-de", "--option=foobar"});
-    }
 
-    @Test
-    public void testDisablePartialMatching_test6_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(0, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-        options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
-        options.addOption0(
-                new Option(0, "o", "option", "Turn on option with argument.", true, null));
-        final CommandLine line = parser.parse0(options, new String[] {"-de", "--option=foobar"});
         assertTrue("There should be an option debug in any case...", line.hasOption2("debug"));
         assertTrue(
                 "There should be an extract option because partial matching is off",
@@ -90,61 +46,18 @@ public class DisablePartialMatchingTest {
     }
 
     @Test
-    public void testRegularPartialMatching_test0_decomposed() throws Exception {
+    public void testRegularPartialMatching() throws Exception {
         final CommandLineParser parser = new DefaultParser(2, false, null);
-    }
 
-    @Test
-    public void testRegularPartialMatching_test1_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(2, false, null);
         final Options options = new Options();
-    }
 
-    @Test
-    public void testRegularPartialMatching_test2_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(2, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-    }
-
-    @Test
-    public void testRegularPartialMatching_test3_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(2, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-        options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
-    }
-
-    @Test
-    public void testRegularPartialMatching_test4_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(2, false, null);
-        final Options options = new Options();
         options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
         options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
         options.addOption0(
                 new Option(0, "o", "option", "Turn on option with argument.", true, null));
-    }
 
-    @Test
-    public void testRegularPartialMatching_test5_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(2, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-        options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
-        options.addOption0(
-                new Option(0, "o", "option", "Turn on option with argument.", true, null));
         final CommandLine line = parser.parse0(options, new String[] {"-de", "--option=foobar"});
-    }
 
-    @Test
-    public void testRegularPartialMatching_test6_decomposed() throws Exception {
-        final CommandLineParser parser = new DefaultParser(2, false, null);
-        final Options options = new Options();
-        options.addOption0(new Option(0, "d", "debug", "Turn on debug.", false, null));
-        options.addOption0(new Option(0, "e", "extract", "Turn on extract.", false, null));
-        options.addOption0(
-                new Option(0, "o", "option", "Turn on option with argument.", true, null));
-        final CommandLine line = parser.parse0(options, new String[] {"-de", "--option=foobar"});
         assertTrue("There should be an option debug in any case...", line.hasOption2("debug"));
         assertFalse(
                 "There should not be an extract option because partial matching only selects debug",

@@ -57,6 +57,4 @@ public class LuhnCheckDigitTest extends AbstractCheckDigitTest {
                     VALID_DINERS
                 };
     }
-
-    
 }

@@ -41,36 +41,9 @@ public class JiraCsv253Test {
     }
 
     @Test
-    public void testHandleAbsentValues_test0_decomposed() throws IOException {
+    public void testHandleAbsentValues() throws IOException {
         final String source =
                 "\"John\",,\"Doe\"\n" + ",\"AA\",123\n" + "\"John\",90,\n" + "\"\",,90";
-        CSVFormat.DEFAULT.builder();
-    }
-
-    @Test
-    public void testHandleAbsentValues_test1_decomposed() throws IOException {
-        final String source =
-                "\"John\",,\"Doe\"\n" + ",\"AA\",123\n" + "\"John\",90,\n" + "\"\",,90";
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.NON_NUMERIC);
-    }
-
-    @Test
-    public void testHandleAbsentValues_test2_decomposed() throws IOException {
-        final String source =
-                "\"John\",,\"Doe\"\n" + ",\"AA\",123\n" + "\"John\",90,\n" + "\"\",,90";
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.NON_NUMERIC);
-        final CSVFormat csvFormat =
-                CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.NON_NUMERIC).build();
-    }
-
-    @Test
-    public void testHandleAbsentValues_test3_decomposed() throws IOException {
-        final String source =
-                "\"John\",,\"Doe\"\n" + ",\"AA\",123\n" + "\"John\",90,\n" + "\"\",,90";
-        CSVFormat.DEFAULT.builder();
-        CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.NON_NUMERIC);
         final CSVFormat csvFormat =
                 CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.NON_NUMERIC).build();
         try (final CSVParser parser = csvFormat.parse(new StringReader(source))) {

@@ -43,6 +43,4 @@ public class ABANumberCheckDigitTest extends AbstractCheckDigitTest {
                     "123456780", "123123123", "011000015", "111000038", "231381116", "121181976"
                 };
     }
-
-    
 }

@@ -239,6 +239,4 @@ public abstract class AbstractNumberValidatorTest extends TestCase {
         }
         assertNotNull(result);
     }
-
-    
 }

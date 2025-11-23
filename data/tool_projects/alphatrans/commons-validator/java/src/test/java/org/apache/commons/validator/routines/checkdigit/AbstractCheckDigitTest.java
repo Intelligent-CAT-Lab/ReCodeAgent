@@ -308,6 +308,4 @@ public abstract class AbstractCheckDigitTest extends TestCase {
         int start = code.length() - checkDigitLth;
         return code.substring(start);
     }
-
-    
 }

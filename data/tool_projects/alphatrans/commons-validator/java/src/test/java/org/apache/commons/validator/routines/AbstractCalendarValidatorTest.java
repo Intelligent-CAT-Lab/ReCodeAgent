@@ -277,6 +277,4 @@ public abstract class AbstractCalendarValidatorTest extends TestCase {
         Calendar calendar = createCalendar(zone, date, time);
         return calendar.getTime();
     }
-
-    
 }
