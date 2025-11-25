@@ -74,7 +74,7 @@ templates:
       # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Plan Script
 
       ## Overview
-      This script guides you through the process of creating a plan to translate a {{ source_language.upper() }} project into {{ target_language.upper() }}. A high-level design for the translation has already been written. The translation will be "1:1", meaning each {{ source_language.upper() }} item (an item is a function, method, struct, interface, test, or global variable) will have a {{ target_language.upper() }} translation unless the translation requirements explicity require certain items to not be translated. The translation plan will translate sets of {{ source_language.upper() }} items to {{ target_language.upper() }} in a "bottom-up" order. To aid in developing the translation strategy, we will make a call graph.
+      This script guides you through the process of creating a plan to translate a {{ source_language.upper() }} project into {{ target_language.upper() }}. A high-level design for the translation has already been written. The translation will be "1:1", meaning each {{ source_language.upper() }} item (an item is a function, method, struct, interface, test, or global variable) will have a {{ target_language.upper() }} translation unless the translation requirements explicity require certain items to not be translated. The translation plan will translate sets of {{ source_language.upper() }} items to {{ target_language.upper() }} in a "bottom-up" order.
 
       ## Parameters
 
@@ -93,12 +93,12 @@ templates:
       **Constraints:**
       - You MUST read the following file in its entirety: {{ planning_dir }}/{{ target_language }}-overall-design.md
 
-      ### 2. Create a List of {{ source_language.upper() }} Functions and Methods to Translate
+      ### 2. Create and Validate List of {{ source_language.upper() }} Functions and Methods
 
-      Create a list of {{ source_language.upper() }} functions and methods that will be translated both from source files and from test files.
+      Create a list of {{ source_language.upper() }} functions and methods that will be translated, with automated validation.
 
       **Constraints:**
-      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to extract methods, variables, and classes from each {{ source_language }} source file.
+      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to extract methods, variables, and classes from each {{ source_language }} source file AND each {{ source_language }} test file.
       - You MUST write a list of {{ source_language.upper() }} functions and methods that will be translated under {{ planning_dir }}/{{ source_language }}-functions.md
       - Each line in the file MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
       - Each <{{ source_language }}-item-name> MUST follow the following convention:
@@ -106,34 +106,51 @@ templates:
           - For functions: <function-name>
       - You MUST ONLY include functions and methods that will be translated, respecting the translation's requirements outlined in {{ planning_dir }}/{{ target_language }}-overall-design.md
 
-      ### 3. Create the Call Graph
+      **VALIDATION-IN-THE-LOOP REQUIREMENT:**
+      You MUST create and execute a validation script to ensure all functions are correctly extracted:
+      
+      1. **Write Validation Script:**
+         - Create {{ planning_dir }}/validate_functions.py (or appropriate language)
+         - The script MUST:
+           a. Read {{ planning_dir }}/{{ source_language }}-functions.md
+           b. Parse each line and validate the format: <file-name>:<item-name>
+           c. For each entry, use 'mcp__project-analyzer__get_file_structure' to verify the function/method actually exists in the file
+           d. Check that all files from the directory tree (both source AND test files) have been processed
+           e. Report any format errors, missing functions, or unprocessed files (especially test files)
+           f. Exit with code 0 if validation passes, code 1 if errors found
+      
+      2. **Execute Validation and Iterate:**
+         - Run the validation script after creating {{ source_language }}-functions.md
+         - If validation fails, fix the issues (add missing entries, correct format, etc.)
+         - Re-run validation until it passes
+         - This ensures ALL functions from ALL files (including test files) are captured
+      
+      3. **Create Validation Report:**
+         - Create {{ planning_dir }}/functions-validation-report.md documenting:
+           a. Total number of files processed
+           b. Total number of functions/methods extracted
+           c. Breakdown by file type (source vs test)
+           d. Any issues encountered and resolutions
+           e. Confirmation that validation passed
+      
+      4. **Cleanup:**
+         - After successful validation, DELETE {{ planning_dir }}/validate_functions.py
+         - Keep the validation report and {{ source_language }}-functions.md
+      
+      **DO NOT proceed to Step 3 until validation script passes and is deleted.**
 
-      Create a file with the call graph.
+      ### 3. Create Name Mapping and Target Skeleton
 
-      **Constraints:**
-      - You MUST write the call graph to the file {{ planning_dir }}/{{ source_language }}-call-graph.md
-      - The call graph MUST ONLY cover functions and methods listed in {{ planning_dir }}/{{ source_language }}-functions.md
-      - Each line in {{ planning_dir }}/{{ source_language }}-call-graph.md MUST contain the functions and methods called by a single {{ source_language.upper() }} function or method, and have the following format: <{{ source_language }}-item-reference>: <{{ source_language }}-item-reference>,<{{ source_language }}-item-reference>,...
-      - Each <{{ source_language }}-item-reference> MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
-      - Each <{{ source_language }}-item-name> MUST follow the following convention:
-          - For methods: <reciever-type-name>.<method-name>
-          - For functions: <function-name>
-      - Test functions MUST have their callees listed too
+      Create the name mapping file and target skeleton files in a single integrated step.
 
-      ### 4. Create Name Mapping File
-
-      Create a name mapping file that will be used to ensure consistent naming throughout translation.
-
-      **Constraints:**
-      - You MUST create a name mapping file at {{ planning_dir }}/name-mapping.json
-      - For each function and method listed in {{ planning_dir }}/{{ source_language }}-functions.md:
-        1. Extract the full {{ source_language }} name (including class/package if applicable)
-        2. Convert it to {{ target_language }} following naming conventions:
-           - {{ source_language }} camelCase methods → {{ target_language }} camelCase: `getOptionValue` → `getOptionValue`
-           - {{ source_language }} PascalCase classes → {{ target_language }} PascalCase: `CommandLine` → `CommandLine`
-           - {{ source_language }} camelCase variables → {{ target_language }} camelCase: `optionValue` → `optionValue`
-        3. Add the mapping to name-mapping.json
-      - The name-mapping.json MUST follow this structure:
+      **Part A: Create Name Mapping**
+      - Create {{ planning_dir }}/name-mapping.json mapping ALL items from Step 2.
+      - **CRITICAL NAMING CONVENTIONS - PRESERVE ORIGINAL CASE:**
+        - {{ source_language }} camelCase methods → {{ target_language }} camelCase: `getOptionValue` → `getOptionValue`
+        - {{ source_language }} PascalCase classes → {{ target_language }} PascalCase: `CommandLine` → `CommandLine`
+        - {{ source_language }} camelCase variables → {{ target_language }} camelCase: `optionValue` → `optionValue`
+        - **DO NOT convert to snake_case. Keep camelCase as camelCase.**
+      - Structure:
         ```json
         {
           "classes": {
@@ -147,145 +164,188 @@ templates:
           }
         }
         ```
-      - You MUST include ALL functions and methods from {{ planning_dir }}/{{ source_language }}-functions.md in the mapping
 
-      ### 5. Create Target Language Skeleton
+      **Part B: Create Skeleton Files**
+      - Create directory structure in {{ target_translation_root }}.
+      - Create stub files with class declarations and method signatures (no implementations).
+      - Use names from `name-mapping.json`.
 
-      Create skeleton files for the {{ target_language.upper() }} translation to validate structure and naming.
+      **VALIDATION-IN-THE-LOOP:**
+      1. **Write Validation Script:**
+         - Create {{ planning_dir }}/validate_skeleton_and_mapping.py
+         - The script MUST:
+           a. Load `name-mapping.json` and verify every item from `{{ source_language }}-functions.md` has a mapping.
+           b. Read directory tree from research doc.
+           c. Verify EVERY expected file exists in {{ target_translation_root }} (especially test files).
+           d. Verify each file has valid syntax and contains expected class/method stubs matching name mapping.
+           e. Exit 0 on success, 1 on failure.
 
-      **Constraints:**
-      - You MUST create the directory structure and skeleton files for the {{ target_language.upper() }} project in {{ target_translation_root }}.
-      - For each class/module identified in the design and name-mapping.json, create a file with:
-        - Necessary imports
-        - Class declarations
-        - Method stubs (including `__init__` or constructor)
-        - Field/variable declarations
-      - You MUST not translate the body of the methods, only the signature.
-      - Use the name mappings from {{ planning_dir }}/name-mapping.json.
-      - You MUST use the following naming conventions to map {{ source_language }} file and directory names to {{ target_language }}:
-        - {{ source_language }} camelCase methods → {{ target_language }} camelCase: `getOptionValue` → `getOptionValue`
-        - {{ source_language }} PascalCase classes → {{ target_language }} PascalCase: `CommandLine` → `CommandLine`
-        - {{ source_language }} camelCase variables → {{ target_language }} camelCase: `optionValue` → `optionValue`
-      - You MUST validate the skeleton code to ensure it is correct, can be compiled, and there are no errors:
-        - For Python: Execute each file using `python3 <file_path>` to ensure it loads without syntax errors.
-        - For compiled languages: Attempt to compile the skeleton.
-      - If validation fails, you MUST fix the skeleton structure or imports until it passes.
+      2. **Create & Iterate:**
+         - Create `name-mapping.json`.
+         - Create skeleton files.
+         - Run validation script.
+         - Fix any missing mappings, files, syntax errors, or name mismatches.
+         - Repeat until validation passes.
 
-      ### 6. Create the Translation Plan
+      3. **Report:**
+         - Create {{ planning_dir }}/skeleton-validation-report.md documenting full coverage.
+
+      4. **Cleanup:**
+         - DELETE {{ planning_dir }}/validate_skeleton_and_mapping.py.
+
+      **DO NOT proceed to Step 4 until validation passes.**
+
+      ### 4. Create the Implementation Plan
 
       Create a plan to incrementally implement, compile, and test the translation.
 
       **Constraints:**
       - You MUST create an implementation plan at {{ planning_dir }}/implementation-plan.md
       - You MUST include a checklist at the beginning of the implementation-plan.md file to track implementation progress
-      - The first step in the implementation plan MUST be the following:
+      - The implementation-plan.md file MUST be divided into TWO distinct parts:
+      
+      **PART A: Source Code Translation (For Translator Agent)**
+      - This section lists steps to translate the {{ source_language }} source code to {{ target_language }}.
+      - It MUST NOT include steps for translating tests or running tests.
+      
+      **PART B: Test Translation & Verification (For Validator Agent)**
+      - This section lists steps to translate {{ source_language }} tests to {{ target_language }} and execute them.
+      - Each step must correspond to a completed source module from Part A.
+      
+      - The first step in PART A MUST be the following:
       ```
-      ### Step 1: Verify skeleton project structure and name mapping
+      ### Step A.1: Verify skeleton project structure and name mapping
 
       **Description:** Verify that the file structure of the {{ target_language.upper() }} translation exists under {{ target_translation_root }} and matches the design. Verify that skeleton files (with stubs) exist for all classes/modules. Verify that name-mapping.json exists and contains all required mappings. Run the skeleton validation (e.g., `python3 file.py`) to ensure the environment is set up correctly.
 
       ```
-      - The remaining steps MUST follow a test-driven-development methodology, and priorize testing functions as soon as they are implemented
-      - The remaining steps MUST have the following information:
+      - The remaining steps in PART A MUST have the following information:
         - Description
         - Functions and methods to translate, written as a list of <{{ source_language }}-item-reference>'s
-        - Tests to translate, written as a list of <{{ source_language }}-item-reference>'s. If a test is already implemented, it MUST NOT be listed here
+      - The steps in PART B MUST have the following information:
+        - Description
+        - Tests to translate and execute, written as a list of <{{ source_language }}-item-reference>'s
       - Each step MUST explicitly reference the name-mapping.json file and require using the mapped names
       - The steps MUST be ordered such that all of the depenencies of the {{ target_language.upper() }} source to implement are implemented before that step
       - You MUST NOT include excessive implementation details that are already covered in the translation document because this creates redundancy and potential inconsistencies
       - Each step MUST result in compilable code
-      - A step MAY NOT have tests to implement
       - The plan MUST cover all tests, functions, and methods
     translator: |-
       # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Execution Script
 
       ## Overview
-
-      This script guides you through the process of executing an already-written plan for translating a {{ source_language.upper() }} project to {{ target_language.upper() }}.
+      This script guides you through the process of executing PART A (Source Code Translation) of the implementation plan. You must maintain strict naming consistency and functional equivalence. Do NOT implement or run tests.
 
       ## Parameters
-
-      The following are parameters for this script.
-
       - **source_project_root**: {{ source_project_root }}
       - **target_translation_root**: {{ target_translation_root }}
       - **planning_dir**: {{ planning_dir }}
 
+      ## Critical Naming Convention Rules
+      - Class names: `CommandLine` → `CommandLine` (keep PascalCase for class names)
+      - Method names: `getOptionValue()` → `getOptionValue` (keep camelCase for method names)
+      - Variable names: `optionValue` → `optionValue` (keep camelCase for variable names)
+      - Constants: `MAX_SIZE` → `MAX_SIZE` (keep UPPER_SNAKE_CASE for constants)
+
+      **YOU MUST:**
+      1. Read the name mapping file at {{ planning_dir }}/name-mapping.json
+      2. Use the exact mapped name - DO NOT invent new names
+
       ## Steps
 
       ### 1. Verify Dependencies
+      - Read {{ planning_dir }}/implementation-plan.md
+      - Read {{ planning_dir }}/{{ target_language }}-overall-design.md
 
-      Read the required documents to understand the design decisions made for the {{ target_language.upper() }} translation.
+      ### 2. Read Source Code
+      - Read {{ source_language }} source files to be translated.
+      - Extract class names, method signatures, fields, and constants.
 
-      **Constraints:**
-      - You MUST read the entire contents of the following documents into your context:
-        - {{ planning_dir }}/implementation-plan.md
-        - {{ planning_dir }}/{{ target_language }}-overall-design.md
+      ### 3. Execute PART A of Implementation Plan
+      Execute the steps in **PART A** of {{ planning_dir }}/implementation-plan.md.
 
-      ### 2. Read {{ source_language.upper() }} Source Code
+      **CRITICAL IMPLEMENTATION REQUIREMENTS:**
+      - Implement FULL FUNCTIONALITY of methods (no stubs).
+      - Translate logic 1:1 (control flow, variables, etc.).
+      - Ensure translated code produces same results as source.
 
-      Read the {{ source_language.upper() }} source code so that you have a reference for what you are translating.
+      **METHOD OVERLOADING HANDLING (Java to Python/JavaScript):**
+      - If the source language (like Java) supports method overloading and the target (like Python/JS) does not:
+        1. DO NOT create duplicate function definitions.
+        2. Use one of these strategies:
+           - **Strategy A (Preferred):** Default arguments or `*args`/`**kwargs`.
+           - **Strategy B:** Rename methods (e.g., `getById(id)`).
+           - **Strategy C:** Type checking within the method.
+        3. UPDATE name-mapping.json if you rename.
 
-      **Constraints:**
-      - You MUST read in the {{ source_language.upper() }} source files you are translating in their entirety. This is important so that you know what implement in the {{ target_language.upper() }} translation.
+      **Step Execution Process:**
+      - Execute steps in **PART A** sequentially.
+      - For each step:
+        1. Identify classes/methods.
+        2. Read source implementation.
+        3. Translate logic into skeleton file.
+        4. Verify against name mapping.
+        5. Mark step as `[x]` in plan.
+        6. Verify code compiles/parses.
+      
+      **CRITICAL LOOPING INSTRUCTION:**
+      1. You are NOT allowed to stop until **ALL steps in PART A** are completed.
+      2. You MUST immediately proceed to the next step in Part A.
+      3. You are ONLY finished when every checkbox in **PART A** is marked `[x]`.
+      4. DO NOT touch Part B (Tests). That is for the Validator agent.
+      5. LOOP: Implement Source -> Mark Complete -> NEXT SOURCE TASK.
 
-      ### 3. Execute the Implementation Plan
+      ### 4. Final Verification
+      - Create {{ planning_dir }}/translation-verification-report.md
+      - List translated classes/methods and confirm name mapping.
 
-      Execute the steps in {{ planning_dir }}/implementation-plan.md in order.
-
-      **Constraints:**
-      - You MUST execute the steps in implementation-plan.md in order
-      - After completing a step, you MUST mark it as completed in implementation-plan.md
-      - Before completing a step, you MUST make sure the codebase compiles and tests pass
-      - You MUST implement ALL functions and tests as indicated in the step
-      - You MUST ensure that the {{ target_language.upper() }} functions and tests maintain the exact same functionality as the original {{ source_language.upper() }} functions
-      - If you cannot implement all functions and tests, you MUST inform the user why they cannot be implemented, and then ask for directions on how to proceed
-      - If a {{ target_language.upper() }} test already exists, you MUST NOT re-implement it
-      - If translating projects from CRUST, you MUST NOT make any changes to {{ target_language.upper() }} tests under bin/test.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
-      - You MUST immediately terminate when executing tests result in all tests pass. DO NOT make further changes to resolve warnings.
-      - If a test is not executed in the original {{ source_language.upper() }} project, you MUST NOT implement it in {{ target_language.upper() }}. If already implemented, you can terminate even if it fails.
-      - You MUST use the 'mcp__{{ source_language }}-language-server' to get reliable information about the {{ source_language.upper() }} code when translating. For instance, use the hover tool to read documentation for specific symbols in the codebase
-      - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the {{ target_language.upper() }} code when translating. For instance, use the hover tool to read documentation for specific symbols in the codebase
     validator: |-
-      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Test Generation and Code Repair Script
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Verification Script
 
       ## Overview
-      You are an expert agent specializing in test generation and code repair. Based on the analysis from multiple expert agents regarding functional equivalence between {{ source_language.upper() }} and {{ target_language.upper() }} implementations of the given method/function, your task is to generate tests and repair the target implementation if necessary. Two code fragments in different programming languages are considered functionally equivalent if, when executed on the same input, they always have identical program states at all corresponding points reachable by program execution, and they both produce the same output upon termination.
-
+      You are an expert QA agent. Your GOAL is to execute **PART B** of the implementation plan: translating tests and verifying the codebase. The source code has already been translated by the Translator agent.
 
       ## Parameters
-
-      The following are parameters for this script.
-
       - **source_project_root**: {{ source_project_root }}
       - **target_translation_root**: {{ target_translation_root }}
       - **planning_dir**: {{ planning_dir }}
 
       ## Steps
 
-      ### 1. Verify Dependencies
+      ### 1. Static Analysis & Setup
+      - Read {{ planning_dir }}/implementation-plan.md
+      - Read {{ planning_dir }}/name-mapping.json
 
-      Read the required documents to understand the design decisions made for the {{ target_language.upper() }} translation.
+      ### 2. Execute PART B: Test Translation & Execution
+      Execute the steps in **PART B** of the implementation plan sequentially.
 
-      **Constraints:**
-      - You MUST read the following file in its entirety: {{ planning_dir }}/{{ target_language }}-overall-design.md, {{ planning_dir }}/implementation-plan.md, and {{ planning_dir }}/{{ source_language }}-functions.md, {{ planning_dir }}/{{ source_language }}-call-graph.md
+      **For each step in PART B:**
+      1. **Translate Test Class:**
+         - Read the {{ source_language }} test file (e.g., `OptionTest.java`).
+         - Create the corresponding {{ target_language }} test file (e.g., `OptionTest.py`).
+         - Translate test methods 1:1.
+         - Use the mapped names from `name-mapping.json` to call the source code.
+         - Ensure test logic (assertions, setup, teardown) is preserved.
 
-      ### 2. Validate the translated functions and methods
+      2. **Run Test:**
+         - Execute the newly created test.
+         - Capture the output.
 
-      Validate the translated functions and methods by generating tests in both {{ source_language.upper() }} and {{ target_language.upper() }}, running them, and repairing the {{ target_language.upper() }} code if necessary.
+      3. **Fix & Iterate:**
+         - If tests fail, analyze the error.
+         - **IF ERROR IS IN TEST:** Fix the test code.
+         - **IF ERROR IS IN SOURCE:** Fix the source code (you have permission to edit source files to fix bugs revealed by tests).
+         - Re-run tests until passing.
 
-      **Constraints:**
-      - Your tests should be generated in target file path as standalone files and stored with other tests (see how existing tests are stored). Here is some guide on how to properly store and execute tests for each language:
-          1. Rust: You can create a new test file which includes your tests. Make sure you execute tests using `cargo test`
-          2. Python: You can create a new test file which subclasses `unittest.TestCase` and includes your tests. Execute the tests with `python -m unittest` or `pytest`
-          3. Java: You can create a new test file which subclasses `TestCase` and includes your tests. Execute the tests with `mvn clean test -Drat.skip`
-          4. JavaScript: You can create a new test file which includes your tests. Make sure you execute tests using `node`
-          5. Go: You can create a new test file which includes your tests. Make sure you execute tests using `go`
-          6. C: You can create a new test file which includes your tests. Make sure you compile and run tests using `gcc`
-      - It is IMPORTANT to execute your generated tests in both languages to verify correctness. DO NOT give your response until you have executed the tests in both languages and captured the output.
-      - If you find that the target implementation is not functionally equivalent, provide a correct implementation in your response
-      - You MUST only do my instructions and DO NOT perform any additional analysis to determine functional equivalence. Terminate as soon as possible
-      - If translating projects from CRUST, you MUST NOT make any changes to {{ target_language.upper() }} tests under bin/test.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
-      - You MUST generate tests for every function and method listed in {{ planning_dir }}/{{ source_language }}-functions.md in separate files and execute them. DO NOT delete your generated tests after executing them
-      - You MUST use the 'mcp__{{ source_language }}-language-server' to get reliable information about the {{ source_language.upper() }} code when generating tests. For instance, use the hover tool to read documentation for specific symbols in the codebase
-      - You MUST use the 'mcp__{{ target_language }}-language-server' to get reliable information about the {{ target_language.upper() }} code when generating tests. For instance, use the hover tool to read documentation for specific symbols in the codebase
+      4. **Mark Complete:**
+         - Mark the step as `[x]` in `implementation-plan.md`.
+
+      **CRITICAL LOOPING INSTRUCTION:**
+      - You MUST NOT STOP until all steps in PART B are completed.
+      - Loop: Translate Test -> Run Test -> Fix -> Mark Complete -> NEXT.
+
+      ### 3. Final Validation Summary
+      - Run ALL tests to ensure no regressions.
+      - Create {{ planning_dir }}/validation-summary.md.
+      - Document pass/fail status of every test class.
+      - Confirm project is 100% verified.
