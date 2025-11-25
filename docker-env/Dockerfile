@@ -152,7 +152,7 @@ COPY scripts /workspace/scripts
 COPY src /workspace/src
 COPY .gitignore /workspace/.gitignore
 COPY .gitattributes /workspace/.gitattributes
-COPY CLAUDE.local.md /workspace/CLAUDE.local.md
+COPY CLAUDE.md /workspace/CLAUDE.md
 COPY README.md /workspace/README.md
 
 # Generate configs directory
