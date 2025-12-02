@@ -326,7 +326,7 @@ RUN if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
         apt-get update && apt-get install -y clangd && rm -rf /var/lib/apt/lists/*; \
     fi && \
     if [ "$SOURCE_LANGUAGE" = "java" ] || [ "$TARGET_LANGUAGE" = "java" ]; then \
-        wget https://www.eclipse.org/downloads/download.php?file=/jdtls/snapshots/jdt-language-server-1.52.0-202510171522.tar.gz -O /tmp/jdt-language-server.tar.gz && \
+        wget https://www.eclipse.org/downloads/download.php?file=/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-language-server.tar.gz && \
         mkdir -p /usr/local/jdt-language-server && \
         tar -xzf /tmp/jdt-language-server.tar.gz -C /usr/local/jdt-language-server && \
         rm /tmp/jdt-language-server.tar.gz; \
