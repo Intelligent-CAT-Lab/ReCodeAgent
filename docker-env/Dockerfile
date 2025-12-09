@@ -100,7 +100,8 @@ RUN pip install --no-cache-dir \
     pydot==3.0.4 \
     tqdm==4.67.1 \
     pebble==5.1.3 \
-    attrs==25.3.0
+    attrs==25.3.0 \
+    pytest==9.0.1
 
 # Define ARG parameters for tool_name and project_name
 ARG TOOL_NAME
