@@ -1,0 +1,12 @@
+pub mod cosine;
+pub mod hamming;
+pub mod internal;
+pub mod jaccard;
+pub mod jaro;
+pub mod lcs;
+pub mod levenshtein;
+pub mod qgram;
+pub mod shingle;
+pub mod sorensen_dice;
+pub mod string_analysis;
+mod __synthetic;
