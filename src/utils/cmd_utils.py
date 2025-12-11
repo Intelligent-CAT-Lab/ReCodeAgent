@@ -58,6 +58,10 @@ async def run_claude_code(
             cmd += ["--mcp-config", configs["mcp_config_file"]]
         if configs.get("extra_agent_args"):
             cmd += configs["extra_agent_args"]
+        if agent_name == "translator" and configs.get("extra_translator_agent_args"):
+            cmd += configs["extra_translator_agent_args"]
+        if agent_name == "validator" and configs.get("extra_validator_agent_args"):
+            cmd += configs["extra_validator_agent_args"]
 
         process = await asyncio.create_subprocess_exec(
             *cmd,

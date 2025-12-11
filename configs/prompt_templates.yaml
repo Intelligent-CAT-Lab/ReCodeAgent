@@ -263,7 +263,7 @@ templates:
       - Extract class names, method signatures, fields, and constants.
 
       ### 3. Execute PART A of Implementation Plan
-      Execute the steps in **PART A** of {{ planning_dir }}/implementation-plan.md.
+      Execute the steps in **PART A** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'source-translator-executor' subagent to translate and execute only one source file at a time.
 
       **CRITICAL IMPLEMENTATION REQUIREMENTS:**
       - Implement FULL FUNCTIONALITY of methods (no stubs).
@@ -351,7 +351,7 @@ templates:
       - **Verify source project structure:** List files in {{ source_project_root }} to know EXACTLY which files should exist in {{ target_translation_root }}.
 
       ### 2. Execute PART B: Test Translation & Execution
-      Execute the steps in **PART B** of the implementation plan sequentially.
+      Execute the steps in **PART B** of the implementation plan sequentially. You MUST use the 'test-translator-executor' subagent to translate and execute only one test at a time.
 
       **For each step in PART B:**
       1. **Translate Test Class (1:1 Translation - Same as Source Code):**

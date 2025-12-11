@@ -277,10 +277,12 @@ source_project_root: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/${SOURCE_
 target_translation_root: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/${TARGET_LANGUAGE}\"\n\
 planning_dir: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning\"\n\
 extra_agent_args: [\"--output-format\", \"stream-json\", \"--verbose\", \"--settings\", \"/workspace/.claude/settings.local.json\"]\n\
+extra_translator_agent_args: [\"--agents\", '{\"source-translator-executor\": {\"description\": \"Translates and executes source code from PART A of implementation-plan.md\", \"prompt\": \"You are an agent which performs source translation and execution from PART A of implementation-plan.md. This agent will ONLY translate and execute one source file and then terminates. The execution involves compiling the source file to ensure it is valid.\"}}']\n\
+extra_validator_agent_args: [\"--agents\", '{\"test-translator-executor\": {\"description\": \"Translates and executes tests from PART B of implementation-plan.md\", \"prompt\": \"You are an agent which performs test translation and execution from PART B of implementation-plan.md. This agent will ONLY translate and execute one test class and then terminates. The execution involves compiling and running the test file to ensure it passes.\"}}']\n\
 analyzer_timeout: 2000\n\
 planning_timeout: 2000\n\
-translator_timeout: 2000\n\
-validator_timeout: 2000\n\
+translator_timeout: 5000\n\
+validator_timeout: 5000\n\
 only_agents: [\"analyzer\", \"planning\", \"translator\", \"validator\"]\n\
 skip_agents: []\n\
 vendor: \"anthropic\"" > /workspace/configs/recodeagent_${TOOL_NAME}_${PROJECT_NAME}_${SOURCE_LANGUAGE}_${TARGET_LANGUAGE}.yaml
