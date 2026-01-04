@@ -1,9 +1,7 @@
 from __future__ import annotations
-import time
 import copy
 import re
 import collections
-import enum
 import pathlib
 from io import IOBase
 from io import StringIO
@@ -46,7 +44,8 @@ class CSVParser:
     __headerComment: str = ""
 
     def iterator(self) -> typing.Iterator[CSVRecord]:
-        return self.__csvRecordIterator
+
+        pass  # LLM could not translate this method
 
     def close(self) -> None:
         if self.__lexer is not None:
@@ -64,24 +63,33 @@ class CSVParser:
         format_: CSVFormat,
     ) -> CSVParser:
         if url is None:
-            raise ValueError("url cannot be None")
+            raise ValueError("url")
         if charset is None:
-            raise ValueError("charset cannot be None")
+            raise ValueError("charset")
         if format_ is None:
-            raise ValueError("format cannot be None")
+            raise ValueError("format")
 
-        with urllib.request.urlopen(url) as response:
-            reader = io.TextIOWrapper(response, encoding=charset)
-            return CSVParser.CSVParser1(reader, format_)
+        # Open URL and create a text reader with specified encoding
+        if isinstance(url, str):
+            url_string = url
+        else:
+            url_string = urllib.parse.urlunparse(url)
+
+        response = urllib.request.urlopen(url_string)
+        reader = io.TextIOWrapper(response, encoding=charset)
+
+        return CSVParser.CSVParser1(reader, format_)
 
     @staticmethod
     def parse2(path: Path, charset: str, format_: CSVFormat) -> CSVParser:
         if path is None:
-            raise ValueError("path cannot be None")
+            raise ValueError("path")
         if format_ is None:
-            raise ValueError("format cannot be None")
-        with path.open("rb") as inputStream:
-            return CSVParser.parse1(inputStream, charset, format_)
+            raise ValueError("format")
+
+        # Open the file at the given path in binary mode and pass to parse1
+        with open(path, "rb") as file_stream:
+            return CSVParser.parse1(file_stream, charset, format_)
 
     @staticmethod
     def parse1(
@@ -90,32 +98,36 @@ class CSVParser:
         format_: CSVFormat,
     ) -> CSVParser:
         if inputStream is None:
-            raise ValueError("inputStream cannot be None")
+            raise ValueError("inputStream")
         if format_ is None:
-            raise ValueError("format cannot be None")
+            raise ValueError("format")
+
+        # Wrap the input stream with a text wrapper using the specified charset
         reader = io.TextIOWrapper(inputStream, encoding=charset)
         return CSVParser.parse3(reader, format_)
 
     def __addRecordValue(self, lastRecord: bool) -> None:
-        input_ = self.__format.trim1(self.__reusableToken.content.getvalue())
-        if lastRecord and not input_ and self.__format.getTrailingDelimiter():
+        input_ = self.__reusableToken.trim1(str(self.__reusableToken.content))
+        if lastRecord and input_ == "" and self.__format.getTrailingDelimiter():
             return
         self.__recordList.append(self.__handleNull(input_))
 
     def stream(self) -> typing.Iterable[CSVRecord]:
-        return iter(self.iterator())
+        return self.iterator()
 
     def isClosed(self) -> bool:
-        return self.__lexer.isClosed()
+        return self._CSVParser__lexer.isClosed()
 
     def hasTrailerComment(self) -> bool:
         return self.__trailerComment is not None
 
     def hasHeaderComment(self) -> bool:
-        return self.__headerComment is not None
+
+        pass  # LLM could not translate this method
 
     def getTrailerComment(self) -> str:
-        return self.__trailerComment
+
+        pass  # LLM could not translate this method
 
     def getRecords(self) -> typing.List[CSVRecord]:
         return list(self.stream())
@@ -124,14 +136,15 @@ class CSVParser:
         return self.__recordNumber
 
     def getHeaderNames(self) -> typing.List[str]:
-        return list(self.__headers.headerNames)
 
-    def getHeaderMap(self) -> typing.Optional[typing.Dict[str, int]]:
+        pass  # LLM could not translate this method
+
+    def getHeaderMap(self) -> typing.Dict[str, int]:
         if self.__headers.headerMap is None:
             return None
-        map = self.__createEmptyHeaderMap()
-        map.update(self.__headers.headerMap)
-        return map
+        map_ = self.__createEmptyHeaderMap()
+        map_.update(self.__headers.headerMap)
+        return map_
 
     def getHeaderComment(self) -> str:
         return self.__headerComment
@@ -147,7 +160,8 @@ class CSVParser:
         reader: typing.Union[io.TextIOWrapper, io.BufferedReader, io.TextIOBase],
         format_: CSVFormat,
     ) -> CSVParser:
-        return CSVParser(reader, format_, 0, 1)
+
+        pass  # LLM could not translate this method
 
     def __init__(
         self,
@@ -157,9 +171,9 @@ class CSVParser:
         recordNumber: int,
     ) -> None:
         if reader is None:
-            raise ValueError("reader cannot be None")
+            raise ValueError("reader")
         if format_ is None:
-            raise ValueError("format cannot be None")
+            raise ValueError("format_")
 
         self.__format = format_.copy()
         self.__lexer = Lexer(format_, ExtendedBufferedReader(reader))
@@ -171,9 +185,9 @@ class CSVParser:
     @staticmethod
     def parse4(string: str, format_: CSVFormat) -> CSVParser:
         if string is None:
-            raise ValueError("string must not be None")
+            raise TypeError("string")
         if format_ is None:
-            raise ValueError("format must not be None")
+            raise TypeError("format")
 
         return CSVParser.CSVParser1(StringIO(string), format_)
 
@@ -187,33 +201,24 @@ class CSVParser:
     @staticmethod
     def parse0(file: pathlib.Path, charset: str, format_: CSVFormat) -> CSVParser:
         if file is None:
-            raise ValueError("file cannot be None")
-        if format_ is None:
-            raise ValueError("format cannot be None")
+            raise ValueError("file")
+        if not isinstance(file, pathlib.Path):
+            file = pathlib.Path(file)
         return CSVParser.parse2(file, charset, format_)
 
     def __isStrictQuoteMode(self) -> bool:
-        return self.__format is not None and self.__format.getQuoteMode() in {
-            QuoteMode.ALL_NON_NULL,
-            QuoteMode.NON_NUMERIC,
-        }
+        return (
+            self.__format.getQuoteMode() == QuoteMode.ALL_NON_NULL
+            or self.__format.getQuoteMode() == QuoteMode.NON_NUMERIC
+        )
 
     def __handleNull(self, input_: str) -> str:
-        is_quoted = self.__reusableToken.isQuoted
-        null_string = self.__format.getNullString()
-        strict_quote_mode = self.__isStrictQuoteMode()
-
-        if input_ == null_string:
-            return input_ if strict_quote_mode and is_quoted else None
-
-        return (
-            None
-            if strict_quote_mode
-            and null_string is None
-            and not input_
-            and not is_quoted
-            else input_
-        )
+        isQuoted = self.__reusableToken.isQuoted
+        nullString = self.__format.getNullString()
+        strictQuoteMode = self.__isStrictQuoteMode()
+        if nullString is not None and input_ == nullString:
+            return input_ if strictQuoteMode and isQuoted else None
+        return None if strictQuoteMode and nullString is None and input_ == "" and not isQuoted else input_
 
     def __createHeaders(self) -> Headers:
         hdr_map = None
@@ -238,28 +243,23 @@ class CSVParser:
 
             if header_record is not None:
                 observed_missing = False
-                for i, header in enumerate(header_record):
+                for i in range(len(header_record)):
+                    header = header_record[i]
                     blank_header = CSVFormat.isBlank(header)
+
                     if blank_header and not self.__format.getAllowMissingColumnNames():
                         raise ValueError(f"A header name is missing in {header_record}")
 
-                    contains_header = (
-                        blank_header if observed_missing else header in hdr_map
-                    )
+                    contains_header = observed_missing if blank_header else header in hdr_map
                     header_mode = self.__format.getDuplicateHeaderMode()
                     duplicates_allowed = header_mode == DuplicateHeaderMode.ALLOW_ALL
-                    empty_duplicates_allowed = (
-                        header_mode == DuplicateHeaderMode.ALLOW_EMPTY
-                    )
+                    empty_duplicates_allowed = header_mode == DuplicateHeaderMode.ALLOW_EMPTY
 
-                    if (
-                        contains_header
-                        and not duplicates_allowed
-                        and not (blank_header and empty_duplicates_allowed)
-                    ):
+                    if contains_header and not duplicates_allowed and not (blank_header and empty_duplicates_allowed):
                         raise ValueError(
-                            f'The header contains a duplicate name: "{header}" in {header_record}. '
-                            f"If this is valid then use CSVFormat.Builder.setDuplicateHeaderMode()."
+                            f'The header contains a duplicate name: "{header}" in '
+                            f"{header_record}. If this is valid then use "
+                            f"CSVFormat.Builder.setDuplicateHeaderMode()."
                         )
 
                     observed_missing |= blank_header
@@ -270,66 +270,81 @@ class CSVParser:
                         header_names.append(header)
 
         if header_names is None:
-            header_names = []  # immutable
-        else:
-            header_names = tuple(header_names)  # make immutable
+            header_names = []
 
         return Headers(hdr_map, header_names)
 
     def __createEmptyHeaderMap(self) -> typing.Dict[str, int]:
-        return (
-            dict()
-            if not self.__format.getIgnoreHeaderCase()
-            else collections.defaultdict(int)
-        )
+        if self.__format.getIgnoreHeaderCase():
+            # Case-insensitive dictionary
+            from collections.abc import MutableMapping
+
+            class CaseInsensitiveDict(MutableMapping):
+                def __init__(self):
+                    self._data = {}
+
+                def __getitem__(self, key):
+                    return self._data[key.lower()]
+
+                def __setitem__(self, key, value):
+                    self._data[key.lower()] = value
+
+                def __delitem__(self, key):
+                    del self._data[key.lower()]
+
+                def __iter__(self):
+                    return iter(self._data)
+
+                def __len__(self):
+                    return len(self._data)
+
+            return CaseInsensitiveDict()
+        else:
+            # Regular dict maintains insertion order in Python 3.7+
+            return {}
 
     def nextRecord(self) -> CSVRecord:
         result = None
         self.__recordList.clear()
         sb = None
-        start_char_position = (
-            self.__lexer.getCharacterPosition() + self.__characterOffset
-        )
+        startCharPosition = self.__lexer.getCharacterPosition() + self.__characterOffset
 
         while True:
             self.__reusableToken.reset()
             self.__lexer.nextToken(self.__reusableToken)
 
-            if self.__reusableToken.type == Constants.TOKEN:
+            if self.__reusableToken.type == TOKEN:
                 self.__addRecordValue(False)
-            elif self.__reusableToken.type == Constants.EORECORD:
+            elif self.__reusableToken.type == EORECORD:
                 self.__addRecordValue(True)
-            elif self.__reusableToken.type == Constants.EOF:
+            elif self.__reusableToken.type == EOF:
                 if self.__reusableToken.isReady:
                     self.__addRecordValue(True)
                 elif sb is not None:
-                    self.__trailerComment = sb.getvalue()
-                break
-            elif self.__reusableToken.type == Constants.INVALID:
-                raise IOError(
-                    f"(line {self.getCurrentLineNumber()}) invalid parse sequence"
-                )
-            elif self.__reusableToken.type == Constants.COMMENT:
+                    self.__trailerComment = sb
+            elif self.__reusableToken.type == INVALID:
+                raise IOError(f"(line {self.getCurrentLineNumber()}) invalid parse sequence")
+            elif self.__reusableToken.type == COMMENT:
                 if sb is None:
-                    sb = io.StringIO()
+                    sb = self.__reusableToken.content
                 else:
-                    sb.write(Constants.LF)
-                sb.write(self.__reusableToken.content.getvalue())
-                self.__reusableToken.type = Constants.TOKEN  # Read another token
+                    sb = sb + Constants.LF + self.__reusableToken.content
+                self.__reusableToken.type = TOKEN
             else:
-                raise RuntimeError(
-                    f"Unexpected Token type: {self.__reusableToken.type}"
-                )
+                raise ValueError(f"Unexpected Token type: {self.__reusableToken.type}")
 
-        if self.__recordList:
+            if self.__reusableToken.type != TOKEN:
+                break
+
+        if len(self.__recordList) > 0:
             self.__recordNumber += 1
-            comment = None if sb is None else sb.getvalue()
+            comment = None if sb is None else sb
             result = CSVRecord(
                 self,
-                self.__recordList.copy(),
+                self.__recordList[:],
                 comment,
                 self.__recordNumber,
-                start_char_position,
+                startCharPosition,
             )
 
         return result
@@ -338,51 +353,47 @@ class CSVParser:
         return self.__headers.headerMap
 
 
-class Headers:
-
-    headerNames: typing.List[str] = None
-
-    headerMap: typing.Dict[str, int] = None
-
-    def __init__(
-        self, headerMap: typing.Dict[str, int], headerNames: typing.List[str]
-    ) -> None:
-        self.headerMap = headerMap
-        self.headerNames = headerNames
-
-
 class CSVRecordIterator:
 
     __current: CSVRecord = None
 
     def remove(self) -> None:
-        raise NotImplementedError("NotImplementedError")
+        raise NotImplementedError("remove operation is not supported")
 
     def next_(self) -> CSVRecord:
-        if CSVParser().isClosed():
-            raise RuntimeError("CSVParser has been closed")
-
+        if self._CSVParser__outer.isClosed():
+            raise StopIteration("CSVParser has been closed")
         next_record = self.__current
         self.__current = None
 
         if next_record is None:
             next_record = self.__getNextRecord()
             if next_record is None:
-                raise RuntimeError("No more CSV records available")
+                raise StopIteration("No more CSV records available")
 
         return next_record
 
     def hasNext(self) -> bool:
-        if CSVParser().isClosed():
+        if CSVParser.this.isClosed():
             return False
-        if self.__current is None:
-            self.__current = self.__getNextRecord()
-        return self.__current is not None
+        if self._CSVRecordIterator__current is None:
+            self._CSVRecordIterator__current = self._CSVRecordIterator__getNextRecord()
+
+        return self._CSVRecordIterator__current is not None
 
     def __getNextRecord(self) -> CSVRecord:
         try:
-            return CSVParser().nextRecord()
+            return CSVParser.this.nextRecord()
         except IOError as e:
-            raise UncheckedOSError(
-                f"{e.__class__.__name__} reading next record: {str(e)}"
-            ) from e
+            raise IOError(f"{type(e).__name__} reading next record: {str(e)}") from e
+
+
+class Headers:
+
+    headerNames: typing.List[str] = None
+
+    headerMap: typing.Dict[str, int] = None
+
+    def __init__(self, headerMap: typing.Dict[str, int], headerNames: typing.List[str]) -> None:
+        self.headerMap = headerMap
+        self.headerNames = headerNames

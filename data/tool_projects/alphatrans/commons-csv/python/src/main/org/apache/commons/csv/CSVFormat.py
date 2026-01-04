@@ -2,8 +2,6 @@ from __future__ import annotations
 import time
 import copy
 import re
-import sys
-import enum
 from io import StringIO
 import pathlib
 from io import IOBase
@@ -22,6 +20,18 @@ from src.main.org.apache.commons.csv.QuoteMode import *
 
 class CSVFormat:
 
+    TDF: CSVFormat = None  # LLM could not translate this field
+
+    RFC4180: CSVFormat = None
+    POSTGRESQL_TEXT: CSVFormat = None
+    POSTGRESQL_CSV: CSVFormat = None
+    ORACLE: CSVFormat = None
+    MYSQL: CSVFormat = None
+    MONGODB_TSV: CSVFormat = None
+    MONGODB_CSV: CSVFormat = None  # Will be initialized after class definition
+    INFORMIX_UNLOAD_CSV: CSVFormat = None
+    INFORMIX_UNLOAD: CSVFormat = None
+    EXCEL: CSVFormat = None
     DEFAULT: CSVFormat = None
     __trim: bool = False
 
@@ -63,53 +73,6 @@ class CSVFormat:
 
     __serialVersionUID: int = 2
 
-    TDF: CSVFormat = None  # LLM could not translate this field
-
-    RFC4180: CSVFormat = None  # LLM could not translate this field
-
-    POSTGRESQL_TEXT: CSVFormat = None  # LLM could not translate this field
-
-    POSTGRESQL_CSV: CSVFormat = None  # LLM could not translate this field
-
-    ORACLE: CSVFormat = None  # LLM could not translate this field
-
-    MYSQL: CSVFormat = None  # LLM could not translate this field
-
-    MONGODB_TSV: CSVFormat = None  # LLM could not translate this field
-
-    MONGODB_CSV: CSVFormat = None  # LLM could not translate this field
-
-    INFORMIX_UNLOAD_CSV: CSVFormat = None  # LLM could not translate this field
-
-    INFORMIX_UNLOAD: CSVFormat = None  # LLM could not translate this field
-
-    EXCEL: CSVFormat = None  # LLM could not translate this field
-
-    @staticmethod
-    def initialize_fields() -> None:
-        CSVFormat.DEFAULT: CSVFormat = CSVFormat(
-            0,
-            False,
-            False,
-            Constants.COMMA,
-            None,
-            None,
-            False,
-            False,
-            None,
-            None,
-            False,
-            Constants.DOUBLE_QUOTE_CHAR,
-            None,
-            True,
-            DuplicateHeaderMode.ALLOW_ALL,
-            None,
-            False,
-            False,
-            None,
-            Constants.CRLF,
-        )
-
     def withTrim1(self, trim: bool) -> CSVFormat:
         return self.builder().setTrim(trim).build()
 
@@ -117,150 +80,168 @@ class CSVFormat:
         return self.builder().setTrim(True).build()
 
     def withTrailingDelimiter1(self, trailingDelimiter: bool) -> CSVFormat:
-        return self.builder().setTrailingDelimiter(trailingDelimiter).build()
+
+        pass  # LLM could not translate this method
 
     def withTrailingDelimiter0(self) -> CSVFormat:
         return self.builder().setTrailingDelimiter(True).build()
 
     def withSystemRecordSeparator(self) -> CSVFormat:
-        return self.builder().setRecordSeparator1(os.linesep).build()
+
+        pass  # LLM could not translate this method
 
     def withSkipHeaderRecord1(self, skipHeaderRecord: bool) -> CSVFormat:
-        return self.builder().setSkipHeaderRecord(skipHeaderRecord).build()
+
+        pass  # LLM could not translate this method
 
     def withSkipHeaderRecord0(self) -> CSVFormat:
-        return self.builder().setSkipHeaderRecord(True).build()
+
+        pass  # LLM could not translate this method
 
     def withRecordSeparator1(self, recordSeparator: str) -> CSVFormat:
-        return self.builder().setRecordSeparator1(recordSeparator).build()
+
+        pass  # LLM could not translate this method
 
     def withRecordSeparator0(self, recordSeparator: str) -> CSVFormat:
-        return self.builder().setRecordSeparator0(recordSeparator).build()
+
+        pass  # LLM could not translate this method
 
     def withQuoteMode(self, quoteMode: QuoteMode) -> CSVFormat:
-        return self.builder().setQuoteMode(quoteMode).build()
+
+        pass  # LLM could not translate this method
 
     def withQuote1(self, quoteChar: str) -> CSVFormat:
-        return self.builder().setQuote1(quoteChar).build()
+
+        pass  # LLM could not translate this method
 
     def withQuote0(self, quoteChar: str) -> CSVFormat:
-        return self.builder().setQuote0(quoteChar).build()
+
+        pass  # LLM could not translate this method
 
     def withNullString(self, nullString: str) -> CSVFormat:
-        return self.builder().setNullString(nullString).build()
+
+        pass  # LLM could not translate this method
 
     def withIgnoreSurroundingSpaces1(self, ignoreSurroundingSpaces: bool) -> CSVFormat:
-        return (
-            self.builder().setIgnoreSurroundingSpaces(ignoreSurroundingSpaces).build()
-        )
+
+        pass  # LLM could not translate this method
 
     def withIgnoreSurroundingSpaces0(self) -> CSVFormat:
-        return self.builder().setIgnoreSurroundingSpaces(True).build()
+
+        pass  # LLM could not translate this method
 
     def withIgnoreHeaderCase1(self, ignoreHeaderCase: bool) -> CSVFormat:
-        return self.builder().setIgnoreHeaderCase(ignoreHeaderCase).build()
+
+        pass  # LLM could not translate this method
 
     def withIgnoreHeaderCase0(self) -> CSVFormat:
-        return self.builder().setIgnoreHeaderCase(True).build()
+
+        pass  # LLM could not translate this method
 
     def withIgnoreEmptyLines1(self, ignoreEmptyLines: bool) -> CSVFormat:
-        return self.builder().setIgnoreEmptyLines(ignoreEmptyLines).build()
+
+        pass  # LLM could not translate this method
 
     def withIgnoreEmptyLines0(self) -> CSVFormat:
-        return self.builder().setIgnoreEmptyLines(True).build()
+
+        pass  # LLM could not translate this method
 
     def withHeaderComments(self, headerComments: typing.List[typing.Any]) -> CSVFormat:
-        return self.builder().setHeaderComments0(headerComments).build()
+
+        pass  # LLM could not translate this method
 
     def withEscape1(self, escape: str) -> CSVFormat:
-        return self.builder().setEscape1(escape).build()
+
+        pass  # LLM could not translate this method
 
     def withEscape0(self, escape: str) -> CSVFormat:
-        return self.builder().setEscape0(escape).build()
+
+        pass  # LLM could not translate this method
 
     def withDelimiter(self, delimiter: str) -> CSVFormat:
         return self.builder().setDelimiter0(delimiter).build()
 
     def withCommentMarker1(self, commentMarker: str) -> CSVFormat:
-        return self.builder().setCommentMarker1(commentMarker).build()
+
+        pass  # LLM could not translate this method
 
     def withCommentMarker0(self, commentMarker: str) -> CSVFormat:
-        return self.builder().setCommentMarker0(commentMarker).build()
+
+        pass  # LLM could not translate this method
 
     def withAutoFlush(self, autoFlush: bool) -> CSVFormat:
         return self.builder().setAutoFlush(autoFlush).build()
 
     def withAllowMissingColumnNames1(self, allowMissingColumnNames: bool) -> CSVFormat:
-        return (
-            self.builder().setAllowMissingColumnNames(allowMissingColumnNames).build()
-        )
+
+        pass  # LLM could not translate this method
 
     def withAllowMissingColumnNames0(self) -> CSVFormat:
-        return self.builder().setAllowMissingColumnNames(True).build()
 
-    def withAllowDuplicateHeaderNames1(
-        self, allowDuplicateHeaderNames: bool
-    ) -> CSVFormat:
-        mode = (
-            DuplicateHeaderMode.ALLOW_ALL
-            if allowDuplicateHeaderNames
-            else DuplicateHeaderMode.ALLOW_EMPTY
-        )
+        pass  # LLM could not translate this method
+
+    def withAllowDuplicateHeaderNames1(self, allowDuplicateHeaderNames: bool) -> CSVFormat:
+        mode = DuplicateHeaderMode.ALLOW_ALL if allowDuplicateHeaderNames else DuplicateHeaderMode.ALLOW_EMPTY
         return self.builder().setDuplicateHeaderMode(mode).build()
 
     def withAllowDuplicateHeaderNames0(self) -> CSVFormat:
-        return (
-            self.builder().setDuplicateHeaderMode(DuplicateHeaderMode.ALLOW_ALL).build()
-        )
+
+        pass  # LLM could not translate this method
 
     def toString(self) -> str:
         sb = []
         sb.append(f"Delimiter=<{self.__delimiter}>")
         if self.isEscapeCharacterSet():
-            sb.append(f" Escape=<{self.__escapeCharacter}>")
+            sb.append(" ")
+            sb.append(f"Escape=<{self.__escapeCharacter}>")
         if self.isQuoteCharacterSet():
-            sb.append(f" QuoteChar=<{self.__quoteCharacter}>")
+            sb.append(" ")
+            sb.append(f"QuoteChar=<{self.__quoteCharacter}>")
         if self.__quoteMode is not None:
-            sb.append(f" QuoteMode=<{self.__quoteMode}>")
+            sb.append(" ")
+            sb.append(f"QuoteMode=<{self.__quoteMode}>")
         if self.isCommentMarkerSet():
-            sb.append(f" CommentStart=<{self.__commentMarker}>")
+            sb.append(" ")
+            sb.append(f"CommentStart=<{self.__commentMarker}>")
         if self.isNullStringSet():
-            sb.append(f" NullString=<{self.__nullString}>")
+            sb.append(" ")
+            sb.append(f"NullString=<{self.__nullString}>")
         if self.__recordSeparator is not None:
-            sb.append(f" RecordSeparator=<{self.__recordSeparator}>")
-        if hasattr(self, "_CSVFormat__ignoreEmptyLines") and self.getIgnoreEmptyLines():
+            sb.append(" ")
+            sb.append(f"RecordSeparator=<{self.__recordSeparator}>")
+        if self.getIgnoreEmptyLines():
             sb.append(" EmptyLines:ignored")
-        if (
-            hasattr(self, "_CSVFormat__ignoreSurroundingSpaces")
-            and self.getIgnoreSurroundingSpaces()
-        ):
+        if self.getIgnoreSurroundingSpaces():
             sb.append(" SurroundingSpaces:ignored")
-        if hasattr(self, "_CSVFormat__ignoreHeaderCase") and self.getIgnoreHeaderCase():
+        if self.getIgnoreHeaderCase():
             sb.append(" IgnoreHeaderCase:ignored")
         sb.append(f" SkipHeaderRecord:{self.__skipHeaderRecord}")
         if self.__headerComments is not None:
-            sb.append(f" HeaderComments:{self.__headerComments}")
+            sb.append(" ")
+            sb.append(f"HeaderComments:{str(list(self.__headerComments))}")
         if self.__headers is not None:
-            sb.append(f" Header:{self.__headers}")
-        return " ".join(sb)
+            sb.append(" ")
+            sb.append(f"Header:{str(list(self.__headers))}")
+        return "".join(sb)
 
     def print4(self, out: Path, charset: str) -> CSVPrinter:
-        return self.print0(out.open(mode="w", encoding=charset))
+        return self.print0(open(out, "w", encoding=charset))
 
     def print1(self, out: pathlib.Path, charset: str) -> CSVPrinter:
-        with out.open("w", encoding=charset) as file:
-            return CSVPrinter(file, self)
+        return CSVPrinter(open(out, "w", encoding=charset), self)
 
     def hashCode(self) -> int:
         prime = 31
         result = 1
-        result = prime * result + hash(tuple(self.__headers)) if self.__headers else 0
-        result = (
-            prime * result + hash(tuple(self.__headerComments))
-            if self.__headerComments
-            else 0
+        result = prime * result + hash(
+            tuple(tuple(h) if h is not None else None for h in self.__headers) if self.__headers is not None else None
         )
         result = prime * result + hash(
+            tuple(tuple(h) if h is not None else None for h in self.__headerComments)
+            if self.__headerComments is not None
+            else None
+        )
+        return prime * result + hash(
             (
                 self.__duplicateHeaderMode,
                 self.__allowMissingColumnNames,
@@ -281,10 +262,9 @@ class CSVFormat:
                 self.__trim,
             )
         )
-        return result
 
     def getDelimiter(self) -> str:
-        return self.__delimiter[0]
+        return self.__delimiter[0] if self.__delimiter is not None else None
 
     def getAllowDuplicateHeaderNames(self) -> bool:
         return self.__duplicateHeaderMode == DuplicateHeaderMode.ALLOW_ALL
@@ -292,50 +272,46 @@ class CSVFormat:
     def equals(self, obj: typing.Any) -> bool:
         if self is obj:
             return True
-        if obj is None or not isinstance(obj, CSVFormat):
+        if obj is None or type(self) != type(obj):
             return False
+        other = obj
         return (
-            self.__duplicateHeaderMode == obj.__duplicateHeaderMode
-            and self.__allowMissingColumnNames == obj.__allowMissingColumnNames
-            and self.__autoFlush == obj.__autoFlush
-            and self.__commentMarker == obj.__commentMarker
-            and self.__delimiter == obj.__delimiter
-            and self.__escapeCharacter == obj.__escapeCharacter
-            and (
-                self.__headers == obj.__headers
-                if self.__headers is not None and obj.__headers is not None
-                else self.__headers is obj.__headers
-            )
-            and (
-                self.__headerComments == obj.__headerComments
-                if self.__headerComments is not None
-                and obj.__headerComments is not None
-                else self.__headerComments is obj.__headerComments
-            )
-            and self.__ignoreEmptyLines == obj.__ignoreEmptyLines
-            and self.__ignoreHeaderCase == obj.__ignoreHeaderCase
-            and self.__ignoreSurroundingSpaces == obj.__ignoreSurroundingSpaces
-            and self.__nullString == obj.__nullString
-            and self.__quoteCharacter == obj.__quoteCharacter
-            and self.__quoteMode == obj.__quoteMode
-            and self.__quotedNullString == obj.__quotedNullString
-            and self.__recordSeparator == obj.__recordSeparator
-            and self.__skipHeaderRecord == obj.__skipHeaderRecord
-            and self.__trailingDelimiter == obj.__trailingDelimiter
-            and self.__trim == obj.__trim
+            self.__duplicateHeaderMode == other.__duplicateHeaderMode
+            and self.__allowMissingColumnNames == other.__allowMissingColumnNames
+            and self.__autoFlush == other.__autoFlush
+            and self.__commentMarker == other.__commentMarker
+            and self.__delimiter == other.__delimiter
+            and self.__escapeCharacter == other.__escapeCharacter
+            and self.__headers == other.__headers
+            and self.__headerComments == other.__headerComments
+            and self.__ignoreEmptyLines == other.__ignoreEmptyLines
+            and self.__ignoreHeaderCase == other.__ignoreHeaderCase
+            and self.__ignoreSurroundingSpaces == other.__ignoreSurroundingSpaces
+            and self.__nullString == other.__nullString
+            and self.__quoteCharacter == other.__quoteCharacter
+            and self.__quoteMode == other.__quoteMode
+            and self.__quotedNullString == other.__quotedNullString
+            and self.__recordSeparator == other.__recordSeparator
+            and self.__skipHeaderRecord == other.__skipHeaderRecord
+            and self.__trailingDelimiter == other.__trailingDelimiter
+            and self.__trim == other.__trim
         )
 
     @staticmethod
     def clone(values: typing.List[typing.Any]) -> typing.List[typing.Any]:
-        return None if values is None else values[:]
+        return (
+            None
+            if values is None
+            else (
+                values.copy()
+                if isinstance(values, list)
+                else (list(values) if hasattr(values, "__iter__") and not isinstance(values, str) else values)
+            )
+        )
 
-    def printRecord(
-        self,
-        appendable: typing.Union[typing.List, io.TextIOBase],
-        values: typing.List[typing.Any],
-    ) -> None:
-        for i, value in enumerate(values):
-            self.print2(value, appendable, i == 0)
+    def printRecord(self, appendable: typing.Union[typing.List, io.TextIOBase], *values: typing.Any) -> None:
+        for i in range(len(values)):
+            self.print2(values[i], appendable, i == 0)
         self.println(appendable)
 
     def println(self, appendable: typing.Union[typing.List, io.TextIOBase]) -> None:
@@ -345,6 +321,8 @@ class CSVFormat:
             self.__append1(self.__recordSeparator, appendable)
 
     def printer(self) -> CSVPrinter:
+        import sys
+
         return CSVPrinter(sys.stdout, self)
 
     def print2(
@@ -353,16 +331,18 @@ class CSVFormat:
         out: typing.Union[typing.List, io.TextIOBase],
         newRecord: bool,
     ) -> None:
+        charSequence = None
+
         if value is None:
             if self.__nullString is None:
                 charSequence = Constants.EMPTY
-            elif self.__quoteMode == QuoteMode.ALL:
+            elif QuoteMode.ALL == self.__quoteMode:
                 charSequence = self.__quotedNullString
             else:
                 charSequence = self.__nullString
         elif isinstance(value, str):
             charSequence = value
-        elif isinstance(value, io.TextIOBase):
+        elif isinstance(value, (io.TextIOWrapper, io.BufferedReader, io.TextIOBase)):
             self.__print5(value, out, newRecord)
             return
         else:
@@ -374,13 +354,11 @@ class CSVFormat:
     def print0(self, out: typing.Union[typing.List, io.TextIOBase]) -> CSVPrinter:
         return CSVPrinter(out, self)
 
-    def parse(
-        self, reader: typing.Union[io.TextIOWrapper, io.BufferedReader, io.TextIOBase]
-    ) -> CSVParser:
+    def parse(self, reader: typing.Union[io.TextIOWrapper, io.BufferedReader, io.TextIOBase]) -> CSVParser:
         return CSVParser.CSVParser1(reader, self)
 
     def isQuoteCharacterSet(self) -> bool:
-        return self.__quoteCharacter is not None
+        return self.__quoteCharacter != "" and self.__quoteCharacter is not None
 
     def isNullStringSet(self) -> bool:
         return self.__nullString is not None
@@ -406,8 +384,8 @@ class CSVFormat:
     def getQuoteMode(self) -> QuoteMode:
         return self.__quoteMode
 
-    def getQuoteCharacter(self) -> Optional[str]:
-        return self.__quoteCharacter if self.__quoteCharacter else None
+    def getQuoteCharacter(self) -> str:
+        return self.__quoteCharacter
 
     def getNullString(self) -> str:
         return self.__nullString
@@ -421,16 +399,14 @@ class CSVFormat:
     def getIgnoreEmptyLines(self) -> bool:
         return self.__ignoreEmptyLines
 
-    def getHeaderComments(self) -> typing.Optional[typing.List[str]]:
-        return (
-            self.__headerComments.copy() if self.__headerComments is not None else None
-        )
+    def getHeaderComments(self) -> typing.List[typing.List[str]]:
+        return self.__headerComments.copy() if self.__headerComments is not None else None
 
-    def getHeader(self) -> typing.Optional[typing.List[str]]:
+    def getHeader(self) -> typing.List[typing.List[str]]:
         return self.__headers.copy() if self.__headers is not None else None
 
-    def getEscapeCharacter(self) -> Optional[str]:
-        return self.__escapeCharacter if self.__escapeCharacter else None
+    def getEscapeCharacter(self) -> str:
+        return self.__escapeCharacter
 
     def getDuplicateHeaderMode(self) -> DuplicateHeaderMode:
         return self.__duplicateHeaderMode
@@ -438,32 +414,34 @@ class CSVFormat:
     def getDelimiterString(self) -> str:
         return self.__delimiter
 
-    def getCommentMarker(self) -> Optional[str]:
-        return self.__commentMarker if self.__commentMarker else None
+    def getCommentMarker(self) -> str:
+        return self.__commentMarker
 
     def getAutoFlush(self) -> bool:
         return self.__autoFlush
 
     def getAllowMissingColumnNames(self) -> bool:
-        return self.__allowMissingColumnNames
+
+        pass  # LLM could not translate this method
 
     def format_(self, values: typing.List[typing.Any]) -> str:
         out = io.StringIO()
         try:
-            csv_printer = CSVPrinter(out, self)
-            csv_printer.printRecord1(values)
-            res = out.getvalue()
-            len_ = (
-                len(res) - len(self.__recordSeparator)
-                if self.__recordSeparator
-                else len(res)
-            )
-            return res[:len_]
+            with CSVPrinter(out, self) as csvPrinter:
+                csvPrinter.printRecord1(values)
+                res = out.getvalue()
+                len_ = (
+                    len(res) - len(self._CSVFormat__recordSeparator)
+                    if self._CSVFormat__recordSeparator is not None
+                    else len(res)
+                )
+                return res[0:len_]
         except IOError as e:
             raise RuntimeError(e)
 
     def builder(self) -> Builder:
-        return Builder.create1(self)
+
+        pass  # LLM could not translate this method
 
     def __init__(
         self,
@@ -488,60 +466,97 @@ class CSVFormat:
         headerComments: typing.List[typing.Any],
         recordSeparator: str,
     ) -> None:
-
-        pass  # LLM could not translate this method
+        if constructorId == 0:
+            self.__delimiter = delimiter
+            self.__quoteCharacter = quoteChar
+            self.__quoteMode = quoteMode
+            self.__commentMarker = commentStart
+            self.__escapeCharacter = escape
+            self.__ignoreSurroundingSpaces = ignoreSurroundingSpaces
+            self.__allowMissingColumnNames = allowMissingColumnNames
+            self.__ignoreEmptyLines = ignoreEmptyLines
+            self.__recordSeparator = recordSeparator
+            self.__nullString = nullString
+            self.__headerComments = CSVFormat.toStringArray(headerComments)
+            self.__headers = CSVFormat.clone(header)
+            self.__skipHeaderRecord = skipHeaderRecord
+            self.__ignoreHeaderCase = ignoreHeaderCase
+            self.__trailingDelimiter = trailingDelimiter
+            self.__trim = trim
+            self.__autoFlush = autoFlush
+            self.__quotedNullString = quoteChar + nullString + quoteChar
+            self.__duplicateHeaderMode = duplicateHeaderMode
+            self.__validate()
+        else:
+            self.__delimiter = builder._Builder__delimiter
+            self.__quoteCharacter = builder._Builder__quoteCharacter
+            self.__quoteMode = builder._Builder__quoteMode
+            self.__commentMarker = builder._Builder__commentMarker
+            self.__escapeCharacter = builder._Builder__escapeCharacter
+            self.__ignoreSurroundingSpaces = builder._Builder__ignoreSurroundingSpaces
+            self.__allowMissingColumnNames = builder._Builder__allowMissingColumnNames
+            self.__ignoreEmptyLines = builder._Builder__ignoreEmptyLines
+            self.__recordSeparator = builder._Builder__recordSeparator
+            self.__nullString = builder._Builder__nullString
+            self.__headerComments = builder._Builder__headerComments
+            self.__headers = builder._Builder__headers
+            self.__skipHeaderRecord = builder._Builder__skipHeaderRecord
+            self.__ignoreHeaderCase = builder._Builder__ignoreHeaderCase
+            self.__trailingDelimiter = builder._Builder__trailingDelimiter
+            self.__trim = builder._Builder__trim
+            self.__autoFlush = builder._Builder__autoFlush
+            self.__quotedNullString = builder._Builder__quotedNullString
+            self.__duplicateHeaderMode = builder._Builder__duplicateHeaderMode
+            self.__validate()
 
     @staticmethod
     def valueOf(format_: str) -> CSVFormat:
-        return Predefined.__dict__[format_].getFormat()
+        return getattr(Predefined, format_).getFormat()
 
     @staticmethod
     def trim0(charSequence: str) -> str:
-        if isinstance(charSequence, str):
-            return charSequence.strip()
-
         count = len(charSequence)
-        length = count
+        len_ = count
         pos = 0
 
-        while pos < length and CSVFormat.__isTrimChar1(charSequence, pos):
+        while pos < len_ and CSVFormat.__isTrimChar1(charSequence, pos):
             pos += 1
-        while pos < length and CSVFormat.__isTrimChar1(charSequence, length - 1):
-            length -= 1
 
-        return charSequence[pos:length] if pos > 0 or length < count else charSequence
+        while pos < len_ and CSVFormat.__isTrimChar1(charSequence, len_ - 1):
+            len_ -= 1
+
+        return charSequence[pos:len_] if pos > 0 or len_ < count else charSequence
 
     @staticmethod
-    def toStringArray(
-        values: typing.Optional[typing.List[typing.Any]],
-    ) -> typing.Optional[typing.List[str]]:
+    def toStringArray(values: typing.List[typing.Any]) -> typing.List[str]:
         if values is None:
             return None
-        return [str(value) if value is not None else None for value in values]
+        strings = [str(v) if v is not None else None for v in values]
+        return strings
 
     @staticmethod
     def newFormat(delimiter: str) -> CSVFormat:
         return CSVFormat(
-            constructorId=0,
-            autoFlush=False,
-            skipHeaderRecord=False,
-            delimiter=delimiter,
-            nullString=None,
-            escape=None,
-            ignoreSurroundingSpaces=False,
-            trim=False,
-            builder=None,
-            commentStart=None,
-            ignoreHeaderCase=False,
-            quoteChar=None,
-            quoteMode=None,
-            ignoreEmptyLines=False,
-            duplicateHeaderMode=DuplicateHeaderMode.ALLOW_ALL,
-            header=None,
-            allowMissingColumnNames=False,
-            trailingDelimiter=False,
-            headerComments=None,
-            recordSeparator=None,
+            0,
+            False,
+            False,
+            delimiter,
+            None,
+            None,
+            False,
+            False,
+            None,
+            None,
+            False,
+            None,
+            None,
+            False,
+            DuplicateHeaderMode.ALLOW_ALL,
+            None,
+            False,
+            False,
+            None,
+            None,
         )
 
     @staticmethod
@@ -549,59 +564,67 @@ class CSVFormat:
         return value is None or value.strip() == ""
 
     def __validate(self) -> None:
-        if self.__containsLineBreak(self.__delimiter):
+        if CSVFormat.__containsLineBreak(self.__delimiter):
             raise ValueError("The delimiter cannot be a line break")
 
-        if self.__quoteCharacter and self.__contains(
-            self.__delimiter, self.__quoteCharacter
+        if (
+            self.__quoteCharacter is not None
+            and self.__quoteCharacter != ""
+            and CSVFormat.__contains(self.__delimiter, self.__quoteCharacter)
         ):
             raise ValueError(
                 f"The quoteChar character and the delimiter cannot be the same ('{self.__quoteCharacter}')"
             )
 
-        if self.__escapeCharacter and self.__contains(
-            self.__delimiter, self.__escapeCharacter
+        if (
+            self.__escapeCharacter is not None
+            and self.__escapeCharacter != ""
+            and CSVFormat.__contains(self.__delimiter, self.__escapeCharacter)
         ):
-            raise ValueError(
-                f"The escape character and the delimiter cannot be the same ('{self.__escapeCharacter}')"
-            )
+            raise ValueError(f"The escape character and the delimiter cannot be the same ('{self.__escapeCharacter}')")
 
-        if self.__commentMarker and self.__contains(
-            self.__delimiter, self.__commentMarker
+        if (
+            self.__commentMarker is not None
+            and self.__commentMarker != ""
+            and CSVFormat.__contains(self.__delimiter, self.__commentMarker)
         ):
             raise ValueError(
                 f"The comment start character and the delimiter cannot be the same ('{self.__commentMarker}')"
             )
 
-        if self.__quoteCharacter and self.__quoteCharacter == self.__commentMarker:
+        if (
+            self.__quoteCharacter is not None
+            and self.__quoteCharacter != ""
+            and self.__quoteCharacter == self.__commentMarker
+        ):
             raise ValueError(
                 f"The comment start character and the quoteChar cannot be the same ('{self.__commentMarker}')"
             )
 
-        if self.__escapeCharacter and self.__escapeCharacter == self.__commentMarker:
+        if (
+            self.__escapeCharacter is not None
+            and self.__escapeCharacter != ""
+            and self.__escapeCharacter == self.__commentMarker
+        ):
             raise ValueError(
                 f"The comment start and the escape character cannot be the same ('{self.__commentMarker}')"
             )
 
-        if not self.__escapeCharacter and self.__quoteMode == QuoteMode.NONE:
+        if (self.__escapeCharacter is None or self.__escapeCharacter == "") and self.__quoteMode == QuoteMode.NONE:
             raise ValueError("No quotes mode set but no escape character is set")
 
-        if (
-            self.__headers
-            and self.__duplicateHeaderMode != DuplicateHeaderMode.ALLOW_ALL
-        ):
-            dup_check_set = set()
-            empty_duplicates_allowed = (
-                self.__duplicateHeaderMode == DuplicateHeaderMode.ALLOW_EMPTY
-            )
+        if self.__headers is not None and self.__duplicateHeaderMode != DuplicateHeaderMode.ALLOW_ALL:
+            dupCheckSet: typing.Set[str] = set()
+            emptyDuplicatesAllowed = self.__duplicateHeaderMode == DuplicateHeaderMode.ALLOW_EMPTY
             for header in self.__headers:
-                blank = self.isBlank(header)
-                contains_header = not dup_check_set.add("" if blank else header)
-                if contains_header and not (blank and empty_duplicates_allowed):
+                blank = CSVFormat.isBlank(header)
+                headerToAdd = "" if blank else header
+                containsHeader = headerToAdd in dupCheckSet
+                if containsHeader and not (blank and emptyDuplicatesAllowed):
                     raise ValueError(
-                        f'The header contains a duplicate name: "{header}" in {self.__headers}. '
-                        "If this is valid then use CSVFormat.Builder.setDuplicateHeaderMode()."
+                        f'The header contains a duplicate name: "{header}" in {self.__headers}. If this is valid then use CSVFormat.Builder.setDuplicateHeaderMode().'
                     )
+                dupCheckSet.add(headerToAdd)
 
     def __printWithQuotes1(
         self,
@@ -613,16 +636,14 @@ class CSVFormat:
             return
 
         pos = 0
+
         quote = self.getQuoteCharacter()
         builder = []
 
         self.__append0(quote, appendable)
 
-        while True:
-            c = reader.read(1)
-            if not c:  # End of stream
-                break
-
+        c = reader.read(1)
+        while c:
             builder.append(c)
             if c == quote:
                 if pos > 0:
@@ -632,8 +653,8 @@ class CSVFormat:
                     pos = -1
 
                 self.__append0(c, appendable)
-
             pos += 1
+            c = reader.read(1)
 
         if pos > 0:
             self.__append1("".join(builder[:pos]), appendable)
@@ -655,21 +676,16 @@ class CSVFormat:
         delim = list(self.getDelimiterString())
         delimLength = len(delim)
         quoteChar = self.getQuoteCharacter()
-        escapeChar = (
-            self.getEscapeCharacter() if self.isEscapeCharacterSet() else quoteChar
-        )
+        escapeChar = self.getEscapeCharacter() if self.isEscapeCharacterSet() else quoteChar
 
         quoteModePolicy = self.getQuoteMode()
         if quoteModePolicy is None:
             quoteModePolicy = QuoteMode.MINIMAL
 
-        if (
-            quoteModePolicy == QuoteMode.ALL
-            or quoteModePolicy == QuoteMode.ALL_NON_NULL
-        ):
+        if quoteModePolicy == QuoteMode.ALL or quoteModePolicy == QuoteMode.ALL_NON_NULL:
             quote = True
         elif quoteModePolicy == QuoteMode.NON_NUMERIC:
-            quote = not isinstance(object_, (int, float))
+            quote = not isinstance(object_, (int, float, complex))
         elif quoteModePolicy == QuoteMode.NONE:
             self.__printWithEscapes0(charSeq, out)
             return
@@ -679,7 +695,8 @@ class CSVFormat:
                     quote = True
             else:
                 c = charSeq[pos]
-                if ord(c) <= ord(Constants.COMMENT):
+
+                if c <= Constants.COMMENT:
                     quote = True
                 else:
                     while pos < length:
@@ -713,6 +730,7 @@ class CSVFormat:
 
         out.write(quoteChar)
 
+        pos = 0
         while pos < length:
             c = charSeq[pos]
             if c == quoteChar or c == escapeChar:
@@ -732,31 +750,28 @@ class CSVFormat:
         start = 0
         pos = 0
 
-        # Temporary reader on input reader
         bufferedReader = ExtendedBufferedReader(reader)
         delim = list(self.getDelimiterString())
         delimLength = len(delim)
         escape = self.getEscapeCharacter()
         builder = []
 
-        while True:
-            c = bufferedReader.read0()
-            if c == Constants.END_OF_STREAM:
-                break
+        c = bufferedReader.read0()
+        while c != Constants.END_OF_STREAM:
+            builder.append(chr(c) if isinstance(c, int) else c)
 
-            builder.append(chr(c))
-            isDelimiterStart = self.__isDelimiter(
-                chr(c),
-                "".join(builder) + "".join(bufferedReader.lookAhead2(delimLength - 1)),
-                pos,
-                delim,
-                delimLength,
-            )
+            lookAheadChars = bufferedReader.lookAhead2(delimLength - 1)
+            builderStr = "".join(builder)
+            lookAheadStr = "".join(lookAheadChars)
+            charAtPos = chr(c) if isinstance(c, int) else c
+
+            isDelimiterStart = self.__isDelimiter(charAtPos, builderStr + lookAheadStr, pos, delim, delimLength)
 
             if (
                 c == ord(Constants.CR)
                 or c == ord(Constants.LF)
-                or c == ord(escape)
+                or (isinstance(c, int) and chr(c) == escape)
+                or (isinstance(c, str) and c == escape)
                 or isDelimiterStart
             ):
                 if pos > start:
@@ -770,24 +785,23 @@ class CSVFormat:
                     c = ord("r")
 
                 self.__append0(escape, appendable)
-                self.__append0(chr(c), appendable)
+                self.__append0(chr(c) if isinstance(c, int) else c, appendable)
 
                 if isDelimiterStart:
                     for i in range(1, delimLength):
                         c = bufferedReader.read0()
                         self.__append0(escape, appendable)
-                        self.__append0(chr(c), appendable)
+                        self.__append0(chr(c) if isinstance(c, int) else c, appendable)
 
-                start = pos + 1  # Start on the current char after this one
+                start = pos + 1
 
             pos += 1
+            c = bufferedReader.read0()
 
         if pos > start:
             self.__append1("".join(builder[start:pos]), appendable)
 
-    def __printWithEscapes0(
-        self, charSeq: str, appendable: typing.Union[typing.List, io.TextIOBase]
-    ) -> None:
+    def __printWithEscapes0(self, charSeq: str, appendable: typing.Union[typing.List, io.TextIOBase]) -> None:
         start = 0
         pos = 0
         end = len(charSeq)
@@ -799,14 +813,11 @@ class CSVFormat:
         while pos < end:
             c = charSeq[pos]
             isDelimiterStart = self.__isDelimiter(c, charSeq, pos, delim, delimLength)
-            if (
-                c == Constants.CR
-                or c == Constants.LF
-                or c == escape
-                or isDelimiterStart
-            ):
+
+            if c == Constants.CR or c == Constants.LF or c == escape or isDelimiterStart:
                 if pos > start:
                     appendable.write(charSeq[start:pos])
+
                 if c == Constants.LF:
                     c = "n"
                 elif c == Constants.CR:
@@ -823,6 +834,7 @@ class CSVFormat:
                         appendable.write(c)
 
                 start = pos + 1  # start on the current char after this one
+
             pos += 1
 
         if pos > start:
@@ -840,7 +852,7 @@ class CSVFormat:
             self.__printWithQuotes1(reader, out)
         elif self.isEscapeCharacterSet():
             self.__printWithEscapes1(reader, out)
-        elif isinstance(out, io.TextIOBase):
+        elif isinstance(out, (io.TextIOWrapper, io.BufferedWriter, io.TextIOBase)):
             IOUtils.copyLarge0(reader, out)
         else:
             IOUtils.copy0(reader, out)
@@ -883,15 +895,17 @@ class CSVFormat:
                 return False
         return True
 
-    def __append1(
-        self, csq: str, appendable: typing.Union[typing.List, io.TextIOBase]
-    ) -> None:
-        appendable.append(csq)
+    def __append1(self, csq: str, appendable: typing.Union[typing.List, io.TextIOBase]) -> None:
+        if isinstance(appendable, list):
+            appendable.append(csq)
+        else:
+            appendable.write(csq)
 
-    def __append0(
-        self, c: str, appendable: typing.Union[typing.List, io.TextIOBase]
-    ) -> None:
-        appendable.append(c)
+    def __append0(self, c: str, appendable: typing.Union[typing.List, io.TextIOBase]) -> None:
+        if isinstance(appendable, list):
+            appendable.append(c)
+        else:
+            appendable.write(c)
 
     @staticmethod
     def __isTrimChar1(charSequence: str, pos: int) -> bool:
@@ -899,10 +913,10 @@ class CSVFormat:
 
     @staticmethod
     def __isTrimChar0(ch: str) -> bool:
-        return ord(ch) <= ord(Constants.SP)
+        return ch <= Constants.SP
 
     @staticmethod
-    def __isLineBreak1(c: Optional[str]) -> bool:
+    def __isLineBreak1(c: str) -> bool:
         return c is not None and CSVFormat.__isLineBreak0(c)
 
     @staticmethod
@@ -911,21 +925,20 @@ class CSVFormat:
 
     @staticmethod
     def __containsLineBreak(source: str) -> bool:
-        return CSVFormat.__contains(source, Constants.CR) or CSVFormat.__contains(
-            source, Constants.LF
-        )
+        return CSVFormat.__contains(source, Constants.CR) or CSVFormat.__contains(source, Constants.LF)
 
     @staticmethod
     def __contains(source: str, searchCh: str) -> bool:
         if source is None:
-            raise ValueError("source cannot be None")
+            raise ValueError("source")
         return searchCh in source
 
     def trim1(self, value: str) -> str:
         return value.strip() if self.getTrim() else value
 
     def copy(self) -> CSVFormat:
-        return self.builder().build()
+
+        pass  # LLM could not translate this method
 
 
 class Builder:
@@ -970,9 +983,7 @@ class Builder:
 
     def setAllowDuplicateHeaderNames(self, allowDuplicateHeaderNames: bool) -> Builder:
         self.setDuplicateHeaderMode(
-            DuplicateHeaderMode.ALLOW_ALL
-            if allowDuplicateHeaderNames
-            else DuplicateHeaderMode.ALLOW_EMPTY
+            DuplicateHeaderMode.ALLOW_ALL if allowDuplicateHeaderNames else DuplicateHeaderMode.ALLOW_EMPTY
         )
         return self
 
@@ -993,14 +1004,14 @@ class Builder:
         return self
 
     def setRecordSeparator0(self, recordSeparator: str) -> Builder:
-        self.__recordSeparator = str(recordSeparator)
+        self.__recordSeparator = recordSeparator
         return self
 
     def setQuoteMode(self, quoteMode: QuoteMode) -> Builder:
         self.__quoteMode = quoteMode
         return self
 
-    def setQuote1(self, quoteCharacter: Optional[str]) -> Builder:
+    def setQuote1(self, quoteCharacter: str) -> Builder:
         if CSVFormat._CSVFormat__isLineBreak1(quoteCharacter):
             raise ValueError("The quoteChar cannot be a line break")
         self.__quoteCharacter = quoteCharacter
@@ -1012,9 +1023,7 @@ class Builder:
 
     def setNullString(self, nullString: str) -> Builder:
         self.__nullString = nullString
-        self.__quotedNullString = (
-            f"{self.__quoteCharacter}{nullString}{self.__quoteCharacter}"
-        )
+        self.__quotedNullString = str(self.__quoteCharacter) + nullString + str(self.__quoteCharacter)
         return self
 
     def setIgnoreSurroundingSpaces(self, ignoreSurroundingSpaces: bool) -> Builder:
@@ -1029,7 +1038,7 @@ class Builder:
         self.__ignoreEmptyLines = ignoreEmptyLines
         return self
 
-    def setHeaderComments1(self, headerComments: typing.List[str]) -> Builder:
+    def setHeaderComments1(self, headerComments: typing.List[typing.List[str]]) -> Builder:
         self.__headerComments = CSVFormat.clone(headerComments)
         return self
 
@@ -1047,36 +1056,32 @@ class Builder:
         self.setEscape1(escapeCharacter)
         return self
 
-    def setDuplicateHeaderMode(
-        self, duplicateHeaderMode: DuplicateHeaderMode
-    ) -> Builder:
-        self.__duplicateHeaderMode = duplicateHeaderMode or ValueError(
-            "duplicateHeaderMode cannot be None"
-        )
+    def setDuplicateHeaderMode(self, duplicateHeaderMode: DuplicateHeaderMode) -> Builder:
+        if duplicateHeaderMode is None:
+            raise ValueError("duplicateHeaderMode")
+        self.__duplicateHeaderMode = duplicateHeaderMode
         return self
 
     def setDelimiter1(self, delimiter: str) -> Builder:
-        if "\n" in delimiter or "\r" in delimiter:  # Check for line breaks
+        if CSVFormat._CSVFormat__containsLineBreak(delimiter):
             raise ValueError("The delimiter cannot be a line break")
-        if not delimiter:  # Check if the delimiter is empty
+        if not delimiter:
             raise ValueError("The delimiter cannot be empty")
-        self.__delimiter = delimiter  # Set the delimiter
-        return self  # Return the current Builder instance
+        self.__delimiter = delimiter
+        return self
 
     def setDelimiter0(self, delimiter: str) -> Builder:
-        return self.setDelimiter1(str(delimiter))
+        return self.setDelimiter1(delimiter)
 
     def setCommentMarker1(self, commentMarker: str) -> Builder:
-        if self.__isLineBreak1(commentMarker):
-            raise ValueError(
-                "The comment start marker character cannot be a line break"
-            )
+        if CSVFormat._CSVFormat__isLineBreak1(commentMarker):
+            raise ValueError("The comment start marker character cannot be a line break")
         self.__commentMarker = commentMarker
         return self
 
     def setCommentMarker0(self, commentMarker: str) -> Builder:
-        self.setCommentMarker1(commentMarker)
-        return self
+
+        pass  # LLM could not translate this method
 
     def setAutoFlush(self, autoFlush: bool) -> Builder:
         self.__autoFlush = autoFlush
@@ -1112,11 +1117,13 @@ class Builder:
 
     @staticmethod
     def create1(csvFormat: CSVFormat) -> Builder:
-        return Builder(csvFormat)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def create0() -> Builder:
-        return Builder(CSVFormat.DEFAULT)
+
+        pass  # LLM could not translate this method
 
     def __init__(self, csvFormat: CSVFormat) -> None:
         self.__delimiter = csvFormat._CSVFormat__delimiter
@@ -1173,6 +1180,3 @@ class Predefined:
 
     def __init__(self, format_: CSVFormat) -> None:
         self.__format = format_
-
-
-CSVFormat.initialize_fields()

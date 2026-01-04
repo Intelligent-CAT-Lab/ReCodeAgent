@@ -29,11 +29,7 @@ class ExtendedBufferedReader(io.BufferedReader):
                 next_char = self.lookAhead0()
                 if next_char == ord(Constants.LF):
                     self.read0()
-            if current in (
-                Constants.END_OF_STREAM,
-                ord(Constants.LF),
-                ord(Constants.CR),
-            ):
+            if current == Constants.END_OF_STREAM or current == ord(Constants.LF) or current == ord(Constants.CR):
                 break
             buffer.append(chr(current))
         return "".join(buffer)
@@ -41,37 +37,54 @@ class ExtendedBufferedReader(io.BufferedReader):
     def close(self) -> None:
         self.__closed = True
         self.__lastChar = Constants.END_OF_STREAM
-        super().close()
+        if hasattr(super(), "close"):
+            super().close()
 
     def read1(self, buf: typing.List[str], offset: int, length: int) -> int:
         if length == 0:
             return 0
 
-        len_read = super().readinto(memoryview(buf)[offset : offset + length])
+        # Read from the underlying buffer
+        data = super().read(length)
 
-        if len_read > 0:
+        if data is None or len(data) == 0:
+            len_read = -1
+            self.__lastChar = Constants.END_OF_STREAM
+        else:
+            len_read = len(data)
+
+            # Decode bytes to string
+            text = data.decode("utf-8", errors="replace")
+
+            # Copy characters into buf at the specified offset
+            for i in range(len_read):
+                buf[offset + i] = text[i]
+
+            # Process each character for EOL counting
             for i in range(offset, offset + len_read):
                 ch = buf[i]
                 if ch == Constants.LF:
-                    if Constants.CR != (buf[i - 1] if i > offset else self.__lastChar):
+                    prev_char = (
+                        buf[i - 1]
+                        if i > offset
+                        else (chr(self.__lastChar) if self.__lastChar != Constants.UNDEFINED else None)
+                    )
+                    if Constants.CR != prev_char:
                         self.__eolCounter += 1
                 elif ch == Constants.CR:
                     self.__eolCounter += 1
 
-            self.__lastChar = buf[offset + len_read - 1]
+            self.__lastChar = ord(buf[offset + len_read - 1])
+            self.__position += len_read
 
-        elif len_read == Constants.END_OF_STREAM:
-            self.__lastChar = Constants.END_OF_STREAM
-
-        self.__position += len_read
         return len_read
 
     def read0(self) -> int:
-        current = self.read(1)  # Read a single character
-        if not current:  # If no character is read, end of stream
-            current = Constants.END_OF_STREAM
+        data = super().read(1)
+        if data:
+            current = data[0] if isinstance(data, bytes) else ord(data)
         else:
-            current = ord(current)  # Convert character to its ASCII value
+            current = Constants.END_OF_STREAM
 
         if (
             current == ord(Constants.CR)
@@ -93,21 +106,30 @@ class ExtendedBufferedReader(io.BufferedReader):
         return self.__closed
 
     def lookAhead2(self, n: int) -> typing.List[str]:
-        buf = [""] * n  # Create a list of empty strings with size n
+        buf = [""] * n
         return self.lookAhead1(buf)
 
     def lookAhead1(self, buf: typing.List[str]) -> typing.List[str]:
         n = len(buf)
-        self.mark(n)
-        self.readinto(buf)
-        self.reset()
+        current_pos = self.tell()
+
+        # Read n characters
+        data = self.read(n)
+
+        # Reset to original position
+        self.seek(current_pos)
+
+        # Fill buf with the characters read
+        for i in range(len(data)):
+            buf[i] = data[i]
+
         return buf
 
     def lookAhead0(self) -> int:
-        self.mark(1)
-        c = self.read(1)
-        self.reset()
-        return ord(c) if c else -1
+        data = self.peek(1)
+        if not data or len(data) == 0:
+            return -1
+        return data[0]
 
     def getPosition(self) -> int:
         return self.__position
@@ -117,12 +139,18 @@ class ExtendedBufferedReader(io.BufferedReader):
 
     def getCurrentLineNumber(self) -> int:
         if (
-            self.__lastChar == Constants.CR
-            or self.__lastChar == Constants.LF
+            self.__lastChar == ord(Constants.CR)
+            or self.__lastChar == ord(Constants.LF)
             or self.__lastChar == Constants.UNDEFINED
             or self.__lastChar == Constants.END_OF_STREAM
         ):
-            return self.__eolCounter  # counter is accurate
-        return self.__eolCounter + 1  # Allow for counter being incremented only at EOL
+            return self.__eolCounter
+        return self.__eolCounter + 1
 
-    super().__init__(reader)
+    def __init__(self, reader: typing.Union[io.TextIOWrapper, io.BufferedReader, io.TextIOBase]) -> None:
+        if isinstance(reader, io.BufferedReader):
+            super().__init__(reader.raw)
+        elif hasattr(reader, "buffer"):
+            super().__init__(reader.buffer)
+        else:
+            super().__init__(reader)

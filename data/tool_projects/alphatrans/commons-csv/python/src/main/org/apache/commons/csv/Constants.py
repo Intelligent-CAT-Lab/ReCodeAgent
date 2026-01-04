@@ -7,23 +7,28 @@ from typing import *
 
 class Constants:
 
-    US: str = "\x1f"
+    US: str = chr(31)
     UNDEFINED: int = -2
-    TAB: str = "\t"
+    TAB: str = None  # LLM could not translate this field
+
     SQL_NULL_STRING: str = "\\N"
     SP: str = " "
-    RS: str = chr(30)
+    RS: str = None  # LLM could not translate this field
+
     PIPE: str = "|"
     PARAGRAPH_SEPARATOR: str = "\u2029"
     NEXT_LINE: str = "\u0085"
     LINE_SEPARATOR: str = "\u2028"
-    LF: str = "\n"
+    LF: str = None  # LLM could not translate this field
+
     FF: str = "\f"
     END_OF_STREAM: int = -1
-    EMPTY_STRING_ARRAY: List[str] = []
-    EMPTY: str = ""
+    EMPTY_STRING_ARRAY: typing.List[str] = []
+    EMPTY: str = None  # LLM could not translate this field
+
     DOUBLE_QUOTE_CHAR: str = '"'
-    CRLF: str = "\r\n"
+    CRLF: str = None  # LLM could not translate this field
+
     CR: str = "\r"
     COMMENT: str = "#"
     COMMA: str = ","
@@ -31,4 +36,4 @@ class Constants:
     BACKSLASH: str = "\\"
 
     def __init__(self) -> None:
-        raise NotImplementedError("This class cannot be instantiated")
+        raise AssertionError("Constants class cannot be instantiated")

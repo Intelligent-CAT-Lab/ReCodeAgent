@@ -37,8 +37,9 @@ class Lexer:
     __delimiter: typing.List[str] = None
 
     __DISABLED: str = "\ufffe"
-    __LF_STRING: str = str(Constants.LF)
-    __CR_STRING: str = Constants.CR
+    __LF_STRING: str = None  # LLM could not translate this field
+
+    __CR_STRING: str = None  # LLM could not translate this field
 
     def close(self) -> None:
         self.__reader.close()
@@ -46,29 +47,26 @@ class Lexer:
     def __parseSimpleToken(self, token: Token, ch: int) -> Token:
         while True:
             if self.readEndOfLine(ch):
-                token.type = Constants.EORECORD
+                token.type = EORECORD
                 break
             if self.isEndOfFile(ch):
-                token.type = Constants.EOF
+                token.type = EOF
                 token.isReady = True  # There is data at EOF
                 break
             if self.isDelimiter(ch):
-                token.type = Constants.TOKEN
+                token.type = TOKEN
                 break
             if self.isEscape(ch):
                 if self.isEscapeDelimiter():
-                    token.content.write("".join(self.__delimiter))
+                    token.content.append("".join(self.__delimiter))
                 else:
                     unescaped = self.readEscape()
-                    if (
-                        unescaped == Constants.END_OF_STREAM
-                    ):  # unexpected char after escape
-                        token.content.write(chr(ch))
-                        token.content.write(chr(self.__reader.getLastChar()))
+                    if unescaped == Constants.END_OF_STREAM:  # unexpected char after escape
+                        token.content.append(chr(ch) + chr(self.__reader.getLastChar()))
                     else:
-                        token.content.write(chr(unescaped))
+                        token.content.append(chr(unescaped))
             else:
-                token.content.write(chr(ch))
+                token.content.append(chr(ch))
             ch = self.__reader.read0()  # continue
 
         if self.__ignoreSurroundingSpaces:
@@ -78,105 +76,108 @@ class Lexer:
 
     def __parseEncapsulatedToken(self, token: Token) -> Token:
         token.isQuoted = True
-        start_line_number = self.getCurrentLineNumber()
+        startLineNumber = self.getCurrentLineNumber()
+
         while True:
             c = self.__reader.read0()
 
             if self.isEscape(c):
                 if self.isEscapeDelimiter():
-                    token.content.write("".join(self.__delimiter))
+                    token.content.append("".join(self.__delimiter))
                 else:
                     unescaped = self.readEscape()
-                    if (
-                        unescaped == Constants.END_OF_STREAM
-                    ):  # unexpected char after escape
-                        token.content.write(chr(c))
-                        token.content.write(chr(self.__reader.getLastChar()))
+                    if unescaped == Constants.END_OF_STREAM:  # unexpected char after escape
+                        token.content.append(chr(c))
+                        token.content.append(chr(self.__reader.getLastChar()))
                     else:
-                        token.content.write(chr(unescaped))
+                        token.content.append(chr(unescaped))
             elif self.isQuoteChar(c):
                 if self.isQuoteChar(self.__reader.lookAhead0()):
                     c = self.__reader.read0()
-                    token.content.write(chr(c))
+                    token.content.append(chr(c))
                 else:
                     while True:
                         c = self.__reader.read0()
                         if self.isDelimiter(c):
-                            token.type = Type.TOKEN
+                            token.type = TOKEN
                             return token
                         if self.isEndOfFile(c):
-                            token.type = Type.EOF
+                            token.type = EOF
                             token.isReady = True  # There is data at EOF
                             return token
                         if self.readEndOfLine(c):
-                            token.type = Type.EORECORD
+                            token.type = EORECORD
                             return token
                         if not chr(c).isspace():
                             raise IOError(
-                                f"(line {self.getCurrentLineNumber()}) invalid char between encapsulated token and delimiter"
+                                f"(line {self.getCurrentLineNumber()}) invalid char between "
+                                f"encapsulated token and delimiter"
                             )
             elif self.isEndOfFile(c):
-                raise IOError(
-                    f"(startline {start_line_number}) EOF reached before encapsulated token finished"
-                )
+                raise IOError(f"(startline {startLineNumber}) EOF reached before encapsulated token finished")
             else:
-                token.content.write(chr(c))
+                token.content.append(chr(c))
 
-    def __mapNullToDisabled(self, c: Optional[str]) -> str:
-        return self.__DISABLED if c is None else c
+    def __mapNullToDisabled(self, c: str) -> str:
+        return Lexer.__DISABLED if c is None else c
 
     def __isMetaChar(self, ch: int) -> bool:
-        return (
-            ch == self.__escape or ch == self.__quoteChar or ch == self.__commentStart
-        )
+        return ch == ord(self.__escape) or ch == ord(self.__quoteChar) or ch == ord(self.__commentStart)
 
-    def trimTrailingSpaces(
-        self, buffer: typing.Union[typing.List[str], io.StringIO]
-    ) -> None:
-        if isinstance(buffer, StringIO):
+    def trimTrailingSpaces(self, buffer: typing.Union[typing.List[str], io.StringIO]) -> None:
+        if isinstance(buffer, list):
+            length = len(buffer)
+            while length > 0 and buffer[length - 1].isspace():
+                length = length - 1
+            if length != len(buffer):
+                del buffer[length:]
+        else:
             content = buffer.getvalue()
-            trimmed_content = content.rstrip()
-            buffer.seek(0)
-            buffer.truncate(0)
-            buffer.write(trimmed_content)
-        elif isinstance(buffer, list):
-            while buffer and buffer[-1].isspace():
-                buffer.pop()
+            length = len(content)
+            while length > 0 and content[length - 1].isspace():
+                length = length - 1
+            if length != len(content):
+                buffer.seek(0)
+                buffer.truncate(0)
+                buffer.write(content[:length])
 
     def readEscape(self) -> int:
         ch = self.__reader.read0()
+
         if ch == ord("r"):
-            return ord(Constants.CR)
+            return ord(CR)
         elif ch == ord("n"):
-            return ord(Constants.LF)
+            return ord(LF)
         elif ch == ord("t"):
-            return ord(Constants.TAB)
+            return ord(TAB)
         elif ch == ord("b"):
-            return ord(Constants.BACKSPACE)
+            return ord(BACKSPACE)
         elif ch == ord("f"):
-            return ord(Constants.FF)
-        elif ch in (
-            ord(Constants.CR),
-            ord(Constants.LF),
-            ord(Constants.FF),
-            ord(Constants.TAB),
-            ord(Constants.BACKSPACE),
-        ):
+            return ord(FF)
+        elif ch == ord(CR):
             return ch
-        elif ch == Constants.END_OF_STREAM:
+        elif ch == ord(LF):
+            return ch
+        elif ch == ord(FF):  # TODO is this correct?
+            return ch
+        elif ch == ord(TAB):  # TODO is this correct? Do tabs need to be escaped?
+            return ch
+        elif ch == ord(BACKSPACE):  # TODO is this correct?
+            return ch
+        elif ch == END_OF_STREAM:
             raise IOError("EOF whilst processing escape sequence")
-        elif self.__isMetaChar(ch):
-            return ch
         else:
-            return Constants.END_OF_STREAM
+            if self.__isMetaChar(ch):
+                return ch
+            return END_OF_STREAM
 
     def readEndOfLine(self, ch: int) -> bool:
         if ch == ord(Constants.CR) and self.__reader.lookAhead0() == ord(Constants.LF):
             ch = self.__reader.read0()
-            if not self.__firstEol:
+            if self.__firstEol is None:
                 self.__firstEol = Constants.CRLF
 
-        if not self.__firstEol:
+        if self.__firstEol is None:
             if ch == ord(Constants.LF):
                 self.__firstEol = self.__LF_STRING
             elif ch == ord(Constants.CR):
@@ -185,59 +186,58 @@ class Lexer:
         return ch == ord(Constants.LF) or ch == ord(Constants.CR)
 
     def nextToken(self, token: Token) -> Token:
-        last_char = self.__reader.getLastChar()
+        lastChar = self.__reader.getLastChar()
         c = self.__reader.read0()
 
-        # Handle end of line
+        # Note: The following call will swallow LF if c == CR. But we don't need to know if the last char was CR or LF
+        # - they are equivalent here.
         eol = self.readEndOfLine(c)
 
         if self.__ignoreEmptyLines:
-            while eol and self.isStartOfLine(last_char):
-                last_char = c
+            while eol and self.isStartOfLine(lastChar):
+                lastChar = c
                 c = self.__reader.read0()
                 eol = self.readEndOfLine(c)
                 if self.isEndOfFile(c):
-                    token.type = Constants.EOF
+                    token.type = EOF
                     return token
 
-        if self.isEndOfFile(last_char) or (
-            not self.__isLastTokenDelimiter and self.isEndOfFile(c)
-        ):
-            token.type = Constants.EOF
+        if self.isEndOfFile(lastChar) or (not self.__isLastTokenDelimiter and self.isEndOfFile(c)):
+            token.type = EOF
             return token
 
-        if self.isStartOfLine(last_char) and self.isCommentStart(c):
+        if self.isStartOfLine(lastChar) and self.isCommentStart(c):
             line = self.__reader.readLine()
             if line is None:
-                token.type = Constants.EOF
+                token.type = EOF
                 return token
             comment = line.strip()
-            token.content.write(comment)
-            token.type = Constants.COMMENT
+            token.content.append(comment)
+            token.type = COMMENT
             return token
 
-        while token.type == Constants.INVALID:
+        while token.type == INVALID:
             if self.__ignoreSurroundingSpaces:
                 while chr(c).isspace() and not self.isDelimiter(c) and not eol:
                     c = self.__reader.read0()
                     eol = self.readEndOfLine(c)
 
             if self.isDelimiter(c):
-                token.type = Constants.TOKEN
+                token.type = TOKEN
             elif eol:
-                token.type = Constants.EORECORD
+                token.type = EORECORD
             elif self.isQuoteChar(c):
                 self.__parseEncapsulatedToken(token)
             elif self.isEndOfFile(c):
-                token.type = Constants.EOF
-                token.isReady = True  # There is data at EOF
+                token.type = EOF
+                token.isReady = True  # there is data at EOF
             else:
                 self.__parseSimpleToken(token, c)
 
         return token
 
     def isStartOfLine(self, ch: int) -> bool:
-        return ch == Constants.LF or ch == Constants.CR or ch == Constants.UNDEFINED
+        return ch == Constants.UNDEFINED or ch == ord(Constants.CR) or ch == ord("\n")
 
     def isQuoteChar(self, ch: int) -> bool:
         return ch == ord(self.__quoteChar)
@@ -252,9 +252,7 @@ class Lexer:
                 or self.__escapeDelimiterBuf[2 * i - 1] != self.__escape
             ):
                 return False
-        count = self.__reader.read1(
-            self.__escapeDelimiterBuf, 0, len(self.__escapeDelimiterBuf)
-        )
+        count = self.__reader.read1(self.__escapeDelimiterBuf, 0, len(self.__escapeDelimiterBuf))
         return count != Constants.END_OF_STREAM
 
     def isEscape(self, ch: int) -> bool:
@@ -265,14 +263,14 @@ class Lexer:
 
     def isDelimiter(self, ch: int) -> bool:
         self.__isLastTokenDelimiter = False
-        if ch != self.__delimiter[0]:
+        if ch != ord(self.__delimiter[0]):
             return False
         if len(self.__delimiter) == 1:
             self.__isLastTokenDelimiter = True
             return True
         self.__reader.lookAhead1(self.__delimiterBuf)
         for i in range(len(self.__delimiterBuf)):
-            if self.__delimiterBuf[i] != self.__delimiter[i + 1]:
+            if ord(self.__delimiterBuf[i]) != ord(self.__delimiter[i + 1]):
                 return False
         count = self.__reader.read1(self.__delimiterBuf, 0, len(self.__delimiterBuf))
         self.__isLastTokenDelimiter = count != Constants.END_OF_STREAM
@@ -301,13 +299,5 @@ class Lexer:
         self.__commentStart = self.__mapNullToDisabled(format_.getCommentMarker())
         self.__ignoreSurroundingSpaces = format_.getIgnoreSurroundingSpaces()
         self.__ignoreEmptyLines = format_.getIgnoreEmptyLines()
-        self.__delimiterBuf = (
-            ["\u0000"] * (len(self.__delimiter) - 1)
-            if len(self.__delimiter) > 1
-            else []
-        )
-        self.__escapeDelimiterBuf = (
-            ["\u0000"] * (2 * len(self.__delimiter) - 1)
-            if len(self.__delimiter) > 0
-            else []
-        )
+        self.__delimiterBuf = ["\u0000"] * (len(self.__delimiter) - 1)
+        self.__escapeDelimiterBuf = ["\u0000"] * (2 * len(self.__delimiter) - 1)

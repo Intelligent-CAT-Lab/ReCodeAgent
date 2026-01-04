@@ -19,27 +19,23 @@ class CSVPrinter(io.BufferedIOBase):
     __appendable: typing.Union[typing.List, io.TextIOBase] = None
 
     def flush(self) -> None:
-        if isinstance(self.__appendable, io.IOBase) or hasattr(
-            self.__appendable, "flush"
-        ):
+        if hasattr(self.__appendable, "flush"):
             self.__appendable.flush()
 
     def close(self) -> None:
         self.close1(True)
 
-    def printRecords1(self, *values: typing.Any) -> None:
-        self.printRecords0(list(values))
+    def printRecords1(self, values: typing.List[typing.Any]) -> None:
+
+        pass  # LLM could not translate this method
 
     def printRecords0(self, values: typing.Iterable[typing.Any]) -> None:
         for value in values:
             self.__printRecordObject(value)
 
     def printRecord2(self, values: typing.Iterable[typing.Any]) -> None:
-        for t in values:
-            try:
-                self.print(t)
-            except IOError as e:
-                raise IOUtils.rethrow(e)
+        for value in values:
+            self.print(value)
         self.println()
 
     def printRecord1(self, values: typing.List[typing.Any]) -> None:
@@ -60,20 +56,20 @@ class CSVPrinter(io.BufferedIOBase):
         if not self.__newRecord:
             self.println()
         self.__appendable.write(self.__format.getCommentMarker())
-        self.__appendable.write(Constants.SP)
+        self.__appendable.write(SP)
         i = 0
         while i < len(comment):
             c = comment[i]
-            if c == Constants.CR:
-                if i + 1 < len(comment) and comment[i + 1] == Constants.LF:
+            if c == CR:
+                if i + 1 < len(comment) and comment[i + 1] == LF:
                     i += 1
                 self.println()
                 self.__appendable.write(self.__format.getCommentMarker())
-                self.__appendable.write(Constants.SP)
-            elif c == Constants.LF:
+                self.__appendable.write(SP)
+            elif c == LF:
                 self.println()
                 self.__appendable.write(self.__format.getCommentMarker())
-                self.__appendable.write(Constants.SP)
+                self.__appendable.write(SP)
             else:
                 self.__appendable.write(c)
             i += 1
@@ -89,37 +85,33 @@ class CSVPrinter(io.BufferedIOBase):
     def close1(self, flush: bool) -> None:
         if flush or self.__format.getAutoFlush():
             self.flush()
-        if isinstance(self.__appendable, io.IOBase):
+        if hasattr(self.__appendable, "close"):
             self.__appendable.close()
 
     def close0(self) -> None:
         self.close1(False)
 
-    def __init__(
-        self, appendable: typing.Union[typing.List, io.TextIOBase], format_: CSVFormat
-    ) -> None:
+    def __init__(self, appendable: typing.Union[typing.List, io.TextIOBase], format_: CSVFormat) -> None:
         if appendable is None:
             raise ValueError("appendable cannot be None")
         if format_ is None:
-            raise ValueError("format cannot be None")
+            raise ValueError("format_ cannot be None")
 
         self.__appendable = appendable
         self.__format = format_.copy()
 
-        header_comments = format_.getHeaderComments()
-        if header_comments is not None:
-            for line in header_comments:
+        headerComments = self.__format.getHeaderComments()
+        if headerComments is not None:
+            for line in headerComments:
                 self.printComment(line)
 
-        if format_.getHeader() is not None and not format_.getSkipHeaderRecord():
-            self.printRecord1(format_.getHeader())
+        if self.__format.getHeader() is not None and not self.__format.getSkipHeaderRecord():
+            self.printRecord1(self.__format.getHeader())
 
     def __printRecordObject(self, value: typing.Any) -> None:
-        if isinstance(value, (list, tuple)):  # Equivalent to Object[] in Java
+        if isinstance(value, list) or isinstance(value, tuple):
             self.printRecord1(value)
-        elif isinstance(value, Iterable) and not isinstance(
-            value, (str, bytes)
-        ):  # Check for Iterable but exclude strings/bytes
+        elif isinstance(value, typing.Iterable) and not isinstance(value, str):
             self.printRecord0(value)
         else:
-            self.printRecord1(value)
+            self.printRecord1([value])

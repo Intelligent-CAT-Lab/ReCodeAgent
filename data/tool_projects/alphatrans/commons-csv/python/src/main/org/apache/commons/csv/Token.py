@@ -8,23 +8,21 @@ from typing import *
 
 class Token:
 
-    content: io.StringIO = io.StringIO(" " * 50)
+    content: typing.Union[typing.List[str], io.StringIO] = None  # LLM could not translate this field
+
     __INITIAL_TOKEN_LENGTH: int = 50
     isQuoted: bool = False
 
     isReady: bool = False
 
-    type: typing.Type = None
-
-    @staticmethod
-    def initialize_fields() -> None:
-        type: typing.Type = Type.INVALID
+    type: typing.Type = None  # LLM could not translate this field
 
     def toString(self) -> str:
-        return f"{self.type.name()} [{self.content.getvalue()}]"
+        content_str = "".join(self.content) if isinstance(self.content, list) else self.content.getvalue()
+        return f"{self.type.__name__} [{content_str}]"
 
     def reset(self) -> None:
-        self.content = io.StringIO(" " * 50)  # Reset content to an empty StringIO
+        self.content.clear()
         self.type = Type.INVALID
         self.isReady = False
         self.isQuoted = False
@@ -41,6 +39,3 @@ class Type:
     TOKEN: typing.Type = None
 
     INVALID: typing.Type = None
-
-
-Token.initialize_fields()

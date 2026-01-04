@@ -1,5 +1,4 @@
 from __future__ import annotations
-import time
 import re
 import io
 import numbers
@@ -26,16 +25,20 @@ class CSVRecord:
     __serialVersionUID: int = 1
 
     def toString(self) -> str:
-        return f"CSVRecord [comment='{self.__comment}', recordNumber={self.__recordNumber}, values={self.__values}]"
+        return (
+            f"CSVRecord [comment='{self.__comment}', "
+            f"recordNumber={self.__recordNumber}, "
+            f"values={self.__values}]"
+        )
 
     def iterator(self) -> typing.Iterator[str]:
         return iter(self.toList())
 
-    def values(self) -> typing.List[typing.List[str]]:
+    def values(self) -> typing.List[str]:
         return self.__values
 
     def toMap(self) -> typing.Dict[str, str]:
-        return self.putIn({})
+        return self.putIn(dict())
 
     def toList(self) -> typing.List[str]:
         return list(self.stream())
@@ -44,7 +47,7 @@ class CSVRecord:
         return iter(self.__values)
 
     def size(self) -> int:
-        return len(self.__values)
+        return len(self._CSVRecord__values)
 
     def putIn(self, map_: typing.Any) -> typing.Any:
         header_map = self.__getHeaderMapRaw()
@@ -52,18 +55,18 @@ class CSVRecord:
             return map_
 
         for key, value in header_map.items():
-            if value < len(self.__values[0]):
-                map_[key] = self.__values[0][value]
+            if value < len(self.__values):
+                map_[key] = self.__values[value]
 
         return map_
 
     def isSet1(self, name: str) -> bool:
-        return self.isMapped(name) and self.__getHeaderMapRaw().get(
-            name
-        ).intValue() < len(self.__values)
+
+        pass  # LLM could not translate this method
 
     def isSet0(self, index: int) -> bool:
-        return 0 <= index < len(self.__values)
+
+        pass  # LLM could not translate this method
 
     def isMapped(self, name: str) -> bool:
         header_map = self.__getHeaderMapRaw()
@@ -71,7 +74,7 @@ class CSVRecord:
 
     def isConsistent(self) -> bool:
         header_map = self.__getHeaderMapRaw()
-        return header_map is None or len(header_map) == len(self.__values)
+        return header_map is None or (self.__values is not None and len(header_map) == len(self.__values))
 
     def hasComment(self) -> bool:
         return self.__comment is not None
@@ -80,28 +83,29 @@ class CSVRecord:
         return self.__recordNumber
 
     def getParser(self) -> CSVParser:
-        return self.__parser
+        return self._CSVRecord__parser
 
     def getComment(self) -> str:
-        return self.__comment
+        return self._CSVRecord__comment
 
     def getCharacterPosition(self) -> int:
-        return self.__characterPosition
+        return self._CSVRecord__characterPosition
 
     def get2(self, name: str) -> str:
         header_map = self.__getHeaderMapRaw()
         if header_map is None:
-            raise RuntimeError(
-                "No header mapping was specified, the record values can't be accessed by name"
-            )
+            raise ValueError("No header mapping was specified, the record values can't be accessed by name")
+
         index = header_map.get(name)
         if index is None:
-            raise ValueError(
-                f"Mapping for {name} not found, expected one of {list(header_map.keys())}"
-            )
+            raise ValueError(f"Mapping for {name} not found, expected one of {list(header_map.keys())}")
+
+        if self.__values is None:
+            raise ValueError("Record values are not initialized")
+
         try:
             return self.__values[index]
-        except IndexError:
+        except IndexError as e:
             raise ValueError(
                 f"Index for header '{name}' is {index} but CSVRecord only has {len(self.__values)} values!"
             )
@@ -110,10 +114,12 @@ class CSVRecord:
         return self.__values[i]
 
     def get0(self, e: enum.Enum) -> str:
-        return self.get2(None if e is None else e.name)
 
-    def __getHeaderMapRaw(self) -> typing.Optional[typing.Dict[str, int]]:
-        return None if self.__parser is None else self.__parser.getHeaderMapRaw()
+        pass  # LLM could not translate this method
+
+    def __getHeaderMapRaw(self) -> typing.Dict[str, int]:
+
+        pass  # LLM could not translate this method
 
     def __init__(
         self,
