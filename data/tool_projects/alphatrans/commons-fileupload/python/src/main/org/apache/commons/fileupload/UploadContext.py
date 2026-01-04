@@ -8,4 +8,4 @@ from src.main.org.apache.commons.fileupload.RequestContext import *
 class UploadContext(ABC):
 
     def contentLength(self) -> int:
-        return 0  # Replace with the actual implementation
+        pass

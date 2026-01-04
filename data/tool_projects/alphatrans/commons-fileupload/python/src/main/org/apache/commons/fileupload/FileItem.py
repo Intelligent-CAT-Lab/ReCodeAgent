@@ -15,53 +15,50 @@ class FileItem(ABC):
     def getOutputStream(
         self,
     ) -> typing.Union[io.BytesIO, io.StringIO, io.BufferedWriter]:
-        return io.BytesIO()
+        raise NotImplementedError("Subclasses must implement getOutputStream()")
 
     def setFormField(self, state: bool) -> None:
-        self._is_form_field = state
+        pass
 
     def isFormField(self) -> bool:
-        return False
+        pass
 
     def setFieldName(self, name: str) -> None:
-        self.field_name = name
+        pass
 
     def getFieldName(self) -> str:
-        return self._field_name
+        pass
 
     def delete(self) -> None:
-        # Implement the delete functionality here
         pass
 
     def write(self, file: pathlib.Path) -> None:
-        with file.open("wb") as f:
-            f.write(self.get_content())
+
+        pass  # LLM could not translate this method
 
     def getString1(self) -> str:
-        return ""
+        pass
 
     def getString0(self, encoding: str) -> str:
-        try:
-            return self.some_byte_data.decode(encoding)
-        except LookupError as e:
-            raise ValueError(f"Unsupported encoding: {encoding}") from e
+
+        pass  # LLM could not translate this method
 
     def get(self) -> typing.List[int]:
-        return []
+        raise NotImplementedError
 
     def getSize(self) -> int:
-        return 0  # Replace with actual implementation
+        raise NotImplementedError("This method should be implemented by subclasses")
 
     def isInMemory(self) -> bool:
-        return False  # Replace with actual logic if needed
+        pass
 
     def getName(self) -> str:
-        return self.name
+        raise NotImplementedError
 
     def getContentType(self) -> str:
-        return "application/octet-stream"
+        pass
 
     def getInputStream(
         self,
     ) -> typing.Union[io.BytesIO, io.StringIO, io.BufferedReader]:
-        raise NotImplementedError("Subclasses must implement this method")
+        raise NotImplementedError

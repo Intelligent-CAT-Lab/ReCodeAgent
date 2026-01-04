@@ -8,7 +8,7 @@ from src.main.org.apache.commons.fileupload.FileItemHeaders import *
 class FileItemHeadersSupport(ABC):
 
     def setHeaders(self, headers: FileItemHeaders) -> None:
-        self.headers = headers
+        pass
 
     def getHeaders(self) -> FileItemHeaders:
-        return super().getHeaders()
+        pass

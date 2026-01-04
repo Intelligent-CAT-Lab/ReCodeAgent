@@ -12,19 +12,19 @@ from src.main.org.apache.commons.fileupload.FileItemHeadersSupport import *
 class FileItemStream(ABC):
 
     def isFormField(self) -> bool:
-        return False  # Replace with the actual logic if needed
+        pass
 
     def getFieldName(self) -> str:
-        return self._field_name
+        pass
 
     def getName(self) -> str:
-        return self.name
+        pass
 
     def getContentType(self) -> str:
-        return "application/octet-stream"
+        pass
 
     def openStream(self) -> typing.Union[io.BytesIO, io.StringIO, io.BufferedReader]:
-        raise NotImplementedError("Subclasses must implement this method")
+        raise NotImplementedError("Subclasses must implement openStream()")
 
 
 class ItemSkippedException:

@@ -13,19 +13,21 @@ class FileItemHeadersImpl(FileItemHeaders):
     __serialVersionUID: int = -4455695752627032559
 
     def getHeaders(self, name: str) -> typing.Iterator[str]:
-        name_lower = name.lower()
-        header_value_list = self.__headerNameToValueListMap.get(name_lower, [])
-        return iter(header_value_list)
+        nameLower = name.lower()
+        headerValueList = self.__headerNameToValueListMap.get(nameLower)
+        if headerValueList is None:
+            headerValueList = []
+        return iter(headerValueList)
 
     def getHeaderNames(self) -> typing.Iterator[str]:
         return iter(self.__headerNameToValueListMap.keys())
 
     def getHeader(self, name: str) -> str:
-        name_lower = name.lower()
-        header_value_list = self.__headerNameToValueListMap.get(name_lower)
-        if header_value_list is None:
+        nameLower = name.lower()
+        headerValueList = self.__headerNameToValueListMap.get(nameLower)
+        if headerValueList is None:
             return None
-        return header_value_list[0]
+        return headerValueList[0]
 
     def addHeader(self, name: str, value: str) -> None:
         name_lower = name.lower()

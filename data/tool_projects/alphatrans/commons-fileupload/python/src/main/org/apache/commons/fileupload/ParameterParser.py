@@ -14,40 +14,38 @@ class ParameterParser:
     __i1: int = 0
     __len: int = 0
     __pos: int = 0
-    __chars: typing.List[str] = None
+    __chars: typing.List[str] = None  # LLM could not translate this field
 
-    def parse3(
-        self, charArray: typing.List[str], offset: int, length: int, separator: str
-    ) -> typing.Dict[str, str]:
+    def parse3(self, charArray: typing.List[str], offset: int, length: int, separator: str) -> typing.Dict[str, str]:
         if charArray is None:
             return {}
 
-        params: typing.Dict[str, str] = {}
+        params = {}
         self.__chars = charArray
         self.__pos = offset
-        self.__len = length
+        self.__len = offset + length
 
-        paramName: typing.Optional[str] = None
-        paramValue: typing.Optional[str] = None
+        paramName = None
+        paramValue = None
 
         while self.__hasChar():
             paramName = self.__parseToken(["=", separator])
             paramValue = None
 
-            if self.__hasChar() and self.__chars[self.__pos] == "=":
+            if self.__hasChar() and (self.__chars[self.__pos] == "="):
                 self.__pos += 1  # skip '='
                 paramValue = self.__parseQuotedToken([separator])
 
                 if paramValue is not None:
                     try:
                         paramValue = MimeUtility.decodeText(paramValue)
-                    except Exception:  # Catching ValueError equivalent
+                    except Exception as e:
                         pass
 
-            if self.__hasChar() and self.__chars[self.__pos] == separator:
+            if self.__hasChar() and (self.__chars[self.__pos] == separator):
                 self.__pos += 1  # skip separator
 
-            if paramName is not None and len(paramName) > 0:
+            if (paramName is not None) and (len(paramName) > 0):
                 if self.__lowerCaseNames:
                     paramName = paramName.lower()
 
@@ -55,9 +53,7 @@ class ParameterParser:
 
         return params
 
-    def parse2(
-        self, charArray: typing.List[str], separator: str
-    ) -> typing.Dict[str, str]:
+    def parse2(self, charArray: typing.List[str], separator: str) -> typing.Dict[str, str]:
         if charArray is None:
             return {}
         return self.parse3(charArray, 0, len(charArray), separator)
@@ -68,10 +64,11 @@ class ParameterParser:
         return self.parse2(list(str_), separator)
 
     def parse0(self, str_: str, separators: typing.List[str]) -> typing.Dict[str, str]:
-        if not separators:  # Check if separators is None or empty
+        if separators is None or len(separators) == 0:
             return {}
 
         separator = separators[0]
+
         if str_ is not None:
             idx = len(str_)
             for separator2 in separators:
@@ -89,29 +86,25 @@ class ParameterParser:
         return self.__lowerCaseNames
 
     def __init__(self) -> None:
-        super().__init__()
+        pass
 
     def __parseQuotedToken(self, terminators: typing.List[str]) -> str:
-        ch: str
         self.__i1 = self.__pos
         self.__i2 = self.__pos
-        quoted: bool = False
-        char_escaped: bool = False
-
+        quoted = False
+        charEscaped = False
         while self.__hasChar():
             ch = self.__chars[self.__pos]
             if not quoted and self.__isOneOf(ch, terminators):
                 break
-            if not char_escaped and ch == '"':
+            if not charEscaped and ch == '"':
                 quoted = not quoted
-            char_escaped = not char_escaped and ch == "\\"
+            charEscaped = not charEscaped and ch == "\\"
             self.__i2 += 1
             self.__pos += 1
-
         return self.__getToken(True)
 
     def __parseToken(self, terminators: typing.List[str]) -> str:
-        ch: str
         self.__i1 = self.__pos
         self.__i2 = self.__pos
         while self.__hasChar():
@@ -131,10 +124,12 @@ class ParameterParser:
         return result
 
     def __getToken(self, quoted: bool) -> str:
-        while (self.__i1 < self.__i2) and self.__chars[self.__i1].isspace():
+        while (self.__i1 < self.__i2) and (self.__chars[self.__i1].isspace()):
             self.__i1 += 1
-        while (self.__i2 > self.__i1) and self.__chars[self.__i2 - 1].isspace():
+
+        while (self.__i2 > self.__i1) and (self.__chars[self.__i2 - 1].isspace()):
             self.__i2 -= 1
+
         if (
             quoted
             and ((self.__i2 - self.__i1) >= 2)
@@ -143,9 +138,11 @@ class ParameterParser:
         ):
             self.__i1 += 1
             self.__i2 -= 1
+
         result = None
         if self.__i2 > self.__i1:
             result = "".join(self.__chars[self.__i1 : self.__i2])
+
         return result
 
     def __hasChar(self) -> bool:

@@ -13,13 +13,13 @@ class RequestContext(ABC):
     def getInputStream(
         self,
     ) -> typing.Union[io.BytesIO, io.StringIO, io.BufferedReader]:
-        raise NotImplementedError("Subclasses must implement this method")
+        raise NotImplementedError
 
     def getContentLength(self) -> int:
-        return 0  # Replace with actual implementation if needed
+        pass
 
     def getContentType(self) -> str:
-        return ""
+        pass
 
     def getCharacterEncoding(self) -> str:
-        return "UTF-8"
+        pass

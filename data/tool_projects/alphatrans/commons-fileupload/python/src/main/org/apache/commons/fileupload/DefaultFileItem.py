@@ -19,6 +19,4 @@ class DefaultFileItem(DiskFileItem):
         sizeThreshold: int,
         repository: pathlib.Path,
     ) -> None:
-        super().__init__(
-            fieldName, contentType, isFormField, fileName, sizeThreshold, repository
-        )
+        super().__init__(fieldName, contentType, isFormField, fileName, sizeThreshold, repository)

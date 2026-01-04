@@ -1,5 +1,4 @@
 from __future__ import annotations
-import time
 import re
 from abc import ABC
 import io
@@ -34,22 +33,23 @@ class FileUploadBase(ABC):
     __fileCountMax: int = -1
     __fileSizeMax: int = -1
     __sizeMax: int = -1
-    return headers.get(name.lower())
+
+    def _getHeader(self, headers: typing.Dict[str, str], name: str) -> str:
+        return headers.get(name.lower())
 
     def _parseHeaders(self, headerPart: str) -> typing.Dict[str, str]:
         headers = self._getParsedHeaders(headerPart)
-        result: typing.Dict[str, str] = {}
+        result = {}
         for headerName in headers.getHeaderNames():
             iter2 = headers.getHeaders(headerName)
             headerValue = [next(iter2)]
             for value in iter2:
-                headerValue.append("," + value)
+                headerValue.append(",")
+                headerValue.append(value)
             result[headerName] = "".join(headerValue)
         return result
 
-    def _createItem(
-        self, headers: typing.Dict[str, str], isFormField: bool
-    ) -> FileItem:
+    def _createItem(self, headers: typing.Dict[str, str], isFormField: bool) -> FileItem:
         return self.getFileItemFactory().createItem(
             self._getFieldName2(headers),
             self._getHeader(headers, self.CONTENT_TYPE),
@@ -61,13 +61,14 @@ class FileUploadBase(ABC):
         return self.__getFieldName1(self._getHeader(headers, self.CONTENT_DISPOSITION))
 
     def _getFileName0(self, headers: typing.Dict[str, str]) -> str:
-        return self.__getFileName2(self._getHeader(headers, self.CONTENT_DISPOSITION))
+        return self.__getFileName2(self._getHeader(headers, FileUploadBase.CONTENT_DISPOSITION))
 
     def setProgressListener(self, pListener: ProgressListener) -> None:
         self.__listener = pListener
 
     def getProgressListener(self) -> ProgressListener:
-        return self.__listener
+
+        pass  # LLM could not translate this method
 
     def _newFileItemHeaders(self) -> FileItemHeadersImpl:
         return FileItemHeadersImpl()
@@ -86,18 +87,19 @@ class FileUploadBase(ABC):
             start = end + 2
 
             while start < length:
-                non_ws = start
-                while non_ws < length:
-                    char = headerPart[non_ws]
-                    if char != " " and char != "\t":
+                nonWs = start
+                while nonWs < length:
+                    c = headerPart[nonWs]
+                    if c != " " and c != "\t":
                         break
-                    non_ws += 1
+                    nonWs += 1
 
-                if non_ws == start:
+                if nonWs == start:
                     break
 
-                end = self.__parseEndOfLine(headerPart, non_ws)
-                header.append(" " + headerPart[non_ws:end])
+                end = self.__parseEndOfLine(headerPart, nonWs)
+                header.append(" ")
+                header.append(headerPart[nonWs:end])
                 start = end + 2
 
             self.__parseHeaderLine(headers, "".join(header))
@@ -108,9 +110,9 @@ class FileUploadBase(ABC):
         return self.__getFieldName1(headers.getHeader(self.CONTENT_DISPOSITION))
 
     def _getFileName1(self, headers: FileItemHeaders) -> str:
-        return self.__getFileName2(headers.getHeader(self.CONTENT_DISPOSITION))
+        return self.__getFileName2(headers.getHeader(FileUploadBase.CONTENT_DISPOSITION))
 
-    def _getBoundary(self, contentType: str) -> typing.Optional[bytes]:
+    def _getBoundary(self, contentType: str) -> typing.List[int]:
         parser = ParameterParser()
         parser.setLowerCaseNames(True)
         params = parser.parse0(contentType, [";", ","])
@@ -121,9 +123,10 @@ class FileUploadBase(ABC):
 
         try:
             boundary = boundaryStr.encode("ISO-8859-1")
-        except UnicodeEncodeError:
-            boundary = boundaryStr.encode()  # Falls back to default charset
-        return boundary
+        except (UnicodeEncodeError, LookupError):
+            boundary = boundaryStr.encode()  # Intentionally falls back to default charset
+
+        return list(boundary)
 
     def setHeaderEncoding(self, encoding: str) -> None:
         self.__headerEncoding = encoding
@@ -163,7 +166,7 @@ class FileUploadBase(ABC):
         if colon_offset == -1:
             return
         header_name = header[:colon_offset].strip()
-        header_value = header[colon_offset + 1 :].strip()
+        header_value = header[header.find(":") + 1 :].strip()
         headers.addHeader(header_name, header_value)
 
     def __parseEndOfLine(self, headerPart: str, end: int) -> int:
@@ -171,18 +174,14 @@ class FileUploadBase(ABC):
         while True:
             offset = headerPart.find("\r", index)
             if offset == -1 or offset + 1 >= len(headerPart):
-                raise RuntimeError(
-                    "Expected headers to be terminated by an empty line."
-                )
+                raise ValueError("Expected headers to be terminated by an empty line.")
             if headerPart[offset + 1] == "\n":
                 return offset
             index = offset + 1
 
     def __getFieldName1(self, pContentDisposition: str) -> str:
         fieldName = None
-        if pContentDisposition is not None and pContentDisposition.lower().startswith(
-            self.FORM_DATA
-        ):
+        if pContentDisposition is not None and pContentDisposition.lower().startswith(self.FORM_DATA):
             parser = ParameterParser()
             parser.setLowerCaseNames(True)
             params = parser.parse1(pContentDisposition, ";")
@@ -195,7 +194,7 @@ class FileUploadBase(ABC):
         fileName = None
         if pContentDisposition is not None:
             cdl = pContentDisposition.lower()
-            if cdl.startswith(self.FORM_DATA) or cdl.startswith(self.ATTACHMENT):
+            if cdl.startswith(FileUploadBase.FORM_DATA) or cdl.startswith(FileUploadBase.ATTACHMENT):
                 parser = ParameterParser()
                 parser.setLowerCaseNames(True)
                 params = parser.parse1(pContentDisposition, ";")
@@ -208,45 +207,52 @@ class FileUploadBase(ABC):
         return fileName
 
     def setFileItemFactory(self, factory: FileItemFactory) -> None:
-        self._file_item_factory = factory
+
+        pass  # LLM could not translate this method
 
     def getFileItemFactory(self) -> FileItemFactory:
-        raise NotImplementedError("Subclasses must implement this method")
+
+        pass  # LLM could not translate this method
 
 
-class FileUploadIOException:
+class UnknownSizeException(FileUploadException):
 
-    __cause: FileUploadException = None
+    __serialVersionUID: int = 7062279004812015273
 
-    __serialVersionUID: int = -7047616958165584154
-
-    def getCause(self) -> BaseException:
-        return self.__cause
-
-    def __init__(self, pCause: FileUploadException) -> None:
-        self.__cause = pCause
+    def __init__(self, message: str) -> None:
+        super().__init__(message, None)
 
 
-class InvalidContentTypeException(FileUploadException):
+class FileItemIteratorImpl:
 
-    __serialVersionUID: int = -9073026332015646668
+    __eof: bool = False
 
-    def __init__(self, msg: str, cause: BaseException) -> None:
-        super().__init__(msg, cause)
+    __itemValid: bool = False
+
+    __skipPreamble: bool = False
+
+    __currentFieldName: str = ""
+
+    __currentItem: FileItemStreamImpl = None
+
+    def __getContentLength(self, pHeaders: FileItemHeaders) -> int:
+        try:
+            return int(pHeaders.getHeader(FileUploadBase.CONTENT_LENGTH))
+        except Exception as e:
+            return -1
 
 
-class IOFileUploadException(FileUploadException):
+class FileItemStreamImpl:
 
-    __cause: typing.Union[IOError, OSError] = None
+    __headers: FileItemHeaders = None
 
-    __serialVersionUID: int = 1749796615868477269
+    __opened: bool = False
 
-    def getCause(self) -> BaseException:
-        return self.__cause
+    def setHeaders(self, pHeaders: FileItemHeaders) -> None:
+        self.__headers = pHeaders
 
-    def __init__(self, pMsg: str, pException: typing.Union[IOError, OSError]) -> None:
-        super().__init__(pMsg, pException)
-        self.__cause = pException
+    def getHeaders(self) -> FileItemHeaders:
+        return self.__headers
 
 
 class SizeException(FileUploadException, ABC):
@@ -267,22 +273,6 @@ class SizeException(FileUploadException, ABC):
         super().__init__(message, None)
         self.__actual = actual
         self.__permitted = permitted
-
-
-class SizeLimitExceededException(SizeException):
-
-    __serialVersionUID: int = -2474893167098052828
-
-    @staticmethod
-    def SizeLimitExceededException1(message: str) -> SizeLimitExceededException:
-        return SizeLimitExceededException(message, 0, 0)
-
-    @staticmethod
-    def SizeLimitExceededException0() -> SizeLimitExceededException:
-        return SizeLimitExceededException(None, 0, 0)
-
-    def __init__(self, message: str, actual: int, permitted: int) -> None:
-        super().__init__(message, actual, permitted)
 
 
 class FileSizeLimitExceededException(SizeException):
@@ -309,41 +299,53 @@ class FileSizeLimitExceededException(SizeException):
         super().__init__(message, actual, permitted)
 
 
-class FileItemIteratorImpl:
+class IOFileUploadException(FileUploadException):
 
-    __eof: bool = False
+    __cause: typing.Union[IOError, OSError] = None
 
-    __itemValid: bool = False
+    __serialVersionUID: int = 1749796615868477269
 
-    __skipPreamble: bool = False
+    def getCause(self) -> BaseException:
+        return self.__cause
 
-    __currentFieldName: str = ""
-
-    __currentItem: FileItemStreamImpl = None
-
-    def __getContentLength(self, pHeaders: FileItemHeaders) -> int:
-        try:
-            return int(pHeaders.getHeader(FileUploadBase.CONTENT_LENGTH))
-        except Exception:
-            return -1
+    def __init__(self, pMsg: str, pException: typing.Union[IOError, OSError]) -> None:
+        super().__init__(pMsg, None)
+        self.__cause = pException
 
 
-class FileItemStreamImpl:
+class SizeLimitExceededException(SizeException):
 
-    __headers: FileItemHeaders = None
+    __serialVersionUID: int = -2474893167098052828
 
-    __opened: bool = False
+    @staticmethod
+    def SizeLimitExceededException1(message: str) -> SizeLimitExceededException:
+        return SizeLimitExceededException(message, 0, 0)
 
-    def setHeaders(self, pHeaders: FileItemHeaders) -> None:
-        self.__headers = pHeaders
+    @staticmethod
+    def SizeLimitExceededException0() -> SizeLimitExceededException:
+        return SizeLimitExceededException(None, 0, 0)
 
-    def getHeaders(self) -> FileItemHeaders:
-        return self.__headers
+    def __init__(self, message: str, actual: int, permitted: int) -> None:
+        super().__init__(message, actual, permitted)
 
 
-class UnknownSizeException(FileUploadException):
+class FileUploadIOException:
 
-    __serialVersionUID: int = 7062279004812015273
+    __cause: FileUploadException = None
 
-    def __init__(self, message: str) -> None:
-        super().__init__(message, None)
+    __serialVersionUID: int = -7047616958165584154
+
+    def getCause(self) -> BaseException:
+        return self.__cause
+
+    def __init__(self, pCause: FileUploadException) -> None:
+        super().__init__()
+        self.__cause = pCause
+
+
+class InvalidContentTypeException(FileUploadException):
+
+    __serialVersionUID: int = -9073026332015646668
+
+    def __init__(self, msg: str, cause: BaseException) -> None:
+        super().__init__(msg, cause)

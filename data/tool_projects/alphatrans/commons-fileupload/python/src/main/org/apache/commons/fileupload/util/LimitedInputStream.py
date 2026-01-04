@@ -52,6 +52,4 @@ class LimitedInputStream(ABC):
             self._raiseError(self.__sizeMax, self.__count)
 
     def _raiseError(self, pSizeMax: int, pCount: int) -> None:
-        raise IOError(
-            f"Input size limit exceeded. Max size: {pSizeMax}, Current size: {pCount}"
-        )
+        raise IOError(f"Size limit exceeded: {pCount} bytes read, maximum allowed is {pSizeMax} bytes")

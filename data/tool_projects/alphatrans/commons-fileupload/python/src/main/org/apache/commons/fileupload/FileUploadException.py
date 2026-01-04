@@ -15,19 +15,37 @@ class FileUploadException(Exception):
     def getCause(self) -> BaseException:
         return self.__cause
 
-    def printStackTrace1(
-        self, writer: typing.Union[io.TextIOWrapper, io.StringIO]
-    ) -> None:
-        super().printStack(writer)
+    def printStackTrace1(self, writer: typing.Union[io.TextIOWrapper, io.StringIO]) -> None:
+        import traceback
+
+        # Print the exception traceback for this exception
+        traceback.print_exception(type(self), self, self.__traceback__, file=writer)
+
+        # If there's a cause, print it as well
         if self.__cause is not None:
             writer.write("Caused by:\n")
-            self.__cause.printStack(writer)
+            traceback.print_exception(
+                type(self.__cause),
+                self.__cause,
+                self.__cause.__traceback__,
+                file=writer,
+            )
 
     def printStackTrace0(self, stream: typing.IO) -> None:
-        super().printStackTrace(stream)
+        import traceback
+
+        # Print the exception traceback for this exception
+        traceback.print_exception(type(self), self, self.__traceback__, file=stream)
+
+        # If there's a cause, print it as well
         if self.__cause is not None:
             stream.write("Caused by:\n")
-            self.__cause.printStackTrace(stream)
+            traceback.print_exception(
+                type(self.__cause),
+                self.__cause,
+                self.__cause.__traceback__,
+                file=stream,
+            )
 
     def __init__(self, msg: str, cause: BaseException) -> None:
         super().__init__(msg)

@@ -53,11 +53,11 @@ class DiskFileItem:
         if self.__tempFile is None:
             tempDir = self.__repository
             if tempDir is None:
-                tempDir = pathlib.Path(os.getenv("TMPDIR", "/tmp"))
+                tempDir = pathlib.Path(os.environ.get("TMPDIR", os.environ.get("TEMP", os.environ.get("TMP", "/tmp"))))
 
-            tempFileName = f"upload_{self.__UID}_{self.__getUniqueId()}.tmp"
+            tempFileName = f"upload_{DiskFileItem.__UID}_{DiskFileItem.__getUniqueId()}.tmp"
+
             self.__tempFile = tempDir / tempFileName
-
         return self.__tempFile
 
     def setFormField(self, state: bool) -> None:
@@ -108,5 +108,5 @@ class DiskFileItem:
         id = str(current)
 
         if current < limit:
-            id = ("00000000" + id)[-8:]
+            id = ("00000000" + id)[-len(id) :]
         return id

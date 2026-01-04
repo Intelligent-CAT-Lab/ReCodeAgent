@@ -12,4 +12,4 @@ class PortletFileUpload(FileUpload):
         return PortletFileUpload(None)
 
     def __init__(self, fileItemFactory: FileItemFactory) -> None:
-        super().__init__(1, fileItemFactory)
+        super().__init__(0, fileItemFactory)

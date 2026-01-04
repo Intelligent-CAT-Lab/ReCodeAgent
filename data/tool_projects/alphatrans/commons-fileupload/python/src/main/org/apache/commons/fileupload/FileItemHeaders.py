@@ -9,11 +9,10 @@ from typing import *
 class FileItemHeaders(ABC):
 
     def getHeaderNames(self) -> typing.Iterator[str]:
-        return iter([])
+        raise NotImplementedError("This method must be implemented by subclasses")
 
     def getHeaders(self, name: str) -> typing.Iterator[str]:
-        # Implementation would go here
-        pass
+        raise NotImplementedError("This method must be implemented by subclasses")
 
     def getHeader(self, name: str) -> str:
-        return name  # Replace this with the actual implementation logic
+        pass

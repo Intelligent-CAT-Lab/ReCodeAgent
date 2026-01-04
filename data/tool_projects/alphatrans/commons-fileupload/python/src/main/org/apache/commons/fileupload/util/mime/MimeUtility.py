@@ -36,125 +36,119 @@ class MimeUtility:
 
     @staticmethod
     def decodeText(text: str) -> str:
-        if MimeUtility.__ENCODED_TOKEN_MARKER not in text:
+        if text.find(MimeUtility.__ENCODED_TOKEN_MARKER) < 0:
             return text
 
         offset = 0
-        end_offset = len(text)
+        endOffset = len(text)
 
-        start_white_space = -1
-        end_white_space = -1
+        startWhiteSpace = -1
+        endWhiteSpace = -1
 
-        decoded_text = []
+        decodedText = []
 
-        previous_token_encoded = False
+        previousTokenEncoded = False
 
-        while offset < end_offset:
+        while offset < endOffset:
             ch = text[offset]
 
             if ch in MimeUtility.__LINEAR_WHITESPACE:  # whitespace found
-                start_white_space = offset
-                while offset < end_offset:
+                startWhiteSpace = offset
+                while offset < endOffset:
                     ch = text[offset]
                     if ch in MimeUtility.__LINEAR_WHITESPACE:  # whitespace found
                         offset += 1
                     else:
-                        end_white_space = offset
+                        endWhiteSpace = offset
                         break
             else:
-                word_start = offset
+                wordStart = offset
 
-                while offset < end_offset:
+                while offset < endOffset:
                     ch = text[offset]
                     if ch not in MimeUtility.__LINEAR_WHITESPACE:  # not white space
                         offset += 1
                     else:
                         break
 
-                word = text[word_start:offset]
+                word = text[wordStart:offset]
                 if word.startswith(MimeUtility.__ENCODED_TOKEN_MARKER):
                     try:
-                        decoded_word = MimeUtility.__decodeWord(word)
+                        decodedWord = MimeUtility.__decodeWord(word)
 
-                        if not previous_token_encoded and start_white_space != -1:
-                            decoded_text.append(text[start_white_space:end_white_space])
-                            start_white_space = -1
-
-                        previous_token_encoded = True
-                        decoded_text.append(decoded_word)
+                        if not previousTokenEncoded and startWhiteSpace != -1:
+                            decodedText.append(text[startWhiteSpace:endWhiteSpace])
+                            startWhiteSpace = -1
+                        previousTokenEncoded = True
+                        decodedText.append(decodedWord)
                         continue
 
-                    except ParseException:
+                    except ParseException as e:
                         pass
 
-                if start_white_space != -1:
-                    decoded_text.append(text[start_white_space:end_white_space])
-                    start_white_space = -1
+                if startWhiteSpace != -1:
+                    decodedText.append(text[startWhiteSpace:endWhiteSpace])
+                    startWhiteSpace = -1
+                previousTokenEncoded = False
+                decodedText.append(word)
 
-                previous_token_encoded = False
-                decoded_text.append(word)
-
-        return "".join(decoded_text)
+        return "".join(decodedText)
 
     @staticmethod
     def __javaCharset(charset: str) -> str:
         if charset is None:
             return None
 
-        mapped_charset = MimeUtility.__MIME2JAVA.get(charset.lower())
-        if mapped_charset is None:
+        mappedCharset = MimeUtility.__MIME2JAVA.get(charset.lower())
+        if mappedCharset is None:
             return charset
-        return mapped_charset
+        return mappedCharset
 
     @staticmethod
     def __decodeWord(word: str) -> str:
         if not word.startswith(MimeUtility.__ENCODED_TOKEN_MARKER):
-            raise ParseException(f"Invalid RFC 2047 encoded-word: {word}")
+            raise ParseException("Invalid RFC 2047 encoded-word: " + word)
 
-        charset_pos = word.find("?", 2)
-        if charset_pos == -1:
-            raise ParseException(f"Missing charset in RFC 2047 encoded-word: {word}")
+        charsetPos = word.find("?", 2)
+        if charsetPos == -1:
+            raise ParseException("Missing charset in RFC 2047 encoded-word: " + word)
 
-        charset = word[2:charset_pos].lower()
+        charset = word[2:charsetPos].lower()
 
-        encoding_pos = word.find("?", charset_pos + 1)
-        if encoding_pos == -1:
-            raise ParseException(f"Missing encoding in RFC 2047 encoded-word: {word}")
+        encodingPos = word.find("?", charsetPos + 1)
+        if encodingPos == -1:
+            raise ParseException("Missing encoding in RFC 2047 encoded-word: " + word)
 
-        encoding = word[charset_pos + 1 : encoding_pos]
+        encoding = word[charsetPos + 1 : encodingPos]
 
-        encoded_text_pos = word.find(
-            MimeUtility.__ENCODED_TOKEN_FINISHER, encoding_pos + 1
-        )
-        if encoded_text_pos == -1:
-            raise ParseException(
-                f"Missing encoded text in RFC 2047 encoded-word: {word}"
-            )
+        encodedTextPos = word.find(MimeUtility.__ENCODED_TOKEN_FINISHER, encodingPos + 1)
+        if encodedTextPos == -1:
+            raise ParseException("Missing encoded text in RFC 2047 encoded-word: " + word)
 
-        encoded_text = word[encoding_pos + 1 : encoded_text_pos]
+        encodedText = word[encodingPos + 1 : encodedTextPos]
 
-        if len(encoded_text) == 0:
+        if len(encodedText) == 0:
             return ""
 
         try:
             out = io.BytesIO()
 
-            encoded_data = encoded_text.encode(MimeUtility.__US_ASCII_CHARSET)
+            encodedData = list(encodedText.encode(MimeUtility.__US_ASCII_CHARSET))
 
             if encoding == MimeUtility.__BASE64_ENCODING_MARKER:
-                Base64Decoder.decode(encoded_data, out)
+                Base64Decoder.decode(encodedData, out)
             elif encoding == MimeUtility.__QUOTEDPRINTABLE_ENCODING_MARKER:
-                QuotedPrintableDecoder.decode(encoded_data, out)
+                QuotedPrintableDecoder.decode(encodedData, out)
             else:
-                raise ValueError(f"Unknown RFC 2047 encoding: {encoding}")
+                raise UnicodeError("Unknown RFC 2047 encoding: " + encoding)
 
-            decoded_data = out.getvalue()
-            return decoded_data.decode(MimeUtility.__javaCharset(charset))
-        except Exception as e:
-            raise ValueError(f"Invalid RFC 2047 encoding: {str(e)}")
+            decodedData = out.getvalue()
+            return decodedData.decode(MimeUtility.__javaCharset(charset))
+        except IOError as e:
+            raise UnicodeError("Invalid RFC 2047 encoding")
 
     def __init__(self) -> None:
-        raise NotImplementedError("This class cannot be instantiated")
+        raise AssertionError("MimeUtility is a utility class and should not be instantiated")
 
 
 MimeUtility.run_static_init()

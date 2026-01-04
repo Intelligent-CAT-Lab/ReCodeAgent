@@ -12,14 +12,13 @@ class Streams:
     def checkFileName(fileName: str) -> str:
         if fileName is not None and "\u0000" in fileName:
             sb = []
-            for c in fileName:
+            for i in range(len(fileName)):
+                c = fileName[i]
                 if c == "\u0000":
                     sb.append("\\0")
                 else:
                     sb.append(c)
-            raise InvalidFileNameException(
-                fileName, f"Invalid file name: {''.join(sb)}"
-            )
+            raise InvalidFileNameException(fileName, "Invalid file name: " + "".join(sb))
         return fileName
 
     def __init__(self) -> None:

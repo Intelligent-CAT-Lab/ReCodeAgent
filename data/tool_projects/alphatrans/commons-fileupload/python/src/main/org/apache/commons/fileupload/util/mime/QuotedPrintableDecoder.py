@@ -18,20 +18,18 @@ class QuotedPrintableDecoder:
     ) -> int:
         off = 0
         length = len(data)
-        end_offset = off + length
-        bytes_written = 0
+        endOffset = off + length
+        bytesWritten = 0
 
-        while off < end_offset:
+        while off < endOffset:
             ch = data[off]
             off += 1
 
             if ch == ord("_"):
-                out.write(b" ")
+                out.write(b" " if isinstance(out, (io.BytesIO, io.BufferedWriter)) else " ")
             elif ch == ord("="):
-                if off + 1 >= end_offset:
-                    raise IOError(
-                        "Invalid quoted printable encoding; truncated escape sequence"
-                    )
+                if off + 1 >= endOffset:
+                    raise IOError("Invalid quoted printable encoding; truncated escape sequence")
 
                 b1 = data[off]
                 off += 1
@@ -40,31 +38,27 @@ class QuotedPrintableDecoder:
 
                 if b1 == ord("\r"):
                     if b2 != ord("\n"):
-                        raise IOError(
-                            "Invalid quoted printable encoding; CR must be followed by LF"
-                        )
+                        raise IOError("Invalid quoted printable encoding; CR must be followed by LF")
                 else:
                     c1 = QuotedPrintableDecoder.__hexToBinary(b1)
                     c2 = QuotedPrintableDecoder.__hexToBinary(b2)
+                    byte_value = (c1 << QuotedPrintableDecoder.__UPPER_NIBBLE_SHIFT) | c2
                     out.write(
-                        bytes(
-                            [(c1 << QuotedPrintableDecoder.__UPPER_NIBBLE_SHIFT) | c2]
-                        )
+                        bytes([byte_value]) if isinstance(out, (io.BytesIO, io.BufferedWriter)) else chr(byte_value)
                     )
-                    bytes_written += 1
+                    bytesWritten += 1
             else:
-                out.write(bytes([ch]))
-                bytes_written += 1
+                out.write(bytes([ch]) if isinstance(out, (io.BytesIO, io.BufferedWriter)) else chr(ch))
+                bytesWritten += 1
 
-        return bytes_written
+        return bytesWritten
 
     @staticmethod
     def __hexToBinary(b: int) -> int:
-        i = int(chr(b), 16) if chr(b).isdigit() or chr(b).lower() in "abcdef" else -1
-        if i == -1:
-            raise IOError(
-                f"Invalid quoted printable encoding: not a valid hex digit: {b}"
-            )
+        try:
+            i = int(chr(b), 16)
+        except ValueError:
+            raise IOError(f"Invalid quoted printable encoding: not a valid hex digit: {b}")
         return i
 
     def __init__(self) -> None:

@@ -9,7 +9,5 @@ from src.main.org.apache.commons.fileupload.FileItem import *
 
 class FileItemFactory(ABC):
 
-    def createItem(
-        self, fieldName: str, contentType: str, isFormField: bool, fileName: str
-    ) -> FileItem:
-        return FileItem(fieldName, contentType, isFormField, fileName)
+    def createItem(self, fieldName: str, contentType: str, isFormField: bool, fileName: str) -> FileItem:
+        pass

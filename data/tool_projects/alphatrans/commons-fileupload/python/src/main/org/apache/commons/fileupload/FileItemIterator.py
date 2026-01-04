@@ -11,7 +11,7 @@ from src.main.org.apache.commons.fileupload.FileUploadException import *
 class FileItemIterator(ABC):
 
     def next_(self) -> FileItemStream:
-        raise FileUploadException("Method not implemented")
+        raise NotImplementedError
 
     def hasNext(self) -> bool:
         raise NotImplementedError("This method should be implemented by subclasses")

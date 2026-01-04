@@ -8,7 +8,7 @@ import os
 class Closeable(ABC):
 
     def isClosed(self) -> bool:
-        raise io.OSError("Method not implemented")
+        raise io.UnsupportedOperation("isClosed")
 
     def close(self) -> None:
-        raise io.UnsupportedOperation("close method not implemented")
+        raise NotImplementedError()

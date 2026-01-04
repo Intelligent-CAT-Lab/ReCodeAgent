@@ -9,7 +9,8 @@ from src.main.org.apache.commons.fileupload.disk.DiskFileItem import *
 class DiskFileItemFactory:
 
     DEFAULT_SIZE_THRESHOLD: int = 10240
-    __defaultCharset: str = DiskFileItem.DEFAULT_CHARSET
+    __defaultCharset: str = None  # LLM could not translate this field
+
     __sizeThreshold: int = DEFAULT_SIZE_THRESHOLD
     __repository: pathlib.Path = None
 
