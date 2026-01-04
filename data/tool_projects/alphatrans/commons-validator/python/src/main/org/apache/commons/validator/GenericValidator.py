@@ -13,9 +13,8 @@ from src.main.org.apache.commons.validator.routines.UrlValidator import *
 
 class GenericValidator:
 
-    __CREDIT_CARD_VALIDATOR: CreditCardValidator = (
-        CreditCardValidator.CreditCardValidator0()
-    )
+    __CREDIT_CARD_VALIDATOR: CreditCardValidator = None  # LLM could not translate this field
+
     __URL_VALIDATOR: UrlValidator = UrlValidator.UrlValidator6()
     __serialVersionUID: int = -7212095066891517618
 
@@ -53,8 +52,8 @@ class GenericValidator:
 
     @staticmethod
     def minLength1(value: str, min_: int, lineEndLength: int) -> bool:
-        adjust_amount = GenericValidator.__adjustForLineEnding(value, lineEndLength)
-        return (len(value) + adjust_amount) >= min_
+        adjustAmount = GenericValidator.__adjustForLineEnding(value, lineEndLength)
+        return (len(value) + adjustAmount) >= min_
 
     @staticmethod
     def minLength0(value: str, min_: int) -> bool:
@@ -62,8 +61,8 @@ class GenericValidator:
 
     @staticmethod
     def maxLength1(value: str, max_: int, lineEndLength: int) -> bool:
-        adjust_amount = GenericValidator.__adjustForLineEnding(value, lineEndLength)
-        return (len(value) + adjust_amount) <= max_
+        adjustAmount = GenericValidator.__adjustForLineEnding(value, lineEndLength)
+        return (len(value) + adjustAmount) <= max_
 
     @staticmethod
     def maxLength0(value: str, max_: int) -> bool:
@@ -79,6 +78,8 @@ class GenericValidator:
 
     @staticmethod
     def isCreditCard(value: str) -> bool:
+        if GenericValidator.__CREDIT_CARD_VALIDATOR is None:
+            GenericValidator.__CREDIT_CARD_VALIDATOR = CreditCardValidator()
         return GenericValidator.__CREDIT_CARD_VALIDATOR.isValid(value)
 
     @staticmethod
@@ -103,7 +104,7 @@ class GenericValidator:
 
     @staticmethod
     def isInRange0(value: int, min_: int, max_: int) -> bool:
-        return min_ <= value <= max_
+        return (value >= min_) and (value <= max_)
 
     @staticmethod
     def isDate1(value: str, datePattern: str, strict: bool) -> bool:
@@ -111,7 +112,8 @@ class GenericValidator:
 
     @staticmethod
     def isDate0(value: str, locale: typing.Any) -> bool:
-        return DateValidator.getInstance().isValid2(value, locale)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def isDouble(value: str) -> bool:
@@ -119,7 +121,8 @@ class GenericValidator:
 
     @staticmethod
     def isFloat(value: str) -> bool:
-        return GenericTypeValidator.formatFloat0(value) is not None
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def isLong(value: str) -> bool:
@@ -131,11 +134,13 @@ class GenericValidator:
 
     @staticmethod
     def isShort(value: str) -> bool:
-        return GenericTypeValidator.formatShort0(value) is not None
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def isByte(value: str) -> bool:
-        return GenericTypeValidator.formatByte0(value) is not None
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def matchRegexp(value: str, regexp: str) -> bool:
@@ -148,15 +153,15 @@ class GenericValidator:
 
     @staticmethod
     def isBlankOrNull(value: str) -> bool:
-        return value is None or value.strip() == ""
+        return (value is None) or (len(value.strip()) == 0)
 
     @staticmethod
     def __adjustForLineEnding(value: str, lineEndLength: int) -> int:
-        n_count = 0
-        r_count = 0
-        for char in value:
-            if char == "\n":
-                n_count += 1
-            if char == "\r":
-                r_count += 1
-        return (n_count * lineEndLength) - (r_count + n_count)
+        nCount = 0
+        rCount = 0
+        for i in range(len(value)):
+            if value[i] == "\n":
+                nCount += 1
+            if value[i] == "\r":
+                rCount += 1
+        return (nCount * lineEndLength) - (rCount + nCount)

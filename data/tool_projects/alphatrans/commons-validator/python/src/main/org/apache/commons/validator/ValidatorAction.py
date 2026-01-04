@@ -1,8 +1,12 @@
 from __future__ import annotations
 import time
+import inspect
+import copy
 import re
-import enum
-import threading
+import sys
+import os
+from io import StringIO
+from io import IOBase
 import io
 import typing
 from typing import *
@@ -27,33 +31,27 @@ class ValidatorAction:
     __msg: str = None
     __depends: str = None
     __parameterClasses: typing.List[typing.Type[typing.Any]] = None
-    __methodParams: str = (
-        (
-            Validator.BEAN_PARAM
-            + ","
-            + Validator.VALIDATOR_ACTION_PARAM
-            + ","
-            + Validator.FIELD_PARAM
-        )
-        if Validator.BEAN_PARAM
-        and Validator.VALIDATOR_ACTION_PARAM
-        and Validator.FIELD_PARAM
-        else None
-    )
-    __validationMethod: Optional[Callable] = None
+    __methodParams: str = None  # LLM could not translate this field
+
+    __validationMethod: typing.Union[inspect.Signature, typing.Callable] = None
     __method: str = None
     __validationClass: typing.Type[typing.Any] = None
-    __classname: str = None
+    __classname: str = None  # LLM could not translate this field
+
     __name: str = None
     __log: logging.Logger = logging.getLogger(__name__)
     __serialVersionUID: int = 1339713700053204597
 
     def toString(self) -> str:
-        results = f"ValidatorAction: {self.__name}\n"
-        return results
+        results = io.StringIO()
+        results.write("ValidatorAction: ")
+        results.write(str(self.__name) if self.__name is not None else "None")
+        results.write("\n")
+
+        return results.getvalue()
 
     def getDependencyList(self) -> typing.List[str]:
-        return list(self.__dependencyList)
+        return self.__dependencyList.copy()
 
     def isDependency(self, validatorName: str) -> bool:
         return validatorName in self.__dependencyList
@@ -83,9 +81,8 @@ class ValidatorAction:
 
     def setJavascript(self, javascript: str) -> None:
         if self.__jsFunction is not None:
-            raise RuntimeError(
-                "Cannot call setJavascript() after calling setJsFunction()"
-            )
+            raise RuntimeError("Cannot call setJavascript() after calling setJsFunction()")
+
         self.__javascript = javascript
 
     def getJavascript(self) -> str:
@@ -93,9 +90,7 @@ class ValidatorAction:
 
     def setJsFunction(self, jsFunction: str) -> None:
         if self.__javascript is not None:
-            raise RuntimeError(
-                "Cannot call setJsFunction() after calling setJavascript()"
-            )
+            raise RuntimeError("Cannot call setJsFunction() after calling setJavascript()")
 
         self.__jsFunction = jsFunction
 
@@ -116,10 +111,12 @@ class ValidatorAction:
 
         self.__dependencyList.clear()
 
-        for depend in (
-            depend.strip() for depend in depends.split(",") if depend.strip()
-        ):
-            self.__dependencyList.append(depend)
+        tokens = depends.split(",")
+        for token in tokens:
+            depend = token.strip()
+
+            if depend:
+                self.__dependencyList.append(depend)
 
     def getDepends(self) -> str:
         return self.__depends
@@ -129,9 +126,11 @@ class ValidatorAction:
 
         self.__methodParameterList.clear()
 
-        for value in methodParams.split(","):
-            value = value.strip()
-            if value:
+        tokens = methodParams.split(",")
+        for token in tokens:
+            value = token.strip()
+
+            if value is not None and len(value) > 0:
                 self.__methodParameterList.append(value)
 
     def getMethodParams(self) -> str:
@@ -157,7 +156,7 @@ class ValidatorAction:
 
     def __getLog(self) -> logging.Logger:
         if self.__log is None:
-            self.__log = logging.getLogger(self.__class__.__name__)
+            self.__log = logging.getLogger(__name__)
         return self.__log
 
     def __onlyReturnErrors(self, params: typing.Dict[str, typing.Any]) -> bool:
@@ -165,7 +164,7 @@ class ValidatorAction:
         return v.getOnlyReturnErrors()
 
     def __getClassLoader(self, params: typing.Dict[str, typing.Any]) -> typing.Any:
-        v: Validator = params.get(Validator.VALIDATOR_PARAM)
+        v = params.get(Validator.VALIDATOR_PARAM)
         return v.getClassLoader()
 
     def __isValid(self, result: typing.Any) -> bool:
@@ -174,47 +173,51 @@ class ValidatorAction:
         return result is not None
 
     def __getValidationClassInstance(self) -> typing.Any:
-        if (
-            self.__validationMethod
-            and hasattr(self.__validationMethod, "__self__")
-            and self.__validationMethod.__self__ is None
-        ):
-            # If the method is static, set instance to None
+        if inspect.ismethod(self.__validationMethod) or inspect.isfunction(self.__validationMethod):
+            # Check if it's a static method by checking if it doesn't require 'self'
+            sig = inspect.signature(self.__validationMethod)
+            is_static = "self" not in sig.parameters
+        else:
+            is_static = False
+
+        if is_static:
             self.__instance = None
         else:
             if self.__instance is None:
                 try:
-                    # Create a new instance of the validation class
                     self.__instance = self.__validationClass()
-                except TypeError as e:
-                    msg1 = f"Couldn't create instance of {self.__classname}. {str(e)}"
-                    raise ValidatorException(msg1)
                 except Exception as e:
-                    msg1 = f"Couldn't create instance of {self.__classname}. {str(e)}"
+                    msg1 = f"Couldn't create instance of " f"{self.__classname}.  " f"{str(e)}"
                     raise ValidatorException(msg1)
+
         return self.__instance
 
-    def __getParameterValues(
-        self, params: typing.Dict[str, typing.Any]
-    ) -> typing.List[typing.Any]:
-        param_value = [None] * len(self.__methodParameterList)
+    def __getParameterValues(self, params: typing.Dict[str, typing.Any]) -> typing.List[typing.Any]:
+        paramValue = [None] * len(self.__methodParameterList)
 
-        for i, param_class_name in enumerate(self.__methodParameterList):
-            param_value[i] = params.get(param_class_name)
+        for i in range(len(self.__methodParameterList)):
+            paramClassName = self.__methodParameterList[i]
+            paramValue[i] = params.get(paramClassName)
 
-        return param_value
+        return paramValue
 
     def __loadParameterClasses(self, loader: typing.Any) -> None:
         if self.__parameterClasses is not None:
             return
 
-        parameterClasses = [None] * len(self.__methodParameterList)
+        parameterClasses: typing.List[typing.Type[typing.Any]] = [None] * len(self.__methodParameterList)
 
-        for i, paramClassName in enumerate(self.__methodParameterList):
+        for i in range(len(self.__methodParameterList)):
+            paramClassName: str = self.__methodParameterList[i]
+
             try:
+                # In Python, we need to handle class loading differently
+                # Using importlib or getattr on modules
+                # For simplicity, assuming loader has a loadClass method
                 parameterClasses[i] = loader.loadClass(paramClassName)
-            except ClassNotFoundException as e:
-                raise ValidatorException(e.args[0])
+
+            except Exception as e:
+                raise ValidatorException(str(e))
 
         self.__parameterClasses = parameterClasses
 
@@ -223,8 +226,11 @@ class ValidatorAction:
             return
 
         try:
-            self.__validationClass = loader.loadClass(self.__classname)
-        except ClassNotFoundException as e:
+            # In Python, we use importlib to dynamically load classes
+            module_name, class_name = self.__classname.rsplit(".", 1)
+            module = __import__(module_name, fromlist=[class_name])
+            self.__validationClass = getattr(module, class_name)
+        except (ImportError, AttributeError, ValueError) as e:
             raise ValidatorException(str(e))
 
     def __loadValidationMethod(self) -> None:
@@ -233,13 +239,22 @@ class ValidatorAction:
 
         try:
             self.__validationMethod = getattr(self.__validationClass, self.__method)
+
+            # Optionally verify the method signature matches parameterClasses
+            # This is a best-effort check since Python's type system is different
+            if self.__parameterClasses is not None:
+                sig = inspect.signature(self.__validationMethod)
+                # Note: Full parameter validation would require additional logic
+
         except AttributeError as e:
             raise ValidatorException(f"No such validation method: {str(e)}")
 
     def __generateJsFunction(self) -> str:
         js_name = "org.apache.commons.validator.javascript"
         js_name += ".validate"
-        js_name += self.__name[0].upper() + self.__name[1:]
+        js_name += self.__name[0].upper()
+        js_name += self.__name[1:]
+
         return js_name
 
     def __javascriptAlreadyLoaded(self) -> bool:
@@ -254,20 +269,51 @@ class ValidatorAction:
         return fname
 
     def __readJavascriptFile(self, javascriptFileName: str) -> str:
-        class_loader = threading.current_thread().__class__.__module__
-        if class_loader is None:
-            class_loader = self.__class__.__module__
+        classLoader = Validator._classLoader
+        if classLoader is None:
+            classLoader = self.__class__
 
+        is_stream = None
         try:
-            with open(javascriptFileName, "r", encoding="utf-8") as file:
-                buffer = file.read()
-        except FileNotFoundError:
-            self.__getLog().debug(
-                f"  Unable to read javascript name {javascriptFileName}"
-            )
+            # Try to get resource as stream from class loader
+            if hasattr(classLoader, "getResourceAsStream"):
+                is_stream = classLoader.getResourceAsStream(javascriptFileName)
+        except:
+            pass
+
+        if is_stream is None:
+            try:
+                # Try to open as a file relative to the class
+                is_stream = open(javascriptFileName, "r")
+            except:
+                pass
+
+        if is_stream is None:
+            self.__getLog().debug(f"  Unable to read javascript name {javascriptFileName}")
             return None
+
+        buffer = []
+        try:
+            if isinstance(is_stream, io.IOBase):
+                reader = is_stream
+            else:
+                reader = io.BufferedReader(is_stream)
+
+            for line in reader:
+                if isinstance(line, bytes):
+                    line = line.decode("utf-8")
+                buffer.append(line.rstrip("\n\r"))
+                buffer.append("\n")
+
         except IOError as e:
             self.__getLog().error("Error reading javascript file.", exc_info=e)
-            return None
 
-        return buffer if buffer.strip() else None
+        finally:
+            try:
+                if is_stream is not None:
+                    is_stream.close()
+            except IOError as e:
+                self.__getLog().error("Error closing stream to javascript file.", exc_info=e)
+
+        function = "".join(buffer)
+        return None if function == "" else function

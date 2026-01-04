@@ -1,6 +1,6 @@
 from __future__ import annotations
-import time
 import re
+from io import StringIO
 import io
 import typing
 from typing import *
@@ -15,23 +15,24 @@ class Msg:
     __serialVersionUID: int = 5690015734364127124
 
     def toString(self) -> str:
-        results = []
-        results.append("Msg: name=")
-        results.append(str(self._name))
-        results.append("  key=")
-        results.append(str(self._key))
-        results.append("  resource=")
-        results.append(str(self._resource))
-        results.append("  bundle=")
-        results.append(str(self._bundle))
-        results.append("\n")
-        return "".join(results)
+        results = io.StringIO()
+
+        results.write("Msg: name=")
+        results.write(str(self._name))
+        results.write("  key=")
+        results.write(str(self._key))
+        results.write("  resource=")
+        results.write(str(self._resource))
+        results.write("  bundle=")
+        results.write(str(self._bundle))
+        results.write("\n")
+
+        return results.getvalue()
 
     def clone(self) -> typing.Any:
-        try:
-            return self.__class__.__new__(self.__class__)
-        except Exception as e:
-            raise RuntimeError(str(e))
+        import copy
+
+        return copy.copy(self)
 
     def setResource(self, resource: bool) -> None:
         self._resource = resource

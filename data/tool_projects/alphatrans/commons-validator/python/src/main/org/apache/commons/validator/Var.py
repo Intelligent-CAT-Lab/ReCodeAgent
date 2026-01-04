@@ -1,5 +1,4 @@
 from __future__ import annotations
-import time
 import re
 import io
 import typing
@@ -34,13 +33,12 @@ class Var:
         results.append(self.__jsType)
         results.append("\n")
 
-        return "".join(results)
+        return "".join(str(x) if x is not None else "None" for x in results)
 
     def clone(self) -> typing.Any:
-        try:
-            return super().clone()
-        except AttributeError as e:  # Python does not have NotImplementedError
-            raise RuntimeError(str(e))
+        import copy
+
+        return copy.copy(self)
 
     def setJsType(self, jsType: str) -> None:
         self.__jsType = jsType

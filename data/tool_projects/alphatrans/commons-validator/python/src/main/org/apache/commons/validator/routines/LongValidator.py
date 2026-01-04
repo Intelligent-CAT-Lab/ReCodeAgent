@@ -10,20 +10,17 @@ from src.main.org.apache.commons.validator.routines.AbstractNumberValidator impo
 
 class LongValidator(AbstractNumberValidator):
 
-    __VALIDATOR: LongValidator = None
+    __VALIDATOR: LongValidator = None  # LLM could not translate this field
+
     __serialVersionUID: int = -5117231731027866098
 
-    @staticmethod
-    def initialize_fields() -> None:
-        __VALIDATOR: LongValidator = LongValidator.LongValidator1()
-
     def _processParsedValue(self, value: typing.Any, formatter: Format) -> typing.Any:
-        if isinstance(value, int):  # In Python, `int` includes `long` from Java
+        if isinstance(value, int):
             return value
         return None
 
     def maxValue1(self, value: int, max_: int) -> bool:
-        return self.maxValue0(int(value), max_)
+        return self.maxValue0(value, max_)
 
     def maxValue0(self, value: int, max_: int) -> bool:
         return value <= max_
@@ -41,16 +38,19 @@ class LongValidator(AbstractNumberValidator):
         return min_ <= value <= max_
 
     def validate3(self, value: str, pattern: str, locale: typing.Any) -> int:
-        return self._parse(value, pattern, locale)
+
+        pass  # LLM could not translate this method
 
     def validate2(self, value: str, locale: typing.Any) -> int:
-        return self._parse(value, None, locale)
+
+        pass  # LLM could not translate this method
 
     def validate1(self, value: str, pattern: str) -> int:
         return self._parse(value, pattern, None)
 
     def validate0(self, value: str) -> int:
-        return self._parse(value, None, None)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def LongValidator1() -> LongValidator:
@@ -62,6 +62,3 @@ class LongValidator(AbstractNumberValidator):
     @staticmethod
     def getInstance() -> LongValidator:
         return LongValidator.__VALIDATOR
-
-
-LongValidator.initialize_fields()

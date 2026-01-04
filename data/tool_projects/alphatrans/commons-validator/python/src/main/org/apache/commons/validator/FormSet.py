@@ -1,7 +1,6 @@
 from __future__ import annotations
-import time
-import copy
 import re
+from io import StringIO
 import io
 import typing
 from typing import *
@@ -26,36 +25,53 @@ class FormSet:
 
     __variant: str = None
     __country: str = None
-    __language: str = None
+    __language: str = None  # LLM could not translate this field
+
     __processed: bool = False
-    __log: logging.Logger = logging.getLogger(__name__)
+    __log: logging.Logger = None  # LLM could not translate this field
+
     __serialVersionUID: int = -8936513232763306055
 
     def toString(self) -> str:
-        results = []
-        results.append(
-            f"FormSet: language={self.__language}  country={self.__country}  variant={self.__variant}\n"
-        )
+        results = io.StringIO()
+
+        results.write("FormSet: language=")
+        results.write(str(self.__language))
+        results.write("  country=")
+        results.write(str(self.__country))
+        results.write("  variant=")
+        results.write(str(self.__variant))
+        results.write("\n")
 
         for form in self.getForms().values():
-            results.append(f"   {form}\n")
+            results.write("   ")
+            results.write(str(form))
+            results.write("\n")
 
-        return "".join(results)
+        return results.getvalue()
 
     def displayKey(self) -> str:
         results = []
         if self.__language is not None and len(self.__language) > 0:
-            results.append(f"language={self.__language}")
+            results.append("language=")
+            results.append(self.__language)
         if self.__country is not None and len(self.__country) > 0:
-            results.append(f"country={self.__country}")
+            if len(results) > 0:
+                results.append(", ")
+            results.append("country=")
+            results.append(self.__country)
         if self.__variant is not None and len(self.__variant) > 0:
-            results.append(f"variant={self.__variant}")
-        if not results:
-            return "default"
-        return ", ".join(results)
+            if len(results) > 0:
+                results.append(", ")
+            results.append("variant=")
+            results.append(self.__variant)
+        if len(results) == 0:
+            results.append("default")
+
+        return "".join(results)
 
     def getForms(self) -> typing.Dict[str, Form]:
-        return self.__forms.copy()
+        return dict(self.__forms)
 
     def getForm(self, formName: str) -> Form:
         return self.__forms.get(formName)
@@ -64,16 +80,14 @@ class FormSet:
         form_name = f.getName()
         if form_name in self.__forms:
             self.__getLog().error(
-                f"Form '{form_name}' already exists in FormSet[{self.displayKey()}] - ignoring."
+                "Form '" + form_name + "' already exists in FormSet[" + self.displayKey() + "] - ignoring."
             )
         else:
-            self.__forms[form_name] = f
+            self.__forms[f.getName()] = f
 
     def addConstant(self, name: str, value: str) -> None:
         if name in self.__constants:
-            self.__getLog().error(
-                f"Constant '{name}' already exists in FormSet[{self.displayKey()}] - ignoring."
-            )
+            self.__getLog().error(f"Constant '{name}' already exists in FormSet[{self.displayKey()}] - ignoring.")
         else:
             self.__constants[name] = value
 
@@ -101,20 +115,16 @@ class FormSet:
     def _getType(self) -> int:
         if self.getVariant() is not None:
             if self.getLanguage() is None or self.getCountry() is None:
-                raise RuntimeError(
-                    "When variant is specified, country and language must be specified."
-                )
-            return self._VARIANT_FORMSET
+                raise ValueError("When variant is specified, country and language must be specified.")
+            return FormSet._VARIANT_FORMSET
         elif self.getCountry() is not None:
             if self.getLanguage() is None:
-                raise RuntimeError(
-                    "When country is specified, language must be specified."
-                )
-            return self._COUNTRY_FORMSET
+                raise ValueError("When country is specified, language must be specified.")
+            return FormSet._COUNTRY_FORMSET
         elif self.getLanguage() is not None:
-            return self._LANGUAGE_FORMSET
+            return FormSet._LANGUAGE_FORMSET
         else:
-            return self._GLOBAL_FORMSET
+            return FormSet._GLOBAL_FORMSET
 
     def _isMerged(self) -> bool:
         return self.__merged

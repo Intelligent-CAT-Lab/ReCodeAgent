@@ -17,41 +17,53 @@ class DateValidator:
         DateValidator.__DATE_VALIDATOR: DateValidator = DateValidator()
 
     def isValid1(self, value: str, locale: typing.Any) -> bool:
+        from datetime import datetime
+
         if value is None:
             return False
 
-        from datetime import datetime
-        import locale as py_locale
-
-        # Set the locale for date formatting
+        # Determine the locale to use
         if locale is not None:
-            py_locale.setlocale(py_locale.LC_TIME, locale)
+            loc = locale
         else:
-            py_locale.setlocale(py_locale.LC_TIME, py_locale.getdefaultlocale())
+            import locale as locale_module
 
-        # Define the date format (SHORT equivalent in Java)
-        date_format = "%x"  # Locale's appropriate date representation
+            loc = locale_module.getdefaultlocale()[0]
 
-        try:
-            # Try to parse the date
-            datetime.strptime(value, date_format)
-        except ValueError:
-            return False
+        # Try to parse the date string
+        # Python doesn't have a direct equivalent to Java's 3
+        # We'll try common short date formats
+        date_formats = [
+            "%m/%d/%y",  # US format: 12/31/99
+            "%m/%d/%Y",  # US format: 12/31/1999
+            "%d/%m/%y",  # European format: 31/12/99
+            "%d/%m/%Y",  # European format: 31/12/1999
+            "%Y-%m-%d",  # ISO format: 1999-12-31
+            "%d.%m.%y",  # German format: 31.12.99
+            "%d.%m.%Y",  # German format: 31.12.1999
+        ]
 
-        return True
+        for fmt in date_formats:
+            try:
+                datetime.strptime(value, fmt)
+                return True
+            except ValueError:
+                continue
+
+        return False
 
     def isValid0(self, value: str, datePattern: str, strict: bool) -> bool:
+        from datetime import datetime
+
         if value is None or datePattern is None or len(datePattern) <= 0:
             return False
 
-        from datetime import datetime
-
         try:
-            parsed_date = datetime.strptime(value, datePattern)
-        except ValueError:
+            datetime.strptime(value, datePattern)
+        except (ValueError, TypeError):
             return False
 
-        if strict and len(datePattern) != len(value):
+        if strict and (len(datePattern) != len(value)):
             return False
 
         return True

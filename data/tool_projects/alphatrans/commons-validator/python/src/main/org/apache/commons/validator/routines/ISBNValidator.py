@@ -10,50 +10,52 @@ from src.main.org.apache.commons.validator.routines.checkdigit.ISBN10CheckDigit 
 
 class ISBNValidator:
 
-    ISBN13_REGEX: str = (
-        r"^(978|979)(?:(\d{10})|(?:(?:\-|\s)(\d{1,5})(?:\-|\s)(\d{1,7})(?:\-|\s)(\d{1,6})(?:\-|\s)([0-9])))$"
-    )
     ISBN10_REGEX: str = (
-        r"^(?:(\d{9}[0-9X])|(?:(\d{1,5})(?:\-|\s)(\d{1,7})(?:\-|\s)(\d{1,6})(?:\-|\s)([0-9X])))$"
+        "^(?:(\\d{9}[0-9X])|(?:(\\d{1,5})(?:\\-|\\s)(\\d{1,7})(?:\\-|\\s)(\\d{1,6})(?:\\-|\\s)([0-9X])))$"
     )
     __convert: bool = False
 
-    __isbn13Validator: CodeValidator = CodeValidator.CodeValidator4(
-        ISBN13_REGEX, 13, EAN13CheckDigit.EAN13_CHECK_DIGIT
-    )
-    __isbn10Validator: CodeValidator = CodeValidator.CodeValidator4(
-        ISBN10_REGEX, 10, ISBN10CheckDigit.ISBN10_CHECK_DIGIT
-    )
-    __ISBN_VALIDATOR_NO_CONVERT: ISBNValidator = None
-    __ISBN_VALIDATOR: ISBNValidator = None
-    __TITLE: str = r"(\\d{1,6})"
-    __PUBLISHER: str = r"(\d{1,7})"
-    __GROUP: str = r"(\d{1,5})"
-    __SEP: str = r"(?:\-|\s)"
+    __isbn10Validator: CodeValidator = None  # LLM could not translate this field
+
+    __ISBN_VALIDATOR_NO_CONVERT: ISBNValidator = None  # LLM could not translate this field
+
+    __ISBN_VALIDATOR: ISBNValidator = None  # LLM could not translate this field
+
+    __TITLE: str = "(\\d{1,6})"
+    __PUBLISHER: str = "(\\d{1,7})"
+    __GROUP: str = "(\\d{1,5})"
+    __SEP: str = None  # LLM could not translate this field
+
     __serialVersionUID: int = 4319515687976420405
     __ISBN_10_LEN: int = 10
-
-    @staticmethod
-    def initialize_fields() -> None:
-        ISBNValidator.__ISBN_VALIDATOR_NO_CONVERT: ISBNValidator = ISBNValidator(False)
-
-        ISBNValidator.__ISBN_VALIDATOR: ISBNValidator = ISBNValidator.ISBNValidator1()
+    ISBN13_REGEX: str = (
+        "^(978|979)(?:(\\d{10})|(?:"
+        + str(__SEP)
+        + str(__GROUP)
+        + str(__SEP)
+        + str(__PUBLISHER)
+        + str(__SEP)
+        + str(__TITLE)
+        + str(__SEP)
+        + "([0-9])))$"
+    )
+    __isbn13Validator: CodeValidator = CodeValidator.CodeValidator4(ISBN13_REGEX, 13, EAN13CheckDigit.EAN13_CHECK_DIGIT)
 
     def convertToISBN13(self, isbn10: str) -> str:
         if isbn10 is None:
             return None
 
-        input = isbn10.strip()
-        if len(input) != self.__ISBN_10_LEN:
-            raise ValueError(f"Invalid length {len(input)} for '{input}'")
+        input_str = isbn10.strip()
+        if len(input_str) != self.__ISBN_10_LEN:
+            raise ValueError(f"Invalid length {len(input_str)} for '{input_str}'")
 
-        isbn13 = "978" + input[: self.__ISBN_10_LEN - 1]
+        isbn13 = "978" + input_str[0 : self.__ISBN_10_LEN - 1]
         try:
             check_digit = self.__isbn13Validator.getCheckDigit().calculate(isbn13)
             isbn13 += check_digit
             return isbn13
         except CheckDigitException as e:
-            raise ValueError(f"Check digit error for '{input}' - {str(e)}")
+            raise ValueError(f"Check digit error for '{input_str}' - {str(e)}")
 
     def validateISBN13(self, code: str) -> str:
         result = self.__isbn13Validator.validate(code)
@@ -89,15 +91,10 @@ class ISBNValidator:
 
     @staticmethod
     def getInstance1(convert: bool) -> ISBNValidator:
-        return (
-            ISBNValidator.__ISBN_VALIDATOR
-            if convert
-            else ISBNValidator.__ISBN_VALIDATOR_NO_CONVERT
-        )
+        return ISBNValidator.__ISBN_VALIDATOR if convert else ISBNValidator.__ISBN_VALIDATOR_NO_CONVERT
 
     @staticmethod
     def getInstance0() -> ISBNValidator:
+        if ISBNValidator.__ISBN_VALIDATOR is None:
+            ISBNValidator.__ISBN_VALIDATOR = ISBNValidator()
         return ISBNValidator.__ISBN_VALIDATOR
-
-
-ISBNValidator.initialize_fields()

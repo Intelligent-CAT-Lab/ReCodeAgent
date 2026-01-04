@@ -16,18 +16,17 @@ class AbstractFormatValidator(ABC):
 
     def _parse(self, value: str, formatter: Format) -> typing.Any:
         pos = ParsePosition(0)
-        parsed_value = formatter.parseObject(value, pos)
-
+        parsedValue = formatter.parseObject(value, pos)
         if pos.getErrorIndex() > -1:
             return None
 
         if self.isStrict() and pos.getIndex() < len(value):
             return None
 
-        if parsed_value is not None:
-            parsed_value = self._processParsedValue(parsed_value, formatter)
+        if parsedValue is not None:
+            parsedValue = self._processParsedValue(parsedValue, formatter)
 
-        return parsed_value
+        return parsedValue
 
     def _format4(self, value: typing.Any, formatter: Format) -> str:
         return formatter.format(value)
@@ -46,7 +45,7 @@ class AbstractFormatValidator(ABC):
         return self.format3(value, None, None)
 
     def isValid2(self, value: str, locale: typing.Any) -> bool:
-        return self.isValid3(value, None, locale)
+        return self.isValid3(value, locale)
 
     def isValid1(self, value: str, pattern: str) -> bool:
         return self.isValid3(value, pattern, None)
@@ -58,15 +57,13 @@ class AbstractFormatValidator(ABC):
         return self.__strict
 
     def __init__(self, strict: bool) -> None:
-        self.__strict = strict
+        self._strict = strict
 
     def _getFormat(self, pattern: str, locale: typing.Any) -> Format:
-        # This method is abstract and should be implemented by subclasses
-        raise NotImplementedError("Subclasses must implement this method")
+        raise NotImplementedError("Subclasses must implement _getFormat method")
 
     def _processParsedValue(self, value: typing.Any, formatter: Format) -> typing.Any:
-        # This method is abstract in Java, so it should raise a NotImplementedError in Python
-        raise NotImplementedError("Subclasses must implement this method")
+        raise NotImplementedError("Subclasses must implement _processParsedValue")
 
     def isValid3(self, value: str, pattern: str, locale: typing.Any) -> bool:
-        raise NotImplementedError("Subclasses must implement this method")
+        pass

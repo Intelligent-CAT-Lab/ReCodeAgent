@@ -59,24 +59,20 @@ class CodeValidator:
 
     @staticmethod
     def CodeValidator5(regex: str, checkdigit: CheckDigit) -> CodeValidator:
-        return CodeValidator(1, checkdigit, -1, None, -1, regex)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
-    def CodeValidator4(
-        regex: str, length: int, checkdigit: CheckDigit
-    ) -> CodeValidator:
-        return CodeValidator(1, checkdigit, length, None, length, regex)
+    def CodeValidator4(regex: str, length: int, checkdigit: CheckDigit) -> CodeValidator:
+
+        pass  # LLM could not translate this method
 
     @staticmethod
-    def CodeValidator2(
-        regexValidator: RegexValidator, checkdigit: CheckDigit
-    ) -> CodeValidator:
+    def CodeValidator2(regexValidator: RegexValidator, checkdigit: CheckDigit) -> CodeValidator:
         return CodeValidator(0, checkdigit, -1, regexValidator, -1, None)
 
     @staticmethod
-    def CodeValidator1(
-        regexValidator: RegexValidator, length: int, checkdigit: CheckDigit
-    ) -> CodeValidator:
+    def CodeValidator1(regexValidator: RegexValidator, length: int, checkdigit: CheckDigit) -> CodeValidator:
         return CodeValidator(0, checkdigit, length, regexValidator, length, None)
 
     def __init__(

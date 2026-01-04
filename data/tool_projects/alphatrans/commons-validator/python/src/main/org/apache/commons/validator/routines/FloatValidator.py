@@ -1,6 +1,7 @@
 from __future__ import annotations
 import locale
 import re
+import sys
 import os
 import io
 import numbers
@@ -19,34 +20,24 @@ class FloatValidator(AbstractNumberValidator):
         FloatValidator.__VALIDATOR: FloatValidator = FloatValidator.FloatValidator1()
 
     def _processParsedValue(self, value: typing.Any, formatter: Format) -> typing.Any:
-        double_value = float(
-            value
-        )  # Cast value to float (equivalent to Java's doubleValue())
+        double_value = float(value)
 
         if double_value > 0:
-            if double_value < float.fromhex(
-                "0x1.0p-149"
-            ):  # Equivalent to Float.MIN_VALUE
+            if double_value < sys.float_info.min:
                 return None
-            if double_value > float.fromhex(
-                "0x1.fffffep127"
-            ):  # Equivalent to 3.4028235E38
+            if double_value > sys.float_info.max:
                 return None
         elif double_value < 0:
             pos_double = double_value * -1
-            if pos_double < float.fromhex(
-                "0x1.0p-149"
-            ):  # Equivalent to Float.MIN_VALUE
+            if pos_double < sys.float_info.min:
                 return None
-            if pos_double > float.fromhex(
-                "0x1.fffffep127"
-            ):  # Equivalent to 3.4028235E38
+            if pos_double > sys.float_info.max:
                 return None
 
-        return float(double_value)  # Return the value as a float
+        return float(double_value)
 
     def maxValue1(self, value: float, max_: float) -> bool:
-        return self.maxValue0(float(value), max_)
+        return self.maxValue0(value, max_)
 
     def maxValue0(self, value: float, max_: float) -> bool:
         return value <= max_
@@ -58,22 +49,26 @@ class FloatValidator(AbstractNumberValidator):
         return value >= min_
 
     def isInRange1(self, value: float, min_: float, max_: float) -> bool:
-        return self.isInRange0(float(value), min_, max_)
+        return self.isInRange0(value, min_, max_)
 
     def isInRange0(self, value: float, min_: float, max_: float) -> bool:
         return min_ <= value <= max_
 
     def validate3(self, value: str, pattern: str, locale: typing.Any) -> float:
-        return float(self._parse(value, pattern, locale))
+
+        pass  # LLM could not translate this method
 
     def validate2(self, value: str, locale: typing.Any) -> float:
-        return self._parse(value, None, locale)
+
+        pass  # LLM could not translate this method
 
     def validate1(self, value: str, pattern: str) -> float:
-        return float(self._parse(value, pattern, None))
+
+        pass  # LLM could not translate this method
 
     def validate0(self, value: str) -> float:
-        return self._parse(value, None, None)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def FloatValidator1() -> FloatValidator:

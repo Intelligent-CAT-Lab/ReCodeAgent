@@ -2,7 +2,6 @@ from __future__ import annotations
 import time
 import locale
 import re
-import os
 import io
 import typing
 from typing import *
@@ -13,12 +12,8 @@ from src.main.org.apache.commons.validator.routines.AbstractCalendarValidator im
 
 class DateValidator(AbstractCalendarValidator):
 
-    __VALIDATOR: DateValidator = None
+    __VALIDATOR: DateValidator = None  # Will be initialized after class definition
     __serialVersionUID: int = -3966328400469953190
-
-    @staticmethod
-    def initialize_fields() -> None:
-        DateValidator.__VALIDATOR: DateValidator = DateValidator.DateValidator1()
 
     def _processParsedValue(self, value: typing.Any, formatter: Format) -> typing.Any:
         return value
@@ -31,7 +26,7 @@ class DateValidator(AbstractCalendarValidator):
     ) -> int:
         calendarValue = self.__getCalendar(value, timeZone)
         calendarCompare = self.__getCalendar(compare, timeZone)
-        return self._compare(calendarValue, calendarCompare, "year")
+        return self._compare(calendarValue, calendarCompare, self.YEAR)
 
     def compareQuarters1(
         self,
@@ -42,9 +37,7 @@ class DateValidator(AbstractCalendarValidator):
     ) -> int:
         calendarValue = self.__getCalendar(value, timeZone)
         calendarCompare = self.__getCalendar(compare, timeZone)
-        return self._compareQuarters(
-            calendarValue, calendarCompare, monthOfFirstQuarter
-        )
+        return self._compareQuarters(calendarValue, calendarCompare, monthOfFirstQuarter)
 
     def compareQuarters0(
         self,
@@ -62,7 +55,7 @@ class DateValidator(AbstractCalendarValidator):
     ) -> int:
         calendarValue = self.__getCalendar(value, timeZone)
         calendarCompare = self.__getCalendar(compare, timeZone)
-        return self._compare(calendarValue, calendarCompare, "month")
+        return self._compare(calendarValue, calendarCompare, self.MONTH)
 
     def compareWeeks(
         self,
@@ -72,7 +65,7 @@ class DateValidator(AbstractCalendarValidator):
     ) -> int:
         calendarValue = self.__getCalendar(value, timeZone)
         calendarCompare = self.__getCalendar(compare, timeZone)
-        return self._compare(calendarValue, calendarCompare, "week_of_year")
+        return self._compare(calendarValue, calendarCompare, self.WEEK_OF_YEAR)
 
     def compareDates(
         self,
@@ -82,7 +75,7 @@ class DateValidator(AbstractCalendarValidator):
     ) -> int:
         calendarValue = self.__getCalendar(value, timeZone)
         calendarCompare = self.__getCalendar(compare, timeZone)
-        return self._compare(calendarValue, calendarCompare, "day")
+        return self._compare(calendarValue, calendarCompare, self.DATE)
 
     def validate7(
         self,
@@ -93,10 +86,9 @@ class DateValidator(AbstractCalendarValidator):
     ) -> typing.Union[datetime.datetime, datetime.date]:
         return self._parse(value, pattern, locale, timeZone)
 
-    def validate6(
-        self, value: str, pattern: str, locale: typing.Any
-    ) -> typing.Union[datetime.datetime, datetime.date]:
-        return self._parse(value, pattern, locale, None)
+    def validate6(self, value: str, pattern: str, locale: typing.Any) -> typing.Union[datetime.datetime, datetime.date]:
+
+        pass  # LLM could not translate this method
 
     def validate5(
         self,
@@ -106,10 +98,9 @@ class DateValidator(AbstractCalendarValidator):
     ) -> typing.Union[datetime.datetime, datetime.date]:
         return self._parse(value, None, locale, timeZone)
 
-    def validate4(
-        self, value: str, locale: typing.Any
-    ) -> typing.Union[datetime.datetime, datetime.date]:
-        return self._parse(value, None, locale, None)
+    def validate4(self, value: str, locale: typing.Any) -> typing.Union[datetime.datetime, datetime.date]:
+
+        pass  # LLM could not translate this method
 
     def validate3(
         self,
@@ -117,24 +108,26 @@ class DateValidator(AbstractCalendarValidator):
         pattern: str,
         timeZone: typing.Union[zoneinfo.ZoneInfo, datetime.timezone],
     ) -> typing.Union[datetime.datetime, datetime.date]:
-        return self._parse(value, pattern, None, timeZone)
 
-    def validate2(
-        self, value: str, pattern: str
-    ) -> typing.Union[datetime.datetime, datetime.date]:
-        return self._parse(value, pattern, None, None)
+        pass  # LLM could not translate this method
+
+    def validate2(self, value: str, pattern: str) -> typing.Union[datetime.datetime, datetime.date]:
+
+        pass  # LLM could not translate this method
 
     def validate1(
         self, value: str, timeZone: typing.Union[zoneinfo.ZoneInfo, datetime.timezone]
     ) -> typing.Union[datetime.datetime, datetime.date]:
-        return self._parse(value, None, None, timeZone)
+
+        pass  # LLM could not translate this method
 
     def validate0(self, value: str) -> typing.Union[datetime.datetime, datetime.date]:
-        return self._parse(value, None, None, None)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def DateValidator1() -> DateValidator:
-        return DateValidator(True, datetime.date.SHORT)
+        return DateValidator(True, 3)
 
     def __init__(self, strict: bool, dateStyle: int) -> None:
         super().__init__(strict, dateStyle, -1)
@@ -146,22 +139,24 @@ class DateValidator(AbstractCalendarValidator):
     def __getCalendar(
         self,
         value: typing.Union[datetime.datetime, datetime.date],
-        timeZone: typing.Optional[typing.Union[zoneinfo.ZoneInfo, datetime.timezone]],
-    ) -> datetime.datetime:
+        timeZone: typing.Union[zoneinfo.ZoneInfo, datetime.timezone],
+    ) -> typing.Union[
+        datetime.datetime,
+        datetime.date,
+        datetime.time,
+        datetime.timedelta,
+        datetime.timezone,
+    ]:
+        if value is None:
+            return None
         if timeZone is not None:
-            calendar = datetime.datetime.now(timeZone)
+            if isinstance(value, datetime.datetime):
+                calendar = value.astimezone(timeZone)
+            else:
+                calendar = datetime.datetime.combine(value, datetime.time.min).replace(tzinfo=timeZone)
         else:
-            calendar = datetime.datetime.now()
-        calendar = calendar.replace(
-            year=value.year,
-            month=value.month,
-            day=value.day,
-            hour=getattr(value, "hour", 0),
-            minute=getattr(value, "minute", 0),
-            second=getattr(value, "second", 0),
-            microsecond=getattr(value, "microsecond", 0),
-        )
+            if isinstance(value, datetime.datetime):
+                calendar = value
+            else:
+                calendar = datetime.datetime.combine(value, datetime.time.min)
         return calendar
-
-
-DateValidator.initialize_fields()

@@ -13,16 +13,13 @@ from src.main.org.apache.commons.validator.routines.checkdigit.IBANCheckDigit im
 
 class IBANValidator:
 
-    DEFAULT_IBAN_VALIDATOR: IBANValidator = None
+    DEFAULT_IBAN_VALIDATOR: IBANValidator = None  # LLM could not translate this field
+
     __DEFAULT_FORMATS: typing.List[Validator] = None
     __formatValidators: typing.Dict[str, Validator] = None
 
     @staticmethod
     def initialize_fields() -> None:
-        IBANValidator.DEFAULT_IBAN_VALIDATOR: IBANValidator = (
-            IBANValidator.IBANValidator1()
-        )
-
         IBANValidator.__DEFAULT_FORMATS: typing.List[Validator] = [
             Validator("AD", 24, "ADd{10}[A-Z0-9]{12}"),
             Validator("AE", 23, "AEd{21}"),
@@ -104,42 +101,43 @@ class IBANValidator:
         ]
 
     def setValidator1(self, countryCode: str, length: int, format_: str) -> Validator:
-        if self == self.DEFAULT_IBAN_VALIDATOR:
+        if self is IBANValidator.DEFAULT_IBAN_VALIDATOR:
             raise RuntimeError("The singleton validator cannot be modified")
         if length < 0:
             return self.__formatValidators.pop(countryCode, None)
         return self.setValidator0(Validator(countryCode, length, format_))
 
     def setValidator0(self, validator: Validator) -> Validator:
-        if self == self.DEFAULT_IBAN_VALIDATOR:
+        if self is IBANValidator.DEFAULT_IBAN_VALIDATOR:
             raise RuntimeError("The singleton validator cannot be modified")
-        return self.__formatValidators.setdefault(validator.countryCode, validator)
+        return self.__formatValidators.put(validator.countryCode, validator)
 
     def getValidator(self, code: str) -> Validator:
         if code is None or len(code) < 2:  # ensure we can extract the code
             return None
-        key = code[:2]
+        key = code[0:2]
         return self.__formatValidators.get(key)
 
     def getDefaultValidators(self) -> typing.List[Validator]:
         return self.__DEFAULT_FORMATS.copy()
 
     def hasValidator(self, code: str) -> bool:
-        return self.getValidator(code) is not None
+
+        pass  # LLM could not translate this method
 
     def isValid(self, code: str) -> bool:
-        format_validator = self.getValidator(code)
+        formatValidator = self.getValidator(code)
         if (
-            format_validator is None
-            or len(code) != format_validator.lengthOfIBAN
-            or not format_validator.validator.isValid(code)
+            formatValidator is None
+            or len(code) != formatValidator.lengthOfIBAN
+            or not formatValidator.validator.isValid(code)
         ):
             return False
         return IBANCheckDigit.IBAN_CHECK_DIGIT.isValid(code)
 
     @staticmethod
     def IBANValidator1() -> IBANValidator:
-        return IBANValidator(IBANValidator.__DEFAULT_FORMATS)
+        return IBANValidator(IBANValidator._IBANValidator__DEFAULT_FORMATS)
 
     def __init__(self, formatMap: typing.List[Validator]) -> None:
         self.__formatValidators = self.__createValidators(formatMap)
@@ -148,9 +146,7 @@ class IBANValidator:
     def getInstance() -> IBANValidator:
         return IBANValidator.DEFAULT_IBAN_VALIDATOR
 
-    def __createValidators(
-        self, formatMap: typing.List[Validator]
-    ) -> typing.Dict[str, Validator]:
+    def __createValidators(self, formatMap: typing.List[Validator]) -> typing.Dict[str, Validator]:
         m: typing.Dict[str, Validator] = {}
         for v in formatMap:
             m[v.countryCode] = v
@@ -170,19 +166,15 @@ class Validator:
 
     def __init__(self, cc: str, len_: int, format_: str) -> None:
         if not (len(cc) == 2 and cc[0].isupper() and cc[1].isupper()):
-            raise ValueError(
-                "Invalid country Code; must be exactly 2 upper-case characters"
-            )
+            raise ValueError("Invalid country Code; must be exactly 2 upper-case characters")
 
         if len_ > self.__MAX_LEN or len_ < self.__MIN_LEN:
             raise ValueError(
-                f"Invalid length parameter, must be in range {self.__MIN_LEN} to {self.__MAX_LEN} inclusive: {len_}"
+                f"Invalid length parameter, must be in range " f"{self.__MIN_LEN} to {self.__MAX_LEN} inclusive: {len_}"
             )
 
         if not format_.startswith(cc):
-            raise ValueError(
-                f"countryCode '{cc}' does not agree with format: {format_}"
-            )
+            raise ValueError(f"countryCode '{cc}' does not agree with format: {format_}")
 
         self.countryCode = cc
         self.lengthOfIBAN = len_

@@ -1,6 +1,5 @@
 from __future__ import annotations
 import re
-import numbers
 import io
 import typing
 from typing import *
@@ -12,13 +11,10 @@ from src.main.org.apache.commons.validator.routines.checkdigit.ModulusCheckDigit
 
 class CUSIPCheckDigit(ModulusCheckDigit):
 
-    CUSIP_CHECK_DIGIT: CheckDigit = None
+    CUSIP_CHECK_DIGIT: CheckDigit = None  # LLM could not translate this field
+
     __POSITION_WEIGHT: typing.List[int] = [2, 1]
     __serialVersionUID: int = 666941918490152456
-
-    @staticmethod
-    def initialize_fields() -> None:
-        CUSIPCheckDigit.CUSIP_CHECK_DIGIT: CheckDigit = CUSIPCheckDigit()
 
     def _weightedValue(self, charValue: int, leftPos: int, rightPos: int) -> int:
         weight = self.__POSITION_WEIGHT[rightPos % 2]
@@ -26,18 +22,22 @@ class CUSIPCheckDigit(ModulusCheckDigit):
         return ModulusCheckDigit.sumDigits(weightedValue)
 
     def _toInt(self, character: str, leftPos: int, rightPos: int) -> int:
-        charValue = (
-            int(character) if character.isdigit() else ord(character.upper()) - 55
-        )
-        charMax = 9 if rightPos == 1 else 35  # CHECKSTYLE IGNORE MagicNumber
+        # Get numeric value of character (0-9 for digits, 10-35 for A-Z)
+        if character.isdigit():
+            charValue = int(character)
+        elif character.isalpha():
+            charValue = ord(character.upper()) - ord("A") + 10
+        else:
+            charValue = -1
+
+        charMax = 9 if rightPos == 1 else 35
+
         if charValue < 0 or charValue > charMax:
             raise CheckDigitException.CheckDigitException1(
-                f"Invalid Character[{leftPos},{rightPos}] = '{character}' out of range 0 to {charMax}"
+                f"Invalid Character[{leftPos},{rightPos}] = '{charValue}' out of range 0 to {charMax}"
             )
+
         return charValue
 
     def __init__(self) -> None:
-        super().__init__(10)  # CHECKSTYLE IGNORE MagicNumber
-
-
-CUSIPCheckDigit.initialize_fields()
+        ModulusCheckDigit.__init__(self, 10)

@@ -10,7 +10,8 @@ from src.main.org.apache.commons.validator.Field import *
 
 class Form:
 
-    _inherit: str = None
+    _inherit: str = None  # LLM could not translate this field
+
     _lFields: typing.List[Field] = []
 
     _name: str = None
@@ -21,7 +22,7 @@ class Form:
         results = io.StringIO()
 
         results.write("Form: ")
-        results.write(self._name if self._name else "None")
+        results.write(str(self._name) if self._name is not None else "None")
         results.write("\n")
 
         for field in self._lFields:

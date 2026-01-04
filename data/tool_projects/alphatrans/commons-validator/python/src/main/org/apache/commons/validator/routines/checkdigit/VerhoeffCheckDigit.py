@@ -10,7 +10,7 @@ from src.main.org.apache.commons.validator.routines.checkdigit.CheckDigitExcepti
 
 class VerhoeffCheckDigit(CheckDigit):
 
-    VERHOEFF_CHECK_DIGIT: CheckDigit = None
+    VERHOEFF_CHECK_DIGIT: CheckDigit = None  # Will be initialized after class definition
     __INV_TABLE: typing.List[int] = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9]
     __P_TABLE: typing.List[typing.List[int]] = [
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -36,10 +36,6 @@ class VerhoeffCheckDigit(CheckDigit):
     ]
     __serialVersionUID: int = 4138993995483695178
 
-    @staticmethod
-    def initialize_fields() -> None:
-        VerhoeffCheckDigit.VERHOEFF_CHECK_DIGIT: CheckDigit = VerhoeffCheckDigit()
-
     def calculate(self, code: str) -> str:
         if code is None or len(code) == 0:
             raise CheckDigitException.CheckDigitException1("Code is missing")
@@ -58,14 +54,12 @@ class VerhoeffCheckDigit(CheckDigit):
         checksum = 0
         for i in range(len(code)):
             idx = len(code) - (i + 1)
-            num = int(code[idx])
+            char = code[idx]
+            if not char.isdigit():
+                raise CheckDigitException.CheckDigitException1(f"Invalid Character[{i}] = '{ord(char)}'")
+            num = int(char)
             if num < 0 or num > 9:
-                raise CheckDigitException.CheckDigitException1(
-                    f"Invalid Character[{i}] = '{ord(code[idx])}'"
-                )
+                raise CheckDigitException.CheckDigitException1(f"Invalid Character[{i}] = '{ord(char)}'")
             pos = i if includesCheckDigit else i + 1
             checksum = self.__D_TABLE[checksum][self.__P_TABLE[pos % 8][num]]
         return checksum
-
-
-VerhoeffCheckDigit.initialize_fields()

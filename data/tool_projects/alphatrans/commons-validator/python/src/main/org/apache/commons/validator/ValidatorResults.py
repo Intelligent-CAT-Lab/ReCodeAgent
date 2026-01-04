@@ -14,7 +14,7 @@ class ValidatorResults:
     __serialVersionUID: int = -2709911078904924839
 
     def getResultValueMap(self) -> typing.Dict[str, typing.Any]:
-        results: typing.Dict[str, typing.Any] = {}
+        results = {}
 
         for propertyKey in self._hResults.keys():
             vr = self.getValidatorResult(propertyKey)
@@ -34,14 +34,12 @@ class ValidatorResults:
         return self._hResults.get(key)
 
     def isEmpty(self) -> bool:
-        return not self._hResults
+        return len(self._hResults) == 0
 
     def clear(self) -> None:
         self._hResults.clear()
 
-    def add1(
-        self, field: Field, validatorName: str, result: bool, value: typing.Any
-    ) -> None:
+    def add1(self, field: typing.Any, validatorName: str, result: bool, value: typing.Any) -> None:
         validatorResult = self.getValidatorResult(field.getKey())
 
         if validatorResult is None:

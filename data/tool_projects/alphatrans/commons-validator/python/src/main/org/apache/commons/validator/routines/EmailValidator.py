@@ -19,63 +19,46 @@ class EmailValidator:
 
     __USER_PATTERN: re.Pattern = None  # LLM could not translate this field
 
-    __IP_DOMAIN_REGEX: str = r"^\[(.*)\]$"
-    __EMAIL_PATTERN: re.Pattern = re.compile(r"^(.+)@(\S+)$")
-    __EMAIL_REGEX: str = r"^(.+)@(\S+)$"
-    __QUOTED_USER: str = r'("(\\\\"|[^"])*")'
-    __SPECIAL_CHARS: str = r"\p{Cntrl}\(\)<>@,;:'\\\"\.\\[\]"
+    __IP_DOMAIN_PATTERN: re.Pattern = re.compile(r"^\[(.*)\]$")
+    __EMAIL_PATTERN: re.Pattern = re.compile("^(.+)@(\\S+)$")
+    __USER_REGEX: str = None  # LLM could not translate this field
+
+    __IP_DOMAIN_REGEX: str = "^\\[(.*)\\]$"
+    __EMAIL_REGEX: str = "^(.+)@(\\S+)$"
+    __QUOTED_USER: str = '("(\\\\"|[^"])*")'
+    __SPECIAL_CHARS: str = None  # LLM could not translate this field
+
     __serialVersionUID: int = 1705927040799295880
-    __VALID_CHARS: str = (
-        r"(\\.)|[^\s" + (__SPECIAL_CHARS if __SPECIAL_CHARS is not None else "") + "]"
-    )
-    __WORD: str = None
-    __USER_REGEX: str = None
+
+    __WORD: str = None  # LLM could not translate this field
 
     @staticmethod
     def initialize_fields() -> None:
-        EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD: EmailValidator = (
-            EmailValidator(1, True, True, None)
-        )
+        EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL: EmailValidator = EmailValidator(1, True, False, None)
 
-        EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL: EmailValidator = EmailValidator(
-            1, True, False, None
-        )
+        EmailValidator.__EMAIL_VALIDATOR_WITH_TLD: EmailValidator = EmailValidator(1, False, True, None)
 
-        EmailValidator.__EMAIL_VALIDATOR_WITH_TLD: EmailValidator = EmailValidator(
-            1, False, True, None
-        )
-
-        EmailValidator.__EMAIL_VALIDATOR: EmailValidator = EmailValidator(
-            1, False, False, None
-        )
-
-        EmailValidator.__WORD: str = (
-            f"(({EmailValidator.__VALID_CHARS}|'')+|{EmailValidator.__QUOTED_USER})"
-        )
-
-        EmailValidator.__USER_REGEX: str = (
-            f"^{EmailValidator.__WORD}(.{EmailValidator.__WORD})*$"
-        )
+        EmailValidator.__EMAIL_VALIDATOR: EmailValidator = EmailValidator(1, False, False, None)
 
     def _isValidUser(self, user: str) -> bool:
-        if user is None or len(user) > self.__MAX_USERNAME_LEN:
+        if user is None or len(user) > EmailValidator.__MAX_USERNAME_LEN:
             return False
 
-        return bool(self.__USER_PATTERN.match(user))
+        return EmailValidator.__USER_PATTERN.fullmatch(user) is not None
 
     def _isValidDomain(self, domain: str) -> bool:
-        ip_domain_matcher = self.__IP_DOMAIN_PATTERN.match(domain)
+        ipDomainMatcher = self._EmailValidator__IP_DOMAIN_PATTERN.fullmatch(domain)
 
-        if ip_domain_matcher:
-            inet_address_validator = InetAddressValidator.getInstance()
-            return inet_address_validator.isValid(ip_domain_matcher.group(1))
+        if ipDomainMatcher:
+            inetAddressValidator = InetAddressValidator.getInstance()
+            return inetAddressValidator.isValid(ipDomainMatcher.group(1))
 
-        if self.__allowTld:
-            return self.__domainValidator.isValid(domain) or (
-                not domain.startswith(".") and self.__domainValidator.isValidTld(domain)
+        if self._EmailValidator__allowTld:
+            return self._EmailValidator__domainValidator.isValid(domain) or (
+                not domain.startswith(".") and self._EmailValidator__domainValidator.isValidTld(domain)
             )
         else:
-            return self.__domainValidator.isValid(domain)
+            return self._EmailValidator__domainValidator.isValid(domain)
 
     def isValid(self, email: str) -> bool:
         if email is None:
@@ -84,16 +67,14 @@ class EmailValidator:
         if email.endswith("."):  # check this first - it's cheap!
             return False
 
-        email_matcher = self.__EMAIL_PATTERN.match(email)
-        if not email_matcher:
+        emailMatcher = self._EmailValidator__EMAIL_PATTERN.fullmatch(email)
+        if not emailMatcher:
             return False
 
-        user, domain = email_matcher.groups()
-
-        if not self._isValidUser(user):
+        if not self._isValidUser(emailMatcher.group(1)):
             return False
 
-        if not self._isValidDomain(domain):
+        if not self._isValidDomain(emailMatcher.group(2)):
             return False
 
         return True
@@ -115,9 +96,7 @@ class EmailValidator:
                 raise ValueError("DomainValidator cannot be null")
             else:
                 if domainValidator.isAllowLocal() != allowLocal:
-                    raise ValueError(
-                        "DomainValidator must agree with allowLocal setting"
-                    )
+                    raise ValueError("DomainValidator must agree with allowLocal setting")
                 self.__domainValidator = domainValidator
         else:
             self.__allowTld = allowTld
@@ -131,6 +110,8 @@ class EmailValidator:
     def getInstance1(allowLocal: bool, allowTld: bool) -> EmailValidator:
         if allowLocal:
             if allowTld:
+                if EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD is None:
+                    EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD = EmailValidator(1, True, True, None)
                 return EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD
             else:
                 return EmailValidator.__EMAIL_VALIDATOR_WITH_LOCAL
@@ -142,7 +123,7 @@ class EmailValidator:
 
     @staticmethod
     def getInstance0() -> EmailValidator:
-        return EmailValidator.__EMAIL_VALIDATOR
+        return EmailValidator._EmailValidator__EMAIL_VALIDATOR
 
 
 EmailValidator.initialize_fields()

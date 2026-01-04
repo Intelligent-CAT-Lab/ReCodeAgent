@@ -11,20 +11,13 @@ from src.main.org.apache.commons.validator.routines.checkdigit.ModulusCheckDigit
 
 class ABANumberCheckDigit(ModulusCheckDigit):
 
-    ABAN_CHECK_DIGIT: CheckDigit = None
+    ABAN_CHECK_DIGIT: CheckDigit = None  # Will be initialized after class definition
     __POSITION_WEIGHT: typing.List[int] = [3, 1, 7]
     __serialVersionUID: int = -8255937433810380145
 
-    @staticmethod
-    def initialize_fields() -> None:
-        ABANumberCheckDigit.ABAN_CHECK_DIGIT: CheckDigit = ABANumberCheckDigit()
-
     def _weightedValue(self, charValue: int, leftPos: int, rightPos: int) -> int:
-        weight = self.__POSITION_WEIGHT[rightPos % 3]  # CHECKSTYLE IGNORE MagicNumber
+        weight = self.__POSITION_WEIGHT[rightPos % 3]
         return charValue * weight
 
     def __init__(self) -> None:
-        super().__init__(10)  # CHECKSTYLE IGNORE MagicNumber
-
-
-ABANumberCheckDigit.initialize_fields()
+        super().__init__(10)

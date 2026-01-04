@@ -17,33 +17,30 @@ class CurrencyValidator(BigDecimalValidator):
 
     @staticmethod
     def initialize_fields() -> None:
-        CurrencyValidator.__VALIDATOR: CurrencyValidator = (
-            CurrencyValidator.CurrencyValidator1()
-        )
+        CurrencyValidator.__VALIDATOR: CurrencyValidator = CurrencyValidator.CurrencyValidator1()
 
     def _parse(self, value: str, formatter: Format) -> typing.Any:
-        parsed_value = super()._parse(value, formatter)
-        if parsed_value is not None or not isinstance(formatter, DecimalFormat):
-            return parsed_value
+        parsedValue = super()._parse(value, formatter)
+        if parsedValue is not None or not isinstance(formatter, DecimalFormat):
+            return parsedValue
 
-        decimal_format: DecimalFormat = formatter
-        pattern: str = decimal_format.toPattern()
-        if self.__CURRENCY_SYMBOL in pattern:
+        decimalFormat = formatter
+        pattern = decimalFormat.toPattern()
+        if pattern.find(self.__CURRENCY_SYMBOL) >= 0:
             buffer = []
-            for char in pattern:
-                if char != self.__CURRENCY_SYMBOL:
-                    buffer.append(char)
-            decimal_format.applyPattern("".join(buffer))
-            parsed_value = super()._parse(value, decimal_format)
-
-        return parsed_value
+            for i in range(len(pattern)):
+                if pattern[i] != self.__CURRENCY_SYMBOL:
+                    buffer.append(pattern[i])
+            decimalFormat.applyPattern("".join(buffer))
+            parsedValue = super()._parse(value, decimalFormat)
+        return parsedValue
 
     @staticmethod
     def CurrencyValidator1() -> CurrencyValidator:
         return CurrencyValidator(True, True)
 
     def __init__(self, strict: bool, allowFractions: bool) -> None:
-        super().__init__(strict, self.CURRENCY_FORMAT, allowFractions)
+        super().__init__(strict, AbstractNumberValidator.CURRENCY_FORMAT, allowFractions)
 
     @staticmethod
     def getInstance() -> BigDecimalValidator:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 import re
-import numbers
 import io
 import typing
 from typing import *
@@ -11,13 +10,9 @@ from src.main.org.apache.commons.validator.routines.checkdigit.ModulusCheckDigit
 
 class LuhnCheckDigit(ModulusCheckDigit):
 
-    LUHN_CHECK_DIGIT: CheckDigit = None
+    LUHN_CHECK_DIGIT: CheckDigit = None  # type: ignore
     __POSITION_WEIGHT: typing.List[int] = [2, 1]
     __serialVersionUID: int = -2976900113942875999
-
-    @staticmethod
-    def initialize_fields() -> None:
-        LuhnCheckDigit.LUHN_CHECK_DIGIT: CheckDigit = LuhnCheckDigit()
 
     def _weightedValue(self, charValue: int, leftPos: int, rightPos: int) -> int:
         weight = self.__POSITION_WEIGHT[rightPos % 2]
@@ -25,7 +20,4 @@ class LuhnCheckDigit(ModulusCheckDigit):
         return (weightedValue - 9) if weightedValue > 9 else weightedValue
 
     def __init__(self) -> None:
-        super().__init__(10)  # CHECKSTYLE IGNORE MagicNumber
-
-
-LuhnCheckDigit.initialize_fields()
+        super().__init__(10)

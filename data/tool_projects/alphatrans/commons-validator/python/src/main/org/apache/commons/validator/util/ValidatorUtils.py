@@ -50,15 +50,9 @@ class ValidatorUtils:
 
         if length == len(key):
             value = replaceValue
-
         elif end == length:
-            value = value[:start] + replaceValue
-
+            value = value[0:start] + replaceValue
         else:
-            value = (
-                value[:start]
-                + replaceValue
-                + ValidatorUtils.replace(value[end:], key, replaceValue)
-            )
+            value = value[0:start] + replaceValue + ValidatorUtils.replace(value[end:], key, replaceValue)
 
         return value

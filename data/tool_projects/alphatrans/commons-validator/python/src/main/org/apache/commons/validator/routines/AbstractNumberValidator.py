@@ -24,8 +24,8 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
         return self._getFormat0(pattern, locale)
 
     def isValid3(self, value: str, pattern: str, locale: typing.Any) -> bool:
-        parsed_value = self._parse(value, pattern, locale)
-        return False if parsed_value is None else True
+
+        pass  # LLM could not translate this method
 
     def _getFormat1(self, locale: typing.Any) -> Format:
         formatter = None
@@ -53,26 +53,26 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
             return -1
         if not self.isAllowFractions() or format_.isParseIntegerOnly():
             return 0
-        minimum_fraction = format_.getMinimumFractionDigits()
-        maximum_fraction = format_.getMaximumFractionDigits()
-        if minimum_fraction != maximum_fraction:
+        minimumFraction = format_.getMinimumFractionDigits()
+        maximumFraction = format_.getMaximumFractionDigits()
+        if minimumFraction != maximumFraction:
             return -1
-        scale = minimum_fraction
+        scale = minimumFraction
         if isinstance(format_, DecimalFormat):
             multiplier = format_.getMultiplier()
-            if multiplier == 100:  # CHECKSTYLE IGNORE MagicNumber
-                scale += 2  # CHECKSTYLE IGNORE MagicNumber
-            elif multiplier == 1000:  # CHECKSTYLE IGNORE MagicNumber
-                scale += 3  # CHECKSTYLE IGNORE MagicNumber
-        elif self._AbstractNumberValidator__formatType == self.PERCENT_FORMAT:
-            scale += 2  # CHECKSTYLE IGNORE MagicNumber
+            if multiplier == 100:
+                scale += 2
+            elif multiplier == 1000:
+                scale += 3
+        elif self.__formatType == self.PERCENT_FORMAT:
+            scale += 2
         return scale
 
     def _getFormat0(self, pattern: str, locale: typing.Any) -> Format:
         formatter = None
-        use_pattern = pattern is not None and len(pattern) > 0
+        usePattern = pattern is not None and len(pattern) > 0
 
-        if not use_pattern:
+        if not usePattern:
             formatter = self._getFormat1(locale)
         elif locale is None:
             formatter = DecimalFormat(pattern)
@@ -90,7 +90,7 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
         if value is None or len(value) == 0:
             return None
         formatter = self._getFormat0(pattern, locale)
-        return self._parse(value, formatter)
+        return super()._parse(value, formatter)
 
     def maxValue(
         self,
@@ -98,7 +98,7 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
         max_: typing.Union[int, float, numbers.Number],
     ) -> bool:
         if self.isAllowFractions():
-            return value <= max_
+            return float(value) <= float(max_)
         return int(value) <= int(max_)
 
     def minValue(
@@ -107,7 +107,7 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
         min_: typing.Union[int, float, numbers.Number],
     ) -> bool:
         if self.isAllowFractions():
-            return value >= min_
+            return float(value) >= float(min_)
         return int(value) >= int(min_)
 
     def isInRange(
@@ -116,7 +116,8 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
         min_: typing.Union[int, float, numbers.Number],
         max_: typing.Union[int, float, numbers.Number],
     ) -> bool:
-        return self.minValue(value, min_) and self.maxValue(value, max_)
+
+        pass  # LLM could not translate this method
 
     def getFormatType(self) -> int:
         return self.__formatType
@@ -125,8 +126,9 @@ class AbstractNumberValidator(AbstractFormatValidator, ABC):
         return self.__allowFractions
 
     def __init__(self, strict: bool, formatType: int, allowFractions: bool) -> None:
-
-        pass  # LLM could not translate this method
+        super().__init__(strict)
+        self.__allowFractions = allowFractions
+        self.__formatType = formatType
 
     def _processParsedValue(self, value: typing.Any, formatter: Format) -> typing.Any:
-        raise NotImplementedError("Subclasses must implement this method")
+        pass

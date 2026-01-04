@@ -2,7 +2,6 @@ from __future__ import annotations
 import time
 import locale
 import re
-import os
 from abc import ABC
 import io
 import typing
@@ -24,13 +23,25 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
         return self._getFormat0(pattern, locale)
 
     def isValid3(self, value: str, pattern: str, locale: typing.Any) -> bool:
-        parsed_value = self._parse(value, pattern, locale, None)
-        return parsed_value is not None
+        parsedValue = self._parse(value, pattern, locale, None)
+        return parsedValue is not None
 
     def _compareQuarters(
         self,
-        value: typing.Union[datetime.datetime, datetime.date],
-        compare: typing.Union[datetime.datetime, datetime.date],
+        value: typing.Union[
+            datetime.datetime,
+            datetime.date,
+            datetime.time,
+            datetime.timedelta,
+            datetime.timezone,
+        ],
+        compare: typing.Union[
+            datetime.datetime,
+            datetime.date,
+            datetime.time,
+            datetime.timedelta,
+            datetime.timezone,
+        ],
         monthOfFirstQuarter: int,
     ) -> int:
         valueQuarter = self.__calculateQuarter(value, monthOfFirstQuarter)
@@ -60,20 +71,26 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
         ],
         field: int,
     ) -> int:
-        result = self.__calculateCompareResult(value, compare, "hour")
-        if result != 0 or field in ["hour", "hour_of_day"]:
+        result = 0
+
+        # Compare HOUR_OF_DAY
+        result = self.__calculateCompareResult(value, compare, self.HOUR_OF_DAY)
+        if result != 0 or (field == self.HOUR or field == self.HOUR_OF_DAY):
             return result
 
-        result = self.__calculateCompareResult(value, compare, "minute")
-        if result != 0 or field == "minute":
+        # Compare MINUTE
+        result = self.__calculateCompareResult(value, compare, self.MINUTE)
+        if result != 0 or field == self.MINUTE:
             return result
 
-        result = self.__calculateCompareResult(value, compare, "second")
-        if result != 0 or field == "second":
+        # Compare SECOND
+        result = self.__calculateCompareResult(value, compare, self.SECOND)
+        if result != 0 or field == self.SECOND:
             return result
 
-        if field == "millisecond":
-            return self.__calculateCompareResult(value, compare, "microsecond") // 1000
+        # Compare MILLISECOND
+        if field == self.MILLISECOND:
+            return self.__calculateCompareResult(value, compare, self.MILLISECOND)
 
         raise ValueError(f"Invalid field: {field}")
 
@@ -95,87 +112,65 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
         ],
         field: int,
     ) -> int:
-        result = self.__calculateCompareResult(value, compare, "year")
-        if result != 0 or field == "year":
+        result = 0
+
+        result = self.__calculateCompareResult(value, compare, self.YEAR)
+        if result != 0 or field == self.YEAR:
             return result
 
-        if field == "week_of_year":
-            return self.__calculateCompareResult(value, compare, "isocalendar_week")
+        if field == self.WEEK_OF_YEAR:
+            return self.__calculateCompareResult(value, compare, self.WEEK_OF_YEAR)
 
-        if field == "day_of_year":
-            return self.__calculateCompareResult(
-                value, compare, "timetuple_day_of_year"
-            )
+        if field == self.DAY_OF_YEAR:
+            return self.__calculateCompareResult(value, compare, self.DAY_OF_YEAR)
 
-        result = self.__calculateCompareResult(value, compare, "month")
-        if result != 0 or field == "month":
+        result = self.__calculateCompareResult(value, compare, self.MONTH)
+        if result != 0 or field == self.MONTH:
             return result
 
-        if field == "week_of_month":
-            # Custom logic for week_of_month may be required, as Python's datetime does not directly support it
-            raise NotImplementedError(
-                "Comparison for 'week_of_month' is not implemented"
-            )
+        if field == self.WEEK_OF_MONTH:
+            return self.__calculateCompareResult(value, compare, self.WEEK_OF_MONTH)
 
-        result = self.__calculateCompareResult(value, compare, "day")
-        if result != 0 or field in ["day", "day_of_week", "day_of_week_in_month"]:
+        result = self.__calculateCompareResult(value, compare, self.DATE)
+        if result != 0 or (field == self.DATE or field == self.DAY_OF_WEEK or field == self.DAY_OF_WEEK_IN_MONTH):
             return result
 
         return self._compareTime(value, compare, field)
 
     def _getFormat1(self, locale: typing.Any) -> Format:
         formatter = None
+
         if self.__dateStyle >= 0 and self.__timeStyle >= 0:
             if locale is None:
-                formatter = (
-                    datetime.datetime.strftime
-                )  # Simulating DateFormat.getDateTimeInstance
+                formatter = DateFormat.getDateTimeInstance(self.__dateStyle, self.__timeStyle)
             else:
-                formatter = (
-                    datetime.datetime.strftime
-                )  # Simulating DateFormat.getDateTimeInstance with locale
+                formatter = DateFormat.getDateTimeInstance(self.__dateStyle, self.__timeStyle, locale)
         elif self.__timeStyle >= 0:
             if locale is None:
-                formatter = (
-                    datetime.time.strftime
-                )  # Simulating DateFormat.getTimeInstance
+                formatter = DateFormat.getTimeInstance(self.__timeStyle)
             else:
-                formatter = (
-                    datetime.time.strftime
-                )  # Simulating DateFormat.getTimeInstance with locale
+                formatter = DateFormat.getTimeInstance(self.__timeStyle, locale)
         else:
-            use_date_style = (
-                self.__dateStyle if self.__dateStyle >= 0 else datetime.date.strftime
-            )  # Simulating 3
+            useDateStyle = self.__dateStyle if self.__dateStyle >= 0 else 3
             if locale is None:
-                formatter = (
-                    datetime.date.strftime
-                )  # Simulating DateFormat.getDateInstance
+                formatter = DateFormat.getDateInstance(useDateStyle)
             else:
-                formatter = (
-                    datetime.date.strftime
-                )  # Simulating DateFormat.getDateInstance with locale
+                formatter = DateFormat.getDateInstance(useDateStyle, locale)
 
-        # Simulating formatter.setLenient(false) - Python's datetime is strict by default
+        formatter.setLenient(False)
         return formatter
 
     def _getFormat0(self, pattern: str, locale: typing.Any) -> Format:
         formatter = None
-        use_pattern = pattern is not None and len(pattern) > 0
-        if not use_pattern:
+        usePattern = pattern is not None and len(pattern) > 0
+        if not usePattern:
             formatter = self._getFormat1(locale)
         elif locale is None:
-            formatter = (
-                datetime.datetime.strptime
-            )  # Simulating SimpleDateFormat(pattern)
+            formatter = SimpleDateFormat(pattern)
         else:
-            # Simulating SimpleDateFormat(pattern, symbols) with locale
-            formatter = (
-                datetime.datetime.strptime
-            )  # Python's datetime does not directly support locale-based symbols
-            # Note: You may need to use a library like Babel for full locale support
-
-        # Simulating formatter.setLenient(false) - Python's datetime is strict by default
+            symbols = DateFormatSymbols(locale)
+            formatter = SimpleDateFormat(pattern, symbols)
+        formatter.setLenient(False)
         return formatter
 
     def _parse(
@@ -185,24 +180,19 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
         locale: typing.Any,
         timeZone: typing.Union[zoneinfo.ZoneInfo, datetime.timezone],
     ) -> typing.Any:
-        value = value.strip() if value is not None else None
+        value = None if value is None else value.strip()
         if value is None or len(value) == 0:
             return None
-
         formatter = self._getFormat0(pattern, locale)
         if timeZone is not None:
-            # Simulating formatter.setTimeZone(timeZone)
-            # Python's datetime does not have a direct equivalent for setting a timezone on a formatter.
-            # Instead, we handle time zones during parsing or conversion.
-            pass  # Time zone handling would be implemented here if needed.
-
-        return self._parse(value, formatter)
+            formatter.setTimeZone(timeZone)
+        return super()._parse(value, formatter)
 
     def _format5(self, value: typing.Any, formatter: Format) -> str:
         if value is None:
             return None
         elif isinstance(value, datetime.datetime):
-            value = value.date()
+            value = value
         return formatter.format(value)
 
     def format4(
@@ -214,11 +204,10 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
     ) -> str:
         formatter = self._getFormat0(pattern, locale)
         if timeZone is not None:
-            formatter.timezone = timeZone  # Simulating formatter.setTimeZone(timeZone)
+            formatter.setTimeZone(timeZone)
         elif isinstance(value, datetime.datetime):
-            formatter.timezone = (
-                value.tzinfo
-            )  # Simulating ((Calendar) value).getTimeZone()
+            if value.tzinfo is not None:
+                formatter.setTimeZone(value.tzinfo)
         return self._format5(value, formatter)
 
     def format3(self, value: typing.Any, pattern: str, locale: typing.Any) -> str:
@@ -270,7 +259,14 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
         ],
         field: int,
     ) -> int:
-        difference = getattr(value, field) - getattr(compare, field)
+        # Map Java Calendar field constants to Python datetime attributes
+        # This assumes field is a Calendar field constant (e.g., Calendar.YEAR, Calendar.MONTH, etc.)
+        # and that value and compare are datetime objects with the appropriate attributes
+
+        value_field = getattr(value, self._getFieldName(field), 0)
+        compare_field = getattr(compare, self._getFieldName(field), 0)
+
+        difference = value_field - compare_field
         if difference < 0:
             return -1
         elif difference > 0:
@@ -280,20 +276,39 @@ class AbstractCalendarValidator(AbstractFormatValidator, ABC):
 
     def __calculateQuarter(
         self,
-        calendar: typing.Union[datetime.datetime, datetime.date],
+        calendar: typing.Union[
+            datetime.datetime,
+            datetime.date,
+            datetime.time,
+            datetime.timedelta,
+            datetime.timezone,
+        ],
         monthOfFirstQuarter: int,
     ) -> int:
-        year = calendar.year
-        month = calendar.month
-        relative_month = (
-            (month - monthOfFirstQuarter)
-            if month >= monthOfFirstQuarter
-            else (month + (12 - monthOfFirstQuarter))
-        )
-        quarter = (relative_month // 3) + 1
+        # Get year and month from the calendar object
+        if isinstance(calendar, datetime.datetime):
+            year = calendar.year
+            month = calendar.month
+        elif isinstance(calendar, datetime.date):
+            year = calendar.year
+            month = calendar.month
+        else:
+            raise ValueError("Calendar must be a datetime or date object")
+
+        # Calculate relative month based on the first quarter month
+        if month >= monthOfFirstQuarter:
+            relativeMonth = month - monthOfFirstQuarter
+        else:
+            relativeMonth = month + (12 - monthOfFirstQuarter)
+
+        # Calculate quarter (1-4)
+        quarter = (relativeMonth // 3) + 1
+
+        # Adjust year if month is before the first quarter month
         if month < monthOfFirstQuarter:
             year -= 1
+
         return (year * 10) + quarter
 
     def _processParsedValue(self, value: typing.Any, formatter: Format) -> typing.Any:
-        raise NotImplementedError("Subclasses must implement this method")
+        pass

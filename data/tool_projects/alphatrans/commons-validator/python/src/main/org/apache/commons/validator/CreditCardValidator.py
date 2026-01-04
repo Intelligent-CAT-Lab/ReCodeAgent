@@ -24,7 +24,7 @@ class CreditCardValidator:
     def _luhnCheck(self, cardNumber: str) -> bool:
         digits = len(cardNumber)
         oddOrEven = digits & 1
-        total_sum = 0
+        sum_value = 0
 
         for count in range(digits):
             try:
@@ -32,14 +32,14 @@ class CreditCardValidator:
             except ValueError:
                 return False
 
-            if ((count & 1) ^ oddOrEven) == 0:  # not
+            if ((count & 1) ^ oddOrEven) == 0:
                 digit *= 2
                 if digit > 9:
                     digit -= 9
 
-            total_sum += digit
+            sum_value += digit
 
-        return total_sum != 0 and total_sum % 10 == 0
+        return False if sum_value == 0 else (sum_value % 10 == 0)
 
     def addAllowedCardType(self, type_: CreditCardType) -> None:
         self.__cardTypes.append(type_)
@@ -69,52 +69,26 @@ class CreditCardValidator:
     def __init__(self, options: int) -> None:
         super().__init__()
 
+        self.__cardTypes = []
+
         f = Flags(1, options)
-        if f.isOn(self.VISA):
+        if f.isOn(CreditCardValidator.VISA):
             self.__cardTypes.append(Visa())
 
-        if f.isOn(self.AMEX):
+        if f.isOn(CreditCardValidator.AMEX):
             self.__cardTypes.append(Amex())
 
-        if f.isOn(self.MASTERCARD):
+        if f.isOn(CreditCardValidator.MASTERCARD):
             self.__cardTypes.append(Mastercard())
 
-        if f.isOn(self.DISCOVER):
+        if f.isOn(CreditCardValidator.DISCOVER):
             self.__cardTypes.append(Discover())
 
 
 class CreditCardType(ABC):
 
     def matches(self, card: str) -> bool:
-        # Implement the logic for matching the credit card type here
-        # For now, returning False as a placeholder
-        return False
-
-
-class Discover(CreditCardType):
-
-    __PREFIX: str = "6011"
-
-    def matches(self, card: str) -> bool:
-        return card[:4] == self.__PREFIX and len(card) == 16
-
-
-class Mastercard(CreditCardType):
-
-    __PREFIX: str = "51,52,53,54,55,"
-
-    def matches(self, card: str) -> bool:
-        prefix2 = card[:2] + ","
-        return (prefix2 in self.__PREFIX) and (len(card) == 16)
-
-
-class Amex(CreditCardType):
-
-    __PREFIX: str = "34,37,"
-
-    def matches(self, card: str) -> bool:
-        prefix2 = card[:2] + ","
-        return (prefix2 in self.__PREFIX) and (len(card) == 15)
+        pass
 
 
 class Visa(CreditCardType):
@@ -122,4 +96,30 @@ class Visa(CreditCardType):
     __PREFIX: str = "4"
 
     def matches(self, card: str) -> bool:
-        return card[:1] == self.__PREFIX and (len(card) == 13 or len(card) == 16)
+        return card[0:1] == Visa.__PREFIX and (len(card) == 13 or len(card) == 16)
+
+
+class Mastercard(CreditCardType):
+
+    __PREFIX: str = "51,52,53,54,55,"
+
+    def matches(self, card: str) -> bool:
+        prefix2 = card[0:2] + ","
+        return (prefix2 in self.__PREFIX) and (len(card) == 16)
+
+
+class Discover(CreditCardType):
+
+    __PREFIX: str = "6011"
+
+    def matches(self, card: str) -> bool:
+        return card[0:4] == self.__PREFIX and len(card) == 16
+
+
+class Amex(CreditCardType):
+
+    __PREFIX: str = "34,37,"
+
+    def matches(self, card: str) -> bool:
+        prefix2 = card[0:2] + ","
+        return (prefix2 in self.__PREFIX) and (len(card) == 15)

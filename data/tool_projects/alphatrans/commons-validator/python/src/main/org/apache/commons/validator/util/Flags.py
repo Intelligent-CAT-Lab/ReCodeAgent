@@ -1,5 +1,4 @@
 from __future__ import annotations
-import time
 import re
 import os
 import io
@@ -13,11 +12,9 @@ class Flags:
     __serialVersionUID: int = 8481587558770237995
 
     def toString(self) -> str:
-        bin_str = bin(self.__flags)[
-            2:
-        ]  # Convert to binary string and remove '0b' prefix
-        padded_bin_str = bin_str.zfill(64)  # Pad with leading zeros to make it 64 bits
-        return padded_bin_str
+        bin_str = bin(self.__flags)[2:]  # Convert to binary and remove '0b' prefix
+        bin_str = bin_str.zfill(64)  # Pad with zeros to make it 64 characters
+        return bin_str
 
     def hashCode(self) -> int:
         return int(self.__flags)
@@ -29,21 +26,20 @@ class Flags:
         if obj is self:
             return True
 
-        return self.__flags == obj.__flags
+        f: Flags = obj
+
+        return self.__flags == f.__flags
 
     def clone(self) -> typing.Any:
-        try:
-            import copy
+        import copy
 
-            return copy.deepcopy(self)
-        except Exception as e:
-            raise RuntimeError("Couldn't clone Flags object.") from e
+        return copy.copy(self)
 
     def turnOnAll(self) -> None:
-        self.__flags = 0xFFFFFFFFFFFFFFFF
+        self._Flags__flags = 0xFFFFFFFFFFFFFFFF
 
     def clear(self) -> None:
-        self.__flags = 0
+        self._Flags__flags = 0
 
     def turnOffAll(self) -> None:
         self.__flags = 0
@@ -64,5 +60,6 @@ class Flags:
         return self.__flags
 
     def __init__(self, constructorId: int, flags: int) -> None:
+        super().__init__()
         if constructorId == 1:
             self.__flags = flags

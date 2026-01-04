@@ -7,69 +7,58 @@ from src.main.org.apache.commons.validator.routines.DomainValidator import *
 class EmailValidator:
 
     __EMAIL_VALIDATOR: EmailValidator = None
+    __USER_PATTERN: re.Pattern = None  # LLM could not translate this field
+
     __TLD_PATTERN: re.Pattern = re.compile(r"^([a-zA-Z]+)$")
     __IP_DOMAIN_PATTERN: re.Pattern = re.compile(r"^\[(.*)\]$")
-    __QUOTED_USER: str = r'("[^"]*")'
-    __VALID_CHARS: str = r"[^\\s" + r"\\p{Cntrl}\\(\\)<>@,;:'\\\\\\\"\\.\\[\\]" + r"]"
-    __SPECIAL_CHARS: str = r"\p{Cntrl}\(\)<>@,;:'\\\"\.\\[\]"
-    __WORD: str = None
+    __WORD: str = None  # LLM could not translate this field
 
     __ATOM: str = None  # LLM could not translate this field
 
-    __ATOM_PATTERN: re.Pattern = None
-    __DOMAIN_PATTERN: re.Pattern = None
-    __USER_PATTERN: re.Pattern = re.compile(rf"^\s*{__WORD}(\.{__WORD})*$")
+    __QUOTED_USER: str = '("[^"]*")'
+    __SPECIAL_CHARS: str = None  # LLM could not translate this field
+
+    __ATOM_PATTERN: re.Pattern = None  # LLM could not translate this field
+
+    __DOMAIN_PATTERN: re.Pattern = (
+        re.compile(r"^" + (__ATOM or "") + r"(\." + (__ATOM or "") + r")*\s*$") if __ATOM else None
+    )
 
     @staticmethod
     def initialize_fields() -> None:
         EmailValidator.__EMAIL_VALIDATOR: EmailValidator = EmailValidator()
 
-        EmailValidator.__WORD: str = (
-            f"(({EmailValidator.__VALID_CHARS}|'')+|{EmailValidator.__QUOTED_USER})"
-        )
-
-        EmailValidator.__ATOM_PATTERN: re.Pattern = re.compile(
-            f"({EmailValidator.__ATOM})"
-        )
-
-        EmailValidator.__DOMAIN_PATTERN: re.Pattern = re.compile(
-            rf"^{EmailValidator.__ATOM}(.{EmailValidator.__ATOM})*s*$"
-        )
-
     def _stripComments(self, emailStr: str) -> str:
         import re
 
         result = emailStr
-        commentPat = r'^((?:[^"\\\\]|\\\\.)*(?:"(?:[^"\\\\]|\\\\.)*"(?:[^"\\\\]|\\\\.)*)*)\((?:[^()\\\\]|\\\\.)*\)'
-        commentMatcher = re.compile(commentPat)
+        commentPat = r'^((?:[^"\\]|\\.)*(?:"(?:[^"\\]|\\.)*"(?:[^"\\]|\\.)*)*)\\((?:[^()\\]|\\.)*\\)'
 
-        while commentMatcher.match(result):
-            result = re.sub(commentPat, r"\1 ", result)
+        while re.match(commentPat, result):
+            result = re.sub(commentPat, r"\1 ", result, count=1)
 
         return result
 
     def _isValidSymbolicDomain(self, domain: str) -> bool:
-        domain_segment = [None] * 10  # Equivalent to `new String[10]` in Java
+        domainSegment = [None] * 10
         match = True
         i = 0
-        atom_matcher = self.__ATOM_PATTERN.match(domain)
 
         while match:
-            if atom_matcher:
-                domain_segment[i] = atom_matcher.group(1)
-                l = len(domain_segment[i]) + 1
+            atomMatcher = self.__ATOM_PATTERN.match(domain)
+            match = atomMatcher is not None
+            if match:
+                domainSegment[i] = atomMatcher.group(1)
+                l = len(domainSegment[i]) + 1
                 domain = "" if l >= len(domain) else domain[l:]
                 i += 1
-                atom_matcher = self.__ATOM_PATTERN.match(domain)
-            else:
-                match = False
 
         length = i
 
         if length < 2:
             return False
 
-        tld = domain_segment[length - 1]
+        tld = domainSegment[length - 1]
         if len(tld) > 1:
             if not self.__TLD_PATTERN.match(tld):
                 return False
@@ -79,42 +68,42 @@ class EmailValidator:
         return True
 
     def _isValidIpAddress(self, ipAddress: str) -> bool:
-        ip_address_matcher = self.__IP_DOMAIN_PATTERN.match(ipAddress)
-        if not ip_address_matcher:
+        ipAddressMatcher = self.__IP_DOMAIN_PATTERN.match(ipAddress)
+
+        if not ipAddressMatcher:
             return False
 
-        ip_segments = ip_address_matcher.group(1).split(".")
-        if len(ip_segments) != 4:
-            return False
-
-        for ip_segment in ip_segments:
-            if not ip_segment or len(ip_segment) == 0:
+        for i in range(1, 5):  # 1 to 4 inclusive
+            ipSegment = ipAddressMatcher.group(i)
+            if ipSegment is None or len(ipSegment) <= 0:
                 return False
 
+            iIpSegment = 0
+
             try:
-                i_ip_segment = int(ip_segment)
+                iIpSegment = int(ipSegment)
             except ValueError:
                 return False
 
-            if i_ip_segment < 0 or i_ip_segment > 255:
+            if iIpSegment > 255:
                 return False
 
         return True
 
     def _isValidUser(self, user: str) -> bool:
-        return bool(self.__USER_PATTERN.match(user))
+        return self.__USER_PATTERN.match(user) is not None
 
     def _isValidDomain(self, domain: str) -> bool:
         symbolic = False
 
-        ip_domain_matcher = self.__IP_DOMAIN_PATTERN.match(domain)
+        ipDomainMatcher = self.__IP_DOMAIN_PATTERN.match(domain)
 
-        if ip_domain_matcher:
-            inet_address_validator = InetAddressValidator.getInstance()
-            if inet_address_validator.isValid(ip_domain_matcher.group(1)):
+        if ipDomainMatcher:
+            inetAddressValidator = InetAddressValidator.getInstance()
+            if inetAddressValidator.isValid(ipDomainMatcher.group(1)):
                 return True
         else:
-            symbolic = bool(self.__DOMAIN_PATTERN.match(domain))
+            symbolic = self.__DOMAIN_PATTERN.match(domain) is not None
 
         if symbolic:
             if not self._isValidSymbolicDomain(domain):
@@ -125,7 +114,8 @@ class EmailValidator:
         return True
 
     def isValid(self, email: str) -> bool:
-        return EmailValidator.getInstance0().isValid(email)
+
+        pass  # LLM could not translate this method
 
     def __init__(self) -> None:
         super().__init__()

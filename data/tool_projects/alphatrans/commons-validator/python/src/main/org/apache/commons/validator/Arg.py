@@ -11,30 +11,36 @@ class Arg:
 
     _resource: bool = True
     _position: int = -1
-    _name: str = None
-    _key: str = None
+    _name: str = None  # LLM could not translate this field
+
+    _key: str = None  # LLM could not translate this field
+
     _bundle: str = None
     __serialVersionUID: int = -8922606779669839294
 
     def toString(self) -> str:
         results = []
+
         results.append("Arg: name=")
-        results.append(self._name)
+        results.append(str(self._name))
         results.append("  key=")
-        results.append(self._key)
+        results.append(str(self._key))
         results.append("  position=")
         results.append(str(self._position))
         results.append("  bundle=")
-        results.append(self._bundle)
+        results.append(str(self._bundle))
         results.append("  resource=")
         results.append(str(self._resource))
         results.append("\n")
+
         return "".join(results)
 
     def clone(self) -> typing.Any:
+        import copy
+
         try:
-            return super().clone()
-        except AttributeError as e:  # Python does not have NotImplementedError
+            return copy.copy(self)
+        except Exception as e:
             raise RuntimeError(str(e))
 
     def setResource(self, resource: bool) -> None:

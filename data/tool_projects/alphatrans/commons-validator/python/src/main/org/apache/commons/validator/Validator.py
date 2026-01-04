@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-import threading
+import sys
 import io
 import typing
 from typing import *
@@ -31,13 +31,9 @@ class Validator:
     def initialize_fields() -> None:
         Validator.VALIDATOR_PARAM: str = "org.apache.commons.validator.Validator"
 
-        Validator.VALIDATOR_RESULTS_PARAM: str = (
-            "org.apache.commons.validator.ValidatorResults"
-        )
+        Validator.VALIDATOR_RESULTS_PARAM: str = "org.apache.commons.validator.ValidatorResults"
 
-        Validator.VALIDATOR_ACTION_PARAM: str = (
-            "org.apache.commons.validator.ValidatorAction"
-        )
+        Validator.VALIDATOR_ACTION_PARAM: str = "org.apache.commons.validator.ValidatorAction"
 
     def setOnlyReturnErrors(self, onlyReturnErrors: bool) -> None:
         self._onlyReturnErrors = onlyReturnErrors
@@ -53,11 +49,12 @@ class Validator:
             return self._classLoader
 
         if self._useContextClassLoader:
-            context_loader = threading.current_thread().__class__.__loader__
-            if context_loader is not None:
-                return context_loader
+            # Python doesn't have direct equivalent to Thread.currentThread().getContextClassLoader()
+            # This would need to be handled differently based on the specific use case
+            # For now, we'll skip this part as Python's module system works differently
+            pass
 
-        return self.__class__.__loader__
+        return self.__class__.__module__
 
     def setUseContextClassLoader(self, use: bool) -> None:
         self._useContextClassLoader = use
@@ -106,12 +103,14 @@ class Validator:
         if constructorId == 0:
             if resources is None:
                 raise ValueError("Resources cannot be null.")
+
             self._resources = resources
             self._formName = formName
             self._fieldName = fieldName
         else:
             if resources is None:
                 raise ValueError("Resources cannot be null.")
+
             self._resources = resources
             self._formName = formName
 

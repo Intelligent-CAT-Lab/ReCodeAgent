@@ -1,5 +1,4 @@
 from __future__ import annotations
-import copy
 import re
 import io
 import typing
@@ -9,13 +8,15 @@ from src.main.org.apache.commons.validator.Field import *
 
 class ValidatorResult:
 
-    _field: Optional[Field] = None
+    _field: typing.Any = None
     _hAction: typing.Dict[str, ResultStatus] = {}
 
     __serialVersionUID: int = -3713364681647250531
 
     def getActionMap(self) -> typing.Dict[str, ResultStatus]:
-        return self._hAction.copy()
+        from types import MappingProxyType
+
+        return MappingProxyType(self._hAction)
 
     def getField(self) -> typing.Any:
         return self._field
@@ -63,9 +64,7 @@ class ResultStatus:
         self.__valid = valid
 
     @staticmethod
-    def ResultStatus0(
-        ignored: ValidatorResult, valid: bool, result: typing.Any
-    ) -> ResultStatus:
+    def ResultStatus0(ignored: ValidatorResult, valid: bool, result: typing.Any) -> ResultStatus:
         return ResultStatus(1, result, None, valid)
 
     def __init__(

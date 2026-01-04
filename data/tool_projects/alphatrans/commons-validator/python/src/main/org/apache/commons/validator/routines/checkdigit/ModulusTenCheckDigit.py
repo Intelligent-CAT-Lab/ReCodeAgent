@@ -1,7 +1,6 @@
 from __future__ import annotations
 import copy
 import re
-import numbers
 import io
 import typing
 from typing import *
@@ -37,11 +36,15 @@ class ModulusTenCheckDigit(ModulusCheckDigit):
         return weightedValue
 
     def _toInt(self, character: str, leftPos: int, rightPos: int) -> int:
-        num = int(character) if character.isdigit() else -1
+        if len(character) != 1:
+            raise CheckDigitException.CheckDigitException1(f"Invalid Character[{leftPos}] = '{character}'")
+        num = -1
+        if character.isdigit():
+            num = int(character)
+        elif character.isalpha():
+            num = ord(character.upper()) - ord("A") + 10
         if num < 0:
-            raise CheckDigitException.CheckDigitException1(
-                f"Invalid Character[{leftPos}] = '{character}'"
-            )
+            raise CheckDigitException.CheckDigitException1(f"Invalid Character[{leftPos}] = '{character}'")
         return num
 
     def isValid(self, code: str) -> bool:
@@ -50,7 +53,7 @@ class ModulusTenCheckDigit(ModulusCheckDigit):
         if not code[-1].isdigit():
             return False
 
-        return super().isValid(code)
+        return ModulusCheckDigit.isValid(self, code)
 
     @staticmethod
     def ModulusTenCheckDigit2(
@@ -59,9 +62,7 @@ class ModulusTenCheckDigit(ModulusCheckDigit):
         return ModulusTenCheckDigit(postitionWeight, False, False)
 
     @staticmethod
-    def ModulusTenCheckDigit1(
-        postitionWeight: typing.List[int], useRightPos: bool
-    ) -> ModulusTenCheckDigit:
+    def ModulusTenCheckDigit1(postitionWeight: typing.List[int], useRightPos: bool) -> ModulusTenCheckDigit:
         return ModulusTenCheckDigit(postitionWeight, useRightPos, False)
 
     def __init__(
@@ -70,7 +71,7 @@ class ModulusTenCheckDigit(ModulusCheckDigit):
         useRightPos: bool,
         sumWeightedDigits: bool,
     ) -> None:
-        super().__init__(10)  # CHECKSTYLE IGNORE MagicNumber
-        self.__postitionWeight = postitionWeight.copy()
-        self.__useRightPos = useRightPos
-        self.__sumWeightedDigits = sumWeightedDigits
+        super().__init__(10)
+        self._ModulusTenCheckDigit__postitionWeight = postitionWeight.copy()
+        self._ModulusTenCheckDigit__useRightPos = useRightPos
+        self._ModulusTenCheckDigit__sumWeightedDigits = sumWeightedDigits

@@ -13,21 +13,13 @@ from src.main.org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit im
 
 class CreditCardValidator:
 
-    VPAY_VALIDATOR: CodeValidator = CodeValidator.CodeValidator5(
-        r"^(4)(\d{12,18})$", LuhnCheckDigit.LUHN_CHECK_DIGIT
-    )
-    VISA_VALIDATOR: CodeValidator = CodeValidator.CodeValidator5(
-        r"^(4)(\d{12}|\d{15})$", LuhnCheckDigit.LUHN_CHECK_DIGIT
-    )
+    VPAY_VALIDATOR: CodeValidator = None  # LLM could not translate this field
+
     MASTERCARD_VALIDATOR_PRE_OCT2016: CodeValidator = CodeValidator.CodeValidator5(
         "^(5[1-5]\\d{14})$", LuhnCheckDigit.LUHN_CHECK_DIGIT
     )
+    AMEX_VALIDATOR: CodeValidator = None  # LLM could not translate this field
 
-    DISCOVER_VALIDATOR: CodeValidator = None  # LLM could not translate this field
-
-    AMEX_VALIDATOR: CodeValidator = CodeValidator.CodeValidator5(
-        r"^(3[47]\d{13})$", LuhnCheckDigit.LUHN_CHECK_DIGIT
-    )
     MASTERCARD_PRE_OCT2016: int = 1 << 6
     VPAY: int = 1 << 5
     DINERS: int = 1 << 4
@@ -36,26 +28,24 @@ class CreditCardValidator:
     VISA: int = 1 << 1
     AMEX: int = 1 << 0
     NONE: int = 0
-    __MASTERCARD_REGEX: RegexValidator = RegexValidator(
+    __MASTERCARD_REGEX: RegexValidator = RegexValidator.RegexValidator1(
         [
-            r"^(5[1-5]\d{14})$",  # 51 - 55 (pre Oct 2016)
-            r"^(2221\d{12})$",  # 222100 - 222199
-            r"^(222[2-9]\d{12})$",  # 222200 - 222999
-            r"^(22[3-9]\d{13})$",  # 223000 - 229999
-            r"^(2[3-6]\d{14})$",  # 230000 - 269999
-            r"^(27[01]\d{13})$",  # 270000 - 271999
-            r"^(2720\d{12})$",  # 272000 - 272099
-        ],
-        caseSensitive=True,
+            "^(5[1-5]\\d{14})$",  # 51 - 55 (pre Oct 2016)
+            "^(2221\\d{12})$",  # 222100 - 222199
+            "^(222[2-9]\\d{12})$",  # 222200 - 222999
+            "^(22[3-9]\\d{13})$",  # 223000 - 229999
+            "^(2[3-6]\\d{14})$",  # 230000 - 269999
+            "^(27[01]\\d{13})$",  # 270000 - 271999
+            "^(2720\\d{12})$",  # 272000 - 272099
+        ]
     )
-    __DISCOVER_REGEX: RegexValidator = RegexValidator(
+    __DISCOVER_REGEX: RegexValidator = RegexValidator.RegexValidator1(
         [
-            r"^(6011\d{12,13})$",
-            r"^(64[4-9]\d{13})$",
-            r"^(65\d{14})$",
-            r"^(62[2-8]\d{13})$",
-        ],
-        caseSensitive=True,
+            "^(6011\\d{12,13})$",
+            "^(64[4-9]\\d{13})$",
+            "^(65\\d{14})$",
+            "^(62[2-8]\\d{13})$",
+        ]
     )
     __LUHN_VALIDATOR: CheckDigit = LuhnCheckDigit.LUHN_CHECK_DIGIT
     __cardTypes: typing.List[CodeValidator] = []
@@ -63,63 +53,42 @@ class CreditCardValidator:
     __MAX_CC_LENGTH: int = 19
     __MIN_CC_LENGTH: int = 12
     __serialVersionUID: int = 5955978921148959496
-    MASTERCARD_VALIDATOR: CodeValidator = CodeValidator.CodeValidator2(
-        __MASTERCARD_REGEX, __LUHN_VALIDATOR
-    )
-    DINERS_VALIDATOR: CodeValidator = None
+    VISA_VALIDATOR: CodeValidator = CodeValidator.CodeValidator5("^(4)(\\d{12}|\\d{15})$", __LUHN_VALIDATOR)
+    MASTERCARD_VALIDATOR: CodeValidator = CodeValidator.CodeValidator2(__MASTERCARD_REGEX, __LUHN_VALIDATOR)
+    DISCOVER_VALIDATOR: CodeValidator = CodeValidator.CodeValidator2(__DISCOVER_REGEX, __LUHN_VALIDATOR)
+
+    DINERS_VALIDATOR: CodeValidator = None  # LLM could not translate this field
 
     @staticmethod
-    def initialize_fields() -> None:
-        CreditCardValidator.DINERS_VALIDATOR: CodeValidator = (
-            CodeValidator.CodeValidator5(
-                r"^(30[0-5]d{11}|3095d{10}|36d{12}|3[8-9]d{12})$",
-                CreditCardValidator.__LUHN_VALIDATOR,
-            )
-        )
+    def createRangeValidator(creditCardRanges: typing.List[CreditCardRange], digitCheck: CheckDigit) -> CodeValidator:
+        # Clone the credit card ranges
+        ccr = creditCardRanges.copy()
 
-    @staticmethod
-    def createRangeValidator(
-        creditCardRanges: typing.List[CreditCardRange], digitCheck: CheckDigit
-    ) -> CodeValidator:
+        # Create a custom RegexValidator subclass
         class CustomRegexValidator(RegexValidator):
-            __serialVersionUID: int = 1
-
-            def __init__(self, creditCardRanges: typing.List[CreditCardRange]):
+            def __init__(self):
                 super().__init__(["(\\d+)"], True)
-                self.ccr = creditCardRanges.copy()
+                self.ccr = ccr
 
-            def validate(self, value: str) -> Optional[str]:
-                if self.match(value) is not None:
+            def validate(self, value: str) -> str:
+                if super().match(value) is not None:
                     length = len(value)
-                    for range in self.ccr:
-                        if self.validLength(length, range):
-                            if range.high is None:  # single prefix only
-                                if value.startswith(range.low):
+                    for range_ in self.ccr:
+                        if CreditCardValidator.validLength(length, range_):
+                            if range_.high is None:  # single prefix only
+                                if value.startswith(range_.low):
                                     return value
-                            elif (
-                                range.low <= value
-                                and range.high >= value[: len(range.high)]
-                            ):
+                            elif range_.low <= value[: len(range_.low)] and range_.high >= value[: len(range_.high)]:
                                 return value
                 return None
 
             def isValid(self, value: str) -> bool:
                 return self.validate(value) is not None
 
-            def match(self, value: str) -> Optional[List[str]]:
-                validated_value = self.validate(value)
-                return [validated_value] if validated_value else None
+            def match(self, value: str) -> typing.List[str]:
+                return [self.validate(value)]
 
-            def validLength(self, length: int, range: CreditCardRange) -> bool:
-                return (
-                    len(range.low)
-                    <= length
-                    <= (len(range.high) if range.high else len(range.low))
-                )
-
-        return LuhnCheckDigit.CodeValidator2(
-            CustomRegexValidator(creditCardRanges), digitCheck
-        )
+        return CodeValidator.CodeValidator2(CustomRegexValidator(), digitCheck)
 
     @staticmethod
     def validLength(valueLength: int, range_: CreditCardRange) -> bool:
@@ -128,16 +97,18 @@ class CreditCardValidator:
                 if valueLength == length:
                     return True
             return False
-        return range_.minLen <= valueLength <= range_.maxLen
+        return valueLength >= range_.minLen and valueLength <= range_.maxLen
 
     def validate(self, card: str) -> typing.Any:
         if card is None or len(card) == 0:
             return None
+
         result = None
         for cardType in self.__cardTypes:
             result = cardType.validate(card)
             if result is not None:
                 return result
+
         return None
 
     def isValid(self, card: str) -> bool:
@@ -150,10 +121,8 @@ class CreditCardValidator:
 
     @staticmethod
     def genericCreditCardValidator2() -> CreditCardValidator:
-        return CreditCardValidator.genericCreditCardValidator0(
-            CreditCardValidator._CreditCardValidator__MIN_CC_LENGTH,
-            CreditCardValidator._CreditCardValidator__MAX_CC_LENGTH,
-        )
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def genericCreditCardValidator1(length: int) -> CreditCardValidator:
@@ -167,7 +136,7 @@ class CreditCardValidator:
             None,
             [
                 CodeValidator(
-                    0,
+                    1,
                     CreditCardValidator._CreditCardValidator__LUHN_VALIDATOR,
                     maxLen,
                     None,
@@ -185,28 +154,29 @@ class CreditCardValidator:
         creditCardValidators: typing.List[CodeValidator],
     ) -> None:
         super().__init__()
+        self.__cardTypes = []
 
         if constructorId == 0:
-            if self.__isOn(options, self.VISA):
-                self.__cardTypes.append(self.VISA_VALIDATOR)
+            if self.__isOn(options, CreditCardValidator.VISA):
+                self.__cardTypes.append(CreditCardValidator.VISA_VALIDATOR)
 
-            if self.__isOn(options, self.VPAY):
-                self.__cardTypes.append(self.VPAY_VALIDATOR)
+            if self.__isOn(options, CreditCardValidator.VPAY):
+                self.__cardTypes.append(CreditCardValidator.VPAY_VALIDATOR)
 
-            if self.__isOn(options, self.AMEX):
-                self.__cardTypes.append(self.AMEX_VALIDATOR)
+            if self.__isOn(options, CreditCardValidator.AMEX):
+                self.__cardTypes.append(CreditCardValidator.AMEX_VALIDATOR)
 
-            if self.__isOn(options, self.MASTERCARD):
-                self.__cardTypes.append(self.MASTERCARD_VALIDATOR)
+            if self.__isOn(options, CreditCardValidator.MASTERCARD):
+                self.__cardTypes.append(CreditCardValidator.MASTERCARD_VALIDATOR)
 
-            if self.__isOn(options, self.MASTERCARD_PRE_OCT2016):
-                self.__cardTypes.append(self.MASTERCARD_VALIDATOR_PRE_OCT2016)
+            if self.__isOn(options, CreditCardValidator.MASTERCARD_PRE_OCT2016):
+                self.__cardTypes.append(CreditCardValidator.MASTERCARD_VALIDATOR_PRE_OCT2016)
 
-            if self.__isOn(options, self.DISCOVER):
-                self.__cardTypes.append(self.DISCOVER_VALIDATOR)
+            if self.__isOn(options, CreditCardValidator.DISCOVER):
+                self.__cardTypes.append(CreditCardValidator.DISCOVER_VALIDATOR)
 
-            if self.__isOn(options, self.DINERS):
-                self.__cardTypes.append(self.DINERS_VALIDATOR)
+            if self.__isOn(options, CreditCardValidator.DINERS):
+                self.__cardTypes.append(CreditCardValidator.DINERS_VALIDATOR)
 
         elif constructorId == 1:
             if creditCardValidators is None:
@@ -217,7 +187,10 @@ class CreditCardValidator:
             if creditCardRanges is None:
                 raise ValueError("Card ranges are missing")
             self.__cardTypes.extend(
-                self.createRangeValidator(creditCardRanges, self.__LUHN_VALIDATOR)
+                CreditCardValidator.createRangeValidator(
+                    creditCardRanges,
+                    CreditCardValidator._CreditCardValidator__LUHN_VALIDATOR,
+                )
             )
 
         elif constructorId == 3:
@@ -227,7 +200,10 @@ class CreditCardValidator:
                 raise ValueError("Card ranges are missing")
             self.__cardTypes.extend(creditCardValidators)
             self.__cardTypes.extend(
-                self.createRangeValidator(creditCardRanges, self.__LUHN_VALIDATOR)
+                CreditCardValidator.createRangeValidator(
+                    creditCardRanges,
+                    CreditCardValidator._CreditCardValidator__LUHN_VALIDATOR,
+                )
             )
 
     @staticmethod
@@ -238,8 +214,8 @@ class CreditCardValidator:
             + CreditCardValidator.VISA
             + CreditCardValidator.MASTERCARD
             + CreditCardValidator.DISCOVER,
-            [],
-            [],
+            None,
+            None,
         )
 
     def __isOn(self, options: int, flag: int) -> bool:
@@ -278,7 +254,4 @@ class CreditCardRange:
             self.high = high
             self.minLen = -1
             self.maxLen = -1
-            self.lengths = lengths.copy()  # Use copy() to clone the list in Python
-
-
-CreditCardValidator.initialize_fields()
+            self.lengths = lengths.copy() if lengths is not None else None
