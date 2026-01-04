@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-import enum
+import os
 from io import StringIO
 import io
 import typing
@@ -25,13 +25,11 @@ class MissingOptionException(ParseException):
             return MissingOptionException(
                 constructorId,
                 missingOptions,
-                MissingOptionException.__createMessage(missingOptions),
+                MissingOptionException._MissingOptionException__createMessage(missingOptions),
             )
         return MissingOptionException(constructorId, missingOptions, message)
 
-    def __init__(
-        self, constructorId: int, missingOptions: typing.List[typing.Any], message: str
-    ) -> None:
+    def __init__(self, constructorId: int, missingOptions: typing.List[typing.Any], message: str) -> None:
         super().__init__(message)
         if constructorId == 1:
             self.__missingOptions = missingOptions
@@ -44,9 +42,21 @@ class MissingOptionException(ParseException):
         buf.write(": ")
 
         it = iter(missingOptions)
-        for i, option in enumerate(missingOptions):
-            buf.write(str(option))
-            if i < len(missingOptions) - 1:
-                buf.write(", ")
+        try:
+            while True:
+                buf.write(str(next(it)))
+                # Check if there's a next element
+                try:
+                    # Peek at next element
+                    next_elem = next(it)
+                    buf.write(", ")
+                    # Put it back by creating new iterator with it prepended
+                    it = iter([next_elem] + list(it))
+                except StopIteration:
+                    break
+        except StopIteration:
+            pass
 
-        return buf.getvalue()
+        result = buf.getvalue()
+        buf.close()
+        return result

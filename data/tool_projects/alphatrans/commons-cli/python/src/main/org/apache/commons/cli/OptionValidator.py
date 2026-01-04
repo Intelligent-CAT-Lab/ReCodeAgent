@@ -18,16 +18,14 @@ class OptionValidator:
         else:
             for ch in option:
                 if not OptionValidator.__isValidChar(ch):
-                    raise ValueError(
-                        f"The option '{option}' contains an illegal character : '{ch}'"
-                    )
+                    raise ValueError(f"The option '{option}' contains an illegal " f"character : '{ch}'")
 
         return option
 
     @staticmethod
     def __isValidOpt(c: str) -> bool:
-        return OptionValidator.__isValidChar(c) or c in {"?", "@"}
+        return OptionValidator.__isValidChar(c) or c == "?" or c == "@"
 
     @staticmethod
     def __isValidChar(c: str) -> bool:
-        return c.isidentifier() or c.isdigit() or c == "_"
+        return c.isalnum() or c == "_" or c == "$"

@@ -14,17 +14,23 @@ from src.main.org.apache.commons.cli.Options import *
 
 class PatternOptionBuilder:
 
-    URL_VALUE: typing.Type[urllib.parse.ParseResult] = urllib.parse.ParseResult
+    URL_VALUE: typing.Type[
+        typing.Union[
+            urllib.parse.ParseResult,
+            urllib.parse.SplitResult,
+            urllib.parse.DefragResult,
+            str,
+        ]
+    ] = urllib.parse.ParseResult
     FILES_VALUE: typing.Type[typing.List[pathlib.Path]] = list[pathlib.Path]
     FILE_VALUE: typing.Type[pathlib.Path] = pathlib.Path
-    EXISTING_FILE_VALUE: typing.Type[io.FileIO] = io.FileIO
+    EXISTING_FILE_VALUE: typing.Type[typing.Union[io.FileIO, io.BufferedReader, io.TextIOWrapper]] = io.FileIO
     CLASS_VALUE: typing.Type[typing.Any] = type
-    DATE_VALUE: typing.Type[typing.Union[datetime.date, datetime.datetime]] = (
-        datetime.date
-    )
+    DATE_VALUE: typing.Type[typing.Union[datetime.date, datetime.datetime]] = datetime.datetime
     NUMBER_VALUE: typing.Type[typing.Union[int, float, numbers.Number]] = numbers.Number
-    OBJECT_VALUE: typing.Type[typing.Any] = object
-    STRING_VALUE: typing.Type[str] = str
+    OBJECT_VALUE: typing.Type[typing.Any] = None  # LLM could not translate this field
+
+    STRING_VALUE: typing.Type[str] = None  # LLM could not translate this field
 
     @staticmethod
     def parsePattern(pattern: str) -> Options:
@@ -40,11 +46,7 @@ class PatternOptionBuilder:
             if not PatternOptionBuilder.isValueCode(ch):
                 if opt != " ":
                     option = (
-                        Builder.builder1(str(opt))
-                        .hasArg1(type_ is not None)
-                        .required1(required)
-                        .type_(type_)
-                        .build()
+                        Builder.builder1(str(opt)).hasArg1(type_ is not None).required1(required).type_(type_).build()
                     )
 
                     options.addOption0(option)
@@ -59,13 +61,7 @@ class PatternOptionBuilder:
                 type_ = PatternOptionBuilder.getValueClass(ch)
 
         if opt != " ":
-            option = (
-                Builder.builder1(str(opt))
-                .hasArg1(type_ is not None)
-                .required1(required)
-                .type_(type_)
-                .build()
-            )
+            option = Builder.builder1(str(opt)).hasArg1(type_ is not None).required1(required).type_(type_).build()
 
             options.addOption0(option)
 
@@ -73,27 +69,38 @@ class PatternOptionBuilder:
 
     @staticmethod
     def isValueCode(ch: str) -> bool:
-        return ch in {"@", ":", "%", "+", "#", "<", ">", "*", "/", "!"}
+        return (
+            ch == "@"
+            or ch == ":"
+            or ch == "%"
+            or ch == "+"
+            or ch == "#"
+            or ch == "<"
+            or ch == ">"
+            or ch == "*"
+            or ch == "/"
+            or ch == "!"
+        )
 
     @staticmethod
     def getValueClass(ch: str) -> typing.Any:
-        match ch:
-            case "@":
-                return PatternOptionBuilder.OBJECT_VALUE
-            case ":":
-                return PatternOptionBuilder.STRING_VALUE
-            case "%":
-                return PatternOptionBuilder.NUMBER_VALUE
-            case "+":
-                return PatternOptionBuilder.CLASS_VALUE
-            case "#":
-                return PatternOptionBuilder.DATE_VALUE
-            case "<":
-                return PatternOptionBuilder.EXISTING_FILE_VALUE
-            case ">":
-                return PatternOptionBuilder.FILE_VALUE
-            case "*":
-                return PatternOptionBuilder.FILES_VALUE
-            case "/":
-                return PatternOptionBuilder.URL_VALUE
+        if ch == "@":
+            return PatternOptionBuilder.OBJECT_VALUE
+        elif ch == ":":
+            return PatternOptionBuilder.STRING_VALUE
+        elif ch == "%":
+            return PatternOptionBuilder.NUMBER_VALUE
+        elif ch == "+":
+            return PatternOptionBuilder.CLASS_VALUE
+        elif ch == "#":
+            return PatternOptionBuilder.DATE_VALUE
+        elif ch == "<":
+            return PatternOptionBuilder.EXISTING_FILE_VALUE
+        elif ch == ">":
+            return PatternOptionBuilder.FILE_VALUE
+        elif ch == "*":
+            return PatternOptionBuilder.FILES_VALUE
+        elif ch == "/":
+            return PatternOptionBuilder.URL_VALUE
+
         return None

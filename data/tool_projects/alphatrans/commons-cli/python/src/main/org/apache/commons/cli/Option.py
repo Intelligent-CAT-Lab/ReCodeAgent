@@ -2,6 +2,8 @@ from __future__ import annotations
 import time
 import copy
 import re
+import os
+from io import StringIO
 import io
 import typing
 from typing import *
@@ -16,8 +18,9 @@ class Option:
 
     __values: typing.List[str] = []
 
-    __type: typing.Type[str] = str
-    __argCount: int = UNINITIALIZED
+    __type: typing.Type[typing.Any] = None  # LLM could not translate this field
+
+    __argCount: int = None
     __optionalArg: bool = False
 
     __required: bool = False
@@ -32,58 +35,63 @@ class Option:
 
     __serialVersionUID: int = 1
 
+    @staticmethod
+    def initialize_fields() -> None:
+        Option.__argCount: int = Option.UNINITIALIZED
+
     def toString(self) -> str:
-        buf = "[ option: "
-        buf += self.__option
+        buf = io.StringIO()
+        buf.write("[ option: ")
 
-        if self.__longOption:
-            buf += f" {self.__longOption}"
+        buf.write(self.__option)
 
-        buf += " "
+        if self.__longOption is not None:
+            buf.write(" ")
+            buf.write(self.__longOption)
+
+        buf.write(" ")
 
         if self.hasArgs():
-            buf += "[ARG...]"
+            buf.write("[ARG...]")
         elif self.hasArg():
-            buf += " [ARG]"
+            buf.write(" [ARG]")
 
-        buf += f" :: {self.__description}"
+        buf.write(" :: ")
+        buf.write(self.__description)
 
-        if self.__type:
-            buf += f" :: {self.__type}"
+        if self.__type is not None:
+            buf.write(" :: ")
+            buf.write(str(self.__type))
 
-        buf += " ]"
+        buf.write(" ]")
 
-        return buf
+        result = buf.getvalue()
+        buf.close()
+        return result
 
     def setType1(self, type_: typing.Any) -> None:
-        self.setType0(type_)
+        self.setType0(typing.cast(typing.Type[typing.Any], type_))
 
     def hashCode(self) -> int:
-        return hash((self._Option__longOption, self._Option__option))
+        return hash((self.__longOption, self.__option))
 
     def equals(self, obj: typing.Any) -> bool:
         if self is obj:
             return True
         if not isinstance(obj, Option):
             return False
-        return (
-            self.__longOption == obj._Option__longOption
-            and self.__option == obj._Option__option
-        )
+        other: Option = obj
+        return self._Option__longOption == other._Option__longOption and self._Option__option == other._Option__option
 
     def clone(self) -> typing.Any:
-        try:
-            option = Option()
-            option.__values = self.__values.copy()
-            option.__option = self.__option
-            return option
-        except Exception as e:
-            raise RuntimeError(f"A cloning error occurred: {str(e)}")
+        option = copy.copy(self)
+        option._Option__values = list(self._Option__values)
+        return option
 
     def addValue(self, value: str) -> bool:
         raise NotImplementedError(
             "The addValue method is not intended for client use. "
-            "Subclasses should use the addValueForProcessing method instead."
+            "Subclasses should use the addValueForProcessing method instead. "
         )
 
     def setValueSeparator(self, sep: str) -> None:
@@ -111,10 +119,10 @@ class Option:
         self.__argName = argName
 
     def isRequired(self) -> bool:
-        return self.__required
+        return self._Option__required
 
     def hasValueSeparator(self) -> bool:
-        return ord(self.__valuesep) > 0
+        return self.__valuesep != "\u0000"
 
     def hasOptionalArg(self) -> bool:
         return self.__optionalArg
@@ -123,13 +131,13 @@ class Option:
         return self.__longOption is not None
 
     def hasArgs(self) -> bool:
-        return self.__argCount > 1 or self.__argCount == self.UNLIMITED_VALUES
+        return self.__argCount > 1 or self.__argCount == Option.UNLIMITED_VALUES
 
     def hasArgName(self) -> bool:
         return self.__argName is not None and len(self.__argName) > 0
 
     def hasArg(self) -> bool:
-        return self.__argCount > 0 or self.__argCount == self.UNLIMITED_VALUES
+        return self.__argCount > 0 or self.__argCount == Option.UNLIMITED_VALUES
 
     def getValuesList(self) -> typing.List[str]:
         return self.__values
@@ -137,8 +145,8 @@ class Option:
     def getValueSeparator(self) -> str:
         return self.__valuesep
 
-    def getValues(self) -> typing.Optional[typing.List[str]]:
-        return None if self.__hasNoValues() else self.__values
+    def getValues(self) -> typing.List[typing.List[str]]:
+        return None if self.__hasNoValues() else self.__values.copy()
 
     def getValue2(self, defaultValue: str) -> str:
         value = self.getValue0()
@@ -173,7 +181,8 @@ class Option:
 
     @staticmethod
     def Option2(option: str, hasArg: bool, description: str) -> Option:
-        return Option(0, option, None, description, hasArg, None)
+
+        pass  # LLM could not translate this method
 
     @staticmethod
     def Option1(option: str, description: str) -> Option:
@@ -200,12 +209,19 @@ class Option:
             self.__valuesep = "\u0000"
         elif constructorId == 0:
             self.__option = OptionValidator.validate(option)
-            self.__longOption = longOption
+            self.__longOption = longOption if longOption is not None else ""
 
             if hasArg:
                 self.__argCount = 1
+            else:
+                self.__argCount = Option.UNINITIALIZED
 
-            self.__description = description
+            self.__description = description if description is not None else ""
+            self.__argName = None
+            self.__required = False
+            self.__optionalArg = False
+            self.__type = str
+            self.__valuesep = "\u0000"
         else:
             self.__argName = builder._Builder__argName
             self.__description = builder._Builder__description
@@ -228,6 +244,7 @@ class Option:
     def __processValue(self, value: str) -> None:
         if self.hasValueSeparator():
             sep = self.getValueSeparator()
+
             index = value.find(sep)
 
             while index != -1:
@@ -235,7 +252,9 @@ class Option:
                     break
 
                 self.__add(value[:index])
+
                 value = value[index + 1 :]
+
                 index = value.find(sep)
 
         self.__add(value)
@@ -263,7 +282,7 @@ class Option:
         self.__values.clear()
 
     def addValueForProcessing(self, value: str) -> None:
-        if self.__argCount == self.UNINITIALIZED:
+        if self.__argCount == Option.UNINITIALIZED:
             raise RuntimeError("NO_ARGS_ALLOWED")
         self.__processValue(value)
 
@@ -277,7 +296,8 @@ class Builder:
 
     __valueSeparator: str = "\u0000"
 
-    __type: typing.Type[str] = str
+    __type: typing.Type[typing.Any] = None  # LLM could not translate this field
+
     __argCount: int = None
     __optionalArg: bool = False
 
@@ -303,7 +323,7 @@ class Builder:
         return self.valueSeparator1("=")
 
     def type_(self, type_: typing.Type[typing.Any]) -> Builder:
-        self.__type = type_
+        self._Builder__type = type_
         return self
 
     def required1(self, required: bool) -> Builder:
@@ -345,7 +365,7 @@ class Builder:
         return self
 
     def build(self) -> Option:
-        if not self.__option and not self.__longOption:
+        if self.__option is None and self.__longOption is None:
             raise ValueError("Either opt or longOpt must be specified")
         return Option(3, None, None, None, False, self)
 
@@ -356,5 +376,7 @@ class Builder:
     def __init__(self, option: str) -> None:
         self.option(option)
 
+
+Option.initialize_fields()
 
 Builder.initialize_fields()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import re
+from io import StringIO
 import io
 import typing
 from typing import *
@@ -18,23 +19,27 @@ class Options:
 
     __shortOpts: typing.Dict[str, Option] = {}
 
-    __serialVersionUID: int = 1
+    __serialVersionUID: int = None  # LLM could not translate this field
 
     def toString(self) -> str:
-        buf = []
-        buf.append("[ Options: [ short ")
-        buf.append(str(self.__shortOpts))
-        buf.append(" ] [ long ")
-        buf.append(str(self.__longOpts))
-        buf.append(" ]")
-        return "".join(buf)
+        buf = io.StringIO()
+
+        buf.write("[ Options: [ short ")
+        buf.write(str(self.__shortOpts))
+        buf.write(" ] [ long ")
+        buf.write(str(self.__longOpts))
+        buf.write(" ]")
+
+        return buf.getvalue()
 
     def hasShortOption(self, opt: str) -> bool:
         opt = Util.stripLeadingHyphens(opt)
+
         return opt in self.__shortOpts
 
     def hasOption(self, opt: str) -> bool:
         opt = Util.stripLeadingHyphens(opt)
+
         return opt in self.__shortOpts or opt in self.__longOpts
 
     def hasLongOption(self, opt: str) -> bool:
@@ -45,7 +50,7 @@ class Options:
         return list(self.__requiredOpts)
 
     def getOptions(self) -> typing.Collection[Option]:
-        return typing.cast(typing.Collection[Option], self.helpOptions())
+        return tuple(self.helpOptions())
 
     def getOptionGroup(self, opt: Option) -> OptionGroup:
         return self.__optionGroups.get(opt.getKey())
@@ -72,9 +77,7 @@ class Options:
 
         return matchingOpts
 
-    def addRequiredOption(
-        self, opt: str, longOpt: str, hasArg: bool, description: str
-    ) -> Options:
+    def addRequiredOption(self, opt: str, longOpt: str, hasArg: bool, description: str) -> Options:
         option = Option(0, opt, longOpt, description, hasArg, None)
         option.setRequired(True)
         self.addOption0(option)
@@ -92,9 +95,7 @@ class Options:
 
         return self
 
-    def addOption3(
-        self, opt: str, longOpt: str, hasArg: bool, description: str
-    ) -> Options:
+    def addOption3(self, opt: str, longOpt: str, hasArg: bool, description: str) -> Options:
         self.addOption0(Option(0, opt, longOpt, description, hasArg, None))
         return self
 

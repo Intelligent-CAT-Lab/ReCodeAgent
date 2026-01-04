@@ -1,5 +1,6 @@
 from __future__ import annotations
 import re
+import sys
 import io
 import typing
 from typing import *
@@ -22,82 +23,91 @@ class CommandLine:
         try:
             return self.getParsedOptionValue2(opt)
         except ParseException as pe:
-            print(f"Exception found converting {opt} to desired type: {pe}")
+            print(
+                f"Exception found converting {opt} to desired type: {pe}",
+                file=io.sys.stderr,
+            )
             return None
 
     def getOptionObject0(self, opt: str) -> typing.Any:
-        return self.getOptionObject1(str(opt))
+
+        pass  # LLM could not translate this method
 
     def iterator(self) -> typing.Iterator[Option]:
         return iter(self.__options)
 
     def hasOption2(self, opt: str) -> bool:
-        return self.hasOption1(self.__resolveOption(opt))
+
+        pass  # LLM could not translate this method
 
     def hasOption1(self, opt: Option) -> bool:
-        return opt in self.__options
+
+        pass  # LLM could not translate this method
 
     def hasOption0(self, opt: str) -> bool:
-        return self.hasOption2(str(opt))
+        return self.hasOption2(opt)
 
     def getParsedOptionValue2(self, opt: str) -> typing.Any:
-        return self.getParsedOptionValue1(self.__resolveOption(opt))
+
+        pass  # LLM could not translate this method
 
     def getParsedOptionValue1(self, option: Option) -> typing.Any:
         if option is None:
             return None
-        res = self.getOptionValue2(option)
+        res: str = self.getOptionValue2(option)
         if res is None:
             return None
         return TypeHandler.createValue1(res, option.getType())
 
     def getParsedOptionValue0(self, opt: str) -> typing.Any:
-        return self.getParsedOptionValue2(str(opt))
+        return self.getParsedOptionValue2(opt)
 
-    def getOptionValues2(self, opt: str) -> Union[List[str], None]:
-        return self.getOptionValues1(self.__resolveOption(opt))
+    def getOptionValues2(self, opt: str) -> typing.List[typing.List[str]]:
 
-    def getOptionValues1(self, option: Option) -> Union[List[str], None]:
-        values: List[str] = []
+        pass  # LLM could not translate this method
 
-        for processed_option in self.__options:
-            if processed_option.equals(option):
-                values.extend(processed_option.getValuesList())
+    def getOptionValues1(self, option: Option) -> typing.Optional[typing.List[str]]:
+        values: typing.List[str] = []
 
-        return None if not values else values
+        for processedOption in self.__options:
+            if processedOption.equals(option):
+                values.extend(processedOption.getValuesList())
 
-    def getOptionValues0(self, opt: str) -> Union[List[str], None]:
-        return self.getOptionValues2(str(opt))
+        return None if len(values) == 0 else values
+
+    def getOptionValues0(self, opt: str) -> typing.List[typing.List[str]]:
+        return self.getOptionValues2(opt)
 
     def getOptionValue5(self, opt: str, defaultValue: str) -> str:
-        return self.getOptionValue3(self.__resolveOption(opt), defaultValue)
+
+        pass  # LLM could not translate this method
 
     def getOptionValue4(self, opt: str) -> str:
-        return self.getOptionValue2(self.__resolveOption(opt))
+
+        pass  # LLM could not translate this method
 
     def getOptionValue3(self, option: Option, defaultValue: str) -> str:
-        answer = self.getOptionValue2(option)
-        return answer if answer is not None else defaultValue
 
-    def getOptionValue2(self, option: Option) -> Union[str, None]:
+        pass  # LLM could not translate this method
+
+    def getOptionValue2(self, option: Option) -> str:
         if option is None:
             return None
-        values = self.getOptionValues1(option)
+        values: typing.List[str] = self.getOptionValues1(option)
         return None if values is None else values[0]
 
     def getOptionValue1(self, opt: str, defaultValue: str) -> str:
-        return self.getOptionValue5(str(opt), defaultValue)
+
+        pass  # LLM could not translate this method
 
     def getOptionValue0(self, opt: str) -> str:
-        return self.getOptionValue4(str(opt))
+        return self.getOptionValue4(opt)
 
     def getOptions(self) -> typing.List[Option]:
         processed = self.__options
         return list(processed)
 
-    def getOptionProperties1(
-        self, opt: str
-    ) -> typing.Union[configparser.ConfigParser, typing.Dict]:
+    def getOptionProperties1(self, opt: str) -> typing.Union[configparser.ConfigParser, typing.Dict]:
         props = {}
 
         for option in self.__options:
@@ -110,14 +120,12 @@ class CommandLine:
 
         return props
 
-    def getOptionProperties0(
-        self, option: Option
-    ) -> typing.Union[configparser.ConfigParser, typing.Dict]:
+    def getOptionProperties0(self, option: Option) -> typing.Union[configparser.ConfigParser, typing.Dict]:
         props = {}
 
-        for processed_option in self.__options:
-            if processed_option.equals(option):
-                values = processed_option.getValuesList()
+        for processedOption in self.__options:
+            if processedOption.equals(option):
+                values = processedOption.getValuesList()
                 if len(values) >= 2:
                     props[values[0]] = values[1]
                 elif len(values) == 1:
@@ -138,9 +146,8 @@ class CommandLine:
         self.__args.append(arg)
 
     def __init__(self) -> None:
-        raise NotImplementedError(
-            "CommandLine is protected and cannot be instantiated directly."
-        )
+        if type(self) is CommandLine:
+            raise TypeError("Cannot instantiate CommandLine directly")
 
     def __resolveOption(self, opt: str) -> Option:
         opt = Util.stripLeadingHyphens(opt)

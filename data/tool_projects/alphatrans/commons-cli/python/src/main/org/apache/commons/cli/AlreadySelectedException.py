@@ -21,14 +21,17 @@ class AlreadySelectedException(ParseException):
         return self.__option
 
     @staticmethod
-    def AlreadySelectedException1(
-        group: OptionGroup, option: Option
-    ) -> AlreadySelectedException:
-        message = (
-            f"The option '{option.getKey()}' was specified but an option from this group "
-            f"has already been selected: '{group.getSelected()}'"
+    def AlreadySelectedException1(group: OptionGroup, option: Option) -> AlreadySelectedException:
+        return AlreadySelectedException(
+            "The option '"
+            + option.getKey()
+            + "' was specified but an option from this group "
+            + "has already been selected: '"
+            + group.getSelected()
+            + "'",
+            group,
+            option,
         )
-        return AlreadySelectedException(message, group, option)
 
     @staticmethod
     def AlreadySelectedException0(message: str) -> AlreadySelectedException:

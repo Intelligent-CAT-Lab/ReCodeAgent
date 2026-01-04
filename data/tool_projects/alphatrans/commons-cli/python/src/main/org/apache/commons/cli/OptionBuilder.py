@@ -15,7 +15,8 @@ class OptionBuilder:
 
     __type: typing.Type[typing.Any] = None
 
-    __argCount: int = Option.UNINITIALIZED
+    __argCount: int = None  # LLM could not translate this field
+
     __required: bool = False
 
     __argName: str = ""
@@ -34,7 +35,7 @@ class OptionBuilder:
 
     @staticmethod
     def withType1(newType: typing.Any) -> OptionBuilder:
-        return OptionBuilder.withType0(typing.cast(typing.Type[typing.Any], newType))
+        return OptionBuilder.withType0(newType)
 
     @staticmethod
     def withValueSeparator1(sep: str) -> OptionBuilder:
@@ -44,6 +45,7 @@ class OptionBuilder:
     @staticmethod
     def withValueSeparator0() -> OptionBuilder:
         OptionBuilder.__valueSeparator = "="
+
         return OptionBuilder.__INSTANCE
 
     @staticmethod
@@ -53,18 +55,18 @@ class OptionBuilder:
 
     @staticmethod
     def withLongOpt(newLongopt: str) -> OptionBuilder:
-        OptionBuilder.__longOption = newLongopt
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__longOption = newLongopt
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def withDescription(newDescription: str) -> OptionBuilder:
-        OptionBuilder.__description = newDescription
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__description = newDescription
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def withArgName(name: str) -> OptionBuilder:
-        OptionBuilder.__argName = name
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__argName = name
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def isRequired1(newRequired: bool) -> OptionBuilder:
@@ -73,20 +75,22 @@ class OptionBuilder:
 
     @staticmethod
     def isRequired0() -> OptionBuilder:
-        OptionBuilder.__required = True
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__required = True
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def hasOptionalArgs1(numArgs: int) -> OptionBuilder:
         OptionBuilder.__argCount = numArgs
         OptionBuilder.__optionalArg = True
+
         return OptionBuilder.__INSTANCE
 
     @staticmethod
     def hasOptionalArgs0() -> OptionBuilder:
-        OptionBuilder.__argCount = Option.UNLIMITED_VALUES
-        OptionBuilder.__optionalArg = True
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__argCount = Option.UNLIMITED_VALUES
+        OptionBuilder._OptionBuilder__optionalArg = True
+
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def hasOptionalArg() -> OptionBuilder:
@@ -106,13 +110,13 @@ class OptionBuilder:
 
     @staticmethod
     def hasArg1(hasArg: bool) -> OptionBuilder:
-        OptionBuilder.__argCount = 1 if hasArg else Option.UNINITIALIZED
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__argCount = 1 if hasArg else Option.UNINITIALIZED
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def hasArg0() -> OptionBuilder:
-        OptionBuilder.__argCount = 1
-        return OptionBuilder.__INSTANCE
+        OptionBuilder._OptionBuilder__argCount = 1
+        return OptionBuilder._OptionBuilder__INSTANCE
 
     @staticmethod
     def create2(opt: str) -> Option:
@@ -134,7 +138,7 @@ class OptionBuilder:
 
     @staticmethod
     def create1(opt: str) -> Option:
-        return OptionBuilder.create2(str(opt))
+        return OptionBuilder.create2(opt)
 
     @staticmethod
     def create0() -> Option:
@@ -145,7 +149,7 @@ class OptionBuilder:
         return OptionBuilder.create2(None)
 
     def __init__(self) -> None:
-        raise NotImplementedError("This class cannot be instantiated directly.")
+        raise AssertionError("OptionBuilder instances should not be constructed")
 
     @staticmethod
     def __reset() -> None:

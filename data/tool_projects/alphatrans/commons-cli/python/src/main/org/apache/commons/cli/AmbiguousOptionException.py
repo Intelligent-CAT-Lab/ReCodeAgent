@@ -1,5 +1,6 @@
 from __future__ import annotations
 import re
+import os
 from io import StringIO
 import io
 import typing
@@ -17,18 +18,30 @@ class AmbiguousOptionException(UnrecognizedOptionException):
 
     def __init__(self, option: str, matchingOptions: typing.Collection[str]) -> None:
         super().__init__(self.__createMessage(option, matchingOptions), option)
-        self.__matchingOptions = matchingOptions
+        self._AmbiguousOptionException__matchingOptions = matchingOptions
 
     @staticmethod
     def __createMessage(option: str, matchingOptions: typing.Collection[str]) -> str:
         buf = io.StringIO()
-        buf.write(f"Ambiguous option: '{option}'  (could be: ")
+        buf.write("Ambiguous option: '")
+        buf.write(option)
+        buf.write("'  (could be: ")
 
         it = iter(matchingOptions)
-        for match in it:
-            buf.write(f"'{match}'")
-            if match != list(matchingOptions)[-1]:  # Check if it's not the last element
+        for item in it:
+            buf.write("'")
+            buf.write(item)
+            buf.write("'")
+            try:
+                next_item = next(it)
                 buf.write(", ")
+                # Put the item back by creating a new iterator with it prepended
+                it = iter([next_item] + list(it))
+            except StopIteration:
+                pass
 
         buf.write(")")
-        return buf.getvalue()
+
+        result = buf.getvalue()
+        buf.close()
+        return result

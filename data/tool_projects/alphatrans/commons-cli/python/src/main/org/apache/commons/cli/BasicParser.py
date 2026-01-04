@@ -10,6 +10,9 @@ from src.main.org.apache.commons.cli.Parser import *
 class BasicParser(Parser):
 
     def _flatten(
-        self, options: Options, arguments: typing.List[str], stopAtNonOption: bool
-    ) -> typing.List[str]:
+        self,
+        options: Options,
+        arguments: typing.List[typing.List[str]],
+        stopAtNonOption: bool,
+    ) -> typing.List[typing.List[str]]:
         return arguments

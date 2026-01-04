@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-import enum
+from io import StringIO
 import io
 import typing
 from typing import *
@@ -19,29 +19,32 @@ class OptionGroup:
     __serialVersionUID: int = 1
 
     def toString(self) -> str:
-        buff = []
+        buff = io.StringIO()
 
-        options = list(self.getOptions())
-        buff.append("[")
+        iter_options = iter(self.getOptions())
 
-        for i, option in enumerate(options):
+        buff.write("[")
+
+        first = True
+        for option in iter_options:
+            if not first:
+                buff.write(", ")
+            first = False
+
             if option.getOpt() is not None:
-                buff.append("-")
-                buff.append(option.getOpt())
+                buff.write("-")
+                buff.write(option.getOpt())
             else:
-                buff.append("--")
-                buff.append(option.getLongOpt())
+                buff.write("--")
+                buff.write(option.getLongOpt())
 
             if option.getDescription() is not None:
-                buff.append(" ")
-                buff.append(option.getDescription())
+                buff.write(" ")
+                buff.write(option.getDescription())
 
-            if i < len(options) - 1:
-                buff.append(", ")
+        buff.write("]")
 
-        buff.append("]")
-
-        return "".join(buff)
+        return buff.getvalue()
 
     def setSelected(self, option: Option) -> None:
         if option is None:

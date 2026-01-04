@@ -15,13 +15,9 @@ class MissingArgumentException(ParseException):
         return self.__option
 
     @staticmethod
-    def MissingArgumentException1(
-        constructorId: int, message: str, option: Option
-    ) -> MissingArgumentException:
+    def MissingArgumentException1(constructorId: int, message: str, option: Option) -> MissingArgumentException:
         if constructorId == 1:
-            return MissingArgumentException(
-                constructorId, f"Missing argument for option: {option.getKey()}", option
-            )
+            return MissingArgumentException(constructorId, "Missing argument for option: " + option.getKey(), option)
         return MissingArgumentException(constructorId, message, option)
 
     def __init__(self, constructorId: int, message: str, option: Option) -> None:

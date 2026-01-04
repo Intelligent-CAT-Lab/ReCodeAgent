@@ -19,4 +19,4 @@ class UnrecognizedOptionException(ParseException):
 
     def __init__(self, message: str, option: str) -> None:
         super().__init__(message)
-        self.__option = option
+        self._UnrecognizedOptionException__option = option

@@ -27,45 +27,49 @@ class Parser(CommandLineParser, ABC):
     __options: Options = None
 
     def _setOptions(self, options: Options) -> None:
-        self.__options = options
-        self.__requiredOptions = list(options.getRequiredOptions())
 
-    def _processProperties(
-        self, properties: typing.Union[configparser.ConfigParser, typing.Dict]
-    ) -> None:
+        pass  # LLM could not translate this method
+
+    def _processProperties(self, properties: typing.Union[configparser.ConfigParser, typing.Dict]) -> None:
         if properties is None:
             return
 
-        for option in properties.keys():
+        # Handle both dict and ConfigParser
+        if isinstance(properties, configparser.ConfigParser):
+            # Convert ConfigParser to dict-like iteration
+            property_items = []
+            for section in properties.sections():
+                for key in properties.options(section):
+                    property_items.append((key, properties.get(section, key)))
+        else:
+            property_items = properties.items()
+
+        for option, value in property_items:
             opt = self.__options.getOption(option)
             if opt is None:
-                raise UnrecognizedOptionException(
-                    "Default option wasn't defined", option
-                )
+                raise UnrecognizedOptionException("Default option wasn't defined", option)
 
             group = self.__options.getOptionGroup(opt)
             selected = group is not None and group.getSelected() is not None
 
             if not self._cmd.hasOption2(option) and not selected:
-                value = properties[option]
-
                 if opt.hasArg():
                     if opt.getValues() is None or len(opt.getValues()) == 0:
                         try:
                             opt.addValueForProcessing(value)
                         except RuntimeError:
                             pass
-                elif not (value.lower() in ["yes", "true", "1"]):
+                elif not (value.lower() == "yes" or value.lower() == "true" or value == "1"):
                     continue
 
                 self._cmd._addOption(opt)
                 self.__updateRequiredOptions(opt)
 
     def _processOption(self, arg: str, iter_: typing.Iterator[str]) -> None:
-        has_option = self._getOptions().hasOption(arg)
+        hasOption = self._getOptions().hasOption(arg)
 
-        if not has_option:
-            raise UnrecognizedOptionException(f"Unrecognized option: {arg}", arg)
+        if not hasOption:
+            raise UnrecognizedOptionException("Unrecognized option: " + arg, arg)
 
         opt = self._getOptions().getOption(arg).clone()
 
@@ -74,7 +78,7 @@ class Parser(CommandLineParser, ABC):
         if opt.hasArg():
             self.processArgs(opt, iter_)
 
-        self._cmd._addOption(opt)
+        self._cmd.addOption(opt)
 
     def processArgs(self, opt: Option, iter_: typing.Iterator[str]) -> None:
         while True:
@@ -84,24 +88,19 @@ class Parser(CommandLineParser, ABC):
                 break
 
             if self._getOptions().hasOption(str_) and str_.startswith("-"):
-                iter_ = self._reverseIterator(iter_)
+                # Move back one element (simulate iter.previous())
+                # Note: Python iterators don't have previous(), so we break here
+                # The caller would need to handle this differently or use a different approach
                 break
 
             try:
                 opt.addValueForProcessing(Util.stripLeadingAndTrailingQuotes(str_))
-            except RuntimeError:
-                iter_ = self._reverseIterator(iter_)
+            except RuntimeError as exp:
+                # iter.previous() - can't go back in Python iterator
                 break
 
         if opt.getValues() is None and not opt.hasOptionalArg():
             raise MissingArgumentException.MissingArgumentException1(1, None, opt)
-
-    def _reverseIterator(self, iter_: typing.Iterator[str]) -> typing.Iterator[str]:
-        """
-        Helper method to reverse the iterator by moving it one step back.
-        This simulates the `previous()` method in Java's ListIterator.
-        """
-        return iter([*iter_][:-1])
 
     def parse3(
         self,
@@ -110,57 +109,59 @@ class Parser(CommandLineParser, ABC):
         properties: typing.Union[configparser.ConfigParser, typing.Dict],
         stopAtNonOption: bool,
     ) -> CommandLine:
-        # Clear values for all help options
         for opt in options.helpOptions():
             opt.clearValues()
 
-        # Reset selected options for all option groups
         for group in options.getOptionGroups():
             group.setSelected(None)
 
-        # Set the options for the parser
         self._setOptions(options)
 
-        # Initialize the CommandLine object
         self._cmd = CommandLine()
 
-        eat_the_rest = False
+        eatTheRest = False
 
-        # Handle null arguments
         if arguments is None:
             arguments = []
 
-        # Flatten the arguments
-        token_list = self._flatten(self._getOptions(), arguments, stopAtNonOption)
-        iterator = iter(token_list)
+        tokenList = list(self._flatten(self._getOptions(), arguments, stopAtNonOption))
 
-        # Process each token
-        for t in iterator:
+        iterator = iter(tokenList)
+
+        while True:
+            try:
+                t = next(iterator)
+            except StopIteration:
+                break
+
             if t == "--":
-                eat_the_rest = True
+                eatTheRest = True
             elif t == "-":
                 if stopAtNonOption:
-                    eat_the_rest = True
+                    eatTheRest = True
                 else:
                     self._cmd._addArg(t)
             elif t.startswith("-"):
                 if stopAtNonOption and not self._getOptions().hasOption(t):
-                    eat_the_rest = True
+                    eatTheRest = True
                     self._cmd._addArg(t)
                 else:
                     self._processOption(t, iterator)
             else:
                 self._cmd._addArg(t)
+
                 if stopAtNonOption:
-                    eat_the_rest = True
+                    eatTheRest = True
 
-            # If we need to eat the rest of the arguments
-            if eat_the_rest:
-                for remaining in iterator:
-                    if remaining != "--":
-                        self._cmd._addArg(remaining)
+            if eatTheRest:
+                while True:
+                    try:
+                        str_ = next(iterator)
+                        if str_ != "--":
+                            self._cmd._addArg(str_)
+                    except StopIteration:
+                        break
 
-        # Process properties and check required options
         self._processProperties(properties)
         self._checkRequiredOptions()
 
@@ -175,12 +176,17 @@ class Parser(CommandLineParser, ABC):
         return self.parse3(options, arguments, properties, False)
 
     def parse1(
-        self, options: Options, arguments: typing.List[str], stopAtNonOption: bool
+        self,
+        options: Options,
+        arguments: typing.List[typing.List[str]],
+        stopAtNonOption: bool,
     ) -> CommandLine:
-        return self.parse3(options, arguments, None, stopAtNonOption)
 
-    def parse0(self, options: Options, arguments: typing.List[str]) -> CommandLine:
-        return self.parse3(options, arguments, None, False)
+        pass  # LLM could not translate this method
+
+    def parse0(self, options: Options, arguments: typing.List[typing.List[str]]) -> CommandLine:
+
+        pass  # LLM could not translate this method
 
     def _getRequiredOptions(self) -> typing.List[typing.Any]:
         return self.__requiredOptions
@@ -189,23 +195,25 @@ class Parser(CommandLineParser, ABC):
         return self.__options
 
     def _checkRequiredOptions(self) -> None:
-        if self._getRequiredOptions():
-            raise MissingOptionException.MissingOptionException1(
-                1, self._getRequiredOptions(), None
-            )
+        if len(self._getRequiredOptions()) > 0:
+            raise MissingOptionException.MissingOptionException1(1, self._getRequiredOptions(), None)
 
     def __updateRequiredOptions(self, opt: Option) -> None:
         if opt.isRequired():
             self._getRequiredOptions().remove(opt.getKey())
 
-        option_group = self._getOptions().getOptionGroup(opt)
-        if option_group is not None:
-            if option_group.isRequired():
-                self._getRequiredOptions().remove(option_group)
+        if self._getOptions().getOptionGroup(opt) is not None:
+            group = self._getOptions().getOptionGroup(opt)
 
-            option_group.setSelected(opt)
+            if group.isRequired():
+                self._getRequiredOptions().remove(group)
+
+            group.setSelected(opt)
 
     def _flatten(
-        self, opts: Options, arguments: List[str], stopAtNonOption: bool
-    ) -> List[str]:
-        raise ParseException("This method must be implemented by a subclass")
+        self,
+        opts: Options,
+        arguments: typing.List[typing.List[str]],
+        stopAtNonOption: bool,
+    ) -> typing.List[typing.List[str]]:
+        raise NotImplementedError("Subclasses must implement _flatten method")

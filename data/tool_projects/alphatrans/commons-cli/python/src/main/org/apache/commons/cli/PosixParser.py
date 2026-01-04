@@ -1,4 +1,5 @@
 from __future__ import annotations
+import copy
 import re
 import io
 import typing
@@ -22,29 +23,27 @@ class PosixParser(Parser):
 
     __tokens: typing.List[str] = []
 
-    def _flatten(
-        self, options: Options, arguments: List[str], stopAtNonOption: bool
-    ) -> List[str]:
+    def _flatten(self, options: Options, arguments: typing.List[str], stopAtNonOption: bool) -> typing.List[str]:
         self.__init()
         self.__options = options
 
-        iter_ = iter(arguments)
+        it = iter(arguments)
 
-        for token in iter_:
+        for token in it:
             if token == "-" or token == "--":
                 self.__tokens.append(token)
             elif token.startswith("--"):
                 pos = token.find("=")
                 opt = token if pos == -1 else token[:pos]  # --foo
 
-                matching_opts = options.getMatchingOptions(opt)
+                matchingOpts = options.getMatchingOptions(opt)
 
-                if not matching_opts:
+                if len(matchingOpts) == 0:
                     self.__processNonOptionToken(token, stopAtNonOption)
-                elif len(matching_opts) > 1:
-                    raise AmbiguousOptionException(opt, matching_opts)
+                elif len(matchingOpts) > 1:
+                    raise AmbiguousOptionException(opt, matchingOpts)
                 else:
-                    self.__currentOption = options.getOption(matching_opts[0])
+                    self.__currentOption = options.getOption(matchingOpts[0])
 
                     self.__tokens.append("--" + self.__currentOption.getLongOpt())
                     if pos != -1:
@@ -52,20 +51,20 @@ class PosixParser(Parser):
             elif token.startswith("-"):
                 if len(token) == 2 or options.hasOption(token):
                     self.__processOptionToken(token, stopAtNonOption)
-                elif options.getMatchingOptions(token):
-                    matching_opts = options.getMatchingOptions(token)
-                    if len(matching_opts) > 1:
-                        raise AmbiguousOptionException(token, matching_opts)
-                    opt = options.getOption(matching_opts[0])
+                elif len(options.getMatchingOptions(token)) > 0:
+                    matchingOpts = options.getMatchingOptions(token)
+                    if len(matchingOpts) > 1:
+                        raise AmbiguousOptionException(token, matchingOpts)
+                    opt = options.getOption(matchingOpts[0])
                     self.__processOptionToken("-" + opt.getLongOpt(), stopAtNonOption)
                 else:
                     self._burstToken(token, stopAtNonOption)
             else:
                 self.__processNonOptionToken(token, stopAtNonOption)
 
-            self.__gobble(iter_)
+            self.__gobble(it)
 
-        return self.__tokens
+        return self.__tokens.copy() if len(self.__tokens) > 0 else Util.EMPTY_STRING_ARRAY
 
     def _burstToken(self, token: str, stopAtNonOption: bool) -> None:
         for i in range(1, len(token)):
@@ -95,9 +94,7 @@ class PosixParser(Parser):
         self.__tokens.append(token)
 
     def __processNonOptionToken(self, value: str, stopAtNonOption: bool) -> None:
-        if stopAtNonOption and (
-            self.__currentOption is None or not self.__currentOption.hasArg()
-        ):
+        if stopAtNonOption and (self.__currentOption is None or not self.__currentOption.hasArg()):
             self.__eatTheRest = True
             self.__tokens.append("--")
 
@@ -109,8 +106,5 @@ class PosixParser(Parser):
 
     def __gobble(self, iter_: typing.Iterator[str]) -> None:
         if self.__eatTheRest:
-            while True:
-                try:
-                    self.__tokens.append(next(iter_))
-                except StopIteration:
-                    break
+            for item in iter_:
+                self.__tokens.append(item)

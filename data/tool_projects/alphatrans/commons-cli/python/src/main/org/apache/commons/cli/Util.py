@@ -17,16 +17,13 @@ class Util:
             return str_[2:]
         if str_.startswith("-"):
             return str_[1:]
+
         return str_
 
     @staticmethod
     def stripLeadingAndTrailingQuotes(str_: str) -> str:
         length = len(str_)
-        if (
-            length > 1
-            and str_.startswith('"')
-            and str_.endswith('"')
-            and '"' not in str_[1 : length - 1]
-        ):
+        if length > 1 and str_.startswith('"') and str_.endswith('"') and str_[1 : length - 1].find('"') == -1:
             str_ = str_[1 : length - 1]
+
         return str_
