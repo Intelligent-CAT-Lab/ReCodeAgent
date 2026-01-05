@@ -192,9 +192,7 @@ RUN echo '{\n  "mcpServers": {' > /workspace/configs/claude_mcp_config.json && \
         "--workspace",\n\
         "/workspace/data/tool_projects/'${TOOL_NAME}'/'${PROJECT_NAME}'/python",\n\
         "--lsp",\n\
-        "pyright-langserver",\n\
-        "--",\n\
-        "--stdio"\n\
+        "pylsp"\n\
       ]\n\
     },' >> /workspace/configs/claude_mcp_config.json; \
     fi && \
@@ -318,7 +316,7 @@ RUN if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
         rustup component add rust-analyzer; \
     fi && \
     if [ "$SOURCE_LANGUAGE" = "python" ] || [ "$TARGET_LANGUAGE" = "python" ]; then \
-        npm install -g pyright; \
+        pip install python-lsp-server[all]; \
     fi && \
     if [ "$SOURCE_LANGUAGE" = "typescript" ] || [ "$TARGET_LANGUAGE" = "typescript" ] || \
        [ "$SOURCE_LANGUAGE" = "javascript" ] || [ "$TARGET_LANGUAGE" = "javascript" ]; then \
