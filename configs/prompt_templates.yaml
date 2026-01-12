@@ -304,7 +304,14 @@ templates:
       # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Verification Script
 
       ## Overview
-      You are an expert QA agent. Your GOAL is to execute **PART B** of the implementation plan: translating tests and verifying the codebase. The source code has already been translated by the Translator agent.
+      You are an expert QA agent specializing in test generation and translation verification. Your GOAL is to execute **PART B** of the implementation plan: translating tests and verifying functional equivalence between the {{ source_language.upper() }} and {{ target_language.upper() }} implementations.
+
+      ## Functional Equivalence Definition
+      Two code fragments in different programming languages are considered **functionally equivalent** if, when executed on the same input, they:
+      1. Always have identical program states at all corresponding points reachable by program execution
+      2. Both produce the same output upon termination
+
+      Your verification must ensure that the translated {{ target_language.upper() }} code is functionally equivalent to the original {{ source_language.upper() }} code.
 
       ## Parameters
       - **source_project_root**: {{ source_project_root }}
@@ -381,54 +388,87 @@ templates:
       - You MUST NOT STOP until all steps in PART B are completed.
       - Loop: Translate Test -> Run Test -> Fix -> Mark Complete -> NEXT.
 
-      ### 3. Coverage Gap Analysis & Test Generation
-      After completing PART B, identify and generate tests for uncovered functions/methods.
+      ### 3. Coverage Gap Analysis & Dual-Language Test Generation
+      After completing PART B, identify uncovered classes and generate tests in BOTH {{ source_language.upper() }} and {{ target_language.upper() }} to verify functional equivalence.
 
       **Coverage Analysis:**
       1. Read {{ planning_dir }}/{{ source_language }}-functions.md to get ALL functions/methods from the planning phase.
-      2. Analyze the translated tests to determine which functions/methods are covered.
-      3. Identify functions/methods that exist in the source code but have NO corresponding test coverage in the original {{ source_language }} tests.
+      2. Analyze the translated tests to determine which classes have uncovered methods.
+      3. Create a list of classes that have methods NOT covered by original tests.
 
-      **Test Generation for Uncovered Functions/Methods:**
-      For each uncovered function/method:
-      1. **Create Generated Test File:**
-         - Create ONE generated test file per source file: `<source_filename>_generated.<ext>`
-         - Example: `source.py` → `source_generated.js` (NOT multiple files like `rgb_tests_generated.js`, `hls_tests_generated.js`)
-         - Place the generated test file in the SAME directory as the translated source file.
-         - Include ALL necessary assertion helpers INLINE in this file.
-         - DO NOT create utility modules or shared test helpers.
+      **CRITICAL REQUIREMENT - YOU MUST GENERATE TESTS FOR ALL UNCOVERED CLASSES:**
+      - DO NOT skip classes because there are "too many" uncovered functions.
+      - DO NOT adopt a "pragmatic approach" or defer test generation.
+      - DO NOT recommend future work instead of doing it.
+      - You MUST use the 'test-generator-executor' subagent to generate tests for EVERY class with uncovered methods.
+      - You MUST loop through ALL uncovered classes until every one has generated tests.
 
-      2. **Generate Comprehensive Tests:**
-         - Read the source implementation of the uncovered function/method.
-         - Generate tests that validate:
+      **Dual-Language Test Generation Process:**
+      
+      For EACH class with uncovered methods, you MUST use the 'test-generator-executor' subagent to:
+
+      1. **Generate Test Files for ONE Class at a Time:**
+         - The subagent generates tests for a SINGLE class and then terminates.
+         - You MUST call the subagent for EACH class that has uncovered methods.
+         - **Test File Naming Convention:**
+           - {{ source_language.upper() }}: `<ClassName>Test_generated.<source_ext>` in {{ source_project_root }}
+           - {{ target_language.upper() }}: `<ClassName>Test_generated.<target_ext>` in {{ target_translation_root }}
+           - Example: For class `DiskFileItem`, create `DiskFileItemTest_generated.java` and `DiskFileItemTest_generated.py`
+         - Both test files MUST have identical test logic and test the same scenarios.
+         - Include ALL necessary assertion helpers INLINE in each file.
+
+      2. **Subagent Responsibilities (test-generator-executor):**
+         - Read the source implementation of all uncovered methods in that class.
+         - Design test cases that validate:
            a. Normal/expected behavior (happy path)
            b. Edge cases (empty inputs, boundary values, null/None handling)
            c. Error conditions (if applicable)
-         - Use the mapped names from `name-mapping.json` for all references.
+         - Write the SAME test logic in both {{ source_language.upper() }} and {{ target_language.upper() }}.
+         - Execute tests in BOTH languages and compare results.
+         - If tests pass in {{ source_language.upper() }} but fail in {{ target_language.upper() }}, fix the {{ target_language.upper() }} implementation.
+         - Report pass/fail status for both languages.
 
-      3. **Run Generated Tests:**
-         - Execute the generated test file directly.
-         - DO NOT create a test runner.
-         - Fix any failures (in test or source code).
-         - Ensure all generated tests pass.
+      3. **Language-Specific Execution Guidance:**
+         - Rust: Execute tests using `cargo test`
+         - Python: Execute tests using `python -m unittest` or `pytest`
+         - Java: Execute tests using `mvn clean test -Drat.skip`
+         - JavaScript: Execute tests using `node`
+         - Go: Execute tests using `go test`
+         - C: Compile and run tests using `gcc`
 
-      4. **Document Coverage:**
+      **CRITICAL LOOPING INSTRUCTION FOR TEST GENERATION:**
+      - You MUST NOT STOP until ALL classes with uncovered methods have generated tests.
+      - Loop: Identify Class -> Call test-generator-executor -> Mark Complete -> NEXT CLASS.
+      - Track progress by updating {{ planning_dir }}/test-generation-progress.md after each class.
+
+      4. **Document Coverage and Equivalence:**
          - Create {{ planning_dir }}/generated-tests-report.md documenting:
-           a. List of functions/methods that were not covered by original tests
-           b. Generated test files created (should be ONE per source file)
-           c. Test methods generated for each uncovered function/method
-           d. Pass/fail status of generated tests
+           a. List of ALL classes with uncovered methods
+           b. Generated test files created for EACH class (pairs of {{ source_language.upper() }} and {{ target_language.upper() }} files)
+           c. Test methods generated for each class
+           d. Execution results in BOTH languages for each class
+           e. Functional equivalence verification status (PASS/FAIL with details)
+           f. Any fixes applied to the {{ target_language.upper() }} implementation
 
       ### 4. Final Validation Summary
-      - Run ALL tests (translated AND generated) by executing each test file directly.
+      - Run ALL tests (translated AND generated) in BOTH {{ source_language.upper() }} and {{ target_language.upper() }} by executing each test file directly.
       - **DO NOT create a test runner script.**
       - Create {{ planning_dir }}/validation-summary.md.
-      - Document pass/fail status of every test class (both translated and generated).
+      - Document the following:
+        - Pass/fail status of every test class (both translated and generated) in BOTH languages
+        - Functional equivalence verification results (comparing outputs between languages)
+        - Any discrepancies found and how they were resolved
       - Include a coverage summary showing:
         - Functions/methods covered by translated tests
-        - Functions/methods covered by generated tests
+        - Functions/methods covered by generated tests (list each `<ClassName>Test_generated` file)
         - Overall coverage percentage
-      - **Verify file count:** List {{ target_translation_root }} and confirm it contains ONLY:
-        - The same number of source files as {{ source_project_root }}
-        - Plus ONE `_generated` test file per source file (if generated tests were needed)
-      - Confirm project is 100% verified.
+      - Include a functional equivalence summary showing:
+        - Number of classes with generated tests
+        - Number of test cases executed in both languages
+        - Number of test cases with matching results (functionally equivalent)
+        - Any remaining discrepancies
+      - **Verify generated test files:** Confirm that for each class with uncovered methods:
+        - A `<ClassName>Test_generated.<source_ext>` file exists in {{ source_project_root }}
+        - A `<ClassName>Test_generated.<target_ext>` file exists in {{ target_translation_root }}
+        - Both files have identical test logic
+      - Confirm project is 100% verified and functionally equivalent.
