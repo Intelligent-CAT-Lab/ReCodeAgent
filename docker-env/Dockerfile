@@ -73,7 +73,7 @@ RUN node -v && npm -v \
 RUN npm install -g \
     crc-32@1.2.2 \
     numjs@0.16.1 \
-    @anthropic-ai/claude-code@2.0.50
+    @anthropic-ai/claude-code@2.1.5
 
 # Install Python packages
 RUN pip install --no-cache-dir \
@@ -276,7 +276,7 @@ target_translation_root: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/${TAR
 planning_dir: \"data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning\"\n\
 extra_agent_args: [\"--output-format\", \"stream-json\", \"--verbose\", \"--settings\", \"/workspace/.claude/settings.local.json\"]\n\
 extra_translator_agent_args: [\"--agents\", '{\"source-translator-executor\": {\"description\": \"Translates and executes source code from PART A of implementation-plan.md\", \"prompt\": \"You are an agent which performs source translation and execution from PART A of implementation-plan.md. This agent will ONLY translate and execute one source file and then terminates. The execution involves compiling the source file to ensure it is valid.\"}}']\n\
-extra_validator_agent_args: [\"--agents\", '{\"test-translator-executor\": {\"description\": \"Translates and executes tests from PART B of implementation-plan.md\", \"prompt\": \"You are an agent which performs test translation and execution from PART B of implementation-plan.md. This agent will ONLY translate and execute one test class and then terminates. The execution involves compiling and running the test file to ensure it passes.\"}}']\n\
+extra_validator_agent_args: [\"--agents\", '{\"test-translator-executor\": {\"description\": \"Translates and executes tests from PART B of implementation-plan.md\", \"prompt\": \"You are an agent which performs test translation and execution from PART B of implementation-plan.md. This agent will ONLY translate and execute one test class and then terminates. The execution involves compiling and running the test file to ensure it passes.\"}, \"test-generator-executor\": {\"description\": \"Generates and executes tests for a single class in both source and target languages to verify functional equivalence\", \"prompt\": \"You are an agent which generates tests for a SINGLE CLASS to verify functional equivalence between the source and target implementations. For the given class: 1) Identify all uncovered methods/functions in that class. 2) Generate a test file named ClassNameTest_generated in the source language that tests all uncovered methods. 3) Generate an identical test file named ClassNameTest_generated in the target language with the same test logic. 4) Execute tests in BOTH languages and compare results. 5) If tests pass in source but fail in target, fix the target implementation. 6) Report pass/fail status for both languages. This agent terminates after completing tests for ONE class.\"}}']\n\
 analyzer_timeout: 2000\n\
 planning_timeout: 2000\n\
 translator_timeout: 5000\n\
