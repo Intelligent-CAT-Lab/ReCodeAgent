@@ -32,7 +32,7 @@ def run(project_name: str) -> Dict[str, Any]:
     Implementation function that can be called directly from Python code.
     """
     # Construct the project path
-    project_path = f"/home/ssm-user/agent/data/tool_projects/crust/{project_name}/rust"
+    project_path = f"/workspace/data/tool_projects/crust/{project_name}/rust"
 
     # Validate the project path
     if not os.path.exists(project_path):
