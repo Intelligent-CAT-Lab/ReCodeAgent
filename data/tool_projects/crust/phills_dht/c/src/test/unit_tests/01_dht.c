@@ -94,9 +94,9 @@ int main(int argc, char **argv) {
 	printf("finished. %i passed. %i failed.\n", passed, failed);
 	
 	if (failed == 0)
-		return 1;
-	else
 		return 0;
+	else
+		return 1;
 }
 
 bool uninitialise_test() {
