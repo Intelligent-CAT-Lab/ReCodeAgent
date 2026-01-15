@@ -1,6 +1,8 @@
 .PHONY: clean doc test
 
-CFLAGS := -DNDEBUG -O3 -Werror $(CFLAGS) -fprofile-arcs -ftest-coverage -lm
+CFLAGS := -DNDEBUG -O3 -Werror $(CFLAGS) -fprofile-arcs -ftest-coverage
+LDFLAGS := -fprofile-arcs -ftest-coverage
+LDLIBS := -lm
 
 razz: razz.o card.o razz_simulation.o
 
@@ -15,7 +17,7 @@ card_test.o: card.h
 card_test: card_test.o card.o
 
 test: card_test
-	valgrind --leak-check=full ./card_test
+	./card_test
 
 doc:
 	doxygen
