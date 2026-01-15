@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "geofence.h"
+#include "../src/geofence.h"
 
 typedef bool(*geofence_func)(point*, const point*, size_t);
 
