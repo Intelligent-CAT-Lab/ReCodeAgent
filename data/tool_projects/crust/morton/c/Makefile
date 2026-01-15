@@ -14,6 +14,7 @@
 # bench.o: bench.c morton.h Makefile
 # morton.o: morton.c morton.h Makefile
 
+.PHONY: test
 test: 
 	gcc $(CFLAGS) -o test tests/test.c morton.c morton.h
 	./test
