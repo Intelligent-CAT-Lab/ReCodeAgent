@@ -1,5 +1,5 @@
-CC=clang
-#CC=gcc -pg
+# CC=clang
+CC=gcc -pg
 CFLAGS=-Wall -Wextra -pedantic -O2 -std=c99 -g
 
 holdemodds: build
