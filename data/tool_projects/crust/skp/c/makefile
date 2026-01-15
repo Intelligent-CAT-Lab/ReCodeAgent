@@ -1,13 +1,23 @@
+CC = gcc
+CFLAGS = -Wall -I src
 
-skpgen:
-	cd examples/skpgen; make
+.PHONY: all test clean
 
-pkg:
-	rm -rf dist
-	mkdir -p dist/bin
-	mkdir -p dist/src
-	cp src/skp.[ch] dist/src
-	cd examples/skpgen; make -B skpgen
-	cp examples/skpgen/skpgen dist/bin
+all: test
 
-	
+test: test/ut_test1 test/ut_test2 test/ut_test3
+	./test/ut_test1
+	./test/ut_test2
+	./test/ut_test3
+
+test/ut_test1: test/ut_test1.c src/skp.h src/skp.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+test/ut_test2: test/ut_test2.c src/skp.h src/skp.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+test/ut_test3: test/ut_test3.c src/skp.h src/skp.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+clean:
+	rm -f test/ut_test1 test/ut_test2 test/ut_test3
