@@ -1,4 +1,4 @@
-#include "../src/CircularBuffer.h"
+#include "../src/circular_buffer.h"
 #include <string.h>
 #include <assert.h>
 
