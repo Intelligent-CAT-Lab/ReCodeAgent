@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "fast_hamming.h"
+#include "../src/fast_hamming.h"
 
-#include "test/testing.h"
+#include "testing.h"
 
 // Copied from fast_hamming.c as it's otherwise not visible
 static inline uint8_t log2uint8(uint8_t v) {

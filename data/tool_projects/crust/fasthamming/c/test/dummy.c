@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "fast_hamming.h"
+#include "../src/fast_hamming.h"
 
-#include "test/testing.h"
+#include "testing.h"
 
 bool test_dummy() {
     bool result = true;

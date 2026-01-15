@@ -16,9 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "fast_hamming.h"
+#include "../src/fast_hamming.h"
 
-#include "test/testing.h"
+#include "testing.h"
 
 /*
  * Test Data
