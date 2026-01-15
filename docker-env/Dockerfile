@@ -333,5 +333,106 @@ RUN if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
         rm /tmp/jdt-language-server.tar.gz; \
     fi
 
+# Run bear -- make for crust projects to generate compile_commands.json
+RUN if [ "${TOOL_NAME}" = "crust" ]; then \
+        MAKE_TARGET=""; \
+        case "${PROJECT_NAME}" in \
+            2dpartint) MAKE_TARGET="test" ;; \
+            42-kocaeli-printf) MAKE_TARGET="test" ;; \
+            aes128-simd) MAKE_TARGET="test" ;; \
+            amp) MAKE_TARGET="test" ;; \
+            approxidate) MAKE_TARGET="test" ;; \
+            avalanche) MAKE_TARGET="all" ;; \
+            bhshell) MAKE_TARGET="test" ;; \
+            bigint) MAKE_TARGET="test" ;; \
+            bitset) MAKE_TARGET="test" ;; \
+            blt) MAKE_TARGET="blt_test" ;; \
+            bostree) MAKE_TARGET="test" ;; \
+            btree-map) MAKE_TARGET="test" ;; \
+            c-aces) MAKE_TARGET="test" ;; \
+            c-blind-rsa-signatures) MAKE_TARGET="all" ;; \
+            c-string) MAKE_TARGET="test" ;; \
+            carrays) MAKE_TARGET="test" ;; \
+            cfsm) MAKE_TARGET="test" ;; \
+            chtrie) MAKE_TARGET="test" ;; \
+            circularbuffer) MAKE_TARGET="test" ;; \
+            cissy) MAKE_TARGET="all" ;; \
+            cjson) MAKE_TARGET="test" ;; \
+            clhash) MAKE_TARGET="test" ;; \
+            clog) MAKE_TARGET="test" ;; \
+            coroutine) MAKE_TARGET="test" ;; \
+            cset) MAKE_TARGET="test" ;; \
+            csyncmers) MAKE_TARGET="all" ;; \
+            dict) MAKE_TARGET="all" ;; \
+            emlang) MAKE_TARGET="test" ;; \
+            expr) MAKE_TARGET="test" ;; \
+            fasthamming) MAKE_TARGET="test" ;; \
+            fft) MAKE_TARGET="test" ;; \
+            file2str) MAKE_TARGET="test" ;; \
+            fs_c) MAKE_TARGET="test" ;; \
+            fslib) MAKE_TARGET="all" ;; \
+            genetic-neural-network-for-simple-control) MAKE_TARGET="all" ;; \
+            geofence) MAKE_TARGET="test" ;; \
+            gorilla-paper-encode) MAKE_TARGET="test" ;; \
+            graph-recogniser) MAKE_TARGET="all" ;; \
+            hamta) MAKE_TARGET="bin/libhamta.so" ;; \
+            holdem-odds) MAKE_TARGET="test" ;; \
+            hydra) MAKE_TARGET="test" ;; \
+            impcheck) MAKE_TARGET="test_full" ;; \
+            inversion_list) MAKE_TARGET="all" ;; \
+            jccc) MAKE_TARGET="test" ;; \
+            kairocompiler) MAKE_TARGET="all" ;; \
+            kd3) MAKE_TARGET="all" ;; \
+            lambda-calculus-eval) MAKE_TARGET="test" ;; \
+            leftpad) MAKE_TARGET="tests" ;; \
+            lib2bit) MAKE_TARGET="test" ;; \
+            libbeaufort) MAKE_TARGET="test" ;; \
+            libfor) MAKE_TARGET="test" ;; \
+            libm17) MAKE_TARGET="test" ;; \
+            libpgn) MAKE_TARGET="test" ;; \
+            libpsbt) MAKE_TARGET="test" ;; \
+            libqueue) MAKE_TARGET="test" ;; \
+            libvcd) MAKE_TARGET="all" ;; \
+            libwecan) MAKE_TARGET="all" ;; \
+            linear-algebra-c) MAKE_TARGET="default" ;; \
+            ljmm) MAKE_TARGET="all" ;; \
+            ltre) MAKE_TARGET="test" ;; \
+            math-library-in-c) MAKE_TARGET="all" ;; \
+            megalania) MAKE_TARGET="all" ;; \
+            merkle-tree-c) MAKE_TARGET="all" ;; \
+            morton) MAKE_TARGET="test" ;; \
+            murmurhash_c) MAKE_TARGET="test" ;; \
+            mvptree) MAKE_TARGET="all" ;; \
+            nandc) MAKE_TARGET="test" ;; \
+            phills_dht) MAKE_TARGET="all" ;; \
+            quadtree) MAKE_TARGET="test" ;; \
+            razz_simulation) MAKE_TARGET="test" ;; \
+            rbtree-lab) MAKE_TARGET="test" ;; \
+            recordmanager) MAKE_TARGET="all" ;; \
+            rhbloom) MAKE_TARGET="test" ;; \
+            roaring-bitmap) MAKE_TARGET="tests" ;; \
+            rubiksolver) MAKE_TARGET="test" ;; \
+            satc) MAKE_TARGET="test" ;; \
+            simple-config) MAKE_TARGET="tst" ;; \
+            simple-sparsehash) MAKE_TARGET="all" ;; \
+            simplexml) MAKE_TARGET="test" ;; \
+            skp) MAKE_TARGET="test" ;; \
+            slothlang) MAKE_TARGET="test" ;; \
+            ted) MAKE_TARGET="test" ;; \
+            tisp) MAKE_TARGET="test" ;; \
+            totp) MAKE_TARGET="test" ;; \
+            ulidgen) MAKE_TARGET="test" ;; \
+            utf8) MAKE_TARGET="test" ;; \
+            vec) MAKE_TARGET="test" ;; \
+            worsp) MAKE_TARGET="test" ;; \
+            xopt) MAKE_TARGET="test" ;; \
+            *) MAKE_TARGET="" ;; \
+        esac; \
+        if [ -n "$MAKE_TARGET" ]; then \
+            cd /workspace/data/tool_projects/crust/${PROJECT_NAME}/c && \
+            bear -- make $MAKE_TARGET || true; \
+        fi; \
+    fi
+
 # Default command
 CMD ["/bin/bash"]
