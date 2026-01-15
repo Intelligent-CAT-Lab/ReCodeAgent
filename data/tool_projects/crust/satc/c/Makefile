@@ -1,8 +1,8 @@
-CC=clang
+CC=gcc
 clean-test:
 	rm -rf satc-test html
 test:
-	clang -std=c99 -Wall -O3 satc-test.c -o satc-test
+	gcc -std=gnu99 -Wall -O3 satc-test.c -o satc-test -lm
 	./satc-test
 docs:
 	doxygen
