@@ -16,9 +16,14 @@ TESTS := test_fst test_queue test_bitset test_print test_iter test_io test_compi
 BINARIES := fscompile fsprint fsstat fssort fsdraw fscompose fsshort
 
 binaries: $(BINARIES)
-all: tests $(BINARIES)
+all: $(OBJECTS)
 
 $(OBJ)/%.o: $(SRC)/%.c
+	@mkdir -p $(@D)
+	$(CC) -I$(SRC) -c $< -o $@
+
+# Build test helper from tests/ directory
+$(OBJ)/test.o: $(TST)/test.c
 	@mkdir -p $(@D)
 	$(CC) -I$(SRC) -c $< -o $@
 
