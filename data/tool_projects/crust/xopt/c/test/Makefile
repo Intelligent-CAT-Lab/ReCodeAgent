@@ -3,7 +3,7 @@
 all: simple-test macro-test
 
 %.o: %.c
-	$(CC) -ansi -pedantic -Wall -Wextra -Werror $(CFLAGS) -I.. -c $< -o $@
+	$(CC) -std=c99 -Wall -Wextra $(CFLAGS) -I.. -c $< -o $@
 
 simple-test: simple-test.o ../libxopt.a
 	$(CC) -L.. -o $@ $< -lxopt
