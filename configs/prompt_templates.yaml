@@ -99,7 +99,7 @@ templates:
       Create a list of {{ source_language.upper() }} functions and methods that will be translated, with automated validation.
 
       **Constraints:**
-      - For CRUST projects, functions are already extracted and available in translation directory. DO NOT extract functions again.
+      - For CRUST projects, functions are already extracted and available in translation directory. Each funtion that requires implementation has unimplemented!() in its body, so please only focus on these functions. DO NOT extract functions again. Tests are already translated and validated by a human validator. DO NOT translate tests again.
       - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to extract methods, variables, and classes from each {{ source_language }} source file AND each {{ source_language }} test file.
       - You MUST write a list of {{ source_language.upper() }} functions and methods that will be translated under {{ planning_dir }}/{{ source_language }}-functions.md
       - Each line in the file MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
@@ -171,7 +171,7 @@ templates:
       - Create directory structure in {{ target_translation_root }}.
       - Create stub files with class declarations and method signatures (no implementations).
       - Use names from `name-mapping.json`.
-      - For CRUST projects, a skeleton is already provided in the target translation root. DO NOT create new skeleton files.
+      - For CRUST projects, there are already target skeleton files in the target translation root. DO NOT create new skeleton files.
 
       **VALIDATION-IN-THE-LOOP:**
       1. **Write Validation Script:**
@@ -205,7 +205,6 @@ templates:
       **Constraints:**
       - You MUST create an implementation plan at {{ planning_dir }}/implementation-plan.md
       - You MUST include a checklist at the beginning of the implementation-plan.md file to track implementation progress
-      - For CRUST projects, source code with unimplemented functions are already provided in the target translation root. DO NOT create new source code files. Tests are already translated and available under src/bin/test.rs. DO NOT translate tests again.
       - The implementation-plan.md file MUST be divided into TWO distinct parts:
       
       **PART A: Source Code Translation (For Translator Agent)**
@@ -215,6 +214,7 @@ templates:
       **PART B: Test Translation & Verification (For Validator Agent)**
       - This section lists steps to translate {{ source_language }} tests to {{ target_language }} and execute them.
       - Each step must correspond to a completed source module from Part A.
+      - For CRUST projects, tests are already translated and available under src/bin. DO NOT translate tests again.
       
       - The first step in PART A MUST be the following:
       ```
@@ -375,13 +375,13 @@ templates:
 
       2. **Run Test:**
          - Execute the test file directly (e.g., `node source.js`, `python source.py`).
-         - If translating tests from CRUST projects, you MUST use the 'mcp__crust-test-runner__run_tests' tool to run the tests.
+         - If translating projects from CRUST, you MUST NOT make any changes to {{ target_language.upper() }} tests under src/bin/*.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
          - DO NOT create a separate test runner script.
          - Capture the output.
 
       3. **Fix & Iterate:**
          - If tests fail, analyze the error.
-         - **IF ERROR IS IN TEST:** Fix the test code.
+         - **IF ERROR IS IN TEST:** Fix the test code. For CRUST tests, there is no need to fix the test code because the tests are already translated and validated by a human validator.
          - **IF ERROR IS IN SOURCE:** Fix the source code (you have permission to edit source files to fix bugs revealed by tests).
          - Re-run tests until passing.
 
