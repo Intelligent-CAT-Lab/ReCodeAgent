@@ -576,42 +576,55 @@ templates:
 
       **DO NOT SKIP THIS STEP. DO NOT SAY "no tests needed". If a function has no test, you MUST generate one.**
 
-      **Step 9.1: For EACH uncovered function:**
-      1. Read the function implementation in {{ source_language.upper() }}
-      2. Read the translated function in {{ target_language.upper() }}
-      3. Design test cases that cover:
-         - Normal/expected behavior (happy path)
-         - Edge cases (empty inputs, boundary values, null/None handling)
-         - Error conditions (if applicable)
+      **CRITICAL: You MUST use the 'test-generator-executor' subagent to generate and execute tests for uncovered functions. DO NOT manually generate tests.**
 
-      **Step 9.2: Create Test Files**
-         - **Test File Naming Convention:**
-        - {{ source_language.upper() }}: `<filename>_generated.<source_ext>` in {{ source_project_root }}
-        - {{ target_language.upper() }}: `<filename>_generated.<target_ext>` in {{ target_translation_root }}
-        - Example: For functions in `utils.py`, create `utils_generated.py` (source) and `utils_generated.js` (target)
-      - **Both test files MUST have identical test logic**
-      - **Include ALL necessary imports and setup in each test file**
+      **Step 9.1: Group Uncovered Functions by Class**
+      1. Read {{ planning_dir }}/coverage-map.md to identify all uncovered functions
+      2. Group uncovered functions by their containing class
+      3. Create a list of classes that need test generation
+      4. Note: The test-generator-executor subagent works on a SINGLE CLASS at a time
 
-      **Step 9.3: Execute Generated Tests**
-      1. Run the generated {{ source_language.upper() }} test
-      2. Run the generated {{ target_language.upper() }} test
-      3. Compare results:
-         - If BOTH pass → Functional equivalence verified
-         - If source passes but target fails → Translation bug (add to validation report)
-         - If source fails → Test design issue (fix the test)
+      **Step 9.2: Use test-generator-executor Subagent for Each Class**
+      For EACH class with uncovered functions:
+      1. **Invoke the 'test-generator-executor' subagent** with the following information:
+         - The class name
+         - The file path containing the class (in both source and target languages)
+      
+      2. **The test-generator-executor subagent will automatically:**
+         - Identify all uncovered methods/functions in the specified class
+         - Generate a test file named `ClassNameTest_generated` in the {{ source_language.upper() }} language that tests all uncovered methods
+         - Generate an identical test file named `ClassNameTest_generated` in the {{ target_language.upper() }} language with the same test logic
+         - Execute tests in BOTH languages and compare results
+         - If tests pass in source but fail in target, fix the target implementation
+         - Report pass/fail status for both languages
+         - Terminate after completing tests for ONE class
 
-      **Step 9.4: Language-Specific Execution Commands**
-      - Rust: `cargo test`
-      - Python: `python -m pytest <file>` or `python -m unittest <file>`
-      - Java: `mvn clean test -Dtest=<TestClass> -Drat.skip`
-      - JavaScript: `node <file>`
-      - Go: `go test -run <TestName>`
-      - C: Compile with `gcc` and run
+      3. **After the subagent completes:**
+         - Verify that test files were created in both languages with the naming `ClassNameTest_generated`
+         - Verify that tests were executed and results were reported
+         - Update {{ planning_dir }}/coverage-map.md to mark the covered functions
+         - If the subagent reports failures, record them in the validation report
+
+      **Step 9.3: Test File Naming Convention**
+      The test-generator-executor subagent will create test files with the following exact naming:
+      - {{ source_language.upper() }}: `ClassNameTest_generated.<source_ext>` in {{ source_project_root }}
+      - {{ target_language.upper() }}: `ClassNameTest_generated.<target_ext>` in {{ target_translation_root }}
+      - Example: For class `Utils`, create `UtilsTest_generated.py` (source) and `UtilsTest_generated.js` (target)
+      - The naming format is `ClassNameTest_generated` where `ClassName` is the actual class name
+
+      **Step 9.4: Handle Test Results**
+      After each test-generator-executor invocation:
+      1. Review the test execution results reported by the subagent
+      2. If BOTH source and target tests pass → Functional equivalence verified, mark functions as covered
+      3. If source passes but target fails → Translation bug detected, add to validation report
+      4. If source fails → Test design issue, the subagent should fix the test and re-run
 
       **CRITICAL LOOPING INSTRUCTION FOR TEST GENERATION:**
       - You MUST NOT STOP until ALL uncovered functions have generated tests
-      - Loop: Read uncovered function → Design test → Write test in BOTH languages → Execute → Verify → NEXT FUNCTION
-      - Update {{ planning_dir }}/coverage-map.md after each function is covered
+      - Loop: Identify class with uncovered functions → Invoke test-generator-executor subagent → Verify results → Update coverage map → NEXT CLASS
+      - Update {{ planning_dir }}/coverage-map.md after each class is covered
+      - Continue until all uncovered functions from the coverage map have been addressed
+      - Remember: The test-generator-executor subagent works on ONE CLASS at a time and terminates after completing tests for that class
 
       ### 10. Write Validation Report
       Create {{ planning_dir }}/validation-report.md with the following structure:
