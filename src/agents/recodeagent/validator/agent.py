@@ -1,8 +1,24 @@
 """
 Validator Agent for the RecodeAgent system
 
-This module provides the ValidatorAgent class that validates the translated code by
-generating tests and comparing the behavior between C and Rust implementations.
+This module provides the ValidatorAgent class that validates the translated code
+and writes a detailed report of any issues found for the Translator to repair.
+
+The validator is responsible for:
+1. Checking all stubs have been implemented (no unimplemented!(), pass, etc.)
+2. Checking there are no TODO comments remaining
+3. Checking functions are functionally equivalent to source
+4. Checking tests are translated correctly:
+   - Same number of assertions as source
+   - Same assertions as source
+5. Generating tests for functions without coverage (in both source and target languages)
+6. Writing a validation report for issues that need repair
+
+The agent participates in a translation-validation loop:
+- Translator translates code
+- Validator checks for issues and writes validation-report.md
+- If issues found, Translator repairs them
+- Loop continues until validation passes (no issues)
 """
 
 import os
@@ -19,13 +35,19 @@ from src.utils.model_utils import ModelUtils
 
 class ValidatorAgent(RecodeAgent):
     """
-    Agent that validates translated code.
+    Agent that validates translated code and writes validation reports.
 
     This agent is responsible for:
-    1. Generating tests for both C and Rust implementations
-    2. Running the tests to compare behavior
-    3. Identifying discrepancies between implementations
-    4. Suggesting fixes for functional equivalence issues
+    1. Checking all stubs have been implemented
+    2. Checking there are no TODO comments
+    3. Checking functions are functionally equivalent
+    4. Checking tests are translated correctly (same assertions)
+    5. Generating tests for uncovered functions (in both languages)
+    6. Writing validation-report.md with issues for the Translator to repair
+
+    The validation loop:
+    - If issues are found: Write validation-report.md with FAIL status
+    - If no issues: Write validation-summary.md and delete validation-report.md
 
     Attributes:
         Inherits all attributes from RecodeAgent
@@ -45,17 +67,27 @@ class ValidatorAgent(RecodeAgent):
         """
         Run the validator agent to validate translated code.
 
+        The validator checks for:
+        - Unimplemented stubs
+        - TODO comments
+        - Function equivalence issues
+        - Test translation issues (assertion count/content mismatches)
+        - Coverage gaps (generates tests for uncovered functions)
+
+        If issues are found, writes validation-report.md for the Translator to repair.
+        If no issues, writes validation-summary.md to signal completion.
+
         Args:
             project_details (Dict[str, Any]): Details about the project to validate
                 Must contain:
-                - c_project_root: Path to the C project root
-                - rust_translation_root: Path to the Rust translation root
+                - source_project_root: Path to the source project root
+                - target_translation_root: Path to the target translation root
                 - planning_dir: Path with planning documents
 
         Returns:
             Tuple[bool, Dict[str, Any]]: (success_status, results)
                 - success_status: True if validation was successfully completed
-                - results: The validation results including test outcomes and fixes
+                - results: The validation results including issues found and test outcomes
         """
         self.logger.info(f"Starting validation for project: {project_details.get('project_name', 'unknown')}")
 

@@ -2,7 +2,13 @@
 Translator Agent for the RecodeAgent system
 
 This module provides the TranslatorAgent class that executes the implementation plan
-created by the planning agent to translate source code from C to Rust.
+created by the planning agent to translate source code between programming languages.
+
+The translator is responsible for:
+1. Translating ALL functions from source to target language
+2. Translating ALL tests from source to target language
+3. Executing tests to ensure they pass
+4. Repairing issues identified in validation reports (in the translation-validation loop)
 """
 
 import os
@@ -19,13 +25,18 @@ from src.utils.model_utils import ModelUtils
 
 class TranslatorAgent(RecodeAgent):
     """
-    Agent that translates source code from C to Rust.
+    Agent that translates source code between programming languages.
 
     This agent is responsible for:
-    1. Executing the implementation plan
-    2. Translating C functions and methods to Rust
-    3. Creating project skeleton and structure
-    4. Ensuring the translated code compiles and passes tests
+    1. Executing the implementation plan (translating functions and tests)
+    2. Ensuring the translated code compiles and passes tests
+    3. Repairing issues identified by the Validator agent
+
+    The agent participates in a translation-validation loop:
+    - Translator translates code
+    - Validator checks for issues and writes a report
+    - Translator repairs issues based on the report
+    - Loop continues until no issues remain
 
     Attributes:
         Inherits all attributes from RecodeAgent
@@ -41,6 +52,41 @@ class TranslatorAgent(RecodeAgent):
         super().__init__(configs)
         self.logger.info("TranslatorAgent initialized")
 
+    def _get_validation_feedback(self, planning_dir: str) -> str:
+        """
+        Read the validation report if it exists and return its content as feedback.
+
+        Args:
+            planning_dir (str): Path to the planning directory
+
+        Returns:
+            str: The validation report content, or empty string if no report exists
+        """
+        validation_report_path = Path(planning_dir) / "validation-report.md"
+        
+        if validation_report_path.exists():
+            try:
+                with open(validation_report_path, "r") as f:
+                    report_content = f.read()
+                
+                # Check if this is a FAIL report (has issues to fix)
+                if "## Status: FAIL" in report_content or "Total issues found:" in report_content:
+                    self.logger.info("Found validation report with issues - will include as feedback")
+                    return f"""
+## VALIDATION FEEDBACK - ISSUES TO REPAIR
+
+The Validator agent has identified the following issues that MUST be repaired:
+
+{report_content}
+
+**IMPORTANT:** You MUST address ALL issues listed above before proceeding.
+After fixing all issues, delete {validation_report_path} to signal completion.
+"""
+            except Exception as e:
+                self.logger.warning(f"Could not read validation report: {e}")
+        
+        return ""
+
     async def run(self, project_details: Dict[str, Any]) -> Tuple[bool, Dict[str, Any]]:
         """
         Run the translator agent to translate source code.
@@ -48,8 +94,8 @@ class TranslatorAgent(RecodeAgent):
         Args:
             project_details (Dict[str, Any]): Details about the project to translate
                 Must contain:
-                - c_project_root: Path to the C project root
-                - rust_translation_root: Path to the Rust translation root
+                - source_project_root: Path to the source project root
+                - target_translation_root: Path to the target translation root
                 - planning_dir: Path with planning documents
 
         Returns:
@@ -65,8 +111,17 @@ class TranslatorAgent(RecodeAgent):
         )
         prompt = prompt_generator.generate_prompt()
 
+        # Check for validation feedback (issues from previous validation that need repair)
+        planning_dir = project_details.get("planning_dir", "./planning/")
+        validation_feedback = self._get_validation_feedback(planning_dir)
+
         self.logger.debug("Generated prompt:")
         self.logger.debug(prompt)
+        
+        if validation_feedback:
+            self.logger.info("Including validation feedback in prompt")
+            self.logger.debug("Validation feedback:")
+            self.logger.debug(validation_feedback)
 
         try:
             # Execute the model
@@ -74,7 +129,7 @@ class TranslatorAgent(RecodeAgent):
             model_utils = ModelUtils(configs=self.configs, logger=self.logger)
             status, agent_output = await model_utils.prompt_agent(
                 prompt=prompt,
-                feedback="",
+                feedback=validation_feedback,
                 agent_name="translator",
                 timeout=self.configs["translator_timeout"],
             )

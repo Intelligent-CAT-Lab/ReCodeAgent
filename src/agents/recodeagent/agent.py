@@ -271,51 +271,124 @@ async def run_agents(
     else:
         logger.info("Skipping Planning Agent")
 
-    # Run translator agent if not skipped
-    if (not only_agents or "translator" in only_agents) and "translator" not in skip_agents:
-        logger.info("Running Translator Agent")
-        translator_agent = TranslatorAgent(config)
+    # Run translator-validator loop if not skipped
+    # The loop continues until validator reports no issues
+    run_translator = (not only_agents or "translator" in only_agents) and "translator" not in skip_agents
+    run_validator = (not only_agents or "validator" in only_agents) and "validator" not in skip_agents
 
-        # Start timing the execution
-        start_time = time.time()
-        translator_success, translator_results = await translator_agent.run(project_details)
-        # Record execution time in seconds
-        execution_time = time.time() - start_time
+    if run_translator or run_validator:
+        max_iterations = config.get("max_translation_validation_iterations", 5)
+        iteration = 0
+        validation_passed = False
+        
+        # Track cumulative execution times
+        total_translator_time = 0.0
+        total_validator_time = 0.0
+        iteration_results = []
 
-        if not translator_success:
-            logger.error("Translator Agent failed. Aborting.")
-            return False
+        while iteration < max_iterations and not validation_passed:
+            iteration += 1
+            logger.info(f"=== Translation-Validation Loop: Iteration {iteration}/{max_iterations} ===")
+            
+            iteration_result = {"iteration": iteration}
 
-        logger.info(f"Translator Agent completed successfully in {execution_time:.2f} seconds")
+            # Run translator agent
+            if run_translator:
+                logger.info(f"Running Translator Agent (Iteration {iteration})")
+                translator_agent = TranslatorAgent(config)
 
-        # Add execution time to the results dictionary
-        translator_results["execution_time_seconds"] = execution_time
-        project_details["translator_results"] = translator_results
+                # Start timing the execution
+                start_time = time.time()
+                translator_success, translator_results = await translator_agent.run(project_details)
+                # Record execution time in seconds
+                execution_time = time.time() - start_time
+                total_translator_time += execution_time
+
+                if not translator_success:
+                    logger.error("Translator Agent failed. Aborting.")
+                    return False
+
+                logger.info(f"Translator Agent completed in {execution_time:.2f} seconds")
+                iteration_result["translator_time"] = execution_time
+                iteration_result["translator_results"] = translator_results
+
+            # Run validator agent
+            if run_validator:
+                logger.info(f"Running Validator Agent (Iteration {iteration})")
+                validator_agent = ValidatorAgent(config)
+
+                # Start timing the execution
+                start_time = time.time()
+                validator_success, validator_results = await validator_agent.run(project_details)
+                # Record execution time in seconds
+                execution_time = time.time() - start_time
+                total_validator_time += execution_time
+
+                if not validator_success:
+                    logger.error("Validator Agent failed. Aborting.")
+                    return False
+
+                logger.info(f"Validator Agent completed in {execution_time:.2f} seconds")
+                iteration_result["validator_time"] = execution_time
+                iteration_result["validator_results"] = validator_results
+
+                # Check if validation passed by looking for validation-report.md
+                # If the file doesn't exist or has PASS status, validation is complete
+                validation_report_path = Path(project_details["planning_dir"]) / "validation-report.md"
+                validation_summary_path = Path(project_details["planning_dir"]) / "validation-summary.md"
+                
+                if validation_summary_path.exists():
+                    # Validator created summary, meaning validation passed
+                    logger.info("Validation summary found - validation passed!")
+                    validation_passed = True
+                elif validation_report_path.exists():
+                    # Check if report indicates PASS or FAIL
+                    try:
+                        with open(validation_report_path, "r") as f:
+                            report_content = f.read()
+                        if "## Status: PASS" in report_content:
+                            logger.info("Validation report shows PASS status")
+                            validation_passed = True
+                        else:
+                            logger.info("Validation report shows FAIL status - issues need repair")
+                            logger.info("Continuing to next iteration for repairs...")
+                    except Exception as e:
+                        logger.warning(f"Could not read validation report: {e}")
+                        # Assume there are issues if we can't read the report
+                else:
+                    # No validation report means either first run or all issues resolved
+                    # Check if this is not the first iteration
+                    if iteration > 1:
+                        logger.info("No validation report found after iteration - assuming passed")
+                        validation_passed = True
+            else:
+                # If validator is skipped, exit loop after one translator run
+                validation_passed = True
+
+            iteration_results.append(iteration_result)
+
+        if not validation_passed:
+            logger.warning(f"Translation-validation loop did not converge after {max_iterations} iterations")
+        else:
+            logger.info(f"Translation-validation loop completed successfully in {iteration} iteration(s)")
+
+        # Store final results
+        project_details["translator_results"] = {
+            "execution_time_seconds": total_translator_time,
+            "iterations": iteration,
+            "iteration_results": iteration_results,
+        }
+        project_details["validator_results"] = {
+            "execution_time_seconds": total_validator_time,
+            "iterations": iteration,
+            "validation_passed": validation_passed,
+            "iteration_results": iteration_results,
+        }
+
+        logger.info(f"Total Translator time: {total_translator_time:.2f} seconds")
+        logger.info(f"Total Validator time: {total_validator_time:.2f} seconds")
     else:
-        logger.info("Skipping Translator Agent")
-
-    # Run validator agent if not skipped
-    if (not only_agents or "validator" in only_agents) and "validator" not in skip_agents:
-        logger.info("Running Validator Agent")
-        validator_agent = ValidatorAgent(config)
-
-        # Start timing the execution
-        start_time = time.time()
-        validator_success, validator_results = await validator_agent.run(project_details)
-        # Record execution time in seconds
-        execution_time = time.time() - start_time
-
-        if not validator_success:
-            logger.error("Validator Agent failed. Aborting.")
-            return False
-
-        logger.info(f"Validator Agent completed successfully in {execution_time:.2f} seconds")
-
-        # Add execution time to the results dictionary
-        validator_results["execution_time_seconds"] = execution_time
-        project_details["validator_results"] = validator_results
-    else:
-        logger.info("Skipping Validator Agent")
+        logger.info("Skipping Translator and Validator Agents")
 
     # Save the final project details for reference
     try:

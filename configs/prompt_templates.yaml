@@ -238,12 +238,18 @@ templates:
       # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Execution Script
 
       ## Overview
-      This script guides you through the process of executing PART A (Source Code Translation) of the implementation plan. You must maintain strict naming consistency and functional equivalence. Do NOT implement or run tests.
+      This script guides you through translating ALL functions and ALL tests from {{ source_language.upper() }} to {{ target_language.upper() }}. You must maintain strict naming consistency and ensure functional equivalence. After translation, you must execute tests to ensure they pass. If you receive a validation report with issues, you must repair those issues.
 
       ## Parameters
       - **source_project_root**: {{ source_project_root }}
       - **target_translation_root**: {{ target_translation_root }}
       - **planning_dir**: {{ planning_dir }}
+
+      ## Your Responsibilities
+      1. **Translate ALL functions** from {{ source_language.upper() }} to {{ target_language.upper() }}
+      2. **Translate ALL tests** from {{ source_language.upper() }} to {{ target_language.upper() }}
+      3. **Execute tests** to ensure they pass in the target language
+      4. **Repair issues** identified in the validation report (if provided)
 
       ## Critical Naming Convention Rules
       - **PRESERVE SOURCE NAMES EXACTLY - DO NOT RENAME IDENTIFIERS**
@@ -257,15 +263,20 @@ templates:
 
       ## Steps
 
-      ### 1. Verify Dependencies
+      ### 1. Check for Validation Report
+      - Check if {{ planning_dir }}/validation-report.md exists
+      - If it exists, read it to understand issues that need to be repaired
+      - If this is your first run (no validation report), proceed with full translation
+
+      ### 2. Verify Dependencies
       - Read {{ planning_dir }}/implementation-plan.md
       - Read {{ planning_dir }}/{{ target_language }}-overall-design.md
 
-      ### 2. Read Source Code
+      ### 3. Read Source Code
       - Read {{ source_language }} source files to be translated.
       - Extract class names, method signatures, fields, and constants.
 
-      ### 3. Execute PART A of Implementation Plan
+      ### 4. Translate All Functions (PART A)
       Execute the steps in **PART A** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'source-translator-executor' subagent to translate and execute only one source file at a time.
 
       **CRITICAL IMPLEMENTATION REQUIREMENTS:**
@@ -292,65 +303,97 @@ templates:
         5. Mark step as `[x]` in plan.
         6. Verify code compiles/parses.
       
-      **CRITICAL LOOPING INSTRUCTION:**
-      1. You are NOT allowed to stop until **ALL steps in PART A** are completed.
-      2. You MUST immediately proceed to the next step in Part A.
-      3. You are ONLY finished when every checkbox in **PART A** is marked `[x]`.
-      4. DO NOT touch Part B (Tests). That is for the Validator agent.
-      5. LOOP: Implement Source -> Mark Complete -> NEXT SOURCE TASK.
+      ### 5. Translate All Tests (PART B)
+      Execute the steps in **PART B** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'test-translator-executor' subagent to translate and execute only one test file at a time.
 
-      ### 4. Final Verification
-      - Create {{ planning_dir }}/translation-verification-report.md
-      - List translated classes/methods and confirm name mapping.
+      **For each test in PART B:**
+      1. **Translate Test Class (1:1 Translation):**
+         - Read the {{ source_language }} test file.
+         - Create the corresponding {{ target_language }} test file.
+         - Translate test methods 1:1, exactly as you would translate source code.
+         - Preserve the exact test structure, assertions, setup, teardown, and test logic.
+         - Use the mapped names from `name-mapping.json` to call the translated source code.
+         - DO NOT modify test behavior, add extra tests, or remove tests during translation.
 
-    validator: |-
-      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Verification Script
+      2. **Execute Test:**
+         - Run the test file directly.
+         - Capture the output.
 
-      ## Overview
-      You are an expert QA agent specializing in test generation and translation verification. Your GOAL is to execute **PART B** of the implementation plan: translating tests and verifying functional equivalence between the {{ source_language.upper() }} and {{ target_language.upper() }} implementations.
+      3. **Fix & Iterate:**
+         - If tests fail, analyze the error and fix the issue.
+         - Re-run tests until passing.
+
+      4. **Mark Complete:**
+         - Mark the step as `[x]` in `implementation-plan.md`.
+
+      ### 6. Handle Validation Report Issues (If Applicable)
+      If a validation report exists at {{ planning_dir }}/validation-report.md, you MUST address ALL issues listed:
+
+      **Issue Types and Repairs:**
+      1. **Directory structure issues:**
+         - **Missing files:** Create the missing files according to the design
+         - **Missing directories:** Create the missing directories
+         - **Extra files:** Remove files not in design (except `*_generated.*` test files)
+         - **Wrong locations:** Move files to correct location as per design
+      2. **Name preservation issues:**
+         - Rename identifiers in target files to EXACTLY match source names
+         - Do NOT convert naming conventions (e.g., don't change `getUserName` to `get_user_name`)
+         - Class, method, function, variable, and constant names must be identical strings
+      3. **Unimplemented stubs:** Implement the full functionality
+      4. **TODO comments:** Complete the TODO item and remove the comment
+      5. **Test translation issues:**
+         - **Assertion count mismatch:** Ensure the translated test has the same number of assertions as the source
+         - **Wrong assertion:** Fix the assertion to match what the source test asserts
+      6. **Test execution failures:** Fix the translated code so tests pass (compare with source behavior)
+      7. **Generated test failures:** If generated tests pass in source but fail in target, fix the target implementation
+      
+      **After repairing all issues:**
+      - Delete {{ planning_dir }}/validation-report.md to signal completion
+      - The Validator will run again to verify fixes
 
       ## Functional Equivalence Definition
       Two code fragments in different programming languages are considered **functionally equivalent** if, when executed on the same input, they:
       1. Always have identical program states at all corresponding points reachable by program execution
       2. Both produce the same output upon termination
 
-      Your verification must ensure that the translated {{ target_language.upper() }} code is functionally equivalent to the original {{ source_language.upper() }} code.
+      **CRITICAL LOOPING INSTRUCTION:**
+      1. You are NOT allowed to stop until ALL steps in PART A AND PART B are completed.
+      2. You MUST immediately proceed to the next step.
+      3. You are ONLY finished when every checkbox is marked `[x]`.
+      4. LOOP: Translate -> Execute Tests -> Fix -> Mark Complete -> NEXT TASK.
+
+      ### 7. Final Verification
+      - Create {{ planning_dir }}/translation-verification-report.md
+      - List translated classes/methods and confirm name mapping.
+      - List translated tests and confirm they pass.
+
+    validator: |-
+      # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Validation Script
+
+      ## Overview
+      You are an expert QA agent specializing in validation and verification. Your GOAL is to validate the translation performed by the Translator agent and write a detailed report of any issues found. The Translator agent will then repair these issues, and you will validate again. This process continues until there are NO issues remaining.
 
       ## Parameters
       - **source_project_root**: {{ source_project_root }}
       - **target_translation_root**: {{ target_translation_root }}
       - **planning_dir**: {{ planning_dir }}
 
-      ## CRITICAL FILE GENERATION CONSTRAINTS
-      
-      **YOU MUST STRICTLY ADHERE TO THE FOLLOWING FILE RULES:**
-      
-      1. **Mirror Source Project Structure Exactly:**
-         - The {{ target_language }} project MUST have the EXACT SAME file structure as the {{ source_language }} project.
-         - For each file in {{ source_project_root }}, there should be ONE corresponding file in {{ target_translation_root }}.
-         - Example: `source.py` → `source.js`, NOT `source.js` + `colorsys.js` + `utils.js`
-      
-      2. **DO NOT Create Any Extra Files:**
-         - NO test runners (e.g., `run_all_tests.js`, `test_runner.py`)
-         - NO test suites or test wrappers (e.g., `test_suite.js`, `all_tests.py`)
-         - NO utility files (e.g., `test_utils.js`, `helpers.py`)
-         - NO duplicate/alternative module files
-         - NO splitting tests into multiple files when source has them in one file
-         - NO separate assertion files
-      
-      3. **Only Allowed Extra Files - Generated Tests:**
-         - The ONLY extra files you may create are for generated test coverage.
-         - Generated test files MUST follow this naming: `<source_filename>_generated.<ext>`
-         - Example: If source has `source.py`, you may create `source_generated.js` for generated tests.
-         - Place generated test files in the SAME directory as the translated source file.
-      
-      4. **Test Code Location:**
-         - If tests exist in the {{ source_language }} source file, translate them IN the same {{ target_language }} file.
-         - DO NOT extract tests to separate files unless they are in separate files in the source.
-      
-      5. **Self-Contained Tests:**
-         - All test helper functions (assertions, utilities) MUST be defined INLINE in the test file that uses them.
-         - DO NOT create shared utility modules for tests.
+      ## Your Responsibilities
+      1. **Check directory structure matches the overall design** - Verify the translated project structure matches what was specified in the design document
+      2. **Verify name preservation** - Check that all identifier names (classes, methods, functions, variables) are EXACTLY the same in source and target files (do NOT use name-mapping.json)
+      3. **Check all stubs have been implemented** - No unimplemented stubs should remain
+      4. **Check there are no TODOs** - All TODO comments should be resolved
+      5. **Check tests are translated correctly:**
+         - Each test must have the **same number of assertions** as the source test
+         - Each test must make the **same assertions** as the source test
+      6. **Execute all translated tests** - Run tests in both languages to verify they pass
+      7. **Build coverage map** - Map each test to the functions it covers
+      8. **Generate tests for uncovered functions** - If a function has no test coverage, generate tests in BOTH languages and execute them
+
+      ## Functional Equivalence Definition
+      Two code fragments in different programming languages are considered **functionally equivalent** if, when executed on the same input, they:
+      1. Always have identical program states at all corresponding points reachable by program execution
+      2. Both produce the same output upon termination
 
       ## Steps
 
@@ -358,121 +401,363 @@ templates:
       - Read {{ planning_dir }}/implementation-plan.md
       - Read {{ planning_dir }}/name-mapping.json
       - Read {{ planning_dir }}/{{ source_language }}-functions.md to get the complete list of functions/methods
-      - **Verify source project structure:** List files in {{ source_project_root }} to know EXACTLY which files should exist in {{ target_translation_root }}.
+      - Read {{ planning_dir }}/{{ target_language }}-overall-design.md to get the expected directory structure
 
-      ### 2. Execute PART B: Test Translation & Execution
-      Execute the steps in **PART B** of the implementation plan sequentially. You MUST use the 'test-translator-executor' subagent to translate and execute only one test at a time.
+      ### 2. Verify Directory Structure Matches Design
+      Compare the actual directory structure in {{ target_translation_root }} against the expected structure defined in {{ planning_dir }}/{{ target_language }}-overall-design.md.
 
-      **For each step in PART B:**
-      1. **Translate Test Class (1:1 Translation - Same as Source Code):**
-         - Read the {{ source_language }} test file (e.g., `OptionTest.java`).
-         - Create the corresponding {{ target_language }} test file (e.g., `OptionTest.py`).
-         - **CRITICAL:** Translate test methods 1:1, exactly as you would translate source code.
-         - Preserve the exact test structure, assertions, setup, teardown, and test logic.
-         - Use the mapped names from `name-mapping.json` to call the translated source code.
-         - DO NOT modify test behavior, add extra tests, or remove tests during translation.
-         - **DO NOT create test runners or test suites.**
-
-      2. **Run Test:**
-         - Execute the test file directly (e.g., `node source.js`, `python source.py`).
-         - If translating projects from CRUST, you MUST NOT make any changes to {{ target_language.upper() }} tests under src/bin/*.rs. You can only execute tests using 'mcp__crust-test-runner__run_tests' tool. This tool will restore the test file to its original state before executing tests
-         - DO NOT create a separate test runner script.
-         - Capture the output.
-
-      3. **Fix & Iterate:**
-         - If tests fail, analyze the error.
-         - **IF ERROR IS IN TEST:** Fix the test code. For CRUST tests, there is no need to fix the test code because the tests are already translated and validated by a human validator.
-         - **IF ERROR IS IN SOURCE:** Fix the source code (you have permission to edit source files to fix bugs revealed by tests).
-         - Re-run tests until passing.
-
-      4. **Mark Complete:**
-         - Mark the step as `[x]` in `implementation-plan.md`.
-
-      **CRITICAL LOOPING INSTRUCTION:**
-      - You MUST NOT STOP until all steps in PART B are completed.
-      - Loop: Translate Test -> Run Test -> Fix -> Mark Complete -> NEXT.
-
-      ### 3. Coverage Gap Analysis & Dual-Language Test Generation
-      After completing PART B, identify uncovered classes and generate tests in BOTH {{ source_language.upper() }} and {{ target_language.upper() }} to verify functional equivalence.
-
-      **Coverage Analysis:**
-      1. Read {{ planning_dir }}/{{ source_language }}-functions.md to get ALL functions/methods from the planning phase.
-      2. Analyze the translated tests to determine which classes have uncovered methods.
-      3. Create a list of classes that have methods NOT covered by original tests.
-
-      **CRITICAL REQUIREMENT - YOU MUST GENERATE TESTS FOR ALL UNCOVERED CLASSES:**
-      - DO NOT skip classes because there are "too many" uncovered functions.
-      - DO NOT adopt a "pragmatic approach" or defer test generation.
-      - DO NOT recommend future work instead of doing it.
-      - You MUST use the 'test-generator-executor' subagent to generate tests for EVERY class with uncovered methods.
-      - You MUST loop through ALL uncovered classes until every one has generated tests.
-
-      **Dual-Language Test Generation Process:**
+      **Verification Process:**
+      1. Read the "{{ target_language.upper() }} Module Structure" section from {{ planning_dir }}/{{ target_language }}-overall-design.md
+      2. Extract the expected directory tree and file list from the design document
+      3. List the actual directory structure in {{ target_translation_root }}
+      4. Compare and identify discrepancies:
+         - **Missing files:** Files specified in design but not present in {{ target_translation_root }}
+         - **Missing directories:** Directories specified in design but not created
+         - **Extra files:** Files in {{ target_translation_root }} not specified in design (except `*_generated.*` test files)
+         - **Wrong locations:** Files in wrong directories compared to design
       
-      For EACH class with uncovered methods, you MUST use the 'test-generator-executor' subagent to:
+      **Record ALL directory structure issues:**
+      - Expected path vs actual path (or missing)
+      - Type of issue (missing file, missing directory, extra file, wrong location)
 
-      1. **Generate Test Files for ONE Class at a Time:**
-         - The subagent generates tests for a SINGLE class and then terminates.
-         - You MUST call the subagent for EACH class that has uncovered methods.
+      ### 3. Verify Name Preservation (Direct File Comparison)
+      **DO NOT use name-mapping.json for this check.** You must verify by directly comparing source and target files.
+
+      **Step 3.1: For EACH source file in {{ source_project_root }}:**
+      1. Open the {{ source_language.upper() }} source file
+      2. Extract all identifier names:
+         - Class names
+         - Method/function names
+         - Variable names (class-level and important local variables)
+         - Constant names
+         - Interface/trait names (if applicable)
+      3. Record each identifier with its type and location
+
+      **Step 3.2: For EACH corresponding target file in {{ target_translation_root }}:**
+      1. Open the corresponding {{ target_language.upper() }} target file
+      2. Extract all identifier names (same categories as above)
+      3. Record each identifier with its type and location
+
+      **Step 3.3: Compare Names (Exact String Match)**
+      For EACH identifier found in the source file:
+      1. Find the corresponding identifier in the target file
+      2. Verify the name is **EXACTLY the same string** (case-sensitive)
+      3. Check for common violations:
+         - `snake_case` converted to `camelCase` or vice versa
+         - Names shortened or abbreviated
+         - Names translated to another language
+         - Prefixes/suffixes added or removed
+         - Typos or misspellings
+
+      **Step 3.4: Record ALL name preservation issues:**
+      | Source File | Source Name | Target File | Target Name | Issue |
+      |-------------|-------------|-------------|-------------|-------|
+      | file.java | getUserName | file.py | get_user_name | Case convention changed |
+      | file.java | MAX_SIZE | file.py | maxSize | Case convention changed |
+
+      **CRITICAL:** Names MUST be preserved exactly. Even if target language conventions differ, the translated code MUST use the SAME identifier names as the source.
+
+      ### 4. Check for Unimplemented Stubs
+      For each {{ target_language.upper() }} file in {{ target_translation_root }}:
+      1. Search for stub markers (e.g., `unimplemented!()`, `pass`, `raise NotImplementedError`, `throw new Error("Not implemented")`, etc.)
+      2. Search for placeholder patterns (e.g., empty function bodies, `// TODO`, `# TODO`)
+      3. Record ALL unimplemented stubs found with:
+         - File path
+         - Function/method name
+         - Line number
+         - Type of stub (unimplemented macro, empty body, placeholder, etc.)
+
+      ### 5. Check for TODO Comments
+      For each {{ target_language.upper() }} file in {{ target_translation_root }}:
+      1. Search for TODO comments (case-insensitive: `TODO`, `FIXME`, `XXX`, `HACK`)
+      2. Record ALL TODOs found with:
+         - File path
+         - Line number
+         - TODO content/description
+
+      ### 6. Validate Test Translation
+      For each test file:
+      1. **Count assertions in source test:**
+         - Count all assertion statements (e.g., `assert`, `assertEquals`, `assertTrue`, `expect().toBe()`, etc.)
+         - Record the assertion count per test method
+      
+      2. **Count assertions in target test:**
+         - Count all assertion statements in the translated test
+         - Record the assertion count per test method
+      
+      3. **Compare assertion counts:**
+         - If counts don't match, record this as an issue
+      
+      4. **Compare assertion content:**
+         - For each assertion in source, verify corresponding assertion exists in target
+         - Check that assertions test the same conditions/values
+         - Record any mismatched or missing assertions
+      
+      5. **Record ALL test translation issues:**
+         - Source test file and method
+         - Target test file and method
+         - Issue type: "Assertion count mismatch" or "Wrong assertion"
+         - Source assertion count vs target assertion count
+         - Details of any mismatched assertions
+
+      ### 7. Execute All Translated Tests
+      **YOU MUST execute ALL tests that were translated by the Translator agent.**
+
+      **Step 7.1: Identify All Test Files**
+      1. List all test files in {{ target_translation_root }}
+      2. List all test files in {{ source_project_root }} for comparison
+
+      **Step 7.2: Execute Tests in Target Language**
+      For EACH test file in {{ target_translation_root }}:
+      1. Execute the test file using the appropriate test runner:
+         - Python: `python -m pytest <test_file>` or `python -m unittest <test_file>`
+         - Java: `mvn test -Dtest=<TestClass>`
+         - JavaScript: `node <test_file>` or `npm test`
+         - Rust: `cargo test`
+         - Go: `go test`
+      2. Record the test results:
+         - Test file name
+         - Number of tests run
+         - Number of tests passed
+         - Number of tests failed
+         - Error messages for any failures
+
+      **Step 7.3: Execute Tests in Source Language (for comparison)**
+      For EACH test file in {{ source_project_root }}:
+      1. Execute the test file using the appropriate test runner
+      2. Record the test results for comparison with target language
+
+      **Step 7.4: Compare Results**
+      - Both source and target tests should pass
+      - If source passes but target fails, this indicates a translation bug (record as issue)
+
+      ### 8. Build Function-to-Test Coverage Map
+      **YOU MUST create an explicit mapping from functions to tests to identify coverage gaps.**
+
+      **Step 8.1: Load All Functions**
+      1. Read {{ planning_dir }}/{{ source_language }}-functions.md
+      2. Create a list of ALL functions/methods that need test coverage
+      3. Format: `file_path:function_name` for each function
+
+      **Step 8.2: Analyze Each Test File**
+      For EACH test file (both translated and any existing tests):
+      1. Read the test file content
+      2. Identify which functions/methods are being called/tested
+      3. Look for:
+         - Direct function calls in test methods
+         - Method invocations on class instances
+         - Import statements that indicate which modules are tested
+
+      **Step 8.3: Create Coverage Map**
+      Create {{ planning_dir }}/coverage-map.md with the following structure:
+
+      ```markdown
+      # Function Coverage Map
+
+      ## Covered Functions
+      | Function | File | Tested By | Test Method |
+      |----------|------|-----------|-------------|
+      | func_name | path/to/file.ext | TestClass.py | test_func_name |
+
+      ## Uncovered Functions (NO TEST COVERAGE)
+      | Function | File | Reason |
+      |----------|------|--------|
+      | func_name | path/to/file.ext | No test found |
+
+      ## Summary
+      - Total functions: [NUMBER]
+      - Covered functions: [NUMBER]  
+      - Uncovered functions: [NUMBER]
+      - Coverage percentage: [PERCENTAGE]%
+      ```
+
+      ### 9. Generate Tests for Uncovered Functions
+      **MANDATORY: You MUST generate tests for EVERY function listed as "Uncovered" in the coverage map.**
+
+      **DO NOT SKIP THIS STEP. DO NOT SAY "no tests needed". If a function has no test, you MUST generate one.**
+
+      **Step 9.1: For EACH uncovered function:**
+      1. Read the function implementation in {{ source_language.upper() }}
+      2. Read the translated function in {{ target_language.upper() }}
+      3. Design test cases that cover:
+         - Normal/expected behavior (happy path)
+         - Edge cases (empty inputs, boundary values, null/None handling)
+         - Error conditions (if applicable)
+
+      **Step 9.2: Create Test Files**
          - **Test File Naming Convention:**
-           - {{ source_language.upper() }}: `<ClassName>Test_generated.<source_ext>` in {{ source_project_root }}
-           - {{ target_language.upper() }}: `<ClassName>Test_generated.<target_ext>` in {{ target_translation_root }}
-           - Example: For class `DiskFileItem`, create `DiskFileItemTest_generated.java` and `DiskFileItemTest_generated.py`
-         - Both test files MUST have identical test logic and test the same scenarios.
-         - Include ALL necessary assertion helpers INLINE in each file.
+        - {{ source_language.upper() }}: `<filename>_generated.<source_ext>` in {{ source_project_root }}
+        - {{ target_language.upper() }}: `<filename>_generated.<target_ext>` in {{ target_translation_root }}
+        - Example: For functions in `utils.py`, create `utils_generated.py` (source) and `utils_generated.js` (target)
+      - **Both test files MUST have identical test logic**
+      - **Include ALL necessary imports and setup in each test file**
 
-      2. **Subagent Responsibilities (test-generator-executor):**
-         - Read the source implementation of all uncovered methods in that class.
-         - Design test cases that validate:
-           a. Normal/expected behavior (happy path)
-           b. Edge cases (empty inputs, boundary values, null/None handling)
-           c. Error conditions (if applicable)
-         - Write the SAME test logic in both {{ source_language.upper() }} and {{ target_language.upper() }}.
-         - Execute tests in BOTH languages and compare results.
-         - If tests pass in {{ source_language.upper() }} but fail in {{ target_language.upper() }}, fix the {{ target_language.upper() }} implementation.
-         - Report pass/fail status for both languages.
+      **Step 9.3: Execute Generated Tests**
+      1. Run the generated {{ source_language.upper() }} test
+      2. Run the generated {{ target_language.upper() }} test
+      3. Compare results:
+         - If BOTH pass → Functional equivalence verified
+         - If source passes but target fails → Translation bug (add to validation report)
+         - If source fails → Test design issue (fix the test)
 
-      3. **Language-Specific Execution Guidance:**
-         - Rust: Execute tests using `cargo test`
-         - Python: Execute tests using `python -m unittest` or `pytest`
-         - Java: Execute tests using `mvn clean test -Drat.skip`
-         - JavaScript: Execute tests using `node`
-         - Go: Execute tests using `go test`
-         - C: Compile and run tests using `gcc`
+      **Step 9.4: Language-Specific Execution Commands**
+      - Rust: `cargo test`
+      - Python: `python -m pytest <file>` or `python -m unittest <file>`
+      - Java: `mvn clean test -Dtest=<TestClass> -Drat.skip`
+      - JavaScript: `node <file>`
+      - Go: `go test -run <TestName>`
+      - C: Compile with `gcc` and run
 
       **CRITICAL LOOPING INSTRUCTION FOR TEST GENERATION:**
-      - You MUST NOT STOP until ALL classes with uncovered methods have generated tests.
-      - Loop: Identify Class -> Call test-generator-executor -> Mark Complete -> NEXT CLASS.
-      - Track progress by updating {{ planning_dir }}/test-generation-progress.md after each class.
+      - You MUST NOT STOP until ALL uncovered functions have generated tests
+      - Loop: Read uncovered function → Design test → Write test in BOTH languages → Execute → Verify → NEXT FUNCTION
+      - Update {{ planning_dir }}/coverage-map.md after each function is covered
 
-      4. **Document Coverage and Equivalence:**
-         - Create {{ planning_dir }}/generated-tests-report.md documenting:
-           a. List of ALL classes with uncovered methods
-           b. Generated test files created for EACH class (pairs of {{ source_language.upper() }} and {{ target_language.upper() }} files)
-           c. Test methods generated for each class
-           d. Execution results in BOTH languages for each class
-           e. Functional equivalence verification status (PASS/FAIL with details)
-           f. Any fixes applied to the {{ target_language.upper() }} implementation
+      ### 10. Write Validation Report
+      Create {{ planning_dir }}/validation-report.md with the following structure:
 
-      ### 4. Final Validation Summary
-      - Run ALL tests (translated AND generated) in BOTH {{ source_language.upper() }} and {{ target_language.upper() }} by executing each test file directly.
-      - **DO NOT create a test runner script.**
-      - Create {{ planning_dir }}/validation-summary.md.
-      - Document the following:
-        - Pass/fail status of every test class (both translated and generated) in BOTH languages
-        - Functional equivalence verification results (comparing outputs between languages)
-        - Any discrepancies found and how they were resolved
-      - Include a coverage summary showing:
-        - Functions/methods covered by translated tests
-        - Functions/methods covered by generated tests (list each `<ClassName>Test_generated` file)
-        - Overall coverage percentage
-      - Include a functional equivalence summary showing:
-        - Number of classes with generated tests
-        - Number of test cases executed in both languages
-        - Number of test cases with matching results (functionally equivalent)
-        - Any remaining discrepancies
-      - **Verify generated test files:** Confirm that for each class with uncovered methods:
-        - A `<ClassName>Test_generated.<source_ext>` file exists in {{ source_project_root }}
-        - A `<ClassName>Test_generated.<target_ext>` file exists in {{ target_translation_root }}
-        - Both files have identical test logic
-      - Confirm project is 100% verified and functionally equivalent.
+      ```markdown
+      # Validation Report
+
+      ## Summary
+      - Total issues found: [NUMBER]
+      - Directory structure issues: [NUMBER]
+      - Name preservation issues: [NUMBER]
+      - Unimplemented stubs: [NUMBER]
+      - TODO comments: [NUMBER]
+      - Test translation issues: [NUMBER]
+      - Test execution failures: [NUMBER]
+      
+      ## Coverage Summary
+      - Total functions in {{ source_language }}-functions.md: [NUMBER]
+      - Functions with test coverage: [NUMBER]
+      - Functions WITHOUT test coverage: [NUMBER]
+      - Generated tests created: [NUMBER]
+      - Coverage percentage: [PERCENTAGE]%
+
+      ## Status: [PASS/FAIL]
+
+      ---
+
+      ## 1. Directory Structure Issues
+      | Expected Path | Actual | Issue Type |
+      |---------------|--------|------------|
+      | path/to/expected/file.ext | MISSING | Missing file |
+      | path/to/expected/dir/ | MISSING | Missing directory |
+      | N/A | path/to/extra/file.ext | Extra file (not in design) |
+      | path/expected/file.ext | path/wrong/file.ext | Wrong location |
+
+      **Action Required:** 
+      - For missing files/directories: Create them according to the design
+      - For extra files: Remove them (unless they are `*_generated.*` test files)
+      - For wrong locations: Move files to the correct location as per design
+
+      ---
+
+      ## 2. Name Preservation Issues
+      | Source File | Source Name | Target File | Target Name | Issue |
+      |-------------|-------------|-------------|-------------|-------|
+      | file.java | getUserName | file.py | get_user_name | snake_case conversion |
+      | file.java | MAX_SIZE | file.py | maxSize | Case convention changed |
+
+      **Action Required:** Rename identifiers in target files to EXACTLY match source names. Do NOT convert naming conventions.
+
+      ---
+
+      ## 3. Unimplemented Stubs
+      | File | Function | Line | Type |
+      |------|----------|------|------|
+      | path/to/file.ext | function_name | 42 | unimplemented!() |
+
+      **Action Required:** Implement full functionality for each stub.
+
+      ---
+
+      ## 4. TODO Comments
+      | File | Line | Content |
+      |------|------|---------|
+      | path/to/file.ext | 15 | TODO: handle edge case |
+
+      **Action Required:** Complete each TODO and remove the comment.
+
+      ---
+
+      ## 5. Test Translation Issues
+      | Source Test | Target Test | Issue Type | Details |
+      |-------------|-------------|------------|---------|
+      | test.ext:test_method | test.ext:test_method | Assertion count mismatch | Source: 5, Target: 3 |
+
+      **Action Required:** 
+      - For assertion count mismatch: Add missing assertions to match source count
+      - For wrong assertion: Fix assertion to match source test logic
+
+      ---
+
+      ## 6. Test Execution Results
+      | Test File | Language | Tests Run | Passed | Failed | Status |
+      |-----------|----------|-----------|--------|--------|--------|
+      | TestClass.ext | {{ source_language }} | 10 | 10 | 0 | PASS |
+      | TestClass.ext | {{ target_language }} | 10 | 9 | 1 | FAIL |
+
+      **Failed Tests:**
+      | Test File | Test Method | Error Message |
+      |-----------|-------------|---------------|
+      | TestClass.ext | test_method_name | AssertionError: expected X got Y |
+
+      **Action Required:** Fix failing tests - either fix the test or fix the translated code.
+
+      ---
+
+      ## 7. Coverage Map Summary
+      See {{ planning_dir }}/coverage-map.md for full details.
+
+      **Uncovered Functions Requiring Generated Tests:**
+      | Function | File | Generated Test File |
+      |----------|------|---------------------|
+      | func_name | path/to/file.ext | file_generated.ext |
+
+      ---
+
+      ## 8. Generated Tests for Uncovered Functions
+      | Function | Source Test File | Target Test File | Source Result | Target Result | Equivalent |
+      |----------|------------------|------------------|---------------|---------------|------------|
+      | func_name | file_generated.ext | file_generated.ext | PASS | PASS | YES |
+      | func_name2 | file_generated.ext | file_generated.ext | PASS | FAIL | NO - BUG |
+
+      **Action Required for non-equivalent results:** Fix the {{ target_language }} implementation to match {{ source_language }} behavior.
+
+      ---
+
+      ## Next Steps
+      [If issues found]: The Translator agent must repair all issues listed above.
+      [If no issues]: Translation is complete and verified.
+      ```
+
+      ### 11. Determine Validation Status
+
+      **IF issues are found (Status: FAIL):**
+      - Keep {{ planning_dir }}/validation-report.md in place
+      - The orchestrator will re-run the Translator agent to repair issues
+      - After repairs, you will validate again
+
+      **IF no issues are found (Status: PASS):**
+      - Delete {{ planning_dir }}/validation-report.md (or mark as PASS)
+      - Create {{ planning_dir }}/validation-summary.md with final results:
+        - All functions translated and verified
+        - All tests translated correctly (assertion counts match, same assertions)
+        - All generated tests pass in both languages
+        - Functional equivalence confirmed
+      - The translation/validation loop will terminate
+
+      ## CRITICAL FILE GENERATION CONSTRAINTS
+      
+      1. **Mirror Source Project Structure:**
+         - The {{ target_language }} project MUST have the EXACT SAME file structure as the {{ source_language }} project.
+      
+      2. **Only Allowed Extra Files - Generated Tests:**
+         - Generated test files MUST follow naming: `<source_filename>_generated.<ext>`
+         - Place generated test files in the SAME directory as the source file.
+      
+      3. **Self-Contained Tests:**
+         - All test helper functions MUST be defined INLINE in the test file.
+         - DO NOT create shared utility modules for tests.
