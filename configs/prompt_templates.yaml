@@ -5,7 +5,7 @@ templates:
 
       ## Overview
 
-      This script guides you through the process of creating a high-level design for a {{ target_language.upper() }} translation of a {{ source_language.upper() }} project. The goal is a 1:1 translation, unless otherwise described in the {translation_requirements} parameter described below.
+      This script guides you through the process of creating a high-level design for a {{ target_language.upper() }} translation of a {{ source_language.upper() }} project. The goal is a 1:1 translation, unless otherwise described in the {{ translation_requirements }} parameter described below.
 
       ## Parameters
 
@@ -13,7 +13,7 @@ templates:
 
       - **source_project_root**: {{ source_project_root }}
       - **target_translation_root**: {{ target_translation_root }}
-      - **translation_requirements**: 
+      - **translation_requirements**: {{ translation_requirements }}
       - **planning_dir**: {{ planning_dir }}
 
       ## Steps
@@ -45,7 +45,7 @@ templates:
       Conduct research on relevant {{ target_language.upper() }} libraries that could inform the design of the translation of the {{ source_language.upper() }} project.
 
       **Constraints:**
-      - You MUST research the libraries provided by the user in the {translation_requirements} parameter
+      - You MUST research the libraries provided by the user in the {{ translation_requirements }} parameter
       - You MUST determine the recommended and idiomatic usage pattern for each library you intend to use by reading the library's documentation
       - You MUST lookup the documentation of each item in each library you intend to use to see recommended usage patterns
       - You MUST document research findings for each library in separate markdown files in the {{ planning_dir }}/library_research/ directory
@@ -75,7 +75,7 @@ templates:
       # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Plan Script
 
       ## Overview
-      This script guides you through the process of creating a plan to translate a {{ source_language.upper() }} project into {{ target_language.upper() }}. A high-level design for the translation has already been written. The translation will be "1:1", meaning each {{ source_language.upper() }} item (an item is a function, method, struct, interface, test, or global variable) will have a {{ target_language.upper() }} translation unless the translation requirements explicity require certain items to not be translated. The translation plan will translate sets of {{ source_language.upper() }} items to {{ target_language.upper() }} in a "bottom-up" order.
+      This script guides you through the process of creating a plan to translate a {{ source_language.upper() }} project into {{ target_language.upper() }}. A high-level design for the translation has already been written. The translation will be "1:1", meaning each {{ source_language.upper() }} item (an item is a function, method, struct, interface, test, or global variable) will have a {{ target_language.upper() }} translation unless the translation requirements explicitly require certain items to not be translated. The translation plan will translate sets of {{ source_language.upper() }} items to {{ target_language.upper() }} in a "bottom-up" order.
 
       ## Parameters
 
@@ -99,12 +99,12 @@ templates:
       Create a list of {{ source_language.upper() }} functions and methods that will be translated, with automated validation.
 
       **Constraints:**
-      - For CRUST projects, functions are already extracted and available in translation directory. Each funtion that requires implementation has unimplemented!() in its body, so please only focus on these functions. DO NOT extract functions again. Tests are already translated and validated by a human validator. DO NOT translate tests again.
-      - You MUST use the 'mcp__project-analyzer__get_file_structure' tool to extract methods, variables, and classes from each {{ source_language }} source file AND each {{ source_language }} test file.
+      - For CRUST projects, functions are already extracted and available in the target translation directory. Each function that requires implementation has `unimplemented!()` in its body, so only focus on those functions. DO NOT re-extract functions from the source project. Tests are already translated and validated by a human validator; DO NOT translate tests again.
+      - For NON-CRUST projects, you MUST use the 'mcp__project-analyzer__get_file_structure' tool to extract methods, variables, and classes from each {{ source_language }} source file AND each {{ source_language }} test file.
       - You MUST write a list of {{ source_language.upper() }} functions and methods that will be translated under {{ planning_dir }}/{{ source_language }}-functions.md
-      - Each line in the file MUST have the following format: <{{ source_language }}-file-name>:<{{ source_language }}-item-name>
+      - Each line in the file MUST have the following format: <{{ source_language }}-file-path>:<{{ source_language }}-item-name>
       - Each <{{ source_language }}-item-name> MUST follow the following convention:
-          - For methods: <reciever-type-name>.<method-name>
+          - For methods: <receiver-type-name>.<method-name>
           - For functions: <function-name>
       - You MUST ONLY include functions and methods that will be translated, respecting the translation's requirements outlined in {{ planning_dir }}/{{ target_language }}-overall-design.md
 
@@ -116,8 +116,8 @@ templates:
          - The script MUST:
            a. Read {{ planning_dir }}/{{ source_language }}-functions.md
            b. Parse each line and validate the format: <file-name>:<item-name>
-           c. For each entry, use 'mcp__project-analyzer__get_file_structure' to verify the function/method actually exists in the file
-           d. Check that all files from the directory tree (both source AND test files) have been processed
+           c. For each entry, use 'mcp__project-analyzer__get_file_structure' to verify the function/method actually exists in the file (skip this existence check for CRUST projects; instead verify the target stub contains `unimplemented!()` for the function)
+           d. Check that all files from the directory tree in {{ planning_dir }}/{{ source_language }}-project-research.md (both source AND test files) have been processed (for CRUST projects, skip test files and skip source extraction, and instead verify every target stub file has been reviewed)
            e. Report any format errors, missing functions, or unprocessed files (especially test files)
            f. Exit with code 0 if validation passes, code 1 if errors found
       
@@ -156,16 +156,17 @@ templates:
         ```json
         {
           "classes": {
-            "full.{{ source_language }}.ClassName": "full.{{ target_language }}.ClassName"
+            "<fully_qualified_source_name>": "<fully_qualified_target_name>"
           },
           "methods": {
-            "full.{{ source_language }}.ClassName.methodName": "full.{{ target_language }}.ClassName.methodName"
+            "<fully_qualified_source_name>.<methodName>": "<fully_qualified_target_name>.<methodName>"
           },
           "variables": {
-            "full.{{ source_language }}.ClassName.variableName": "full.{{ target_language }}.ClassName.variableName"
+            "<fully_qualified_source_name>.<variableName>": "<fully_qualified_target_name>.<variableName>"
           }
         }
         ```
+      - Definition: `<fully_qualified_*_name>` MUST use the source language’s canonical module/package + type naming (e.g., `com.foo.Bar` / `foo.bar.Bar` / `foo::bar::Bar`) so keys are unique and stable.
 
       **Part B: Create Skeleton Files**
       - Create directory structure in {{ target_translation_root }}.
@@ -211,16 +212,16 @@ templates:
       - This section lists steps to translate the {{ source_language }} source code to {{ target_language }}.
       - It MUST NOT include steps for translating tests or running tests.
       
-      **PART B: Test Translation & Verification (For Validator Agent)**
+      **PART B: Test Translation & Verification (For Translator Agent)**
       - This section lists steps to translate {{ source_language }} tests to {{ target_language }} and execute them.
       - Each step must correspond to a completed source module from Part A.
-      - For CRUST projects, tests are already translated and available under src/bin. DO NOT translate tests again.
+      - **For CRUST projects:** Tests are already translated and available under src/bin. DO NOT include test translation steps in PART B for CRUST projects. PART B should be empty or contain only test execution steps.
       
       - The first step in PART A MUST be the following:
       ```
       ### Step A.1: Verify skeleton project structure and name mapping
 
-      **Description:** Verify that the file structure of the {{ target_language.upper() }} translation exists under {{ target_translation_root }} and matches the design. Verify that skeleton files (with stubs) exist for all classes/modules. Verify that name-mapping.json exists and contains all required mappings. Run the skeleton validation (e.g., `python3 file.py`) to ensure the environment is set up correctly.
+      **Description:** Verify that the file structure of the {{ target_language.upper() }} translation exists under {{ target_translation_root }} and matches the design. Verify that skeleton files (with stubs) exist for all classes/modules. Verify that name-mapping.json exists and contains all required mappings. Verify that the skeleton validation report exists at {{ planning_dir }}/skeleton-validation-report.md to confirm the environment is set up correctly.
 
       ```
       - The remaining steps in PART A MUST have the following information:
@@ -247,7 +248,7 @@ templates:
 
       ## Your Responsibilities
       1. **Translate ALL functions** from {{ source_language.upper() }} to {{ target_language.upper() }}
-      2. **Translate ALL tests** from {{ source_language.upper() }} to {{ target_language.upper() }}
+      2. **Translate ALL tests** from {{ source_language.upper() }} to {{ target_language.upper() }} (Skip for CRUST projects - tests are already translated)
       3. **Execute tests** to ensure they pass in the target language
       4. **Repair issues** identified in the validation report (if provided)
 
@@ -284,14 +285,21 @@ templates:
       - Translate logic 1:1 (control flow, variables, etc.).
       - Ensure translated code produces same results as source.
 
+      **CRITICAL RUST SAFETY REQUIREMENT (If translating to Rust):**
+      - **ALL Rust translations MUST be safe Rust code with NO unsafe blocks, raw pointer declarations, or raw pointer dereferences.**
+      - You MUST use safe Rust constructs only (references, smart pointers like `Box`, `Rc`, `Arc`, safe borrowing, etc.).
+      - You MUST NOT use `unsafe` blocks, `unsafe fn`, `*const T`, `*mut T`, or any raw pointer operations.
+      - If the source code uses unsafe operations, you MUST find safe Rust alternatives (e.g., use `RefCell` for interior mutability, `Arc`/`Rc` for shared ownership, safe wrappers, etc.).
+      - This is a MANDATORY requirement - unsafe Rust code is NOT allowed in translations.
+
       **METHOD OVERLOADING HANDLING (Java to Python/JavaScript):**
       - If the source language (like Java) supports method overloading and the target (like Python/JS) does not:
         1. DO NOT create duplicate function definitions.
-        2. Use one of these strategies:
-           - **Strategy A (Preferred):** Default arguments or `*args`/`**kwargs`.
-           - **Strategy B:** Rename methods (e.g., `getById(id)`).
-           - **Strategy C:** Type checking within the method.
-        3. UPDATE name-mapping.json if you rename.
+        2. Use one of these strategies (in order of preference):
+           - **Strategy A (Preferred):** Default arguments or `*args`/`**kwargs` to handle multiple signatures.
+           - **Strategy C:** Type checking within the method to handle different parameter types.
+           - **Strategy B (Last Resort):** If Strategies A and C are not feasible, rename methods (e.g., `getById(id)`, `getByIdAndName(id, name)`) to distinguish overloads. **CRITICAL:** If you use Strategy B, you MUST update name-mapping.json to reflect the renamed methods, and document the reason for renaming in a comment.
+        3. **PREFER Strategies A and C** to preserve original method names whenever possible.
 
       **Step Execution Process:**
       - Execute steps in **PART A** sequentially.
@@ -304,7 +312,9 @@ templates:
         6. Verify code compiles/parses.
       
       ### 5. Translate All Tests (PART B)
-      Execute the steps in **PART B** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'test-translator-executor' subagent to translate and execute only one test file at a time.
+      **For CRUST projects:** Skip the translation steps in PART B. Only execute the test execution steps using the 'mcp__crust-test-runner__run_tests' tool.
+      
+      **For non-CRUST projects:** Execute the steps in **PART B** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'test-translator-executor' subagent to translate and execute only one test file at a time.
 
       **CRITICAL: When using the 'test-translator-executor' subagent, it MUST:**
       - Execute the source test in {{ source_language }} to verify it passes and count the number of tests executed
@@ -371,11 +381,19 @@ templates:
          - Class, method, function, variable, and constant names must be identical strings
       3. **Unimplemented stubs:** Implement the full functionality
       4. **TODO comments:** Complete the TODO item and remove the comment
-      5. **Test translation issues:**
+      5. **Rust safety violations (if translating to Rust):**
+         - **CRITICAL:** ALL Rust code MUST be safe Rust with NO unsafe blocks, raw pointer declarations, or raw pointer dereferences
+         - Replace unsafe code with safe Rust alternatives:
+           - Use `RefCell` for interior mutability instead of raw pointers
+           - Use `Arc`/`Rc` for shared ownership instead of raw pointers
+           - Use safe wrappers and safe APIs instead of unsafe operations
+           - Remove all `unsafe` blocks, `unsafe fn`, raw pointer types (`*const T`, `*mut T`), and raw pointer operations
+         - This is a MANDATORY requirement - unsafe Rust code is NOT allowed
+      6. **Test translation issues:**
          - **Assertion count mismatch:** Ensure the translated test has the same number of assertions as the source
          - **Wrong assertion:** Fix the assertion to match what the source test asserts
-      6. **Test execution failures:** Fix the translated code so tests pass (compare with source behavior)
-      7. **Generated test failures:** If generated tests pass in source but fail in target, fix the target implementation
+      7. **Test execution failures:** Fix the translated code so tests pass (compare with source behavior)
+      8. **Generated test failures:** If generated tests pass in source but fail in target, fix the target implementation
       
       **After repairing all issues:**
       - Delete {{ planning_dir }}/validation-report.md to signal completion
@@ -387,9 +405,9 @@ templates:
       2. Both produce the same output upon termination
 
       **CRITICAL LOOPING INSTRUCTION:**
-      1. You are NOT allowed to stop until ALL steps in PART A AND PART B are completed.
+      1. You are NOT allowed to stop until ALL steps in PART A are completed, and ALL steps in PART B are completed.
       2. You MUST immediately proceed to the next step.
-      3. You are ONLY finished when every checkbox is marked `[x]`.
+      3. You are ONLY finished when every checkbox is marked `[x]` in PART A (and PART B if applicable).
       4. LOOP: Translate -> Execute Tests -> Fix -> Mark Complete -> NEXT TASK.
 
       ### 7. Final Verification
@@ -419,6 +437,7 @@ templates:
       6. **Execute all translated tests** - Run tests in both languages to verify they pass
       7. **Build coverage map** - Map each test to the functions it covers
       8. **Generate tests for uncovered functions** - If a function has no test coverage, generate tests in BOTH languages and execute them
+      9. **Verify Rust safety (if translating to Rust)** - Check that ALL Rust code is safe Rust with NO unsafe blocks, raw pointer declarations, or raw pointer dereferences
 
       ## Functional Equivalence Definition
       Two code fragments in different programming languages are considered **functionally equivalent** if, when executed on the same input, they:
@@ -506,6 +525,28 @@ templates:
          - File path
          - Line number
          - TODO content/description
+
+      ### 5.5. Verify Rust Safety (If translating to Rust)
+      **CRITICAL: This step is MANDATORY for Rust translations.**
+      
+      For each Rust file in {{ target_translation_root }}:
+      1. **Search for unsafe code patterns:**
+         - Search for `unsafe` keyword (blocks, functions, traits)
+         - Search for raw pointer types: `*const T`, `*mut T`
+         - Search for raw pointer operations: dereferencing raw pointers, casting to raw pointers
+         - Search for unsafe function calls: `std::ptr::*`, `std::mem::transmute`, etc.
+      
+      2. **Record ALL unsafe code violations:**
+         - File path
+         - Line number
+         - Type of violation (unsafe block, raw pointer declaration, raw pointer dereference, unsafe function call)
+         - Code snippet showing the violation
+      
+      3. **CRITICAL REQUIREMENT:**
+         - **ALL Rust translations MUST be safe Rust code.**
+         - **NO unsafe blocks, raw pointer declarations, or raw pointer dereferences are allowed.**
+         - If unsafe code is found, this MUST be reported as a critical issue in the validation report.
+         - The Translator agent MUST replace unsafe code with safe Rust alternatives (e.g., `RefCell`, `Arc`, `Rc`, safe wrappers, etc.).
 
       ### 6. Validate Test Translation
       For each test file:
@@ -687,6 +728,7 @@ templates:
       - Name preservation issues: [NUMBER]
       - Unimplemented stubs: [NUMBER]
       - TODO comments: [NUMBER]
+      - Rust safety violations: [NUMBER] (if translating to Rust)
       - Test translation issues: [NUMBER]
       - Test execution failures: [NUMBER]
       
@@ -741,6 +783,23 @@ templates:
       | path/to/file.ext | 15 | TODO: handle edge case |
 
       **Action Required:** Complete each TODO and remove the comment.
+
+      ---
+
+      ## 4.5. Rust Safety Violations (If translating to Rust)
+      | File | Line | Violation Type | Code Snippet | Issue |
+      |------|------|----------------|--------------|-------|
+      | path/to/file.rs | 42 | unsafe block | `unsafe { ... }` | Unsafe block found |
+      | path/to/file.rs | 55 | raw pointer | `*const T` | Raw pointer declaration |
+      | path/to/file.rs | 67 | raw pointer deref | `*ptr` | Raw pointer dereference |
+
+      **CRITICAL:** ALL Rust translations MUST be safe Rust code. NO unsafe blocks, raw pointer declarations, or raw pointer dereferences are allowed.
+
+      **Action Required:** 
+      - Replace ALL unsafe code with safe Rust alternatives
+      - Use safe constructs: `RefCell` for interior mutability, `Arc`/`Rc` for shared ownership, safe wrappers, etc.
+      - Remove all `unsafe` blocks, `unsafe fn`, raw pointer types (`*const T`, `*mut T`), and raw pointer operations
+      - This is a MANDATORY requirement - unsafe Rust code is NOT allowed in translations
 
       ---
 
@@ -803,7 +862,7 @@ templates:
       - After repairs, you will validate again
 
       **IF no issues are found (Status: PASS):**
-      - Delete {{ planning_dir }}/validation-report.md (or mark as PASS)
+      - Delete {{ planning_dir }}/validation-report.md
       - Create {{ planning_dir }}/validation-summary.md with final results:
         - All functions translated and verified
         - All tests translated correctly (assertion counts match, same assertions)
@@ -817,8 +876,8 @@ templates:
          - The {{ target_language }} project MUST have the EXACT SAME file structure as the {{ source_language }} project.
       
       2. **Only Allowed Extra Files - Generated Tests:**
-         - Generated test files MUST follow naming: `<source_filename>_generated.<ext>`
-         - Place generated test files in the SAME directory as the source file.
+         - Generated test files MUST follow naming: `ClassNameTest_generated.<ext>` where `ClassName` is the actual class name being tested.
+         - Place generated test files in the SAME directory as the source file being tested.
       
       3. **Self-Contained Tests:**
          - All test helper functions MUST be defined INLINE in the test file.
