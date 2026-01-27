@@ -306,6 +306,14 @@ templates:
       ### 5. Translate All Tests (PART B)
       Execute the steps in **PART B** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'test-translator-executor' subagent to translate and execute only one test file at a time.
 
+      **CRITICAL: When using the 'test-translator-executor' subagent, it MUST:**
+      - Execute the source test in {{ source_language }} to verify it passes and count the number of tests executed
+      - Translate the test to {{ target_language }}
+      - Execute the translated test in {{ target_language }} to verify it passes
+      - Ensure the same number of tests are executed in both source and target languages
+      - Verify that all tests pass in both languages
+      - If source tests pass but target tests fail, fix the target implementation or translation
+
       **For each test in PART B:**
       1. **Translate Test Class (1:1 Translation):**
          - Read the {{ source_language }} test file.
@@ -315,13 +323,35 @@ templates:
          - Use the mapped names from `name-mapping.json` to call the translated source code.
          - DO NOT modify test behavior, add extra tests, or remove tests during translation.
 
-      2. **Execute Test:**
-         - Run the test file directly.
-         - Capture the output.
+      2. **Execute Tests in Both Languages:**
+         - **Execute source test first:** Run the {{ source_language }} test to verify it passes and count the number of tests executed.
+         - **Execute target test:** Run the {{ target_language }} test and verify:
+           - The same number of tests are executed as in the source
+           - All tests pass
+         
+         **For Python tests:** 
+           - If `pytest.ini` does not exist in {{ target_translation_root }}, create it with the following configuration:
+             ```ini
+             [pytest]
+             testpaths = <test_paths>
+             python_files = <python_files>
+             python_classes = <python_classes>
+             python_functions = <python_functions>
+             ```
+           - Create `conftest.py` in {{ target_translation_root }} if necessary (e.g., for shared fixtures, test configuration, or setup/teardown code needed across multiple test files).
+           - Always run pytest from the {{ target_translation_root }} directory (the root of translation) to ensure all tests are discovered and executed.
+           - Execute all tests using: `cd {{ target_translation_root }} && pytest` (this will discover and run all tests in the translation root).
+         **For Rust tests:**
+           - Always run cargo test from the {{ target_translation_root }} directory (the root of translation) to ensure all tests are discovered and executed.
+           - Execute all tests using: `cd {{ target_translation_root }} && cargo test` (this will discover and run all tests in the translation root).
+         **For other languages:** Run the test file directly in both source and target languages.
+         - Capture the output from both executions.
 
       3. **Fix & Iterate:**
-         - If tests fail, analyze the error and fix the issue.
-         - Re-run tests until passing.
+         - If source tests fail, investigate and fix the source test setup if needed.
+         - If target tests fail (but source passes), analyze the error and fix the translation or target implementation.
+         - Ensure the same number of tests execute in both languages.
+         - Re-run tests until passing in both languages.
 
       4. **Mark Complete:**
          - Mark the step as `[x]` in `implementation-plan.md`.
@@ -415,10 +445,12 @@ templates:
          - **Missing directories:** Directories specified in design but not created
          - **Extra files:** Files in {{ target_translation_root }} not specified in design (except `*_generated.*` test files)
          - **Wrong locations:** Files in wrong directories compared to design
+         - **Incorrect file names:** Files with incorrect names compared to design
       
       **Record ALL directory structure issues:**
       - Expected path vs actual path (or missing)
       - Type of issue (missing file, missing directory, extra file, wrong location)
+      - Incorrect file names
 
       ### 3. Verify Name Preservation (Direct File Comparison)
       **DO NOT use name-mapping.json for this check.** You must verify by directly comparing source and target files.
@@ -508,12 +540,29 @@ templates:
       2. List all test files in {{ source_project_root }} for comparison
 
       **Step 7.2: Execute Tests in Target Language**
-      For EACH test file in {{ target_translation_root }}:
+      For Python tests:
+      1. **Ensure pytest.ini exists:** If `pytest.ini` does not exist in {{ target_translation_root }}, create it with the following configuration:
+         ```ini
+         [pytest]
+         testpaths = <test_paths>
+         python_files = <python_files>
+         python_classes = <python_classes>
+         python_functions = <python_functions>
+         ```
+      2. **Create conftest.py if necessary:** Create `conftest.py` in {{ target_translation_root }} if necessary (e.g., for shared fixtures, test configuration, or setup/teardown code needed across multiple test files).
+      3. **Execute all tests from root:** Always run pytest from the {{ target_translation_root }} directory (the root of translation) to ensure all tests are discovered and executed:
+         - Command: `cd {{ target_translation_root }} && pytest`
+         - This will discover and run ALL tests in the translation root directory
+      
+      For Rust tests:
+      1. **Execute all tests from root:** Always run cargo test from the {{ target_translation_root }} directory (the root of translation) to ensure all tests are discovered and executed:
+         - Command: `cd {{ target_translation_root }} && cargo test`
+         - This will discover and run ALL tests in the translation root directory
+      
+      For other languages, execute each test file individually:
       1. Execute the test file using the appropriate test runner:
-         - Python: `python -m pytest <test_file>` or `python -m unittest <test_file>`
          - Java: `mvn test -Dtest=<TestClass>`
          - JavaScript: `node <test_file>` or `npm test`
-         - Rust: `cargo test`
          - Go: `go test`
       2. Record the test results:
          - Test file name
