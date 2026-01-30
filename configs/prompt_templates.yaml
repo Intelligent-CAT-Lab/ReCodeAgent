@@ -511,6 +511,7 @@ templates:
       The subagent will execute tests in both languages and return:
       - Test execution results (pass/fail counts)
       - Any test failures with error messages
+      - For CRUST projects, make sure to run tests with 'mcp__crust-test-runner__run_tests' tool
       Collect the results for the final validation report.
 
       ### 8. Invoke 'coverage-analyzer' Subagent
