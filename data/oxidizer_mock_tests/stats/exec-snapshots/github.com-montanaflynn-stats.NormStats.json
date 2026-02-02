@@ -1,0 +1,66 @@
+[
+    {
+        "inputs": [
+            0,
+            4607182418800017408,
+            "m"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            4607182418800017408,
+            "m"
+        ],
+        "return_value": [
+            0
+        ]
+    },
+    {
+        "inputs": [
+            0,
+            4607182418800017408,
+            "v"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            4607182418800017408,
+            "v"
+        ],
+        "return_value": [
+            4607182418800017408
+        ]
+    },
+    {
+        "inputs": [
+            0,
+            4607182418800017408,
+            "s"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            4607182418800017408,
+            "s"
+        ],
+        "return_value": [
+            0
+        ]
+    },
+    {
+        "inputs": [
+            0,
+            4607182418800017408,
+            "k"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            0,
+            4607182418800017408,
+            "k"
+        ],
+        "return_value": [
+            0
+        ]
+    }
+]

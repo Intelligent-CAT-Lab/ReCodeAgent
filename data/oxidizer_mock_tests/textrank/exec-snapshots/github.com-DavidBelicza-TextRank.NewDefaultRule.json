@@ -1,0 +1,37 @@
+[
+    {
+        "inputs": [],
+        "execution_success": true,
+        "input_modifications": [],
+        "return_value": {
+            "wordSeparators": [
+                " ",
+                ",",
+                "'",
+                "\u2019",
+                "\"",
+                ")",
+                "(",
+                "[",
+                "]",
+                "{",
+                "}",
+                "\"",
+                ";",
+                "\n",
+                ">",
+                "<",
+                "%",
+                "@",
+                "&",
+                "=",
+                "#"
+            ],
+            "sentenceSeparators": [
+                "!",
+                ".",
+                "?"
+            ]
+        }
+    }
+]

@@ -1,0 +1,1080 @@
+[
+    {
+        "inputs": [
+            "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "over",
+            "the",
+            "past",
+            "fortnight",
+            "we",
+            "asked",
+            "you",
+            "to",
+            "nominate",
+            "your",
+            "top",
+            "extensions",
+            "for",
+            "the",
+            "gnome",
+            "desktop"
+        ]
+    },
+    {
+        "inputs": [
+            " And you did just that.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " And you did just that.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "and",
+            "you",
+            "did",
+            "just",
+            "that"
+        ]
+    },
+    {
+        "inputs": [
+            " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " Having now sifted through the hundreds of entries, we\u2019re ready to reveal your favourite GNOME Shell extensions.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "having",
+            "now",
+            "sifted",
+            "through",
+            "the",
+            "hundreds",
+            "of",
+            "entries",
+            "we",
+            "re",
+            "ready",
+            "to",
+            "reveal",
+            "your",
+            "favourite",
+            "gnome",
+            "shell",
+            "extensions"
+        ]
+    },
+    {
+        "inputs": [
+            " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " GNOME 3 (which is more commonly used with the GNOME Shell) has an extension framework that lets developers (and users) extend, build on, and shape how the desktop looks, acts and functions.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "gnome",
+            "3",
+            "which",
+            "is",
+            "more",
+            "commonly",
+            "used",
+            "with",
+            "the",
+            "gnome",
+            "shell",
+            "has",
+            "an",
+            "extension",
+            "framework",
+            "that",
+            "lets",
+            "developers",
+            "and",
+            "users",
+            "extend",
+            "build",
+            "on",
+            "and",
+            "shape",
+            "how",
+            "the",
+            "desktop",
+            "looks",
+            "acts",
+            "and",
+            "functions"
+        ]
+    },
+    {
+        "inputs": [
+            " Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " Dash to Dock takes the GNOME Dash \u2014 this is the \u2018favourites bar\u2019 that appears on the left-hand side of the screen in the Activities overlay \u2014 and transforms it into a desktop dock.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "dash",
+            "to",
+            "dock",
+            "takes",
+            "the",
+            "gnome",
+            "dash",
+            "\u2014",
+            "this",
+            "is",
+            "the",
+            "\u2018favourites",
+            "bar",
+            "that",
+            "appears",
+            "on",
+            "the",
+            "left-hand",
+            "side",
+            "of",
+            "the",
+            "screen",
+            "in",
+            "the",
+            "activities",
+            "overlay",
+            "\u2014",
+            "and",
+            "transforms",
+            "it",
+            "into",
+            "a",
+            "desktop",
+            "dock"
+        ]
+    },
+    {
+        "inputs": [
+            " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " And just like Plank, Docky or AWN you can add app launchers, rearrange them, and use them to minimise, restore and switch between app windows.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "and",
+            "just",
+            "like",
+            "plank",
+            "docky",
+            "or",
+            "awn",
+            "you",
+            "can",
+            "add",
+            "app",
+            "launchers",
+            "rearrange",
+            "them",
+            "and",
+            "use",
+            "them",
+            "to",
+            "minimise",
+            "restore",
+            "and",
+            "switch",
+            "between",
+            "app",
+            "windows"
+        ]
+    },
+    {
+        "inputs": [
+            " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " Dash to Dock has many of the common \u201cDock\u201d features you\u2019d expect, including autohide and intellihide, a fixed-width mode, adjustable icon size, and custom themes.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "dash",
+            "to",
+            "dock",
+            "has",
+            "many",
+            "of",
+            "the",
+            "common",
+            "\u201cdock\u201d",
+            "features",
+            "you",
+            "d",
+            "expect",
+            "including",
+            "autohide",
+            "and",
+            "intellihide",
+            "a",
+            "fixed-width",
+            "mode",
+            "adjustable",
+            "icon",
+            "size",
+            "and",
+            "custom",
+            "themes"
+        ]
+    },
+    {
+        "inputs": [
+            " My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " My biggest pet peeve with GNOME Shell is its legacy app tray that hides in the bottom left of the screen.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "my",
+            "biggest",
+            "pet",
+            "peeve",
+            "with",
+            "gnome",
+            "shell",
+            "is",
+            "its",
+            "legacy",
+            "app",
+            "tray",
+            "that",
+            "hides",
+            "in",
+            "the",
+            "bottom",
+            "left",
+            "of",
+            "the",
+            "screen"
+        ]
+    },
+    {
+        "inputs": [
+            " All extraneous non-system applets, indicators and tray icons hide down here.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " All extraneous non-system applets, indicators and tray icons hide down here.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "all",
+            "extraneous",
+            "non-system",
+            "applets",
+            "indicators",
+            "and",
+            "tray",
+            "icons",
+            "hide",
+            "down",
+            "here"
+        ]
+    },
+    {
+        "inputs": [
+            " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " This makes it a little harder to use applications that rely on a system tray presence, like Skype, Franz, Telegram, and Dropbox.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "this",
+            "makes",
+            "it",
+            "a",
+            "little",
+            "harder",
+            "to",
+            "use",
+            "applications",
+            "that",
+            "rely",
+            "on",
+            "a",
+            "system",
+            "tray",
+            "presence",
+            "like",
+            "skype",
+            "franz",
+            "telegram",
+            "and",
+            "dropbox"
+        ]
+    },
+    {
+        "inputs": [
+            " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " TopIcons Plus is the quick way to put GNOME system tray icons back where they belong: on show and in reach.",
+            {
+                "Type": "RuleDefault",
+                "Value": {
+                    "wordSeparators": [
+                        " ",
+                        ",",
+                        "'",
+                        "\u2019",
+                        "\"",
+                        ")",
+                        "(",
+                        "[",
+                        "]",
+                        "{",
+                        "}",
+                        "\"",
+                        ";",
+                        "\n",
+                        ">",
+                        "<",
+                        "%",
+                        "@",
+                        "&",
+                        "=",
+                        "#"
+                    ],
+                    "sentenceSeparators": [
+                        "!",
+                        ".",
+                        "?"
+                    ]
+                }
+            }
+        ],
+        "return_value": [
+            "topicons",
+            "plus",
+            "is",
+            "the",
+            "quick",
+            "way",
+            "to",
+            "put",
+            "gnome",
+            "system",
+            "tray",
+            "icons",
+            "back",
+            "where",
+            "they",
+            "belong:",
+            "on",
+            "show",
+            "and",
+            "in",
+            "reach"
+        ]
+    }
+]

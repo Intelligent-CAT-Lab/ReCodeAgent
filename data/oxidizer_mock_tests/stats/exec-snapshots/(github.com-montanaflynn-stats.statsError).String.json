@@ -1,0 +1,16 @@
+[
+    {
+        "inputs": [
+            {
+                "err": "test error"
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "err": "test error"
+            }
+        ],
+        "return_value": "test error"
+    }
+]

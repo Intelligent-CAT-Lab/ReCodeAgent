@@ -1,0 +1,34 @@
+[
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {},
+                "WordValID": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {},
+                "WordValID": {}
+            }
+        ],
+        "return_value": {}
+    }
+]

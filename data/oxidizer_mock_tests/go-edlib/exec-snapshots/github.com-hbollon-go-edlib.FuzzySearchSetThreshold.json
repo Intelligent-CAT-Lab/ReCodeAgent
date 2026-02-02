@@ -1,0 +1,112 @@
+[
+    {
+        "inputs": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            3,
+            1060320051,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            3,
+            1060320051,
+            0
+        ],
+        "return_value": [
+            "testing",
+            "",
+            ""
+        ]
+    },
+    {
+        "inputs": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            3,
+            1056964608,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            3,
+            1056964608,
+            0
+        ],
+        "return_value": [
+            "testing",
+            "test",
+            "tester"
+        ]
+    },
+    {
+        "inputs": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            3,
+            1060320051,
+            4
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "testnig",
+            [
+                "test",
+                "tester",
+                "tests",
+                "testers",
+                "testing",
+                "tsting",
+                "sting"
+            ],
+            3,
+            1060320051,
+            4
+        ],
+        "return_value": null
+    }
+]

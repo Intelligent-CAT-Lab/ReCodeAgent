@@ -1,0 +1,246 @@
+[
+    {
+        "inputs": [
+            "President George Herbert Walker Bush"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "President George Herbert Walker Bush"
+        ],
+        "return_value": {
+            "ProvidedName": "President George Herbert Walker Bush",
+            "FullName": "President George Herbert Walker Bush",
+            "Salutation": "President",
+            "FirstName": "George",
+            "MiddleName": "Herbert Walker",
+            "LastName": "Bush",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            " James K. Polera"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            " James K. Polera"
+        ],
+        "return_value": {
+            "ProvidedName": " James K. Polera",
+            "FullName": "James K. Polera",
+            "Salutation": "",
+            "FirstName": "James",
+            "MiddleName": "K.",
+            "LastName": "Polera",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "James Polera a.k.a James K. Polera"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "James Polera a.k.a James K. Polera"
+        ],
+        "return_value": {
+            "ProvidedName": "James Polera a.k.a James K. Polera",
+            "FullName": "James Polera",
+            "Salutation": "",
+            "FirstName": "James",
+            "MiddleName": "",
+            "LastName": "Polera",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": [
+                {
+                    "ProvidedName": " James K. Polera",
+                    "FullName": "James K. Polera",
+                    "Salutation": "",
+                    "FirstName": "James",
+                    "MiddleName": "K.",
+                    "LastName": "Polera",
+                    "Generation": "",
+                    "Suffix": "",
+                    "Nickname": "",
+                    "Aliases": null
+                }
+            ]
+        }
+    },
+    {
+        "inputs": [
+            "K\u00f6nig Ludwig"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "K\u00f6nig Ludwig"
+        ],
+        "return_value": {
+            "ProvidedName": "K\u00f6nig Ludwig",
+            "FullName": "K\u00f6nig Ludwig",
+            "Salutation": "",
+            "FirstName": "K\u00f6nig",
+            "MiddleName": "",
+            "LastName": "Ludwig",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "Dr. James\tPolera\tEsq."
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Dr. James\tPolera\tEsq."
+        ],
+        "return_value": {
+            "ProvidedName": "Dr. James\tPolera\tEsq.",
+            "FullName": "Dr. James Polera Esq.",
+            "Salutation": "Dr.",
+            "FirstName": "James",
+            "MiddleName": "",
+            "LastName": "Polera",
+            "Generation": "",
+            "Suffix": "Esq.",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "I am a Popsicle"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "I am a Popsicle"
+        ],
+        "return_value": {
+            "ProvidedName": "I am a Popsicle",
+            "FullName": "I I am I",
+            "Salutation": "",
+            "FirstName": "I",
+            "MiddleName": "I am",
+            "LastName": "",
+            "Generation": "I",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "Alan Hon"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Alan Hon"
+        ],
+        "return_value": {
+            "ProvidedName": "Alan Hon",
+            "FullName": "Alan Hon",
+            "Salutation": "",
+            "FirstName": "Alan",
+            "MiddleName": "",
+            "LastName": "Hon",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "Jessica Aka"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Jessica Aka"
+        ],
+        "return_value": {
+            "ProvidedName": "Jessica Aka",
+            "FullName": "Jessica Aka",
+            "Salutation": "",
+            "FirstName": "Jessica",
+            "MiddleName": "",
+            "LastName": "Aka",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "James Polera'"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "James Polera'"
+        ],
+        "return_value": {
+            "ProvidedName": "James Polera'",
+            "FullName": "James Polera",
+            "Salutation": "",
+            "FirstName": "James",
+            "MiddleName": "",
+            "LastName": "Polera",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "Mr."
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Mr."
+        ],
+        "return_value": {
+            "ProvidedName": "Mr.",
+            "FullName": "Mr.",
+            "Salutation": "Mr.",
+            "FirstName": "",
+            "MiddleName": "",
+            "LastName": "",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "",
+            "Aliases": null
+        }
+    },
+    {
+        "inputs": [
+            "Philip Francis 'The Scooter' Rizzuto, deceased"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "Philip Francis 'The Scooter' Rizzuto, deceased"
+        ],
+        "return_value": {
+            "ProvidedName": "Philip Francis 'The Scooter' Rizzuto, deceased",
+            "FullName": "Philip Francis Rizzuto",
+            "Salutation": "",
+            "FirstName": "Philip",
+            "MiddleName": "Francis",
+            "LastName": "Rizzuto",
+            "Generation": "",
+            "Suffix": "",
+            "Nickname": "'The Scooter'",
+            "Aliases": null
+        }
+    }
+]

@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            4642437982947333951,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4642437982947333951,
+            0
+        ],
+        "return_value": 4642437159633027072
+    },
+    {
+        "inputs": [
+            13865810019802109759,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            13865810019802109759,
+            0
+        ],
+        "return_value": 13865809196487802880
+    },
+    {
+        "inputs": [
+            4607182418800017408,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4607182418800017408,
+            0
+        ],
+        "return_value": 4607182418800017408
+    },
+    {
+        "inputs": [
+            4607182418800017408,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4607182418800017408,
+            2
+        ],
+        "return_value": 4607182418800017408
+    },
+    {
+        "inputs": [
+            4613937818241073152,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4613937818241073152,
+            2
+        ],
+        "return_value": 4613937818241073152
+    },
+    {
+        "inputs": [
+            4605529566940507198,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4605529566940507198,
+            2
+        ],
+        "return_value": 4605561122934164029
+    },
+    {
+        "inputs": [
+            4606656666713121726,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4606656666713121726,
+            2
+        ],
+        "return_value": 4606641986844732948
+    },
+    {
+        "inputs": [
+            4607872623633045543,
+            2
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4607872623633045543,
+            2
+        ],
+        "return_value": 4607857958744122982
+    },
+    {
+        "inputs": [
+            4618441417868443648,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4618441417868443648,
+            0
+        ],
+        "return_value": 4618441417868443648
+    },
+    {
+        "inputs": [
+            4625196817309499387,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4625196817309499387,
+            0
+        ],
+        "return_value": 4625196817309499392
+    },
+    {
+        "inputs": [
+            4621256167635550209,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4621256167635550209,
+            0
+        ],
+        "return_value": 4621256167635550208
+    }
+]

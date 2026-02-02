@@ -1,0 +1,32 @@
+[
+    {
+        "inputs": [
+            4598175219545276416
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4598175219545276416
+        ],
+        "return_value": 4622945017495814144
+    },
+    {
+        "inputs": [
+            13830554455654793216
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            13830554455654793216
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            4602678819172646912
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            4602678819172646912
+        ],
+        "return_value": 4611686018427387904
+    }
+]

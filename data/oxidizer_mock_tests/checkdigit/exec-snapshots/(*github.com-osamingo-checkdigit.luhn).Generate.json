@@ -1,0 +1,122 @@
+[
+    {
+        "inputs": [
+            {},
+            "424242424242424"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "424242424242424"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            {},
+            "510510510510510"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "510510510510510"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {},
+            "3"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "3"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            {},
+            "51051051051051"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "51051051051051"
+        ],
+        "return_value": 5
+    },
+    {
+        "inputs": [
+            {},
+            "353011133330000"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "353011133330000"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {},
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            ""
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "a"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            {},
+            "a"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            "37144963539843"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "37144963539843"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            {},
+            "3056930902590"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "3056930902590"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            {},
+            "411111111111111"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "411111111111111"
+        ],
+        "return_value": 1
+    }
+]

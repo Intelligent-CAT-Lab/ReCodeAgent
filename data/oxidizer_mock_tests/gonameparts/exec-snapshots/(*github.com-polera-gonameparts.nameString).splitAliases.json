@@ -1,0 +1,101 @@
+[
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera a.k.a James K. Polera",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            },
+            "A.K.A"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera",
+                    "*|*",
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            },
+            "A.K.A"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "Tony Stark a/k/a Ironman a/k/a Stark, Anthony a/k/a Anthony Edward \"Tony\" Stark",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            },
+            "A/K/A"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "Tony Stark ",
+                "SplitName": [
+                    "Tony",
+                    "Stark",
+                    "*|*",
+                    "Ironman",
+                    "*|*",
+                    "Stark,",
+                    "Anthony",
+                    "*|*",
+                    "Anthony",
+                    "Edward",
+                    "\"Tony\"",
+                    "Stark"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " Ironman ",
+                    " Stark, Anthony ",
+                    " Anthony Edward \"Tony\" Stark"
+                ]
+            },
+            "A/K/A"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera a/k/a Batman",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            },
+            "A/K/A"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera",
+                    "*|*",
+                    "Batman"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " Batman"
+                ]
+            },
+            "A/K/A"
+        ],
+        "return_value": null
+    }
+]

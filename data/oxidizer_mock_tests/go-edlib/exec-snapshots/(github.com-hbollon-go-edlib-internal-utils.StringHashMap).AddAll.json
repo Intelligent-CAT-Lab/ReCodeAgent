@@ -1,0 +1,245 @@
+[
+    {
+        "inputs": [
+            {
+                "a": {},
+                "b": {},
+                "c": {}
+            },
+            {
+                "d": {},
+                "e": {},
+                "f": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "a": {},
+                "b": {},
+                "c": {},
+                "d": {},
+                "e": {},
+                "f": {}
+            },
+            {
+                "d": {},
+                "e": {},
+                "f": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            {
+                "A": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "A": {}
+            },
+            {
+                "A": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            {
+                "AB": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AB": {}
+            },
+            {
+                "AB": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "AB": {}
+            },
+            {
+                "AC": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AB": {},
+                "AC": {}
+            },
+            {
+                "AC": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "AB": {}
+            },
+            {
+                "AB": {},
+                "AC": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AB": {},
+                "AC": {}
+            },
+            {
+                "AB": {},
+                "AC": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "A": {}
+            },
+            {
+                "A": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "A": {}
+            },
+            {
+                "A": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            {
+                "AD": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AD": {}
+            },
+            {
+                "AD": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "AD": {}
+            },
+            {
+                "AD": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "AD": {}
+            },
+            {
+                "AD": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            {
+                "ADH": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "ADH": {}
+            },
+            {
+                "ADH": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            {
+                "G": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "G": {}
+            },
+            {
+                "G": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {
+                "G": {}
+            },
+            {
+                "G": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "G": {}
+            },
+            {
+                "G": {}
+            }
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            {},
+            {
+                "GT": {}
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "GT": {}
+            },
+            {
+                "GT": {}
+            }
+        ],
+        "return_value": null
+    }
+]

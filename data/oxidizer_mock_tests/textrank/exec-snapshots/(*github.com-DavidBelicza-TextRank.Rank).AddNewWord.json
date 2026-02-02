@@ -1,0 +1,1214 @@
+[
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {},
+                "WordValID": {}
+            },
+            "word1",
+            -1,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0
+                }
+            },
+            "word1",
+            -1,
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0
+                }
+            },
+            "word2",
+            0,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word2",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0,
+                    "word2": 1
+                }
+            },
+            "word2",
+            0,
+            0
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 2,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word2",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0,
+                    "word2": 1
+                }
+            },
+            "word3",
+            0,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 2,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word2",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word3",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0,
+                    "word2": 1,
+                    "word3": 2
+                }
+            },
+            "word3",
+            0,
+            0
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 2,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word2",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word3",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0,
+                    "word2": 1,
+                    "word3": 2
+                }
+            },
+            "word4",
+            2,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 2,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word2",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word3",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "3": {
+                        "ID": 3,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "2": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word4",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0,
+                    "word2": 1,
+                    "word3": 2,
+                    "word4": 3
+                }
+            },
+            "word4",
+            2,
+            0
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {},
+                "WordValID": {}
+            },
+            "word1",
+            0,
+            1
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            1
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0
+                }
+            },
+            "word1",
+            0,
+            1
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            1
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0
+                }
+            },
+            "word2",
+            1,
+            1
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {},
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            1
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word1",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            1
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "word2",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "word1": 0,
+                    "word2": 1
+                }
+            },
+            "word2",
+            1,
+            1
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {},
+                "WordValID": {}
+            },
+            "past",
+            -1,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {},
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "past": 0
+                }
+            },
+            "past",
+            -1,
+            0
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {},
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "past": 0
+                }
+            },
+            "fortnight",
+            0,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {}
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {},
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "fortnight": 1,
+                    "past": 0
+                }
+            },
+            "fortnight",
+            0,
+            0
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {
+                        "1": {
+                            "0": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {
+                            "1": 1
+                        },
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "fortnight": 1,
+                    "past": 0
+                }
+            },
+            "asked",
+            1,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {
+                        "1": {
+                            "0": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {
+                            "1": 1
+                        },
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "asked",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "asked": 2,
+                    "fortnight": 1,
+                    "past": 0
+                }
+            },
+            "asked",
+            1,
+            0
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {
+                        "1": {
+                            "0": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            },
+                            "2": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {
+                            "1": 1
+                        },
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {
+                            "2": 1
+                        },
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "asked",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "asked": 2,
+                    "fortnight": 1,
+                    "past": 0
+                }
+            },
+            "nominate",
+            2,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {
+                        "1": {
+                            "0": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            },
+                            "2": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {
+                            "1": 1
+                        },
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {
+                            "2": 1
+                        },
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "asked",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "3": {
+                        "ID": 3,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "2": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "nominate",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "asked": 2,
+                    "fortnight": 1,
+                    "nominate": 3,
+                    "past": 0
+                }
+            },
+            "nominate",
+            2,
+            0
+        ],
+        "return_value": 3
+    },
+    {
+        "inputs": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {
+                        "1": {
+                            "0": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            },
+                            "2": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        },
+                        "3": {
+                            "2": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {
+                            "1": 1
+                        },
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {
+                            "2": 1
+                        },
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {
+                            "3": 1
+                        },
+                        "Token": "asked",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "3": {
+                        "ID": 3,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "2": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "nominate",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "asked": 2,
+                    "fortnight": 1,
+                    "nominate": 3,
+                    "past": 0
+                }
+            },
+            "extensions",
+            3,
+            0
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "Max": 0,
+                "Min": 0,
+                "Relation": {
+                    "Max": 0,
+                    "Min": 0,
+                    "Node": {
+                        "1": {
+                            "0": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            },
+                            "2": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        },
+                        "3": {
+                            "2": {
+                                "Qty": 1,
+                                "Weight": 0,
+                                "SentenceIDs": [
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                "SentenceMap": {
+                    "0": "Over the past fortnight we asked you to nominate your top extensions for the GNOME desktop."
+                },
+                "Words": {
+                    "0": {
+                        "ID": 0,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {},
+                        "ConnectionRight": {
+                            "1": 1
+                        },
+                        "Token": "past",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "1": {
+                        "ID": 1,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "0": 1
+                        },
+                        "ConnectionRight": {
+                            "2": 1
+                        },
+                        "Token": "fortnight",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "2": {
+                        "ID": 2,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "1": 1
+                        },
+                        "ConnectionRight": {
+                            "3": 1
+                        },
+                        "Token": "asked",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "3": {
+                        "ID": 3,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "2": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "nominate",
+                        "Qty": 1,
+                        "Weight": 0
+                    },
+                    "4": {
+                        "ID": 4,
+                        "SentenceIDs": [
+                            0
+                        ],
+                        "ConnectionLeft": {
+                            "3": 1
+                        },
+                        "ConnectionRight": {},
+                        "Token": "extensions",
+                        "Qty": 1,
+                        "Weight": 0
+                    }
+                },
+                "WordValID": {
+                    "asked": 2,
+                    "extensions": 4,
+                    "fortnight": 1,
+                    "nominate": 3,
+                    "past": 0
+                }
+            },
+            "extensions",
+            3,
+            0
+        ],
+        "return_value": 4
+    }
+]

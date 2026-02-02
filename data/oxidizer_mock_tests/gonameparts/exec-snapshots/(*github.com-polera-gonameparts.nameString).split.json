@@ -1,0 +1,356 @@
+[
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "President",
+            "George",
+            "Herbert",
+            "Walker",
+            "Bush"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "President George Herbert Walker Bush",
+                "SplitName": [
+                    "President",
+                    "George",
+                    "Herbert",
+                    "Walker",
+                    "Bush"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "President",
+            "George",
+            "Herbert",
+            "Walker",
+            "Bush"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera a.k.a James K. Polera",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera a.k.a James K. Polera",
+                "SplitName": [
+                    "James",
+                    "Polera",
+                    "a.k.a",
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "James",
+            "Polera",
+            "a.k.a",
+            "James",
+            "K.",
+            "Polera"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera",
+                    "*|*",
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            }
+        ],
+        "return_value": [
+            "James",
+            "Polera"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "James Polera ",
+                "SplitName": [
+                    "James",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": [
+                    " James K. Polera"
+                ]
+            }
+        ],
+        "return_value": [
+            "James",
+            "Polera"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": " James K. Polera",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": " James K. Polera",
+                "SplitName": [
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "James",
+            "K.",
+            "Polera"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": " James K. Polera",
+                "SplitName": [
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": " James K. Polera",
+                "SplitName": [
+                    "James",
+                    "K.",
+                    "Polera"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "James",
+            "K.",
+            "Polera"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "K\u00f6nig Ludwig",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "K\u00f6nig Ludwig",
+                "SplitName": [
+                    "K\u00f6nig",
+                    "Ludwig"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "K\u00f6nig",
+            "Ludwig"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "K\u00f6nig Ludwig",
+                "SplitName": [
+                    "K\u00f6nig",
+                    "Ludwig"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "K\u00f6nig Ludwig",
+                "SplitName": [
+                    "K\u00f6nig",
+                    "Ludwig"
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "K\u00f6nig",
+            "Ludwig"
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "Dr. James\tPolera\tEsq.",
+                "SplitName": null,
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "Dr. James\tPolera\tEsq.",
+                "SplitName": [
+                    "Dr.",
+                    "James",
+                    "Polera",
+                    "Esq."
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "Dr.",
+            "James",
+            "Polera",
+            "Esq."
+        ]
+    },
+    {
+        "inputs": [
+            {
+                "FullName": "Dr. James\tPolera\tEsq.",
+                "SplitName": [
+                    "Dr.",
+                    "James",
+                    "Polera",
+                    "Esq."
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {
+                "FullName": "Dr. James\tPolera\tEsq.",
+                "SplitName": [
+                    "Dr.",
+                    "James",
+                    "Polera",
+                    "Esq."
+                ],
+                "Nickname": "",
+                "Aliases": null
+            }
+        ],
+        "return_value": [
+            "Dr.",
+            "James",
+            "Polera",
+            "Esq."
+        ]
+    }
+]

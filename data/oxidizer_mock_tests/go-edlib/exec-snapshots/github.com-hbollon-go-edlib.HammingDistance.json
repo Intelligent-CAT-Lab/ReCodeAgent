@@ -1,0 +1,134 @@
+[
+    {
+        "inputs": [
+            "aa",
+            "aa"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "aa",
+            "aa"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "ab",
+            "aa"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "aa"
+        ],
+        "return_value": 1
+    },
+    {
+        "inputs": [
+            "ab",
+            "ba"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "ab",
+            "ba"
+        ],
+        "return_value": 2
+    },
+    {
+        "inputs": [
+            "ab",
+            "aaa"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "ab",
+            "aaa"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "bbb",
+            "a"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "bbb",
+            "a"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "\ud83d\ude42\ud83d\ude04\ud83d\ude42\ud83d\ude04",
+            "\ud83d\ude04\ud83d\ude42\ud83d\ude04\ud83d\ude42"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "\ud83d\ude42\ud83d\ude04\ud83d\ude42\ud83d\ude04",
+            "\ud83d\ude04\ud83d\ude42\ud83d\ude04\ud83d\ude42"
+        ],
+        "return_value": 4
+    },
+    {
+        "inputs": [
+            "",
+            "abcde"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "",
+            "abcde"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "abcde",
+            ""
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "abcde",
+            ""
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "abcde",
+            "abcde"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            "abcde",
+            "abcde"
+        ],
+        "return_value": 0
+    },
+    {
+        "inputs": [
+            "abcd",
+            "effgghh"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "abcd",
+            "effgghh"
+        ],
+        "return_value": null
+    },
+    {
+        "inputs": [
+            "a cat",
+            "an abct"
+        ],
+        "execution_success": false,
+        "input_modifications": [
+            "a cat",
+            "an abct"
+        ],
+        "return_value": null
+    }
+]

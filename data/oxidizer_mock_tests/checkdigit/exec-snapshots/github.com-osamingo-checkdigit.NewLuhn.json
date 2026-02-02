@@ -1,0 +1,11 @@
+[
+    {
+        "inputs": [],
+        "execution_success": true,
+        "input_modifications": [],
+        "return_value": {
+            "Type": "luhn",
+            "Value": {}
+        }
+    }
+]

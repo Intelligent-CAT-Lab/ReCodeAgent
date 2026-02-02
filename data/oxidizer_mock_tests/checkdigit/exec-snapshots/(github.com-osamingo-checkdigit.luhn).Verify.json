@@ -1,0 +1,86 @@
+[
+    {
+        "inputs": [
+            {},
+            "a"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "a"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            {},
+            "4242424242424242"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "4242424242424242"
+        ],
+        "return_value": true
+    },
+    {
+        "inputs": [
+            {},
+            "5105105105105100"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "5105105105105100"
+        ],
+        "return_value": true
+    },
+    {
+        "inputs": [
+            {},
+            "34"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "34"
+        ],
+        "return_value": true
+    },
+    {
+        "inputs": [
+            {},
+            "510510510510511"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "510510510510511"
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            {},
+            ""
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            ""
+        ],
+        "return_value": false
+    },
+    {
+        "inputs": [
+            {},
+            "4111111111111111"
+        ],
+        "execution_success": true,
+        "input_modifications": [
+            {},
+            "4111111111111111"
+        ],
+        "return_value": true
+    }
+]

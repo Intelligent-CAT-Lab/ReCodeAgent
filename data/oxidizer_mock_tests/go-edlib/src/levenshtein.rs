@@ -1,0 +1,771 @@
+use crate::careful::*;use serde::{Deserialize, Serialize};use serde_with::serde_as;use arbitrary::Arbitrary;use anyhow::Context;use anyhow::Error;use anyhow::Result;use anyhow::anyhow;
+
+use std::collections::HashSet;
+use crate::internal::utils::utils::min;
+use crate::internal::utils::utils::equal;
+#[cfg(not(feature = "mock"))]
+pub fn damerau_levenshtein_distance(str1: &str, str2: &str) -> Result<i32, Error> {
+    let str1_chars: Vec<char> = str1.chars().collect();
+    let str2_chars: Vec<char> = str2.chars().collect();
+    let str1_len = str1_chars.len();
+    let str2_len = str2_chars.len();
+    if str1_len == 0 {
+        return Ok(str2_len as i32);
+    } else if str2_len == 0 {
+        return Ok(str1_len as i32);
+    } else if equal(&str1_chars, &str2_chars)? {
+        return Ok(0);
+    }
+    let mut char_set: HashSet<char> = HashSet::new();
+    str1_chars
+        .iter()
+        .for_each(|c| {
+            char_set.insert(*c);
+        });
+    str2_chars
+        .iter()
+        .for_each(|c| {
+            char_set.insert(*c);
+        });
+    let mut matrix = vec![vec![0; str2_len + 2]; str1_len + 2];
+    let max_dist = (str1_len + str2_len) as i32;
+    matrix[0][0] = max_dist;
+    for i in 0..=str1_len {
+        matrix[i + 1][0] = max_dist;
+        matrix[i + 1][1] = i as i32;
+    }
+    for j in 0..=str2_len {
+        matrix[0][j + 1] = max_dist;
+        matrix[1][j + 1] = j as i32;
+    }
+    for i in 1..=str1_len {
+        let mut db = 0;
+        for j in 1..=str2_len {
+            let i1 = char_set.get(&str2_chars[j - 1]).map_or(i, |idx| *idx as usize);
+            let j1 = db;
+            let cost = if str1_chars[i - 1] == str2_chars[j - 1] { 0 } else { 1 };
+            db = j;
+            matrix[i + 1][j + 1] = min(
+                min(matrix[i + 1][j] + 1, matrix[i][j + 1] + 1),
+                min(
+                    matrix[i][j] + cost,
+                    matrix[i1][j1] + (i - i1) as i32 + (j - j1) as i32,
+                ),
+            );
+        }
+        let i_idx = str1_len - i + 1;
+        char_set.insert(str1_chars[i_idx]);
+    }
+    Ok(matrix[str1_len + 1][str2_len + 1])
+}
+#[cfg(feature = "mock")]
+pub fn damerau_levenshtein_distance(str1: &str, str2: &str) -> Result<i32, Error> {
+    extern "C" {
+        #[link_name = "go_edlib_damerau_levenshtein_distance__ground_truth"]
+        fn damerau_levenshtein_distance__foreign(
+            _: JSONObject,
+            _: JSONObject,
+        ) -> JSONObject;
+    }
+    #[serde_as]
+    #[derive(Serialize)]
+    struct InputStateIn<'a, 'b>(&'a str, &'b str);
+    #[serde_as]
+    #[derive(Serialize, Deserialize)]
+    struct InputStateOut(Box<str>, Box<str>);
+    #[serde_as]
+    #[derive(Serialize, Deserialize)]
+    struct OutputState(i32);
+    let input_state_in = InputStateIn(str1, str2);
+    let input_state_serialized = serde_json::to_value(input_state_in).unwrap();
+    let serde_json::Value::Array(params) = input_state_serialized else {
+        panic!("expect multiple input arguments")
+    };
+    let foreign_execution = unsafe {
+        de::<
+            ForeignExecution,
+        >(damerau_levenshtein_distance__foreign(ser(&params[0]), ser(&params[1])))
+    };
+    if foreign_execution.execution_success {
+        assert_eq!(foreign_execution.input_modifications.len(), 2usize);
+        let inputs_mutation_reserialized = if foreign_execution.input_modifications.len()
+            == 1
+        {
+            foreign_execution.input_modifications[0].clone()
+        } else {
+            serde_json::to_value(foreign_execution.input_modifications.clone()).unwrap()
+        };
+        let input_state_mutated: InputStateOut = serde_json::from_value(
+                inputs_mutation_reserialized,
+            )
+            .unwrap();
+        let output_state: OutputState = serde_json::from_value(
+                foreign_execution.return_value,
+            )
+            .unwrap();
+        let output = output_state.0;
+        return Ok(output);
+    } else {
+        return Err(anyhow!("execution failure"));
+    }
+}
+#[cfg(feature = "mock")]
+pub fn damerau_levenshtein_distance__with_callees_mocked(
+    str1: &str,
+    str2: &str,
+) -> Result<i32, Error> {
+    let str1_chars: Vec<char> = str1.chars().collect();
+    let str2_chars: Vec<char> = str2.chars().collect();
+    let str1_len = str1_chars.len();
+    let str2_len = str2_chars.len();
+    if str1_len == 0 {
+        return Ok(str2_len as i32);
+    } else if str2_len == 0 {
+        return Ok(str1_len as i32);
+    } else if equal(&str1_chars, &str2_chars)? {
+        return Ok(0);
+    }
+    let mut char_set: HashSet<char> = HashSet::new();
+    str1_chars
+        .iter()
+        .for_each(|c| {
+            char_set.insert(*c);
+        });
+    str2_chars
+        .iter()
+        .for_each(|c| {
+            char_set.insert(*c);
+        });
+    let mut matrix = vec![vec![0; str2_len + 2]; str1_len + 2];
+    let max_dist = (str1_len + str2_len) as i32;
+    matrix[0][0] = max_dist;
+    for i in 0..=str1_len {
+        matrix[i + 1][0] = max_dist;
+        matrix[i + 1][1] = i as i32;
+    }
+    for j in 0..=str2_len {
+        matrix[0][j + 1] = max_dist;
+        matrix[1][j + 1] = j as i32;
+    }
+    for i in 1..=str1_len {
+        let mut db = 0;
+        for j in 1..=str2_len {
+            let i1 = char_set.get(&str2_chars[j - 1]).map_or(i, |idx| *idx as usize);
+            let j1 = db;
+            let cost = if str1_chars[i - 1] == str2_chars[j - 1] { 0 } else { 1 };
+            db = j;
+            matrix[i + 1][j + 1] = min(
+                min(matrix[i + 1][j] + 1, matrix[i][j + 1] + 1),
+                min(
+                    matrix[i][j] + cost,
+                    matrix[i1][j1] + (i - i1) as i32 + (j - j1) as i32,
+                ),
+            );
+        }
+        let i_idx = str1_len - i + 1;
+        char_set.insert(str1_chars[i_idx]);
+    }
+    Ok(matrix[str1_len + 1][str2_len + 1])
+}
+#[cfg(test)]
+mod go_edlib_damerau_levenshtein_distance_harness {
+    use super::*;
+    #[test]
+    fn damerau_levenshtein_distance__unit_test() {
+        let unittests_file: std::fs::File = std::fs::File::open(
+                "./exec-snapshots/github.com-hbollon-go-edlib.DamerauLevenshteinDistance.json",
+            )
+            .unwrap();
+        let unittests_reader = std::io::BufReader::new(unittests_file);
+        let unittests: Vec<ExecutionData> = serde_json::from_reader(unittests_reader)
+            .unwrap();
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct InputState(Box<str>, Box<str>);
+        #[serde_as]
+        #[derive(Serialize)]
+        struct OutputState(i32);
+        for execution in unittests {
+            let inputs_reserialized = if execution.inputs.len() == 1 {
+                execution.inputs[0].clone()
+            } else {
+                serde_json::to_value(execution.inputs.clone()).unwrap()
+            };
+            let mut input_state: InputState = serde_json::from_value(inputs_reserialized)
+                .unwrap();
+            struct NonCopyableMarker;
+            let force_fn_once: NonCopyableMarker = NonCopyableMarker;
+            let return_value = std::panic::catch_unwind(
+                std::panic::AssertUnwindSafe(|| {
+                    let _force_fn_once = force_fn_once;
+                    #[cfg(feature = "mock")]
+                    {
+                        (damerau_levenshtein_distance__with_callees_mocked(
+                            &*input_state.0,
+                            &*input_state.1,
+                        ))
+                            .unwrap()
+                    }
+                    #[cfg(not(feature = "mock"))]
+                    {
+                        (damerau_levenshtein_distance(&*input_state.0, &*input_state.1))
+                            .unwrap()
+                    }
+                }),
+            );
+            match return_value {
+                Ok(mut return_value) => {
+                    assert!(execution.result.execution_success);
+                    let output_state = OutputState(return_value);
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(output_state).unwrap(), execution.result
+                        .return_value.clone()
+                    );
+                    let inputs_mutation_reserialized = if execution
+                        .result
+                        .input_modifications
+                        .len() == 1
+                    {
+                        execution.result.input_modifications[0].clone()
+                    } else {
+                        serde_json::to_value(
+                                execution.result.input_modifications.clone(),
+                            )
+                            .unwrap()
+                    };
+                    let input_state_mutated: InputState = serde_json::from_value(
+                            inputs_mutation_reserialized,
+                        )
+                        .unwrap();
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(& input_state.0).unwrap(),
+                        serde_json::to_value(& input_state_mutated.0).unwrap(),
+                    );
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(& input_state.1).unwrap(),
+                        serde_json::to_value(& input_state_mutated.1).unwrap(),
+                    );
+                }
+                Err(_) => {
+                    assert!(! execution.result.execution_success);
+                }
+            }
+        }
+    }
+    #[test]
+    fn damerau_levenshtein_distance__signature_check() {
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct InputState(Box<str>, Box<str>);
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct OutputState(i32);
+        let Ok(unittests_file) = std::fs::File::open(
+            "./exec-snapshots/github.com-hbollon-go-edlib.DamerauLevenshteinDistance.json",
+        ) else { return };
+        let unittests_reader = std::io::BufReader::new(unittests_file);
+        let unittests: Vec<ExecutionData> = serde_json::from_reader(unittests_reader)
+            .unwrap();
+        for execution in unittests {
+            let inputs_reserialized = if execution.inputs.len() == 1 {
+                execution.inputs[0].clone()
+            } else {
+                serde_json::to_value(execution.inputs.clone()).unwrap()
+            };
+            let _: InputState = serde_json::from_value(inputs_reserialized).unwrap();
+            if execution.result.execution_success {
+                let _: OutputState = serde_json::from_value(
+                        execution.result.return_value.clone(),
+                    )
+                    .unwrap();
+            }
+        }
+    }
+}
+
+#[cfg(not(feature = "mock"))]
+pub fn levenshtein_distance(str1: &str, str2: &str) -> Result<i32, Error> {
+    let runestr1: Vec<char> = str1.chars().collect();
+    let runestr2: Vec<char> = str2.chars().collect();
+    let runestr1len = runestr1.len();
+    let runestr2len = runestr2.len();
+    if runestr1len == 0 {
+        return Ok(runestr2len as i32);
+    } else if runestr2len == 0 {
+        return Ok(runestr1len as i32);
+    } else if equal(&runestr1, &runestr2)? {
+        return Ok(0);
+    }
+    let mut column = vec![0; runestr1len + 1];
+    for y in 1..=runestr1len {
+        column[y] = y as i32;
+    }
+    for x in 1..=runestr2len {
+        column[0] = x as i32;
+        let mut lastkey = (x - 1) as i32;
+        for y in 1..=runestr1len {
+            let oldkey = column[y];
+            let i = if runestr1[y - 1] != runestr2[x - 1] { 1 } else { 0 };
+            column[y] = min(min(column[y] + 1, column[y - 1] + 1), lastkey + i);
+            lastkey = oldkey;
+        }
+    }
+    Ok(column[runestr1len])
+}
+#[cfg(feature = "mock")]
+pub fn levenshtein_distance(str1: &str, str2: &str) -> Result<i32, Error> {
+    extern "C" {
+        #[link_name = "go_edlib_levenshtein_distance__ground_truth"]
+        fn levenshtein_distance__foreign(_: JSONObject, _: JSONObject) -> JSONObject;
+    }
+    #[serde_as]
+    #[derive(Serialize)]
+    struct InputStateIn<'a, 'b>(&'a str, &'b str);
+    #[serde_as]
+    #[derive(Serialize, Deserialize)]
+    struct InputStateOut(Box<str>, Box<str>);
+    #[serde_as]
+    #[derive(Serialize, Deserialize)]
+    struct OutputState(i32);
+    let input_state_in = InputStateIn(str1, str2);
+    let input_state_serialized = serde_json::to_value(input_state_in).unwrap();
+    let serde_json::Value::Array(params) = input_state_serialized else {
+        panic!("expect multiple input arguments")
+    };
+    let foreign_execution = unsafe {
+        de::<
+            ForeignExecution,
+        >(levenshtein_distance__foreign(ser(&params[0]), ser(&params[1])))
+    };
+    if foreign_execution.execution_success {
+        assert_eq!(foreign_execution.input_modifications.len(), 2usize);
+        let inputs_mutation_reserialized = if foreign_execution.input_modifications.len()
+            == 1
+        {
+            foreign_execution.input_modifications[0].clone()
+        } else {
+            serde_json::to_value(foreign_execution.input_modifications.clone()).unwrap()
+        };
+        let input_state_mutated: InputStateOut = serde_json::from_value(
+                inputs_mutation_reserialized,
+            )
+            .unwrap();
+        let output_state: OutputState = serde_json::from_value(
+                foreign_execution.return_value,
+            )
+            .unwrap();
+        let output = output_state.0;
+        return Ok(output);
+    } else {
+        return Err(anyhow!("execution failure"));
+    }
+}
+#[cfg(feature = "mock")]
+pub fn levenshtein_distance__with_callees_mocked(
+    str1: &str,
+    str2: &str,
+) -> Result<i32, Error> {
+    let runestr1: Vec<char> = str1.chars().collect();
+    let runestr2: Vec<char> = str2.chars().collect();
+    let runestr1len = runestr1.len();
+    let runestr2len = runestr2.len();
+    if runestr1len == 0 {
+        return Ok(runestr2len as i32);
+    } else if runestr2len == 0 {
+        return Ok(runestr1len as i32);
+    } else if equal(&runestr1, &runestr2)? {
+        return Ok(0);
+    }
+    let mut column = vec![0; runestr1len + 1];
+    for y in 1..=runestr1len {
+        column[y] = y as i32;
+    }
+    for x in 1..=runestr2len {
+        column[0] = x as i32;
+        let mut lastkey = (x - 1) as i32;
+        for y in 1..=runestr1len {
+            let oldkey = column[y];
+            let i = if runestr1[y - 1] != runestr2[x - 1] { 1 } else { 0 };
+            column[y] = min(min(column[y] + 1, column[y - 1] + 1), lastkey + i);
+            lastkey = oldkey;
+        }
+    }
+    Ok(column[runestr1len])
+}
+#[cfg(test)]
+mod go_edlib_levenshtein_distance_harness {
+    use super::*;
+    #[test]
+    fn levenshtein_distance__unit_test() {
+        let unittests_file: std::fs::File = std::fs::File::open(
+                "./exec-snapshots/github.com-hbollon-go-edlib.LevenshteinDistance.json",
+            )
+            .unwrap();
+        let unittests_reader = std::io::BufReader::new(unittests_file);
+        let unittests: Vec<ExecutionData> = serde_json::from_reader(unittests_reader)
+            .unwrap();
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct InputState(Box<str>, Box<str>);
+        #[serde_as]
+        #[derive(Serialize)]
+        struct OutputState(i32);
+        for execution in unittests {
+            let inputs_reserialized = if execution.inputs.len() == 1 {
+                execution.inputs[0].clone()
+            } else {
+                serde_json::to_value(execution.inputs.clone()).unwrap()
+            };
+            let mut input_state: InputState = serde_json::from_value(inputs_reserialized)
+                .unwrap();
+            struct NonCopyableMarker;
+            let force_fn_once: NonCopyableMarker = NonCopyableMarker;
+            let return_value = std::panic::catch_unwind(
+                std::panic::AssertUnwindSafe(|| {
+                    let _force_fn_once = force_fn_once;
+                    #[cfg(feature = "mock")]
+                    {
+                        (levenshtein_distance__with_callees_mocked(
+                            &*input_state.0,
+                            &*input_state.1,
+                        ))
+                            .unwrap()
+                    }
+                    #[cfg(not(feature = "mock"))]
+                    { (levenshtein_distance(&*input_state.0, &*input_state.1)).unwrap() }
+                }),
+            );
+            match return_value {
+                Ok(mut return_value) => {
+                    assert!(execution.result.execution_success);
+                    let output_state = OutputState(return_value);
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(output_state).unwrap(), execution.result
+                        .return_value.clone()
+                    );
+                    let inputs_mutation_reserialized = if execution
+                        .result
+                        .input_modifications
+                        .len() == 1
+                    {
+                        execution.result.input_modifications[0].clone()
+                    } else {
+                        serde_json::to_value(
+                                execution.result.input_modifications.clone(),
+                            )
+                            .unwrap()
+                    };
+                    let input_state_mutated: InputState = serde_json::from_value(
+                            inputs_mutation_reserialized,
+                        )
+                        .unwrap();
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(& input_state.0).unwrap(),
+                        serde_json::to_value(& input_state_mutated.0).unwrap(),
+                    );
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(& input_state.1).unwrap(),
+                        serde_json::to_value(& input_state_mutated.1).unwrap(),
+                    );
+                }
+                Err(_) => {
+                    assert!(! execution.result.execution_success);
+                }
+            }
+        }
+    }
+    #[test]
+    fn levenshtein_distance__signature_check() {
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct InputState(Box<str>, Box<str>);
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct OutputState(i32);
+        let Ok(unittests_file) = std::fs::File::open(
+            "./exec-snapshots/github.com-hbollon-go-edlib.LevenshteinDistance.json",
+        ) else { return };
+        let unittests_reader = std::io::BufReader::new(unittests_file);
+        let unittests: Vec<ExecutionData> = serde_json::from_reader(unittests_reader)
+            .unwrap();
+        for execution in unittests {
+            let inputs_reserialized = if execution.inputs.len() == 1 {
+                execution.inputs[0].clone()
+            } else {
+                serde_json::to_value(execution.inputs.clone()).unwrap()
+            };
+            let _: InputState = serde_json::from_value(inputs_reserialized).unwrap();
+            if execution.result.execution_success {
+                let _: OutputState = serde_json::from_value(
+                        execution.result.return_value.clone(),
+                    )
+                    .unwrap();
+            }
+        }
+    }
+}
+
+#[cfg(not(feature = "mock"))]
+pub fn osa_damerau_levenshtein_distance(str1: &str, str2: &str) -> Result<i32> {
+    let chars1: Vec<char> = str1.chars().collect();
+    let chars2: Vec<char> = str2.chars().collect();
+    let len1 = chars1.len();
+    let len2 = chars2.len();
+    if len1 == 0 {
+        return Ok(len2 as i32);
+    } else if len2 == 0 {
+        return Ok(len1 as i32);
+    } else if equal(&chars1, &chars2).unwrap() {
+        return Ok(0);
+    } else if len1 < len2 {
+        return osa_damerau_levenshtein_distance(str2, str1);
+    }
+    let row = min((len1 + 1).try_into().unwrap(), 3);
+    let mut matrix = vec![vec![0; len2 + 1]; row.try_into().unwrap()];
+    for i in 0..row {
+        matrix[i as usize][0] = i as i32;
+    }
+    for j in 0..=len2 {
+        matrix[0][j as usize] = j as i32;
+    }
+    for i in 1..=len1 {
+        matrix[(i % 3) as usize][0] = i as i32;
+        for j in 1..=len2 {
+            let count = if chars1[i - 1] == chars2[j - 1] { 0 } else { 1 };
+            matrix[(i % 3) as usize][j as usize] = min(
+                min(
+                    matrix[((i - 1) % 3) as usize][j as usize] + 1,
+                    matrix[(i % 3) as usize][(j - 1) as usize] + 1,
+                ),
+                matrix[((i - 1) % 3) as usize][(j - 1) as usize] + count,
+            );
+            if i > 1 && j > 1 && chars1[i - 1] == chars2[j - 2]
+                && chars1[i - 2] == chars2[j - 1]
+            {
+                matrix[(i % 3) as usize][j as usize] = min(
+                    matrix[(i % 3) as usize][j as usize],
+                    matrix[((i - 2) % 3) as usize][(j - 2) as usize] + 1,
+                );
+            }
+        }
+    }
+    Ok(matrix[(len1 % 3) as usize][len2 as usize])
+}
+#[cfg(feature = "mock")]
+pub fn osa_damerau_levenshtein_distance(str1: &str, str2: &str) -> Result<i32> {
+    extern "C" {
+        #[link_name = "go_edlib_osa_damerau_levenshtein_distance__ground_truth"]
+        fn osa_damerau_levenshtein_distance__foreign(
+            _: JSONObject,
+            _: JSONObject,
+        ) -> JSONObject;
+    }
+    #[serde_as]
+    #[derive(Serialize)]
+    struct InputStateIn<'a, 'b>(&'a str, &'b str);
+    #[serde_as]
+    #[derive(Serialize, Deserialize)]
+    struct InputStateOut(Box<str>, Box<str>);
+    #[serde_as]
+    #[derive(Serialize, Deserialize)]
+    struct OutputState(i32);
+    let input_state_in = InputStateIn(str1, str2);
+    let input_state_serialized = serde_json::to_value(input_state_in).unwrap();
+    let serde_json::Value::Array(params) = input_state_serialized else {
+        panic!("expect multiple input arguments")
+    };
+    let foreign_execution = unsafe {
+        de::<
+            ForeignExecution,
+        >(osa_damerau_levenshtein_distance__foreign(ser(&params[0]), ser(&params[1])))
+    };
+    if foreign_execution.execution_success {
+        assert_eq!(foreign_execution.input_modifications.len(), 2usize);
+        let inputs_mutation_reserialized = if foreign_execution.input_modifications.len()
+            == 1
+        {
+            foreign_execution.input_modifications[0].clone()
+        } else {
+            serde_json::to_value(foreign_execution.input_modifications.clone()).unwrap()
+        };
+        let input_state_mutated: InputStateOut = serde_json::from_value(
+                inputs_mutation_reserialized,
+            )
+            .unwrap();
+        let output_state: OutputState = serde_json::from_value(
+                foreign_execution.return_value,
+            )
+            .unwrap();
+        let output = output_state.0;
+        return Ok(output);
+    } else {
+        return Err(anyhow!("execution failure"));
+    }
+}
+#[cfg(feature = "mock")]
+pub fn osa_damerau_levenshtein_distance__with_callees_mocked(
+    str1: &str,
+    str2: &str,
+) -> Result<i32> {
+    let chars1: Vec<char> = str1.chars().collect();
+    let chars2: Vec<char> = str2.chars().collect();
+    let len1 = chars1.len();
+    let len2 = chars2.len();
+    if len1 == 0 {
+        return Ok(len2 as i32);
+    } else if len2 == 0 {
+        return Ok(len1 as i32);
+    } else if equal(&chars1, &chars2).unwrap() {
+        return Ok(0);
+    } else if len1 < len2 {
+        return osa_damerau_levenshtein_distance(str2, str1);
+    }
+    let row = min((len1 + 1).try_into().unwrap(), 3);
+    let mut matrix = vec![vec![0; len2 + 1]; row.try_into().unwrap()];
+    for i in 0..row {
+        matrix[i as usize][0] = i as i32;
+    }
+    for j in 0..=len2 {
+        matrix[0][j as usize] = j as i32;
+    }
+    for i in 1..=len1 {
+        matrix[(i % 3) as usize][0] = i as i32;
+        for j in 1..=len2 {
+            let count = if chars1[i - 1] == chars2[j - 1] { 0 } else { 1 };
+            matrix[(i % 3) as usize][j as usize] = min(
+                min(
+                    matrix[((i - 1) % 3) as usize][j as usize] + 1,
+                    matrix[(i % 3) as usize][(j - 1) as usize] + 1,
+                ),
+                matrix[((i - 1) % 3) as usize][(j - 1) as usize] + count,
+            );
+            if i > 1 && j > 1 && chars1[i - 1] == chars2[j - 2]
+                && chars1[i - 2] == chars2[j - 1]
+            {
+                matrix[(i % 3) as usize][j as usize] = min(
+                    matrix[(i % 3) as usize][j as usize],
+                    matrix[((i - 2) % 3) as usize][(j - 2) as usize] + 1,
+                );
+            }
+        }
+    }
+    Ok(matrix[(len1 % 3) as usize][len2 as usize])
+}
+#[cfg(test)]
+mod go_edlib_osa_damerau_levenshtein_distance_harness {
+    use super::*;
+    #[test]
+    fn osa_damerau_levenshtein_distance__unit_test() {
+        let unittests_file: std::fs::File = std::fs::File::open(
+                "./exec-snapshots/github.com-hbollon-go-edlib.OSADamerauLevenshteinDistance.json",
+            )
+            .unwrap();
+        let unittests_reader = std::io::BufReader::new(unittests_file);
+        let unittests: Vec<ExecutionData> = serde_json::from_reader(unittests_reader)
+            .unwrap();
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct InputState(Box<str>, Box<str>);
+        #[serde_as]
+        #[derive(Serialize)]
+        struct OutputState(i32);
+        for execution in unittests {
+            let inputs_reserialized = if execution.inputs.len() == 1 {
+                execution.inputs[0].clone()
+            } else {
+                serde_json::to_value(execution.inputs.clone()).unwrap()
+            };
+            let mut input_state: InputState = serde_json::from_value(inputs_reserialized)
+                .unwrap();
+            struct NonCopyableMarker;
+            let force_fn_once: NonCopyableMarker = NonCopyableMarker;
+            let return_value = std::panic::catch_unwind(
+                std::panic::AssertUnwindSafe(|| {
+                    let _force_fn_once = force_fn_once;
+                    #[cfg(feature = "mock")]
+                    {
+                        (osa_damerau_levenshtein_distance__with_callees_mocked(
+                            &*input_state.0,
+                            &*input_state.1,
+                        ))
+                            .unwrap()
+                    }
+                    #[cfg(not(feature = "mock"))]
+                    {
+                        (osa_damerau_levenshtein_distance(
+                            &*input_state.0,
+                            &*input_state.1,
+                        ))
+                            .unwrap()
+                    }
+                }),
+            );
+            match return_value {
+                Ok(mut return_value) => {
+                    assert!(execution.result.execution_success);
+                    let output_state = OutputState(return_value);
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(output_state).unwrap(), execution.result
+                        .return_value.clone()
+                    );
+                    let inputs_mutation_reserialized = if execution
+                        .result
+                        .input_modifications
+                        .len() == 1
+                    {
+                        execution.result.input_modifications[0].clone()
+                    } else {
+                        serde_json::to_value(
+                                execution.result.input_modifications.clone(),
+                            )
+                            .unwrap()
+                    };
+                    let input_state_mutated: InputState = serde_json::from_value(
+                            inputs_mutation_reserialized,
+                        )
+                        .unwrap();
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(& input_state.0).unwrap(),
+                        serde_json::to_value(& input_state_mutated.0).unwrap(),
+                    );
+                    assert_json_diff::assert_json_eq!(
+                        serde_json::to_value(& input_state.1).unwrap(),
+                        serde_json::to_value(& input_state_mutated.1).unwrap(),
+                    );
+                }
+                Err(_) => {
+                    assert!(! execution.result.execution_success);
+                }
+            }
+        }
+    }
+    #[test]
+    fn osa_damerau_levenshtein_distance__signature_check() {
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct InputState(Box<str>, Box<str>);
+        #[serde_as]
+        #[derive(Serialize, Deserialize)]
+        struct OutputState(i32);
+        let Ok(unittests_file) = std::fs::File::open(
+            "./exec-snapshots/github.com-hbollon-go-edlib.OSADamerauLevenshteinDistance.json",
+        ) else { return };
+        let unittests_reader = std::io::BufReader::new(unittests_file);
+        let unittests: Vec<ExecutionData> = serde_json::from_reader(unittests_reader)
+            .unwrap();
+        for execution in unittests {
+            let inputs_reserialized = if execution.inputs.len() == 1 {
+                execution.inputs[0].clone()
+            } else {
+                serde_json::to_value(execution.inputs.clone()).unwrap()
+            };
+            let _: InputState = serde_json::from_value(inputs_reserialized).unwrap();
+            if execution.result.execution_success {
+                let _: OutputState = serde_json::from_value(
+                        execution.result.return_value.clone(),
+                    )
+                    .unwrap();
+            }
+        }
+    }
+}
