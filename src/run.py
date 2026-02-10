@@ -102,22 +102,32 @@ async def run_agent(config_file: str, log_level: str = "INFO") -> int:
         except Exception as e:
             logger.warning(f"Failed to create directory {directory}: {e}")
 
-    # Import and run the RecodeAgent orchestrator
+    # Import and run the appropriate agent
     try:
-        from src.agents.recodeagent.agent import run_agents
+        if agent_name in ("baseagent-concat", "baseagent-condensed"):
+            from src.agents.baseagent.agent import BaseAgent
 
-        # Parse skip_agents and only_agents from config if present
-        skip_agents = config.get("skip_agents", [])
-        only_agents = config.get("only_agents", [])
+            project_details = {
+                "project_name": project_name,
+                "source_project_root": source_project_root,
+                "target_translation_root": target_translation_root,
+                "planning_dir": planning_dir,
+            }
+            base_agent = BaseAgent(config)
+            success, _ = await base_agent.run(project_details)
+        else:
+            from src.agents.recodeagent.agent import run_agents
 
-        # Run the agents
-        success = await run_agents(config=config, logger=logger, skip_agents=skip_agents, only_agents=only_agents)
+            skip_agents = config.get("skip_agents", [])
+            only_agents = config.get("only_agents", [])
+
+            success = await run_agents(config=config, logger=logger, skip_agents=skip_agents, only_agents=only_agents)
 
         if success:
-            logger.info("RecodeAgent completed successfully")
+            logger.info(f"{agent_name} completed successfully")
             return 0
         else:
-            logger.error("RecodeAgent failed")
+            logger.error(f"{agent_name} failed")
             return 1
 
     except Exception as e:

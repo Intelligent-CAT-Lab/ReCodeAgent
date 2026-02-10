@@ -745,3 +745,16 @@ templates:
       3. **Self-Contained Tests:**
          - All test helper functions MUST be defined INLINE in the test file.
          - DO NOT create shared utility modules for tests.
+
+  baseagent-condensed: |-
+    # {{ source_language.upper() }} to {{ target_language.upper() }} Translation & Validation Script
+
+    ## Overview
+    You are responsible for translating a {{ source_language.upper() }} project to {{ target_language.upper() }} and validating the result. Your goal is to produce a functionally equivalent {{ target_language.upper() }} translation that passes all tests. The translation should be 1:1 unless otherwise specified in the translation requirements.
+
+    ## Parameters
+    - **source_project_root**: {{ source_project_root }}
+    - **target_translation_root**: {{ target_translation_root }}
+
+    ## Constraints
+    - You MUST execute tests to ensure they pass in the target language

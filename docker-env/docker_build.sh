@@ -4,17 +4,22 @@ if [ "${PWD: -10}" != "docker-env" ]; then
     exit 1
 fi
 
-TOOL_NAME=$1
-PROJECT_NAME=$2
-SOURCE_LANGUAGE=$3
-TARGET_LANGUAGE=$4
+AGENT_NAME=$1
+TOOL_NAME=$2
+PROJECT_NAME=$3
+SOURCE_LANGUAGE=$4
+TARGET_LANGUAGE=$5
 
-if [ -z "$TOOL_NAME" ] || [ -z "$PROJECT_NAME" ] || [ -z "$SOURCE_LANGUAGE" ] || [ -z "$TARGET_LANGUAGE" ]; then
-    echo "Usage: ./docker_build.sh <TOOL_NAME> <PROJECT_NAME> <SOURCE_LANGUAGE> <TARGET_LANGUAGE>"
+if [ -z "$AGENT_NAME" ] || [ -z "$TOOL_NAME" ] || [ -z "$PROJECT_NAME" ] || [ -z "$SOURCE_LANGUAGE" ] || [ -z "$TARGET_LANGUAGE" ]; then
+    echo "Usage: ./docker_build.sh <AGENT_NAME> <TOOL_NAME> <PROJECT_NAME> <SOURCE_LANGUAGE> <TARGET_LANGUAGE>"
+    echo "Agent names: recodeagent, baseagent-concat, baseagent-condensed, noplanning, noanalyzer, novalidator"
     exit 1
 fi
 
-docker build -t ${TOOL_NAME}.${PROJECT_NAME}.${SOURCE_LANGUAGE}.${TARGET_LANGUAGE} \
+IMAGE_NAME=${AGENT_NAME}.${TOOL_NAME}.${PROJECT_NAME}.${SOURCE_LANGUAGE}.${TARGET_LANGUAGE}
+
+docker build -t ${IMAGE_NAME} \
+    --build-arg AGENT_NAME="${AGENT_NAME}" \
     --build-arg TOOL_NAME="${TOOL_NAME}" \
     --build-arg PROJECT_NAME="${PROJECT_NAME}" \
     --build-arg SOURCE_LANGUAGE="${SOURCE_LANGUAGE}" \

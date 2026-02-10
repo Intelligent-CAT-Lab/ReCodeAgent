@@ -5,7 +5,7 @@ if [ "${PWD: -10}" != "docker-env" ]; then
 fi
 
 CONTAINER_NAME=$1
-IMAGE_NAME=$CONTAINER_NAME
+IMAGE_NAME=${2:-$CONTAINER_NAME}
 
 if [ -z "$CONTAINER_NAME" ]; then
     echo "Please provide a container name as the first argument."
