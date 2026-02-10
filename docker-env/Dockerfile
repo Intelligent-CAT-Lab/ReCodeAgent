@@ -154,6 +154,44 @@ RUN if [ "${TOOL_NAME}" = "crust" ]; then \
     mkdir -p /workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning && \
     # Clean up temporary directory \
     rm -rf /tmp/project_files
+
+# noanalyzer: create 2 placeholder docs (planning reads these when analyzer is skipped).
+RUN <<NOANALYZER_SCRIPT
+set -e
+if [ "${AGENT_NAME}" = "noanalyzer" ]; then
+  P=/workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning
+  cat > "$P/${TARGET_LANGUAGE}-overall-design.md" << 'OVERALL_EOF'
+# Placeholder: Overall Design (Not Populated)
+
+**Do not rely on this document.** It is a stub because the analyzer agent was not run (e.g. noanalyzer mode). Proceed with your task using the actual source and target project structure; infer or create design decisions as needed. Do not investigate or try to "fix" the missing content.
+OVERALL_EOF
+  cat > "$P/${SOURCE_LANGUAGE}-project-research.md" << 'RESEARCH_EOF'
+# Placeholder: Source Project Research (Not Populated)
+
+**Do not rely on this document.** It is a stub because the analyzer agent was not run (e.g. noanalyzer mode). Proceed using the actual source project layout and tools (e.g. directory tree, get_file_structure). Do not investigate why this file is empty.
+RESEARCH_EOF
+fi
+NOANALYZER_SCRIPT
+
+# noplanning: create 3 placeholder docs (translator/validator read these when planning is skipped).
+RUN <<NOPLANNING_SCRIPT
+set -e
+if [ "${AGENT_NAME}" = "noplanning" ]; then
+  P=/workspace/data/tool_projects/${TOOL_NAME}/${PROJECT_NAME}/planning
+  cat > "$P/${SOURCE_LANGUAGE}-functions.md" << 'FUNCS_EOF'
+# Placeholder: Functions List (Not Populated)
+
+**Do not rely on this document.** It is a stub because the planning agent was not run (e.g. noplanning mode). Extract functions/methods from the source project yourself and proceed. Do not investigate why this file is empty.
+FUNCS_EOF
+  cat > "$P/implementation-plan.md" << 'PLAN_EOF'
+# Placeholder: Implementation Plan (Not Populated)
+
+**Do not rely on this document.** It is a stub because the planning agent was not run (e.g. noplanning mode). Create your own implementation order from the source/target structure and dependencies. Do not investigate why this file is empty.
+PLAN_EOF
+  printf '%s\n' '{"classes":{},"methods":{},"variables":{},"_placeholder":"Planning agent was not run. Do not rely on this file; create or infer name mappings from the source and target code."}' > "$P/name-mapping.json"
+fi
+NOPLANNING_SCRIPT
+
 COPY scripts /workspace/scripts
 COPY src /workspace/src
 COPY .gitignore /workspace/.gitignore
