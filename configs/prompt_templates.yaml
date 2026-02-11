@@ -261,6 +261,7 @@ templates:
       **YOU MUST:**
       1. Read the name mapping file at {{ planning_dir }}/name-mapping.json
       2. Use the exact mapped name - DO NOT invent new names
+      3. For CRUST projects, you MUST stick to the names already given in the skeleton files. DO NOT follow the naming convention in the overall design document or name-mapping.json.
 
       ## Steps
 
@@ -308,11 +309,12 @@ templates:
         2. Read source implementation.
         3. Translate logic into skeleton file.
         4. Verify against name mapping.
-        5. Mark step as `[x]` in plan.
-        6. Verify code compiles/parses.
+        5. For CRUST projects, you MUST stick to the names already given in the skeleton files. DO NOT follow the naming convention in the overall design document or name-mapping.json. You MUST only change the unimplemented!() blocks to implement the functionality.
+        6. Mark step as `[x]` in plan.
+        7. Verify code compiles/parses.
       
       ### 5. Translate All Tests (PART B)
-      **For CRUST projects:** Skip the translation steps in PART B. Only execute the test execution steps using the 'mcp__crust-test-runner__run_tests' tool.
+      **For CRUST projects:** Skip the translation steps in PART B. Only execute the test execution steps using the 'mcp__crust-test-runner__run_tests' tool. CRUST tests are already translated under src/bin. Do not translate and create new test files under any other directory. It is ok for CRUST tests to not be in the same directory as the source code. You MUST never change the test files in src/bin. If they fail, fix the translations.
       
       **For non-CRUST projects:** Execute the steps in **PART B** of {{ planning_dir }}/implementation-plan.md. You MUST use the 'test-translator-executor' subagent to translate and execute only one test file at a time.
 
@@ -375,6 +377,7 @@ templates:
          - **Missing directories:** Create the missing directories
          - **Extra files:** Remove files not in design (except `*_generated.*` test files)
          - **Wrong locations:** Move files to correct location as per design
+         - **CRUST tests:** If tests are under src/bin, do not change the directory structure. It is ok for CRUST tests to not follow the directory structure in the overall design document.
       2. **Name preservation issues:**
          - Rename identifiers in target files to EXACTLY match source names
          - Do NOT convert naming conventions (e.g., don't change `getUserName` to `get_user_name`)
@@ -392,7 +395,7 @@ templates:
       6. **Test translation issues:**
          - **Assertion count mismatch:** Ensure the translated test has the same number of assertions as the source
          - **Wrong assertion:** Fix the assertion to match what the source test asserts
-      7. **Test execution failures:** Fix the translated code so tests pass (compare with source behavior)
+      7. **Test execution failures:** Fix the translated code so tests pass (compare with source behavior). For CRUST projects, if tests fail, DO NOT change anything in tests under src/bin. You MUST only fix the translations.
       8. **Generated test failures:** If generated tests pass in source but fail in target, fix the target implementation
       
       **After repairing all issues:**
@@ -455,6 +458,7 @@ templates:
 
       ### 2. Invoke 'structure-validator' Subagent
       **Use the 'structure-validator' subagent** to verify directory structure matches the design.
+      For CRUST projects, skip this step. DO NOT invoke this subagent and report any issues.
       
       Provide the subagent with:
       - {{ target_translation_root }}
@@ -465,6 +469,7 @@ templates:
 
       ### 3. Invoke 'name-validator' Subagent
       **Use the 'name-validator' subagent** to verify name preservation.
+      For CRUST projects, skip this step. DO NOT invoke this subagent and report any issues.
       
       Provide the subagent with:
       - {{ source_project_root }}
@@ -484,6 +489,7 @@ templates:
 
       ### 5. Invoke 'rust-safety-validator' Subagent (If translating to Rust)
       **If {{ target_language }} is Rust, use the 'rust-safety-validator' subagent.**
+      For CRUST projects, skip this step. DO NOT invoke this subagent and report any issues.
       
       Provide the subagent with:
       - {{ target_translation_root }}
@@ -493,6 +499,7 @@ templates:
 
       ### 6. Invoke 'test-validator' Subagent
       **Use the 'test-validator' subagent** to validate test translation correctness.
+      For CRUST projects, skip this step. DO NOT invoke this subagent and report any issues.
       
       Provide the subagent with:
       - {{ source_project_root }}
@@ -547,6 +554,7 @@ templates:
          - Identify all uncovered methods/functions in the specified class
          - Generate a test file named `ClassNameTest_generated` in the {{ source_language.upper() }} language that tests all uncovered methods
          - Generate an identical test file named `ClassNameTest_generated` in the {{ target_language.upper() }} language with the same test logic
+         - For CRUST projects, the generated test file should be under src/bin along with the original test files. The generated tests should have #[test] attribute and be executable by using 'cargo test' command.
          - Execute tests in BOTH languages and compare results
          - If tests pass in source but fail in target, fix the target implementation
          - Report pass/fail status for both languages
