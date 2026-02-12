@@ -337,12 +337,14 @@ RUN echo 'export TERM=xterm-256color' >> /root/.bashrc \
     && echo 'alias grep="grep --color=auto"' >> /root/.bashrc \
     && echo 'PS1="\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] "' >> /root/.bashrc
 
-# install mcp-language-server from src/mcp/mcp_language_server
-RUN cd /workspace/src/mcp/mcp_language_server \
-    && go install .
+# install mcp-language-server from src/mcp/mcp_language_server (skip for baseagent-concat / baseagent-condensed)
+RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
+        cd /workspace/src/mcp/mcp_language_server && go install .; \
+    fi
 
-# Install language servers based on SOURCE_LANGUAGE and TARGET_LANGUAGE
-RUN if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
+# Install language servers based on SOURCE_LANGUAGE and TARGET_LANGUAGE (skip for baseagent-concat / baseagent-condensed)
+RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
+    if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
         go install golang.org/x/tools/gopls@latest; \
     fi && \
     if [ "$SOURCE_LANGUAGE" = "rust" ] || [ "$TARGET_LANGUAGE" = "rust" ]; then \
@@ -364,10 +366,12 @@ RUN if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
         mkdir -p /usr/local/jdt-language-server && \
         tar -xzf /tmp/jdt-language-server.tar.gz -C /usr/local/jdt-language-server && \
         rm /tmp/jdt-language-server.tar.gz; \
+    fi; \
     fi
 
-# Run bear -- make for crust projects to generate compile_commands.json
-RUN if [ "${TOOL_NAME}" = "crust" ]; then \
+# Run bear -- make for crust projects to generate compile_commands.json (skip for baseagent-concat / baseagent-condensed)
+RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
+    if [ "${TOOL_NAME}" = "crust" ]; then \
         MAKE_TARGET=""; \
         case "${PROJECT_NAME}" in \
             2dpartint) MAKE_TARGET="test" ;; \
@@ -465,6 +469,7 @@ RUN if [ "${TOOL_NAME}" = "crust" ]; then \
             cd /workspace/data/tool_projects/crust/${PROJECT_NAME}/c && \
             bear -- make $MAKE_TARGET || true; \
         fi; \
+    fi; \
     fi
 
 # Default command
