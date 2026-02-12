@@ -70,7 +70,8 @@ class BaseAgent(RecodeAgent):
         prompt_generator = BasePromptGenerator(configs=self.configs, project_details=project_details)
         prompt = prompt_generator.generate_prompt()
 
-        self.logger.debug("Generated prompt for %s (length: %d chars)", agent_name, len(prompt))
+        self.logger.debug("Generated prompt:")
+        self.logger.debug(prompt)
 
         try:
             # Execute the single agent with the full concatenated prompt
