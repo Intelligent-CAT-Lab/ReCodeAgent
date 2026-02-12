@@ -755,14 +755,126 @@ templates:
          - DO NOT create shared utility modules for tests.
 
   baseagent-condensed: |-
-    # {{ source_language.upper() }} to {{ target_language.upper() }} Translation & Validation Script
+    # {{ source_language.upper() }} to {{ target_language.upper() }} Translation Script
 
     ## Overview
-    You are responsible for translating a {{ source_language.upper() }} project to {{ target_language.upper() }} and validating the result. Your goal is to produce a functionally equivalent {{ target_language.upper() }} translation that passes all tests. The translation should be 1:1 unless otherwise specified in the translation requirements.
+    You are responsible for translating a {{ source_language.upper() }} project to {{ target_language.upper() }} with functional equivalence. This is a streamlined 1:1 translation process that combines design, planning, translation, and validation into a single workflow.
 
     ## Parameters
     - **source_project_root**: {{ source_project_root }}
     - **target_translation_root**: {{ target_translation_root }}
+    - **translation_requirements**: {{ translation_requirements }}
 
-    ## Constraints
-    - You MUST execute tests to ensure they pass in the target language
+    ## Core Principles
+    1. **Name Preservation**: ALL identifiers (classes, methods, functions, variables) MUST remain IDENTICAL to source. DO NOT convert naming conventions (e.g., snake_case to camelCase).
+    2. **Functional Equivalence**: Translated code must produce identical output for identical input.
+    3. **Structure Preservation**: Mirror the exact directory structure and file organization of the source project.
+    4. **Test-Driven Validation**: Execute tests in both languages to verify correctness.
+
+    ## Steps
+
+    ### 1. Understand Source Project
+    - Understand the project structure and file organization
+    - Understand the content of each source file
+    - Identify: data models, error handling, dependencies, key structs/interfaces
+
+    ### 2. Research Target Libraries
+    - Research {{ target_language.upper() }} libraries mentioned in {{ translation_requirements }}
+    - Refer to library documentation to understand the functionality of each library
+    - Determine idiomatic usage patterns for target language
+
+    ### 3. Create Target Structure
+    - Create EXACT same directory structure in {{ target_translation_root }} (only change file extensions)
+    - Create skeleton files with class declarations and method signatures
+    - **CRITICAL**: Preserve ALL source names exactly - no renaming, no convention changes
+
+    ### 4. Extract Functions to Translate
+    - Extract all functions/methods from source files
+    - Create a list of items to translate: <file-path>:<item-name>
+    - For methods: <ClassName>.<methodName>
+    - For functions: <functionName>
+    - Include both source AND test files
+
+    ### 5. Translate All Source Code
+    **CRITICAL IMPLEMENTATION RULES:**
+    - Translate logic 1:1 (control flow, variables, etc.) - NO stubs, full implementation
+    - Use EXACT same identifier names from source
+    - Ensure code compiles/parses after each step
+
+    **If translating to Rust:**
+    - **MANDATORY**: ALL code MUST be safe Rust - NO unsafe blocks, NO raw pointers (*const, *mut), NO unsafe fn
+    - Use safe alternatives: RefCell for interior mutability, Arc/Rc for shared ownership
+
+    **Handle method overloading (Java → Python/JS):**
+    - Prefer: Default arguments or *args/**kwargs to handle multiple signatures
+    - Alternative: Type checking within method
+    - Last resort: Rename methods (e.g., getById, getByIdAndName) and document
+
+    ### 6. Translate All Tests
+    - Translate test files 1:1 exactly like source code
+    - Preserve test structure, assertions, setup/teardown
+    - Use mapped names to call translated source code
+    - DO NOT modify test behavior or add/remove tests
+
+    **Test Execution:**
+    - Execute source test FIRST to verify it passes and count tests
+    - Execute target test and verify same number of tests run and pass
+    - If source passes but target fails: fix target implementation
+    - For Python: use pytest from {{ target_translation_root }}, create pytest.ini if needed
+    - For Rust: use cargo test from {{ target_translation_root }}
+    - Iterate until all tests pass
+
+    ### 7. Validate Translation
+    Run these validation checks:
+
+    **A. Structure Check:**
+    - Verify all expected files exist in {{ target_translation_root }}
+    - No extra files except *_generated.* test files
+    - Files in correct locations matching source structure
+
+    **B. Name Preservation Check:**
+    - Compare identifier names between source and target
+    - Verify EXACT name matches (no convention changes)
+
+    **C. Implementation Check:**
+    - No unimplemented stubs (e.g., unimplemented!(), pass, TODO)
+    - All methods have full functionality
+
+    **D. Test Coverage Check:**
+    - Build coverage map: which functions are tested
+    - For EACH uncovered function:
+      1. Generate test in source language
+      2. Generate identical test in target language
+      3. Execute both and verify they pass
+      4. Generated test files: ClassNameTest_generated.<ext>
+
+    **E. Rust Safety Check (if applicable):**
+    - Search for: unsafe blocks, *const, *mut, unsafe fn
+    - Report any violations (MUST be fixed)
+
+    ### 8. Fix and Iterate
+    If validation finds issues:
+    - **Missing files**: Create them according to source structure
+    - **Name violations**: Rename to EXACT source names
+    - **Unimplemented code**: Implement full functionality
+    - **Test failures**: Fix target implementation to match source behavior
+    - **Rust safety**: Replace unsafe code with safe alternatives
+    - Re-run validation until all checks pass
+
+    ### 9. Final Verification
+    Create a summary confirming:
+    - All source files translated
+    - All tests translated and passing
+    - All uncovered functions have generated tests
+    - 100% functional equivalence verified
+    - No validation issues remaining
+
+    ## Functional Equivalence Definition
+    Two code fragments are functionally equivalent if, for the same input, they:
+    1. Have identical program states at all corresponding execution points
+    2. Produce the same output upon termination
+
+    ## Critical Requirements
+    - **DO NOT STOP** until ALL functions are translated, ALL tests pass, and validation is clean
+    - **IMMEDIATELY PROCEED** to next step after completing current step
+    - You are ONLY finished when translation is complete and fully validated
