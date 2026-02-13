@@ -100,7 +100,7 @@ class BaseAgent(RecodeAgent):
         agent_name = self.configs.get("agent_name", "baseagent-condensed")
         start_time = time.time()
         self.logger.info(
-            f"Starting {agent_name} translation workflow for project: {project_details.get('project_name', 'unknown')}"
+            f"Starting translation for project: {project_details.get('project_name', 'unknown')}"
         )
 
         # Generate the prompt (either concatenated or condensed based on variant)
@@ -112,7 +112,7 @@ class BaseAgent(RecodeAgent):
 
         try:
             # Execute the single agent with the full concatenated prompt
-            self.logger.info(f"Executing {agent_name} with Claude (single agent, full workflow)")
+            self.logger.info(f"Executing {agent_name} with Claude")
             model_utils = ModelUtils(configs=self.configs, logger=self.logger)
             status, agent_output = await model_utils.prompt_agent(
                 prompt=prompt,
@@ -136,7 +136,7 @@ class BaseAgent(RecodeAgent):
                     return False, {"error": "No result found in agent output", "execution_time_seconds": execution_time}
 
             execution_time = time.time() - start_time
-            self.logger.info(f"{agent_name} workflow completed successfully")
+            self.logger.info(f"{agent_name} completed successfully")
 
             # Save the final project details for reference (same pattern as recodeagent)
             try:
