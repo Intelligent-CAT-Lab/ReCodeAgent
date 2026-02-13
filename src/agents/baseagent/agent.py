@@ -7,6 +7,9 @@ workflow using a single agent. Supports two variants:
 - baseagent-condensed: Uses a dedicated condensed prompt template
 """
 
+import time
+import uuid
+import logging
 from pathlib import Path
 from typing import Dict, Any, Tuple
 
@@ -41,8 +44,40 @@ class BaseAgent(RecodeAgent):
         Args:
             configs (Dict[str, Any]): Configuration settings
         """
-        super().__init__(configs)
-        self.logger.info("BaseAgent initialized")
+        # Set configs and session_id (like RecodeAgent does)
+        self.configs = configs
+        self.session_id = str(uuid.uuid4())
+
+        # Use the agent variant name from config (e.g., "baseagent-concat" or "baseagent-condensed")
+        # instead of the class name
+        agent_name = self.configs.get("agent_name", "baseagent-condensed")
+        log_dir = Path(f"logs/{agent_name}")
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        log_file = log_dir / f"{self.session_id}.log"
+
+        self.logger = logging.getLogger(f"{agent_name}.{self.session_id}")
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = False  # Prevent propagation to parent loggers
+
+        # File handler
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.DEBUG)
+
+        # Console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+
+        # Formatter
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+
+        # Add handlers
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(console_handler)
+
+        self.logger.info(f"{agent_name} initialized with session ID: {self.session_id}")
 
     async def run(self, project_details: Dict[str, Any]) -> Tuple[bool, Dict[str, Any]]:
         """
@@ -62,6 +97,7 @@ class BaseAgent(RecodeAgent):
                 - results: The agent output and execution details
         """
         agent_name = self.configs.get("agent_name", "baseagent-condensed")
+        start_time = time.time()
         self.logger.info(
             f"Starting {agent_name} translation workflow for project: {project_details.get('project_name', 'unknown')}"
         )
@@ -85,24 +121,28 @@ class BaseAgent(RecodeAgent):
             )
 
             if not status:
-                self.logger.error(f"{agent_name} execution failed")
-                return False, {"error": f"{agent_name} execution failed"}
+                execution_time = time.time() - start_time
+                self.logger.error(f"{agent_name} execution failed after {execution_time:.2f} seconds")
+                return False, {"error": f"{agent_name} execution failed", "execution_time_seconds": execution_time}
 
             result = agent_output.get("result", "")
             if not result:
                 if "last_json" in agent_output and "result" in agent_output["last_json"]:
                     result = agent_output["last_json"]["result"]
                 else:
+                    execution_time = time.time() - start_time
                     self.logger.error("No result found in agent output")
-                    return False, {"error": "No result found in agent output"}
+                    return False, {"error": "No result found in agent output", "execution_time_seconds": execution_time}
 
-            self.logger.info(f"{agent_name} workflow completed successfully")
+            execution_time = time.time() - start_time
+            self.logger.info(f"{agent_name} workflow completed successfully in {execution_time:.2f} seconds")
 
             final_session_id = f"{agent_name}.{project_details.get('project_name', 'unknown')}"
             self._rename_log_file(self.session_id, final_session_id, agent_name)
 
-            return True, {"agent_output": agent_output}
+            return True, {"agent_output": agent_output, "execution_time_seconds": execution_time}
 
         except Exception as e:
-            self.logger.error(f"Error during {agent_name} execution: {str(e)}")
-            return False, {"error": str(e)}
+            execution_time = time.time() - start_time
+            self.logger.error(f"Error during {agent_name} execution after {execution_time:.2f} seconds: {str(e)}")
+            return False, {"error": str(e), "execution_time_seconds": execution_time}

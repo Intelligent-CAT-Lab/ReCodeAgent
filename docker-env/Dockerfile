@@ -117,9 +117,9 @@ LABEL project_name=${PROJECT_NAME}
 
 # Copy project snapshot into image, but only specific data for the tool and project
 COPY .claude /workspace/.claude
-# For baseagent variants: remove mcp__* from settings.local.json permissions
+# For baseagent-condensed: remove mcp__* from settings.local.json permissions
 COPY docker-env/prepare_baseagent_settings.py /tmp/prepare_baseagent_settings.py
-RUN if [ "${AGENT_NAME}" = "baseagent-concat" ] || [ "${AGENT_NAME}" = "baseagent-condensed" ]; then python3 /tmp/prepare_baseagent_settings.py; fi && rm -f /tmp/prepare_baseagent_settings.py
+RUN if [ "${AGENT_NAME}" = "baseagent-condensed" ]; then python3 /tmp/prepare_baseagent_settings.py; fi && rm -f /tmp/prepare_baseagent_settings.py
 COPY configs/prompt_templates.yaml /workspace/configs/prompt_templates.yaml
 # First copy all project files to a temporary directory
 COPY data/tool_projects/${TOOL_NAME}/${PROJECT_NAME} /tmp/project_files
@@ -202,8 +202,8 @@ COPY README.md /workspace/README.md
 # Generate configs directory
 RUN mkdir -p /workspace/configs
 
-# Generate configs/claude_mcp_config.json file (empty for baseagent variants, full for others)
-RUN if [ "${AGENT_NAME}" = "baseagent-concat" ] || [ "${AGENT_NAME}" = "baseagent-condensed" ]; then \
+# Generate configs/claude_mcp_config.json file (empty for baseagent-condensed, full for others)
+RUN if [ "${AGENT_NAME}" = "baseagent-condensed" ]; then \
         echo '{"mcpServers": {}}' > /workspace/configs/claude_mcp_config.json; \
     else \
         echo '{\n  "mcpServers": {' > /workspace/configs/claude_mcp_config.json && \
@@ -337,13 +337,13 @@ RUN echo 'export TERM=xterm-256color' >> /root/.bashrc \
     && echo 'alias grep="grep --color=auto"' >> /root/.bashrc \
     && echo 'PS1="\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] "' >> /root/.bashrc
 
-# install mcp-language-server from src/mcp/mcp_language_server (skip for baseagent-concat / baseagent-condensed)
-RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
+# install mcp-language-server from src/mcp/mcp_language_server (skip for baseagent-condensed)
+RUN if [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
         cd /workspace/src/mcp/mcp_language_server && go install .; \
     fi
 
-# Install language servers based on SOURCE_LANGUAGE and TARGET_LANGUAGE (skip for baseagent-concat / baseagent-condensed)
-RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
+# Install language servers based on SOURCE_LANGUAGE and TARGET_LANGUAGE (skip for baseagent-condensed)
+RUN if [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
     if [ "$SOURCE_LANGUAGE" = "go" ] || [ "$TARGET_LANGUAGE" = "go" ]; then \
         go install golang.org/x/tools/gopls@latest; \
     fi && \
@@ -369,8 +369,8 @@ RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseag
     fi; \
     fi
 
-# Run bear -- make for crust projects to generate compile_commands.json (skip for baseagent-concat / baseagent-condensed)
-RUN if [ "${AGENT_NAME}" != "baseagent-concat" ] && [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
+# Run bear -- make for crust projects to generate compile_commands.json (skip for baseagent-condensed)
+RUN if [ "${AGENT_NAME}" != "baseagent-condensed" ]; then \
     if [ "${TOOL_NAME}" = "crust" ]; then \
         MAKE_TARGET=""; \
         case "${PROJECT_NAME}" in \
