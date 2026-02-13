@@ -71,7 +71,7 @@ class BasePromptGenerator:
                 template_parts.append(template_content)
 
             # Join with separators for clarity
-            full_template = "YOU MUST FOLLOW THE ORDER OF STEPS DETERMINED BY THE ORDER VARIABLE: " + str(order) + "\n\n"
+            full_template = "YOU MUST FOLLOW THE ORDER OF STEPS DETERMINED BY THE ORDER VARIABLE: " + str(order) + "\n\n ONLY TERMINATE WHEN YOU FINISH ALL FOUR AGENTS. DO NOT STOP AFTER ANALYZER, PLANNING, TRANSLATOR AGENTS. YOU MUST ONLY STOP AFTER VALIDATOR AGENT."
             full_template += "\n\n".join(template_parts)
             template = Template(full_template)
         else:  # baseagent-condensed
