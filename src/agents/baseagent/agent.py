@@ -10,6 +10,7 @@ workflow using a single agent. Supports two variants:
 import time
 import uuid
 import logging
+import json
 from pathlib import Path
 from typing import Dict, Any, Tuple
 
@@ -122,7 +123,7 @@ class BaseAgent(RecodeAgent):
 
             if not status:
                 execution_time = time.time() - start_time
-                self.logger.error(f"{agent_name} execution failed after {execution_time:.2f} seconds")
+                self.logger.error(f"{agent_name} execution failed")
                 return False, {"error": f"{agent_name} execution failed", "execution_time_seconds": execution_time}
 
             result = agent_output.get("result", "")
@@ -135,14 +136,24 @@ class BaseAgent(RecodeAgent):
                     return False, {"error": "No result found in agent output", "execution_time_seconds": execution_time}
 
             execution_time = time.time() - start_time
-            self.logger.info(f"{agent_name} workflow completed successfully in {execution_time:.2f} seconds")
+            self.logger.info(f"{agent_name} workflow completed successfully")
 
-            final_session_id = f"{agent_name}.{project_details.get('project_name', 'unknown')}"
-            self._rename_log_file(self.session_id, final_session_id, agent_name)
+            # Save the final project details for reference (same pattern as recodeagent)
+            try:
+                planning_dir = Path(project_details.get("planning_dir", "./planning/"))
+                planning_dir.mkdir(exist_ok=True, parents=True)
+                project_details["baseagent_results"] = {
+                    "agent_output": agent_output,
+                    "execution_time_seconds": execution_time,
+                }
+                with open(planning_dir / "project_details.json", "w") as f:
+                    json.dump(project_details, f, indent=2)
+            except Exception as e:
+                self.logger.error(f"Failed to save project details: {e}")
 
             return True, {"agent_output": agent_output, "execution_time_seconds": execution_time}
 
         except Exception as e:
             execution_time = time.time() - start_time
-            self.logger.error(f"Error during {agent_name} execution after {execution_time:.2f} seconds: {str(e)}")
+            self.logger.error(f"Error during {agent_name} execution: {str(e)}")
             return False, {"error": str(e), "execution_time_seconds": execution_time}

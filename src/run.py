@@ -15,6 +15,7 @@ import yaml
 import asyncio
 import argparse
 import logging
+import time
 from pathlib import Path
 from typing import Dict, Any, Optional
 
@@ -113,8 +114,18 @@ async def run_agent(config_file: str, log_level: str = "INFO") -> int:
                 "target_translation_root": target_translation_root,
                 "planning_dir": planning_dir,
             }
+            logger.info(f"Project details: {project_details}")
+            logger.info(f"Running {agent_name}")
+
             base_agent = BaseAgent(config)
-            success, _ = await base_agent.run(project_details)
+            start_time = time.time()
+            success, baseagent_results = await base_agent.run(project_details)
+            execution_time = baseagent_results.get("execution_time_seconds", time.time() - start_time)
+
+            if success:
+                logger.info(f"{agent_name} completed successfully in {execution_time:.2f} seconds")
+            else:
+                logger.error(f"{agent_name} failed after {execution_time:.2f} seconds")
         else:
             from src.agents.recodeagent.agent import run_agents
 

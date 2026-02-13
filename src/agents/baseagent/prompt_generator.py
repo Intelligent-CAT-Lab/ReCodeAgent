@@ -67,11 +67,12 @@ class BasePromptGenerator:
             template_parts = []
             for subagent in order.keys():
                 template_content = self.prompt_templates["templates"]["recodeagent"][subagent]
-                template_parts.append("You MUST do this step " + order[subagent] + ":\n" + template_content)
+                template_parts.append(80 * "=" + "\nYOU MUST DO THIS STEP " + order[subagent] + ":\n" + 80 * "=" + "\n\n")
+                template_parts.append(template_content)
 
             # Join with separators for clarity
-            full_template = "You MUST follow the order of steps determined by the order variable: " + str(order) + "\n\n"
-            full_template += "\n\n" + "=" * 80 + "\n\n" + "\n\n".join(template_parts)
+            full_template = "YOU MUST FOLLOW THE ORDER OF STEPS DETERMINED BY THE ORDER VARIABLE: " + str(order) + "\n\n"
+            full_template += "\n\n".join(template_parts)
             template = Template(full_template)
         else:  # baseagent-condensed
             template_content = self.prompt_templates["templates"]["baseagent-condensed"]
