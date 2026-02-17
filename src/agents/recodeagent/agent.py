@@ -280,7 +280,7 @@ async def run_agents(
         max_iterations = config.get("max_translation_validation_iterations", 5)
         iteration = 0
         validation_passed = False
-        
+
         # Track cumulative execution times
         total_translator_time = 0.0
         total_validator_time = 0.0
@@ -289,7 +289,7 @@ async def run_agents(
         while iteration < max_iterations and not validation_passed:
             iteration += 1
             logger.info(f"=== Translation-Validation Loop: Iteration {iteration}/{max_iterations} ===")
-            
+
             iteration_result = {"iteration": iteration}
 
             # Run translator agent
@@ -336,7 +336,7 @@ async def run_agents(
                 # If the file doesn't exist or has PASS status, validation is complete
                 validation_report_path = Path(project_details["planning_dir"]) / "validation-report.md"
                 validation_summary_path = Path(project_details["planning_dir"]) / "validation-summary.md"
-                
+
                 if validation_summary_path.exists():
                     # Validator created summary, meaning validation passed
                     logger.info("Validation summary found - validation passed!")

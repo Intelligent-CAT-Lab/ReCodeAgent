@@ -99,9 +99,7 @@ class BaseAgent(RecodeAgent):
         """
         agent_name = self.configs.get("agent_name", "baseagent-condensed")
         start_time = time.time()
-        self.logger.info(
-            f"Starting translation for project: {project_details.get('project_name', 'unknown')}"
-        )
+        self.logger.info(f"Starting translation for project: {project_details.get('project_name', 'unknown')}")
 
         # Generate the prompt (either concatenated or condensed based on variant)
         prompt_generator = BasePromptGenerator(configs=self.configs, project_details=project_details)
@@ -118,7 +116,7 @@ class BaseAgent(RecodeAgent):
                 prompt=prompt,
                 feedback="",
                 agent_name=agent_name,
-                timeout=self.configs['baseagent_timeout'],
+                timeout=self.configs["baseagent_timeout"],
             )
 
             if not status:

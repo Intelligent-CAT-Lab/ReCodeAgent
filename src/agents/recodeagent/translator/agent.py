@@ -63,12 +63,12 @@ class TranslatorAgent(RecodeAgent):
             str: The validation report content, or empty string if no report exists
         """
         validation_report_path = Path(planning_dir) / "validation-report.md"
-        
+
         if validation_report_path.exists():
             try:
                 with open(validation_report_path, "r") as f:
                     report_content = f.read()
-                
+
                 # Check if this is a FAIL report (has issues to fix)
                 if "## Status: FAIL" in report_content or "Total issues found:" in report_content:
                     self.logger.info("Found validation report with issues - will include as feedback")
@@ -84,7 +84,7 @@ After fixing all issues, delete {validation_report_path} to signal completion.
 """
             except Exception as e:
                 self.logger.warning(f"Could not read validation report: {e}")
-        
+
         return ""
 
     async def run(self, project_details: Dict[str, Any]) -> Tuple[bool, Dict[str, Any]]:
@@ -117,7 +117,7 @@ After fixing all issues, delete {validation_report_path} to signal completion.
 
         self.logger.debug("Generated prompt:")
         self.logger.debug(prompt)
-        
+
         if validation_feedback:
             self.logger.info("Including validation feedback in prompt")
             self.logger.debug("Validation feedback:")
