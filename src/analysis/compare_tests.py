@@ -38,6 +38,13 @@ except ImportError:
     HAS_TREE_SITTER_RUST = False
 
 try:
+    import tree_sitter_javascript as tsjavascript
+
+    HAS_TREE_SITTER_JS = True
+except ImportError:
+    HAS_TREE_SITTER_JS = False
+
+try:
     from tree_sitter import QueryCursor
 
     USE_QUERY_CURSOR = True
@@ -139,6 +146,18 @@ def extract_assertion_types(body: str, lang: str) -> Dict[str, int]:
             (r"\bassert!\s*\(", "assert!"),
             (r"\bpanic!\s*\(", "panic!"),
             (r"\bassert_(?!eq!|ne!)(\w+)!\s*\(", "assert_*!"),
+        ]
+    elif lang == "javascript":
+        # JavaScript assertion patterns (skel custom helper + console.assert + Node assert module)
+        patterns = [
+            (r"\bassert_equal\s*\(", "assert_equal"),
+            (r"\bconsole\.assert\s*\(", "console.assert"),
+            (r"\bassert\.strictEqual\s*\(", "assert.strictEqual"),
+            (r"\bassert\.deepEqual\s*\(", "assert.deepEqual"),
+            (r"\bassert\.notEqual\s*\(", "assert.notEqual"),
+            (r"\bassert\.equal\s*\(", "assert.equal"),
+            (r"\bassert\.ok\s*\(", "assert.ok"),
+            (r"\bexpect\s*\(", "expect"),
         ]
     else:
         # Python assertion patterns
@@ -244,6 +263,8 @@ def count_method_calls(body: str, lang: str) -> int:
             "use",
             "pub",
         }
+    elif lang == "javascript":
+        keywords = {"if", "for", "while", "switch", "return", "const", "let", "var", "function", "new", "typeof", "instanceof", "catch", "throw"}
     else:
         keywords = {"if", "for", "while", "with", "except", "return", "raise", "yield", "lambda", "def", "class"}
 
@@ -429,6 +450,8 @@ def extract_assertEquals_args(body: str, lang: str) -> List[Tuple[str, str]]:
     elif lang == "go":
         # Go doesn't use assertEquals; no pairs to extract
         return []
+    elif lang == "javascript":
+        patterns = [r"\bassert_equal\s*\(", r"\bassert\.equal\s*\(", r"\bassert\.strictEqual\s*\(", r"\bassert\.deepEqual\s*\("]
     else:
         patterns = [r"\b(?:assertEqual|assertEquals)\s*\("]
 
@@ -657,6 +680,18 @@ def extract_individual_assertions(body: str, lang: str) -> List[AssertionInfo]:
             (r"\b(assert)!\s*\(", "assert!"),
             (r"\b(panic)!\s*\(", "panic!"),
             (r"\b(assert_(?!eq!|ne!)\w+)!\s*\(", "assert_*!"),
+        ]
+    elif lang == "javascript":
+        # JavaScript assertion patterns (skel custom helper + console.assert + Node assert module)
+        patterns = [
+            (r"\b(assert_equal)\s*\(", "assert_equal"),
+            (r"\b(console\.assert)\s*\(", "console.assert"),
+            (r"\b(assert\.strictEqual)\s*\(", "assert.strictEqual"),
+            (r"\b(assert\.deepEqual)\s*\(", "assert.deepEqual"),
+            (r"\b(assert\.notEqual)\s*\(", "assert.notEqual"),
+            (r"\b(assert\.equal)\s*\(", "assert.equal"),
+            (r"\b(assert\.ok)\s*\(", "assert.ok"),
+            (r"\b(expect)\s*\(", "expect"),
         ]
     else:
         # Python assertion patterns
@@ -1789,7 +1824,7 @@ class PythonTestParser:
                 if func_name_node:
                     method_name = func_name_node.text.decode("utf-8")
 
-                    if method_name.startswith("test") or method_name.startswith("Test"):
+                    if "test" in method_name.lower():
                         # Extract parameters
                         parameters = []
                         if params_node:
@@ -1907,6 +1942,207 @@ class PythonTestParser:
         return count
 
 
+class JavaScriptTestParser:
+    """Parser for JavaScript test files using tree-sitter (regex fallback if unavailable)"""
+
+    def __init__(self):
+        if HAS_TREE_SITTER_JS:
+            self.language = Language(tsjavascript.language())
+            self.parser = Parser(self.language)
+        else:
+            self.language = None
+            self.parser = None
+
+    def parse_test_file(self, file_path: Path) -> Dict[str, TestMethodInfo]:
+        """Parse a JavaScript test file and extract test functions"""
+        if not file_path.exists():
+            return {}
+
+        try:
+            content = file_path.read_text(encoding="utf-8")
+
+            if HAS_TREE_SITTER_JS:
+                return self._parse_with_tree_sitter(file_path, content)
+            else:
+                return self._parse_with_regex(content)
+        except Exception as e:
+            print(f"Warning: Could not parse {file_path}: {e}")
+            return {}
+
+    def _parse_with_tree_sitter(self, file_path: Path, content: str) -> Dict[str, TestMethodInfo]:
+        """Parse using tree-sitter for accurate AST-based extraction"""
+        content_bytes = content.encode("utf-8")
+        tree = self.parser.parse(content_bytes)
+        methods = {}
+
+        query = Query(
+            self.language,
+            """
+            (function_declaration
+                name: (identifier) @func_name
+                parameters: (formal_parameters) @params
+                body: (statement_block) @body) @func
+            """,
+        )
+
+        matches = run_query_matches(query, tree.root_node)
+
+        for pattern_idx, captures in matches:
+            func_name_nodes = captures.get("func_name", [])
+            params_nodes = captures.get("params", [])
+            func_nodes = captures.get("func", [])
+
+            func_name_node = func_name_nodes[0] if func_name_nodes else None
+            params_node = params_nodes[0] if params_nodes else None
+            func_node = func_nodes[0] if func_nodes else None
+
+            if func_name_node:
+                method_name = func_name_node.text.decode("utf-8")
+
+                if "test" in method_name.lower():
+                    parameters = []
+                    if params_node:
+                        parameters = self._extract_parameters(params_node)
+
+                    full_method = func_node.text.decode("utf-8") if func_node else ""
+                    signature = self._build_signature(func_node) if func_node else ""
+                    assertion_count = self._count_assertions_text(full_method)
+
+                    methods[method_name] = TestMethodInfo(
+                        name=method_name,
+                        signature=signature,
+                        parameters=parameters,
+                        param_count=len(parameters),
+                        assertion_count=assertion_count,
+                        body=full_method,
+                    )
+
+        return methods
+
+    def _parse_with_regex(self, content: str) -> Dict[str, TestMethodInfo]:
+        """Regex-based fallback parser for JavaScript test functions"""
+        methods = {}
+
+        # Match top-level function declarations for any function whose name contains "test"
+        pattern = re.compile(r"^function\s+(\w*[Tt]est\w*)\s*\(([^)]*)\)\s*\{", re.MULTILINE)
+
+        for match in pattern.finditer(content):
+            method_name = match.group(1)
+            params_str = match.group(2).strip()
+
+            # Extract body by matching braces
+            body_start = match.end() - 1  # position of opening {
+            body_text = self._extract_brace_body(content, body_start)
+            full_method = content[match.start():match.start() + len(match.group(0)) - 1 + len(body_text)]
+
+            # Parse parameters
+            parameters = []
+            if params_str:
+                for p in params_str.split(","):
+                    p = p.strip()
+                    if p:
+                        parameters.append(ParameterInfo(name=p))
+
+            signature = f"function {method_name}({params_str})"
+            assertion_count = self._count_assertions_text(full_method)
+
+            methods[method_name] = TestMethodInfo(
+                name=method_name,
+                signature=signature,
+                parameters=parameters,
+                param_count=len(parameters),
+                assertion_count=assertion_count,
+                body=full_method,
+            )
+
+        return methods
+
+    def _extract_brace_body(self, content: str, brace_pos: int) -> str:
+        """Extract the content of a brace-delimited block starting at brace_pos"""
+        depth = 0
+        pos = brace_pos
+        in_string = False
+        string_char = ""
+        in_line_comment = False
+        in_block_comment = False
+
+        while pos < len(content):
+            ch = content[pos]
+
+            if in_line_comment:
+                if ch == "\n":
+                    in_line_comment = False
+            elif in_block_comment:
+                if ch == "*" and pos + 1 < len(content) and content[pos + 1] == "/":
+                    in_block_comment = False
+                    pos += 1
+            elif in_string:
+                if ch == "\\" :
+                    pos += 1  # skip escaped char
+                elif ch == string_char:
+                    in_string = False
+            else:
+                if ch in ('"', "'", "`"):
+                    in_string = True
+                    string_char = ch
+                elif ch == "/" and pos + 1 < len(content) and content[pos + 1] == "/":
+                    in_line_comment = True
+                elif ch == "/" and pos + 1 < len(content) and content[pos + 1] == "*":
+                    in_block_comment = True
+                elif ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        return content[brace_pos : pos + 1]
+            pos += 1
+
+        return content[brace_pos:]
+
+    def _extract_parameters(self, params_node) -> List[ParameterInfo]:
+        """Extract parameter information from formal_parameters node"""
+        parameters = []
+        for child in params_node.children:
+            if child.type == "identifier":
+                param_name = child.text.decode("utf-8")
+                parameters.append(ParameterInfo(name=param_name))
+            elif child.type in ("assignment_pattern", "rest_pattern"):
+                # Default or rest params: extract the name part
+                for sub in child.children:
+                    if sub.type == "identifier":
+                        parameters.append(ParameterInfo(name=sub.text.decode("utf-8")))
+                        break
+        return parameters
+
+    def _build_signature(self, func_node) -> str:
+        """Build function signature (first line up to opening brace)"""
+        func_text = func_node.text.decode("utf-8")
+        lines = func_text.split("\n")
+        signature_lines = []
+        for line in lines:
+            signature_lines.append(line)
+            if "{" in line:
+                break
+        return "\n".join(signature_lines).strip()
+
+    def _count_assertions_text(self, body: str) -> int:
+        """Count assertion calls in JavaScript body text"""
+        patterns = [
+            r"\bassert_equal\s*\(",
+            r"\bconsole\.assert\s*\(",
+            r"\bassert\.strictEqual\s*\(",
+            r"\bassert\.deepEqual\s*\(",
+            r"\bassert\.notEqual\s*\(",
+            r"\bassert\.equal\s*\(",
+            r"\bassert\.ok\s*\(",
+            r"\bexpect\s*\(",
+        ]
+        count = 0
+        for pattern in patterns:
+            count += len(re.findall(pattern, body))
+        return count
+
+
 class TestComparator:
     """Main comparator class"""
 
@@ -1937,6 +2173,8 @@ class TestComparator:
             self.source_parser = GoTestParser()
         elif self.source_lang == "rust":
             self.source_parser = RustTestParser()
+        elif self.source_lang == "javascript":
+            self.source_parser = JavaScriptTestParser()
         else:
             self.source_parser = PythonTestParser()
 
@@ -1946,6 +2184,8 @@ class TestComparator:
             self.target_parser = GoTestParser()
         elif self.target_lang == "rust":
             self.target_parser = RustTestParser()
+        elif self.target_lang == "javascript":
+            self.target_parser = JavaScriptTestParser()
         else:
             self.target_parser = PythonTestParser()
 
@@ -1966,6 +2206,10 @@ class TestComparator:
             return "go"
         if "rust" in parts:
             return "rust"
+
+        # Check for skel JavaScript projects
+        if "javascript" in parts:
+            return "javascript"
 
         # Look for 'python' in path FIRST (before checking for 'java' at the end)
         # This handles cases like python/src/test/java where the last part is 'java'
@@ -2018,10 +2262,17 @@ class TestComparator:
             base = self.target_lang_base
             lang = self.target_lang
 
-        # For Go and Rust, paths in the CSV are already relative file paths
-        if lang in ("go", "rust"):
+        # For Go, Rust, and JavaScript, paths in the CSV are already relative file paths
+        if lang in ("go", "rust", "javascript"):
             if not package_path:
                 # Return a sentinel non-existent path so parsers return {}
+                return base / "__missing__"
+            return base / Path(package_path)
+
+        # For Python/Java paths that are direct filenames (e.g. skel's "source.py"),
+        # treat them as relative file paths rather than dot-separated package names
+        if package_path.endswith(".py") or package_path.endswith(".java"):
+            if not package_path:
                 return base / "__missing__"
             return base / Path(package_path)
 
@@ -2062,6 +2313,9 @@ class TestComparator:
             elif self.source_lang == "rust":
                 source_path_col = "rust test path"
                 source_name_col = "rust test name"
+            elif self.source_lang == "javascript":
+                source_path_col = "javascript test path"
+                source_name_col = "javascript test name"
             else:
                 source_path_col = "python test path"
                 source_name_col = "python test name"
@@ -2075,6 +2329,9 @@ class TestComparator:
             elif self.target_lang == "rust":
                 target_path_col = "rust test path"
                 target_name_col = "rust test name"
+            elif self.target_lang == "javascript":
+                target_path_col = "javascript test path"
+                target_name_col = "javascript test name"
             else:
                 target_path_col = "python test path"
                 target_name_col = "python test name"

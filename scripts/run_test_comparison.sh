@@ -2,8 +2,10 @@
 # Usage: ./scripts/run_test_comparison.sh <project>
 # Example: ./scripts/run_test_comparison.sh commons-cli
 #          ./scripts/run_test_comparison.sh go-edlib
+#          ./scripts/run_test_comparison.sh strsim
 # Or run all AlphaTrans: ./scripts/run_test_comparison.sh all
 # Or run all Oxidizer:   ./scripts/run_test_comparison.sh all-oxidizer
+# Or run all Skel:       ./scripts/run_test_comparison.sh all-skel
 
 project=$1
 # Set to true to compute embedding similarity (slow, loads model). Default: false
@@ -11,6 +13,7 @@ COMPUTE_SIMILARITY=${COMPUTE_SIMILARITY:-false}
 
 ALPHATRANS_BASE_DIR="results/recodeagent_translations/data/tool_projects/alphatrans"
 OXIDIZER_BASE_DIR="results/recodeagent_translations/data/tool_projects/oxidizer"
+SKEL_BASE_DIR="results/recodeagent_translations/data/tool_projects/skel"
 
 # ── AlphaTrans configuration ──────────────────────────────────────────────────
 
@@ -65,6 +68,10 @@ VerhoeffCheckDigitTest:AbstractCheckDigitTest"
 # ── Oxidizer configuration ────────────────────────────────────────────────────
 
 OXIDIZER_PROJECTS=("go-edlib" "stats" "gonameparts" "gohistogram" "checkdigit" "textrank")
+
+# ── Skel configuration ────────────────────────────────────────────────────────
+
+SKEL_PROJECTS=("bst" "colorsys" "heapq" "html" "mathgen" "rbt" "strsim" "toml")
 
 # ── Helper: build similarity arg ─────────────────────────────────────────────
 
@@ -138,6 +145,35 @@ run_oxidizer_comparison() {
     echo ""
 }
 
+# ── Skel runner ───────────────────────────────────────────────────────────────
+
+run_skel_comparison() {
+    local proj=$1
+    local proj_dir="${SKEL_BASE_DIR}/${proj}"
+
+    if [ ! -d "$proj_dir" ]; then
+        echo "Error: Unknown Skel project '$proj' (directory not found: $proj_dir)"
+        echo "Available projects: ${SKEL_PROJECTS[*]}"
+        return 1
+    fi
+
+    echo "Processing $proj (Skel: Python → JavaScript)..."
+    echo "  Python path:     ${proj_dir}/python"
+    echo "  JavaScript path: ${proj_dir}/javascript"
+
+    if [ "$COMPUTE_SIMILARITY" = "true" ]; then
+        echo "  Embedding similarity: enabled"
+    fi
+
+    python src/analysis/compare_tests.py \
+        --mapping_csv "${proj_dir}/test_name_mapping.csv" \
+        --source_lang "${proj_dir}/python" \
+        --target_lang "${proj_dir}/javascript" \
+        --output "${proj_dir}/test_comparison_report.json" \
+        $similarity_arg
+    echo ""
+}
+
 # ── Dispatch ──────────────────────────────────────────────────────────────────
 
 is_oxidizer_project() {
@@ -148,14 +184,25 @@ is_oxidizer_project() {
     return 1
 }
 
+is_skel_project() {
+    local proj=$1
+    for p in "${SKEL_PROJECTS[@]}"; do
+        [ "$p" = "$proj" ] && return 0
+    done
+    return 1
+}
+
 if [ -z "$project" ]; then
-    echo "Usage: ./scripts/run_test_comparison.sh <project|all|all-oxidizer>"
+    echo "Usage: ./scripts/run_test_comparison.sh <project|all|all-oxidizer|all-skel>"
     echo ""
     echo "AlphaTrans projects (Java → Python):"
     echo "  commons-cli, commons-csv, commons-fileupload, commons-validator"
     echo ""
     echo "Oxidizer projects (Go → Rust):"
     echo "  ${OXIDIZER_PROJECTS[*]}"
+    echo ""
+    echo "Skel projects (Python → JavaScript):"
+    echo "  ${SKEL_PROJECTS[*]}"
     exit 1
 fi
 
@@ -167,8 +214,14 @@ elif [ "$project" = "all-oxidizer" ]; then
     for proj in "${OXIDIZER_PROJECTS[@]}"; do
         run_oxidizer_comparison "$proj"
     done
+elif [ "$project" = "all-skel" ]; then
+    for proj in "${SKEL_PROJECTS[@]}"; do
+        run_skel_comparison "$proj"
+    done
 elif is_oxidizer_project "$project"; then
     run_oxidizer_comparison "$project"
+elif is_skel_project "$project"; then
+    run_skel_comparison "$project"
 else
     run_alphatrans_comparison "$project"
 fi
