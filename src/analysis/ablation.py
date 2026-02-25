@@ -257,11 +257,7 @@ def _plot_test_validation(
 ) -> None:
     """Plot Test Validation ridgelines (top row) and graphectory heatmaps (bottom row)."""
     agents = AGENT_ORDER
-    tools = [
-        tool
-        for tool in TOOL_ORDER
-        if (tool in per_project_data) or (tool in graphectory_metrics)
-    ]
+    tools = [tool for tool in TOOL_ORDER if (tool in per_project_data) or (tool in graphectory_metrics)]
     n_agents = len(agents)
 
     # 2xN: top row ridgelines, bottom row heatmaps (equal height ratios)
@@ -441,11 +437,7 @@ def _plot_test_validation(
                         val = matrix[i, j]
                         if np.isnan(val):
                             continue
-                        color = (
-                            "white"
-                            if threshold is not None and val >= threshold
-                            else "black"
-                        )
+                        color = "white" if threshold is not None and val >= threshold else "black"
                         ax_hm.text(
                             j,
                             i,
@@ -466,9 +458,7 @@ def _plot_test_validation(
             ax_hm.set_yticks(range(n_agents))
             ax_hm.set_yticklabels([AGENT_LABELS[a] for a in agents])
             # Thin grid lines between cells
-            ax_hm.set_xticks(
-                np.arange(-0.5, len(HEATMAP_METRICS), 1), minor=True
-            )
+            ax_hm.set_xticks(np.arange(-0.5, len(HEATMAP_METRICS), 1), minor=True)
             ax_hm.set_yticks(np.arange(-0.5, n_agents, 1), minor=True)
             ax_hm.grid(which="minor", color="white", linestyle="-", linewidth=0.2)
             ax_hm.tick_params(which="minor", bottom=False, left=False)
@@ -606,9 +596,7 @@ def main() -> None:
     tool_rates, tool_fragments, tool_tests = _aggregate_rates(rows)
     _print_summary(tool_rates, tool_fragments, tool_tests)
     per_project_data = _collect_per_project_rates(rows)
-    graphectory_metrics, heatmap_vmin, heatmap_vmax = _collect_graphectory_metrics(
-        GRAPHECTORY_DIR
-    )
+    graphectory_metrics, heatmap_vmin, heatmap_vmax = _collect_graphectory_metrics(GRAPHECTORY_DIR)
     _print_graphectory_summary(graphectory_metrics)
     _plot_test_validation(per_project_data, graphectory_metrics, heatmap_vmin, heatmap_vmax)
 

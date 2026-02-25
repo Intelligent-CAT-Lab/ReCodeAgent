@@ -200,7 +200,9 @@ def compute_phase_costs_recodeagent(data: dict) -> dict:
 
 def collect_costs_by_agent():
     """Scan trajectories dir and aggregate cost metrics per agent."""
-    by_agent = defaultdict(lambda: {"usdCost": 0.0, "input_tokens": 0, "output_tokens": 0, "time_seconds": 0.0, "num_turns": 0, "count": 0})
+    by_agent = defaultdict(
+        lambda: {"usdCost": 0.0, "input_tokens": 0, "output_tokens": 0, "time_seconds": 0.0, "num_turns": 0, "count": 0}
+    )
 
     if not TRAJECTORIES_DIR.is_dir():
         return dict(by_agent)
