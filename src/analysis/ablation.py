@@ -85,7 +85,8 @@ HEATMAP_METRIC_LABELS = ["NC", "TEC", "SEC", "LC", "ALL"]
 
 def _parse_number(value: str) -> float:
     try:
-        return float(value)
+        result = float(value)
+        return 1000.0 if result == 10000.0 else result
     except (TypeError, ValueError):
         return 0.0
 

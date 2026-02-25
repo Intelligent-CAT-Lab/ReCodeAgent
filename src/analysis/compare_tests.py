@@ -264,7 +264,22 @@ def count_method_calls(body: str, lang: str) -> int:
             "pub",
         }
     elif lang == "javascript":
-        keywords = {"if", "for", "while", "switch", "return", "const", "let", "var", "function", "new", "typeof", "instanceof", "catch", "throw"}
+        keywords = {
+            "if",
+            "for",
+            "while",
+            "switch",
+            "return",
+            "const",
+            "let",
+            "var",
+            "function",
+            "new",
+            "typeof",
+            "instanceof",
+            "catch",
+            "throw",
+        }
     else:
         keywords = {"if", "for", "while", "with", "except", "return", "raise", "yield", "lambda", "def", "class"}
 
@@ -451,7 +466,12 @@ def extract_assertEquals_args(body: str, lang: str) -> List[Tuple[str, str]]:
         # Go doesn't use assertEquals; no pairs to extract
         return []
     elif lang == "javascript":
-        patterns = [r"\bassert_equal\s*\(", r"\bassert\.equal\s*\(", r"\bassert\.strictEqual\s*\(", r"\bassert\.deepEqual\s*\("]
+        patterns = [
+            r"\bassert_equal\s*\(",
+            r"\bassert\.equal\s*\(",
+            r"\bassert\.strictEqual\s*\(",
+            r"\bassert\.deepEqual\s*\(",
+        ]
     else:
         patterns = [r"\b(?:assertEqual|assertEquals)\s*\("]
 
@@ -2033,7 +2053,7 @@ class JavaScriptTestParser:
             # Extract body by matching braces
             body_start = match.end() - 1  # position of opening {
             body_text = self._extract_brace_body(content, body_start)
-            full_method = content[match.start():match.start() + len(match.group(0)) - 1 + len(body_text)]
+            full_method = content[match.start() : match.start() + len(match.group(0)) - 1 + len(body_text)]
 
             # Parse parameters
             parameters = []
@@ -2077,7 +2097,7 @@ class JavaScriptTestParser:
                     in_block_comment = False
                     pos += 1
             elif in_string:
-                if ch == "\\" :
+                if ch == "\\":
                     pos += 1  # skip escaped char
                 elif ch == string_char:
                     in_string = False
