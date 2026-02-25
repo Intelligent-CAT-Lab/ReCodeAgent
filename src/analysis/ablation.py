@@ -281,7 +281,6 @@ def _plot_test_validation(
     x_min, x_max = -5.0, 105.0
     x_grid = np.linspace(x_min, x_max, 200)
     ridge_scale = 0.85  # height of each ridge (so they don't overlap)
-    np.random.seed(42)
 
     for ax, tool in zip(axes_top, tools):
         # Tools like CRUST may have graphectory metrics but no test-validation data.
@@ -329,17 +328,23 @@ def _plot_test_validation(
                     edgecolor="black",
                     linewidth=0.5,
                 )
-                # Jittered dots for actual data on top of the ridge
-                y_jitter = np.random.uniform(0.05, ridge_scale - 0.05, size=len(values))
+                # Dots placed in ascending order: sort values, spread y linearly by rank
+                sort_idx = np.argsort(values)
+                sorted_values = values[sort_idx]
+                n = len(sorted_values)
+                if n == 1:
+                    y_dot_positions = np.array([ridge_scale / 2])
+                else:
+                    y_dot_positions = np.linspace(0.05, ridge_scale - 0.05, n)
                 ax.scatter(
-                    values,
-                    y_base + y_jitter,
+                    sorted_values,
+                    y_base + y_dot_positions,
                     color="black",
                     s=14,
-                    alpha=0.8,
+                    alpha=1.0,
                     zorder=3,
-                    edgecolors="white",
-                    linewidths=0.3,
+                    edgecolors="none",
+                    linewidths=0,
                 )
                 # Dashed vertical line at mean of per-project validation rates
                 mean_val = float(np.mean(values))
