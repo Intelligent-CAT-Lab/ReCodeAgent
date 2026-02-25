@@ -24,6 +24,20 @@ import tree_sitter_python as tspython
 from tree_sitter import Language, Parser, Query
 
 try:
+    import tree_sitter_go as tsgo
+
+    HAS_TREE_SITTER_GO = True
+except ImportError:
+    HAS_TREE_SITTER_GO = False
+
+try:
+    import tree_sitter_rust as tsrust
+
+    HAS_TREE_SITTER_RUST = True
+except ImportError:
+    HAS_TREE_SITTER_RUST = False
+
+try:
     from tree_sitter import QueryCursor
 
     USE_QUERY_CURSOR = True
@@ -77,12 +91,12 @@ def compute_line_count(body: str) -> int:
     return len([line for line in body.split("\n") if line.strip()])
 
 
-def extract_assertion_types(body: str, is_java: bool) -> Dict[str, int]:
+def extract_assertion_types(body: str, lang: str) -> Dict[str, int]:
     """Extract counts of different assertion types from test body.
 
     Args:
         body: The test method body text
-        is_java: True for Java, False for Python
+        lang: Language identifier ('java', 'python', 'go', 'rust')
 
     Returns:
         Dictionary mapping assertion type to count
@@ -92,7 +106,7 @@ def extract_assertion_types(body: str, is_java: bool) -> Dict[str, int]:
 
     counts = {}
 
-    if is_java:
+    if lang == "java":
         # Java assertion patterns
         patterns = [
             (r"\bassertEquals\s*\(", "assertEquals"),
@@ -105,6 +119,26 @@ def extract_assertion_types(body: str, is_java: bool) -> Dict[str, int]:
             (r"\bassertNotSame\s*\(", "assertNotSame"),
             (r"\bassertArrayEquals\s*\(", "assertArrayEquals"),
             (r"\bfail\s*\(", "fail"),
+        ]
+    elif lang == "go":
+        # Go test reporting patterns (t.Errorf, t.Fatalf, etc.)
+        patterns = [
+            (r"\bt\.Errorf\s*\(", "t.Errorf"),
+            (r"\bt\.Error\b", "t.Error"),
+            (r"\bt\.Fatalf\s*\(", "t.Fatalf"),
+            (r"\bt\.Fatal\b", "t.Fatal"),
+            (r"\bt\.FailNow\s*\(", "t.FailNow"),
+            (r"\bt\.Fail\b", "t.Fail"),
+        ]
+    elif lang == "rust":
+        # Rust assertion macro patterns
+        # The catch-all assert_*! excludes already-named assert_eq! and assert_ne! via negative lookahead
+        patterns = [
+            (r"\bassert_eq!\s*\(", "assert_eq!"),
+            (r"\bassert_ne!\s*\(", "assert_ne!"),
+            (r"\bassert!\s*\(", "assert!"),
+            (r"\bpanic!\s*\(", "panic!"),
+            (r"\bassert_(?!eq!|ne!)(\w+)!\s*\(", "assert_*!"),
         ]
     else:
         # Python assertion patterns
@@ -174,12 +208,12 @@ def compute_similarity_score(source_text: str, target_text: str) -> float:
         return 0.0
 
 
-def count_method_calls(body: str, is_java: bool) -> int:
+def count_method_calls(body: str, lang: str) -> int:
     """Count method invocations in test body.
 
     Args:
         body: The test method body text
-        is_java: True for Java, False for Python
+        lang: Language identifier ('java', 'python', 'go', 'rust')
 
     Returns:
         Number of method calls detected
@@ -189,8 +223,27 @@ def count_method_calls(body: str, is_java: bool) -> int:
 
     # Pattern to match method calls: identifier followed by (
     # Exclude common keywords
-    if is_java:
+    if lang == "java":
         keywords = {"if", "for", "while", "switch", "catch", "synchronized", "new", "return", "throw"}
+    elif lang == "go":
+        keywords = {"if", "for", "switch", "select", "return", "defer", "go", "func", "type", "var", "const"}
+    elif lang == "rust":
+        keywords = {
+            "if",
+            "for",
+            "while",
+            "loop",
+            "match",
+            "return",
+            "let",
+            "fn",
+            "struct",
+            "enum",
+            "impl",
+            "mod",
+            "use",
+            "pub",
+        }
     else:
         keywords = {"if", "for", "while", "with", "except", "return", "raise", "yield", "lambda", "def", "class"}
 
@@ -352,12 +405,12 @@ def extract_literal_value(arg: str) -> Tuple[Optional[str], Optional[Any]]:
     return (None, None)
 
 
-def extract_assertEquals_args(body: str, is_java: bool) -> List[Tuple[str, str]]:
-    """Extract argument pairs from assertEquals/assertEqual calls.
+def extract_assertEquals_args(body: str, lang: str) -> List[Tuple[str, str]]:
+    """Extract argument pairs from assertEquals/assertEqual/assert_eq! calls.
 
     Args:
         body: The test method body text
-        is_java: True for Java, False for Python
+        lang: Language identifier ('java', 'python', 'go', 'rust')
 
     Returns:
         List of (arg1, arg2) tuples
@@ -367,60 +420,66 @@ def extract_assertEquals_args(body: str, is_java: bool) -> List[Tuple[str, str]]
 
     results = []
 
-    # Pattern to match assertEquals(arg1, arg2) or assertEqual(arg1, arg2)
+    # Pattern to match assertEquals(arg1, arg2) or assertEqual(arg1, arg2) or assert_eq!(arg1, arg2)
     # This is tricky because args can contain nested parentheses
-    if is_java:
-        pattern = r"\bassertEquals\s*\("
+    if lang == "java":
+        patterns = [r"\bassertEquals\s*\("]
+    elif lang == "rust":
+        patterns = [r"\bassert_eq!\s*\(", r"\bassert_ne!\s*\("]
+    elif lang == "go":
+        # Go doesn't use assertEquals; no pairs to extract
+        return []
     else:
-        pattern = r"\b(?:assertEqual|assertEquals)\s*\("
+        patterns = [r"\b(?:assertEqual|assertEquals)\s*\("]
 
-    # Find all assertEquals calls and extract their arguments
-    for match in re.finditer(pattern, body):
-        start = match.end()
-        # Find the matching closing parenthesis
-        paren_count = 1
-        pos = start
-        arg_start = start
-        args = []
+    for pattern in patterns:
+        # Find all assertEquals calls and extract their arguments
+        for match in re.finditer(pattern, body):
+            start = match.end()
+            # Find the matching closing parenthesis
+            paren_count = 1
+            pos = start
+            arg_start = start
+            args = []
 
-        while pos < len(body) and paren_count > 0:
-            char = body[pos]
-            if char == "(":
-                paren_count += 1
-            elif char == ")":
-                paren_count -= 1
-                if paren_count == 0:
-                    # End of assertEquals call
+            while pos < len(body) and paren_count > 0:
+                char = body[pos]
+                if char == "(":
+                    paren_count += 1
+                elif char == ")":
+                    paren_count -= 1
+                    if paren_count == 0:
+                        # End of assertEquals call
+                        args.append(body[arg_start:pos].strip())
+                elif char == "," and paren_count == 1:
+                    # Top-level comma separating arguments
                     args.append(body[arg_start:pos].strip())
-            elif char == "," and paren_count == 1:
-                # Top-level comma separating arguments
-                args.append(body[arg_start:pos].strip())
-                arg_start = pos + 1
-            elif char in ('"', "'"):
-                # Skip string literals
-                quote_char = char
-                pos += 1
-                while pos < len(body) and body[pos] != quote_char:
-                    if body[pos] == "\\":
-                        pos += 1  # Skip escaped char
+                    arg_start = pos + 1
+                elif char in ('"', "'"):
+                    # Skip string literals
+                    quote_char = char
                     pos += 1
-            pos += 1
+                    while pos < len(body) and body[pos] != quote_char:
+                        if body[pos] == "\\":
+                            pos += 1  # Skip escaped char
+                        pos += 1
+                pos += 1
 
-        # Java: assertEquals(expected, actual) or assertEquals(message, expected, actual)
-        if is_java and len(args) >= 3:
-            # 3-arg form: message is first, expected and actual are 2nd and 3rd
-            # Handle string concatenation in Java arguments
-            arg1 = _combine_java_string_concatenation(args[1])
-            arg2 = _combine_java_string_concatenation(args[2])
-            results.append((arg1, arg2))
-        elif len(args) >= 2:
-            # Handle string concatenation in Java arguments
-            if is_java:
-                arg1 = _combine_java_string_concatenation(args[0])
-                arg2 = _combine_java_string_concatenation(args[1])
+            # Java: assertEquals(expected, actual) or assertEquals(message, expected, actual)
+            if lang == "java" and len(args) >= 3:
+                # 3-arg form: message is first, expected and actual are 2nd and 3rd
+                # Handle string concatenation in Java arguments
+                arg1 = _combine_java_string_concatenation(args[1])
+                arg2 = _combine_java_string_concatenation(args[2])
                 results.append((arg1, arg2))
-            else:
-                results.append((args[0], args[1]))
+            elif len(args) >= 2:
+                # Handle string concatenation in Java arguments
+                if lang == "java":
+                    arg1 = _combine_java_string_concatenation(args[0])
+                    arg2 = _combine_java_string_concatenation(args[1])
+                    results.append((arg1, arg2))
+                else:
+                    results.append((args[0], args[1]))
 
     return results
 
@@ -550,12 +609,12 @@ class AssertionInfo:
     line_number: Optional[int] = None  # Optional line number for debugging
 
 
-def extract_individual_assertions(body: str, is_java: bool) -> List[AssertionInfo]:
+def extract_individual_assertions(body: str, lang: str) -> List[AssertionInfo]:
     """Extract individual assertions with their types and arguments from test body.
 
     Args:
         body: The test method body text
-        is_java: True for Java, False for Python
+        lang: Language identifier ('java', 'python', 'go', 'rust')
 
     Returns:
         List of AssertionInfo objects, ordered by appearance in code
@@ -566,7 +625,7 @@ def extract_individual_assertions(body: str, is_java: bool) -> List[AssertionInf
     assertions = []
     assertion_positions = []  # Track positions to maintain order
 
-    if is_java:
+    if lang == "java":
         # Java assertion patterns with their method names
         patterns = [
             (r"\b(assertEquals)\s*\(", "assertEquals"),
@@ -579,6 +638,25 @@ def extract_individual_assertions(body: str, is_java: bool) -> List[AssertionInf
             (r"\b(assertNotSame)\s*\(", "assertNotSame"),
             (r"\b(assertArrayEquals)\s*\(", "assertArrayEquals"),
             (r"\b(fail)\s*\(", "fail"),
+        ]
+    elif lang == "go":
+        # Go test reporting patterns
+        patterns = [
+            (r"\b(t\.Errorf)\s*\(", "t.Errorf"),
+            (r"\b(t\.Error)\b", "t.Error"),
+            (r"\b(t\.Fatalf)\s*\(", "t.Fatalf"),
+            (r"\b(t\.Fatal)\b", "t.Fatal"),
+            (r"\b(t\.FailNow)\s*\(", "t.FailNow"),
+            (r"\b(t\.Fail)\b", "t.Fail"),
+        ]
+    elif lang == "rust":
+        # Rust assertion macro patterns
+        patterns = [
+            (r"\b(assert_eq)!\s*\(", "assert_eq!"),
+            (r"\b(assert_ne)!\s*\(", "assert_ne!"),
+            (r"\b(assert)!\s*\(", "assert!"),
+            (r"\b(panic)!\s*\(", "panic!"),
+            (r"\b(assert_(?!eq!|ne!)\w+)!\s*\(", "assert_*!"),
         ]
     else:
         # Python assertion patterns
@@ -629,18 +707,18 @@ def extract_individual_assertions(body: str, is_java: bool) -> List[AssertionInf
                 pos += 1
 
             # Handle Java assertEquals with message (3 args)
-            if is_java and assert_type == "assertEquals" and len(args) >= 3:
+            if lang == "java" and assert_type == "assertEquals" and len(args) >= 3:
                 # Skip message, use expected and actual
                 args = args[1:3]
 
             # Handle string concatenation in Java
-            if is_java:
+            if lang == "java":
                 args = [_combine_java_string_concatenation(arg) for arg in args]
 
             assertion_positions.append((match.start(), AssertionInfo(type=assert_type, args=args, line_number=None)))
 
     # Also handle Python assert statements (extract separately to maintain order)
-    if not is_java:
+    if lang == "python":
         body_for_assert = _python_join_line_continuations(body)
         for line_num, line in enumerate(body_for_assert.splitlines(), 1):
             line_stripped = line.strip()
@@ -757,6 +835,16 @@ GOOD_MATCH_MAPPINGS = {
         "assertRaises",  # fail in try-catch -> assertRaises
         "pytest.raises",  # fail in try-catch -> pytest.raises
     },
+    # ── Go → Rust ────────────────────────────────────────────────────────────
+    # In Go, tests report failure via t.Error/t.Errorf/t.Fatal/t.Fatalf.
+    # These are all conditional (wrapped in an `if`), so any Rust assertion
+    # macro is a valid translation of any of them.
+    "t.Errorf": {"assert_eq!", "assert_ne!", "assert!", "panic!", "assert_*!"},
+    "t.Error": {"assert_eq!", "assert_ne!", "assert!", "panic!", "assert_*!"},
+    "t.Fatalf": {"assert_eq!", "assert_ne!", "assert!", "panic!", "assert_*!"},
+    "t.Fatal": {"assert_eq!", "assert_ne!", "assert!", "panic!", "assert_*!"},
+    "t.FailNow": {"assert_eq!", "assert_ne!", "assert!", "panic!", "assert_*!"},
+    "t.Fail": {"assert_eq!", "assert_ne!", "assert!", "panic!", "assert_*!"},
 }
 
 
@@ -978,18 +1066,22 @@ def calculate_assertion_match_percentages(
     return results
 
 
-def compare_assertEquals_values(source_body: str, target_body: str) -> Dict[str, Any]:
+def compare_assertEquals_values(
+    source_body: str, target_body: str, source_lang: str = "java", target_lang: str = "python"
+) -> Dict[str, Any]:
     """Compare literal values in assertEquals calls between source and target.
 
     Args:
-        source_body: Java test body
-        target_body: Python test body
+        source_body: Source test body
+        target_body: Target test body
+        source_lang: Source language ('java', 'go', 'rust', 'python')
+        target_lang: Target language ('java', 'go', 'rust', 'python')
 
     Returns:
         Dictionary with comparison metrics
     """
-    source_args = extract_assertEquals_args(source_body, is_java=True)
-    target_args = extract_assertEquals_args(target_body, is_java=False)
+    source_args = extract_assertEquals_args(source_body, lang=source_lang)
+    target_args = extract_assertEquals_args(target_body, lang=target_lang)
     # Also treat `assert <lhs> == <rhs>` as assertEquals-like on Python side
     target_assert_eq_pairs = extract_python_assert_eq_pairs(target_body)
     target_pairs = list(target_args) + list(target_assert_eq_pairs)
@@ -1352,6 +1444,302 @@ class JavaTestParser:
         return False
 
 
+def _body_text_without_comments(body_node, comment_types: set) -> str:
+    """Return the body node's text with all comment nodes removed.
+
+    Uses the tree-sitter AST to precisely locate comment spans so that
+    assertion patterns in comments are not counted.
+
+    Args:
+        body_node: A tree-sitter node (e.g. the block/body of a function)
+        comment_types: Set of tree-sitter node type strings that are comments
+                       e.g. {'comment'} for Go, {'line_comment', 'block_comment'} for Rust
+
+    Returns:
+        Source text of the node with comment content blanked out (replaced with
+        spaces so byte offsets of non-comment code are preserved).
+    """
+    if body_node is None:
+        return ""
+
+    raw = body_node.text  # bytes
+    base = body_node.start_byte
+
+    # Collect byte ranges of all comment nodes (recursive)
+    comment_ranges: List[Tuple[int, int]] = []
+
+    def collect_comments(node):
+        if node.type in comment_types:
+            comment_ranges.append((node.start_byte - base, node.end_byte - base))
+        for child in node.children:
+            collect_comments(child)
+
+    collect_comments(body_node)
+
+    if not comment_ranges:
+        return raw.decode("utf-8")
+
+    # Build cleaned bytes: blank out comment spans with spaces
+    result = bytearray(raw)
+    for start, end in comment_ranges:
+        for i in range(start, end):
+            result[i] = ord(" ")
+
+    return result.decode("utf-8")
+
+
+class GoTestParser:
+    """Parser for Go test files using tree-sitter"""
+
+    def __init__(self):
+        if not HAS_TREE_SITTER_GO:
+            raise ImportError("tree-sitter-go is not installed. Run: pip install tree-sitter-go")
+        self.language = Language(tsgo.language())
+        self.parser = Parser(self.language)
+
+    def parse_test_file(self, file_path: Path) -> Dict[str, TestMethodInfo]:
+        """Parse a Go test file and extract test functions.
+
+        Go test functions follow the pattern: func TestXxx(t *testing.T) { ... }
+        """
+        if not file_path.exists():
+            return {}
+
+        try:
+            content = file_path.read_bytes()
+            tree = self.parser.parse(content)
+            methods = {}
+
+            query = Query(
+                self.language,
+                """
+                (function_declaration
+                    name: (identifier) @func_name
+                    parameters: (parameter_list) @params
+                    body: (block) @body) @func
+            """,
+            )
+
+            matches = run_query_matches(query, tree.root_node)
+
+            for pattern_idx, captures in matches:
+                func_name_nodes = captures.get("func_name", [])
+                params_nodes = captures.get("params", [])
+                body_nodes = captures.get("body", [])
+                func_nodes = captures.get("func", [])
+
+                func_name_node = func_name_nodes[0] if func_name_nodes else None
+                params_node = params_nodes[0] if params_nodes else None
+                body_node = body_nodes[0] if body_nodes else None
+                func_node = func_nodes[0] if func_nodes else None
+
+                if func_name_node:
+                    method_name = func_name_node.text.decode("utf-8")
+                    # Go test functions: Test*, Example*, and Benchmark* prefixes
+                    if (
+                        method_name.startswith("Test")
+                        or method_name.startswith("test")
+                        or method_name.startswith("Example")
+                        or method_name.startswith("Benchmark")
+                    ):
+                        parameters = self._extract_parameters(params_node) if params_node else []
+                        full_method = func_node.text.decode("utf-8") if func_node else ""
+                        signature = self._build_signature(func_node) if func_node else ""
+                        assertion_count = self._count_assertions(body_node) if body_node else 0
+
+                        methods[method_name] = TestMethodInfo(
+                            name=method_name,
+                            signature=signature,
+                            parameters=parameters,
+                            param_count=len(parameters),
+                            assertion_count=assertion_count,
+                            body=full_method,
+                        )
+
+            return methods
+        except Exception as e:
+            print(f"Warning: Could not parse {file_path}: {e}")
+            return {}
+
+    def _extract_parameters(self, params_node) -> List[ParameterInfo]:
+        """Extract parameter information from parameter_list node."""
+        parameters = []
+        for child in params_node.children:
+            if child.type == "parameter_declaration":
+                param_name = ""
+                param_type = ""
+                for param_child in child.children:
+                    if param_child.type == "identifier" and not param_name:
+                        param_name = param_child.text.decode("utf-8")
+                    elif param_child.type not in ("identifier", ",", "(", ")"):
+                        param_type = param_child.text.decode("utf-8")
+                if param_name:
+                    parameters.append(ParameterInfo(name=param_name, type=param_type))
+        return parameters
+
+    def _build_signature(self, func_node) -> str:
+        """Build function signature (first line of the function)."""
+        func_text = func_node.text.decode("utf-8")
+        lines = func_text.split("\n")
+        return lines[0].strip() if lines else ""
+
+    def _count_assertions(self, body_node) -> int:
+        """Count Go test assertion calls: t.Error, t.Errorf, t.Fatal, t.Fatalf, t.FailNow, t.Fail."""
+        body_text = _body_text_without_comments(body_node, {"comment"})
+        count = 0
+        patterns = [
+            r"\bt\.Errorf?\s*\(",
+            r"\bt\.Fatalf?\s*\(",
+            r"\bt\.FailNow\s*\(",
+            r"\bt\.Fail\s*\(",
+            r"\bt\.Log\s*\(",
+        ]
+        for pattern in patterns:
+            count += len(re.findall(pattern, body_text))
+        return count
+
+
+class RustTestParser:
+    """Parser for Rust test files using tree-sitter"""
+
+    def __init__(self):
+        if not HAS_TREE_SITTER_RUST:
+            raise ImportError("tree-sitter-rust is not installed. Run: pip install tree-sitter-rust")
+        self.language = Language(tsrust.language())
+        self.parser = Parser(self.language)
+
+    def parse_test_file(self, file_path: Path) -> Dict[str, TestMethodInfo]:
+        """Parse a Rust test file and extract test functions.
+
+        Rust test functions are annotated with #[test].
+        """
+        if not file_path.exists():
+            return {}
+
+        try:
+            content = file_path.read_bytes()
+            tree = self.parser.parse(content)
+            methods = {}
+
+            self._collect_tests_from_node(tree.root_node, methods)
+
+            return methods
+        except Exception as e:
+            print(f"Warning: Could not parse {file_path}: {e}")
+            return {}
+
+    def _collect_tests_from_node(self, container_node, methods: dict):
+        """Recursively collect #[test] functions from a node's children.
+
+        Handles both top-level tests and tests nested inside
+        #[cfg(test)] mod blocks (declaration_list children).
+        """
+        children = list(container_node.children)
+        i = 0
+        while i < len(children):
+            node = children[i]
+
+            if node.type == "attribute_item":
+                attr_text = node.text.decode("utf-8").strip()
+                if "test" in attr_text and "cfg" not in attr_text:
+                    # Look ahead for the function_item (skip other attribute_items)
+                    func_node = None
+                    for j in range(i + 1, min(i + 4, len(children))):
+                        if children[j].type == "function_item":
+                            func_node = children[j]
+                            break
+                        elif children[j].type == "attribute_item":
+                            continue
+                        else:
+                            break
+                    if func_node:
+                        method_name, method_info = self._extract_function_info(func_node)
+                        if method_name:
+                            methods[method_name] = method_info
+
+            elif node.type == "mod_item":
+                # Descend into mod blocks (e.g. #[cfg(test)] mod tests { ... })
+                for child in node.children:
+                    if child.type == "declaration_list":
+                        self._collect_tests_from_node(child, methods)
+
+            i += 1
+
+    def _extract_function_info(self, func_node) -> tuple:
+        """Extract TestMethodInfo from a Rust function_item node."""
+        method_name = ""
+        params_node = None
+        body_node = None
+
+        for child in func_node.children:
+            if child.type == "identifier" and not method_name:
+                method_name = child.text.decode("utf-8")
+            elif child.type == "parameters":
+                params_node = child
+            elif child.type == "block":
+                body_node = child
+
+        if not method_name:
+            return None, None
+
+        parameters = self._extract_parameters(params_node) if params_node else []
+        full_method = func_node.text.decode("utf-8")
+        signature = self._build_signature(func_node)
+        assertion_count = self._count_assertions(body_node) if body_node else 0
+
+        return method_name, TestMethodInfo(
+            name=method_name,
+            signature=signature,
+            parameters=parameters,
+            param_count=len(parameters),
+            assertion_count=assertion_count,
+            body=full_method,
+        )
+
+    def _extract_parameters(self, params_node) -> List[ParameterInfo]:
+        """Extract parameter information from Rust parameters node."""
+        parameters = []
+        for child in params_node.children:
+            if child.type == "parameter":
+                param_name = ""
+                param_type = ""
+                for param_child in child.children:
+                    if param_child.type == "identifier" and not param_name:
+                        param_name = param_child.text.decode("utf-8")
+                    elif param_child.type not in ("identifier", ":", ","):
+                        param_type = param_child.text.decode("utf-8")
+                if param_name:
+                    parameters.append(ParameterInfo(name=param_name, type=param_type))
+        return parameters
+
+    def _build_signature(self, func_node) -> str:
+        """Build function signature (first line of the function)."""
+        func_text = func_node.text.decode("utf-8")
+        lines = func_text.split("\n")
+        return lines[0].strip() if lines else ""
+
+    def _count_assertions(self, body_node) -> int:
+        """Count Rust assertion macros: assert_eq!, assert!, assert_ne!, panic!."""
+        body_text = _body_text_without_comments(body_node, {"line_comment", "block_comment"})
+        count = 0
+        # Single unified pattern covering all assert variants and panic
+        patterns = [
+            r"\bassert_eq!\s*\(",
+            r"\bassert_ne!\s*\(",
+            r"\bassert!\s*\(",
+            r"\bpanic!\s*\(",
+            r"\bassert_(?!eq!|ne!)(\w+)!\s*\(",
+        ]
+        seen_positions = set()
+        for pattern in patterns:
+            for match in re.finditer(pattern, body_text):
+                start = match.start()
+                if start not in seen_positions:
+                    seen_positions.add(start)
+                    count += 1
+        return count
+
+
 class PythonTestParser:
     """Parser for Python test files using tree-sitter"""
 
@@ -1545,11 +1933,19 @@ class TestComparator:
 
         if self.source_lang == "java":
             self.source_parser = JavaTestParser()
+        elif self.source_lang == "go":
+            self.source_parser = GoTestParser()
+        elif self.source_lang == "rust":
+            self.source_parser = RustTestParser()
         else:
             self.source_parser = PythonTestParser()
 
         if self.target_lang == "java":
             self.target_parser = JavaTestParser()
+        elif self.target_lang == "go":
+            self.target_parser = GoTestParser()
+        elif self.target_lang == "rust":
+            self.target_parser = RustTestParser()
         else:
             self.target_parser = PythonTestParser()
 
@@ -1557,14 +1953,19 @@ class TestComparator:
         """Detect language from base path structure.
 
         The base_path is now the test root directory (e.g., java/src/test/java or python/src/test).
+        For oxidizer projects: go/ or rust/ directories.
         We detect by checking path names or looking at file extensions.
         """
         path_str = str(base_path).lower()
 
         # Check path components for language hints
-        # For Java paths like: .../java/src/test/java
-        # For Python paths like: .../python/src/test/java (note: Python can also have 'java' in path)
         parts = base_path.parts
+
+        # Check for oxidizer languages first (go/ and rust/ are top-level dirs in the project)
+        if "go" in parts:
+            return "go"
+        if "rust" in parts:
+            return "rust"
 
         # Look for 'python' in path FIRST (before checking for 'java' at the end)
         # This handles cases like python/src/test/java where the last part is 'java'
@@ -1600,22 +2001,36 @@ class TestComparator:
         """Convert package path to file system path.
 
         Args:
-            package_path: The package path (e.g., org.apache.commons.cli.ApplicationTest)
+            package_path: For Java/Python: dot-separated package path
+                          (e.g., org.apache.commons.cli.ApplicationTest).
+                          For Go/Rust: direct relative file path
+                          (e.g., cosine_test.go or tests/cosine_test.rs).
             is_source: True if looking for source file, False for target file
 
         Assumes self.source_lang_base and self.target_lang_base already point to
-        the correct test root directory (e.g., java/src/test/java or python/src/test).
+        the correct test root directory (e.g., java/src/test/java, python/src/test,
+        go/, rust/).
         """
+        if is_source:
+            base = self.source_lang_base
+            lang = self.source_lang
+        else:
+            base = self.target_lang_base
+            lang = self.target_lang
+
+        # For Go and Rust, paths in the CSV are already relative file paths
+        if lang in ("go", "rust"):
+            if not package_path:
+                # Return a sentinel non-existent path so parsers return {}
+                return base / "__missing__"
+            return base / Path(package_path)
+
+        # For Java/Python: split dot-separated package path into directory components
         parts = package_path.split(".")
         class_name = parts[-1]
         package_parts = parts[:-1]
 
-        if is_source:
-            base = self.source_lang_base
-            ext = ".java" if self.source_lang == "java" else ".py"
-        else:
-            base = self.target_lang_base
-            ext = ".java" if self.target_lang == "java" else ".py"
+        ext = ".java" if lang == "java" else ".py"
 
         # Base path should already be the test root, just append package path
         file_path = base / Path(*package_parts) / f"{class_name}{ext}"
@@ -1636,10 +2051,17 @@ class TestComparator:
 
         for mapping in mappings:
             # Determine source and target column names based on language
-            # CSV has: project, java test path, java test name, python test path, python test name
+            # AlphaTrans CSV: project, java test path, java test name, python test path, python test name
+            # Oxidizer CSV:   project, go test path,   go test name,   rust test path,   rust test name
             if self.source_lang == "java":
                 source_path_col = "java test path"
                 source_name_col = "java test name"
+            elif self.source_lang == "go":
+                source_path_col = "go test path"
+                source_name_col = "go test name"
+            elif self.source_lang == "rust":
+                source_path_col = "rust test path"
+                source_name_col = "rust test name"
             else:
                 source_path_col = "python test path"
                 source_name_col = "python test name"
@@ -1647,6 +2069,12 @@ class TestComparator:
             if self.target_lang == "java":
                 target_path_col = "java test path"
                 target_name_col = "java test name"
+            elif self.target_lang == "go":
+                target_path_col = "go test path"
+                target_name_col = "go test name"
+            elif self.target_lang == "rust":
+                target_path_col = "rust test path"
+                target_name_col = "rust test name"
             else:
                 target_path_col = "python test path"
                 target_name_col = "python test name"
@@ -1884,8 +2312,8 @@ class TestComparator:
                 line_counts_target.append(line_count_tgt)
 
                 # 2. Assertion type breakdown
-                assertion_types_src = extract_assertion_types(source_body, is_java=True)
-                assertion_types_tgt = extract_assertion_types(target_body, is_java=False)
+                assertion_types_src = extract_assertion_types(source_body, lang=self.source_lang)
+                assertion_types_tgt = extract_assertion_types(target_body, lang=self.target_lang)
                 pair_data["metrics"]["assertion_types_source"] = assertion_types_src
                 pair_data["metrics"]["assertion_types_target"] = assertion_types_tgt
                 # Aggregate
@@ -1902,8 +2330,8 @@ class TestComparator:
                         similarity_scores.append(similarity)
 
                 # 4. Method call count
-                method_calls_src = count_method_calls(source_body, is_java=True)
-                method_calls_tgt = count_method_calls(target_body, is_java=False)
+                method_calls_src = count_method_calls(source_body, lang=self.source_lang)
+                method_calls_tgt = count_method_calls(target_body, lang=self.target_lang)
                 pair_data["metrics"]["method_call_count_source"] = method_calls_src
                 pair_data["metrics"]["method_call_count_target"] = method_calls_tgt
                 pair_data["metrics"]["method_call_diff"] = method_calls_src - method_calls_tgt
@@ -1911,15 +2339,17 @@ class TestComparator:
                 method_call_counts_target.append(method_calls_tgt)
 
                 # 5. assertEquals value comparison
-                assertEquals_comparison = compare_assertEquals_values(source_body, target_body)
+                assertEquals_comparison = compare_assertEquals_values(
+                    source_body, target_body, source_lang=self.source_lang, target_lang=self.target_lang
+                )
                 pair_data["metrics"]["assertEquals_comparison"] = assertEquals_comparison
                 if assertEquals_comparison["comparable_pairs"] > 0:
                     assertEquals_total_comparable += assertEquals_comparison["comparable_pairs"]
                     assertEquals_total_matching += assertEquals_comparison["matching_assertions"]
 
                 # 6. Assertion type mapping (how source assertion types map to target types)
-                source_assertions = extract_individual_assertions(source_body, is_java=True)
-                target_assertions = extract_individual_assertions(target_body, is_java=False)
+                source_assertions = extract_individual_assertions(source_body, lang=self.source_lang)
+                target_assertions = extract_individual_assertions(target_body, lang=self.target_lang)
                 assertion_mapping = match_assertions(source_assertions, target_assertions)
                 pair_data["metrics"]["assertion_type_mapping"] = assertion_mapping
 
