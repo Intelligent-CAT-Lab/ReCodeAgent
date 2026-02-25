@@ -1,13 +1,18 @@
 #!/bin/bash
 # Usage: ./scripts/run_test_comparison.sh <project>
 # Example: ./scripts/run_test_comparison.sh commons-cli
-# Or run all: ./scripts/run_test_comparison.sh all
+#          ./scripts/run_test_comparison.sh go-edlib
+# Or run all AlphaTrans: ./scripts/run_test_comparison.sh all
+# Or run all Oxidizer:   ./scripts/run_test_comparison.sh all-oxidizer
 
 project=$1
 # Set to true to compute embedding similarity (slow, loads model). Default: false
 COMPUTE_SIMILARITY=${COMPUTE_SIMILARITY:-false}
 
-BASE_DIR="translations/data/tool_projects/alphatrans"
+ALPHATRANS_BASE_DIR="results/recodeagent_translations/data/tool_projects/alphatrans"
+OXIDIZER_BASE_DIR="results/recodeagent_translations/data/tool_projects/oxidizer"
+
+# ── AlphaTrans configuration ──────────────────────────────────────────────────
 
 # Java test path is always the same
 JAVA_TEST_PATH="java/src/test/java"
@@ -57,54 +62,113 @@ ModulusTenSedolCheckDigitTest:AbstractCheckDigitTest,\
 SedolCheckDigitTest:AbstractCheckDigitTest,\
 VerhoeffCheckDigitTest:AbstractCheckDigitTest"
 
-run_comparison() {
+# ── Oxidizer configuration ────────────────────────────────────────────────────
+
+OXIDIZER_PROJECTS=("go-edlib" "stats" "gonameparts" "gohistogram" "checkdigit" "textrank")
+
+# ── Helper: build similarity arg ─────────────────────────────────────────────
+
+similarity_arg=""
+if [ "$COMPUTE_SIMILARITY" = "true" ]; then
+    similarity_arg="--compute_similarity"
+fi
+
+# ── AlphaTrans runner ─────────────────────────────────────────────────────────
+
+run_alphatrans_comparison() {
     local proj=$1
     local python_path="${PYTHON_TEST_PATHS[$proj]}"
     local superclass_map="${SUPERCLASS_MAPPINGS[$proj]}"
-    
+
     if [ -z "$python_path" ]; then
-        echo "Error: Unknown project '$proj'"
+        echo "Error: Unknown AlphaTrans project '$proj'"
         echo "Available projects: commons-cli, commons-csv, commons-fileupload, commons-validator"
         return 1
     fi
-    
-    echo "Processing $proj..."
-    echo "  Java path: ${BASE_DIR}/${proj}/${JAVA_TEST_PATH}"
-    echo "  Python path: ${BASE_DIR}/${proj}/${python_path}"
-    
-    # Build superclass arg if mapping exists
+
+    echo "Processing $proj (AlphaTrans: Java → Python)..."
+    echo "  Java path:   ${ALPHATRANS_BASE_DIR}/${proj}/${JAVA_TEST_PATH}"
+    echo "  Python path: ${ALPHATRANS_BASE_DIR}/${proj}/${python_path}"
+
     local superclass_arg=""
     if [ -n "$superclass_map" ]; then
         superclass_arg="--superclass_map ${superclass_map}"
         echo "  Superclass mappings: ${superclass_map}"
     fi
 
-    # Build similarity arg if enabled
-    local similarity_arg=""
     if [ "$COMPUTE_SIMILARITY" = "true" ]; then
-        similarity_arg="--compute_similarity"
         echo "  Embedding similarity: enabled"
     fi
-    
+
     python src/analysis/compare_tests.py \
-        --mapping_csv "${BASE_DIR}/${proj}/test_name_mapping.csv" \
-        --source_lang "${BASE_DIR}/${proj}/${JAVA_TEST_PATH}" \
-        --target_lang "${BASE_DIR}/${proj}/${python_path}" \
-        --output "${BASE_DIR}/${proj}/test_comparison_report.json" \
+        --mapping_csv "${ALPHATRANS_BASE_DIR}/${proj}/test_name_mapping.csv" \
+        --source_lang "${ALPHATRANS_BASE_DIR}/${proj}/${JAVA_TEST_PATH}" \
+        --target_lang "${ALPHATRANS_BASE_DIR}/${proj}/${python_path}" \
+        --output "${ALPHATRANS_BASE_DIR}/${proj}/test_comparison_report.json" \
         $superclass_arg $similarity_arg
     echo ""
 }
 
+# ── Oxidizer runner ───────────────────────────────────────────────────────────
+
+run_oxidizer_comparison() {
+    local proj=$1
+    local proj_dir="${OXIDIZER_BASE_DIR}/${proj}"
+
+    if [ ! -d "$proj_dir" ]; then
+        echo "Error: Unknown Oxidizer project '$proj' (directory not found: $proj_dir)"
+        echo "Available projects: ${OXIDIZER_PROJECTS[*]}"
+        return 1
+    fi
+
+    echo "Processing $proj (Oxidizer: Go → Rust)..."
+    echo "  Go path:   ${proj_dir}/go"
+    echo "  Rust path: ${proj_dir}/rust"
+
+    if [ "$COMPUTE_SIMILARITY" = "true" ]; then
+        echo "  Embedding similarity: enabled"
+    fi
+
+    python src/analysis/compare_tests.py \
+        --mapping_csv "${proj_dir}/test_name_mapping.csv" \
+        --source_lang "${proj_dir}/go" \
+        --target_lang "${proj_dir}/rust" \
+        --output "${proj_dir}/test_comparison_report.json" \
+        $similarity_arg
+    echo ""
+}
+
+# ── Dispatch ──────────────────────────────────────────────────────────────────
+
+is_oxidizer_project() {
+    local proj=$1
+    for p in "${OXIDIZER_PROJECTS[@]}"; do
+        [ "$p" = "$proj" ] && return 0
+    done
+    return 1
+}
+
 if [ -z "$project" ]; then
-    echo "Usage: ./scripts/run_test_comparison.sh <project|all>"
-    echo "Available projects: commons-cli, commons-csv, commons-fileupload, commons-validator"
+    echo "Usage: ./scripts/run_test_comparison.sh <project|all|all-oxidizer>"
+    echo ""
+    echo "AlphaTrans projects (Java → Python):"
+    echo "  commons-cli, commons-csv, commons-fileupload, commons-validator"
+    echo ""
+    echo "Oxidizer projects (Go → Rust):"
+    echo "  ${OXIDIZER_PROJECTS[*]}"
     exit 1
 fi
 
 if [ "$project" = "all" ]; then
     for proj in commons-cli commons-csv commons-fileupload commons-validator; do
-        run_comparison "$proj"
+        run_alphatrans_comparison "$proj"
     done
+elif [ "$project" = "all-oxidizer" ]; then
+    for proj in "${OXIDIZER_PROJECTS[@]}"; do
+        run_oxidizer_comparison "$proj"
+    done
+elif is_oxidizer_project "$project"; then
+    run_oxidizer_comparison "$project"
 else
-    run_comparison "$project"
+    run_alphatrans_comparison "$project"
 fi
