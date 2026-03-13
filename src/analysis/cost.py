@@ -282,6 +282,11 @@ def print_detailed_costs(detailed: dict) -> None:
         return
 
     global_totals = _init_metrics_dict()
+    # Per-project totals across all tools
+    project_totals_list: list[dict] = []
+    # Per-tool aggregates of per-project totals
+    per_tool_totals: dict[str, dict] = {}
+    per_tool_project_totals: dict[str, list[dict]] = {}
 
     for tool in RECODEAGENT_TOOLS:
         tool_projects = detailed.get(tool)
@@ -310,6 +315,11 @@ def print_detailed_costs(detailed: dict) -> None:
                 _add_metrics(project_totals, metrics)
                 _add_metrics(global_totals, metrics)
             # Per-project totals across all phases
+            project_totals_list.append(project_totals)
+            # Track per-tool aggregates of project totals
+            tool_totals = per_tool_totals.setdefault(tool, _init_metrics_dict())
+            _add_metrics(tool_totals, project_totals)
+            per_tool_project_totals.setdefault(tool, []).append(project_totals)
             print(f"  total cost:")
             print(f"    total_input_tokens: {project_totals['input_tokens']}")
             print(f"    total_output_tokens: {project_totals['output_tokens']}")
@@ -318,13 +328,107 @@ def print_detailed_costs(detailed: dict) -> None:
             print(f"    total_num_turns: {project_totals['num_turns']}")
             print()
 
+    # Per-tool totals (min/avg/max/total across that tool's projects)
+    if per_tool_totals:
+        print("=== PER-TOOL TOTALS ===")
+        for tool in RECODEAGENT_TOOLS:
+            tool_totals = per_tool_totals.get(tool)
+            projects = per_tool_project_totals.get(tool) or []
+            if not tool_totals or not projects:
+                continue
+            n_projects = len(projects)
+            label = TOOL_DISPLAY_LABELS.get(tool, tool)
+            min_vals = {k: min(p[k] for p in projects) for k in tool_totals.keys()}
+            max_vals = {k: max(p[k] for p in projects) for k in tool_totals.keys()}
+            avg_vals = {k: tool_totals[k] / n_projects for k in tool_totals.keys()}
+
+            print(f"== {label} ==")
+            print(
+                f"  total_input_tokens: "
+                f"min={min_vals['input_tokens']} "
+                f"avg={avg_vals['input_tokens']:.2f} "
+                f"max={max_vals['input_tokens']} "
+                f"total={tool_totals['input_tokens']}"
+            )
+            print(
+                f"  total_output_tokens: "
+                f"min={min_vals['output_tokens']} "
+                f"avg={avg_vals['output_tokens']:.2f} "
+                f"max={max_vals['output_tokens']} "
+                f"total={tool_totals['output_tokens']}"
+            )
+            print(
+                f"  total_usd: "
+                f"min={min_vals['usdCost']:.6f} "
+                f"avg={avg_vals['usdCost']:.6f} "
+                f"max={max_vals['usdCost']:.6f} "
+                f"total={tool_totals['usdCost']:.6f}"
+            )
+            print(
+                f"  total_time_seconds: "
+                f"min={min_vals['time_seconds']:.2f} "
+                f"avg={avg_vals['time_seconds']:.2f} "
+                f"max={max_vals['time_seconds']:.2f} "
+                f"total={tool_totals['time_seconds']:.2f}"
+            )
+            print(
+                f"  total_num_turns: "
+                f"min={min_vals['num_turns']} "
+                f"avg={avg_vals['num_turns']:.2f} "
+                f"max={max_vals['num_turns']} "
+                f"total={tool_totals['num_turns']}"
+            )
+            print()
+
     # Global totals across all tools and projects
     print("=== GLOBAL TOTAL ===")
-    print(f"  total_input_tokens: {global_totals['input_tokens']}")
-    print(f"  total_output_tokens: {global_totals['output_tokens']}")
-    print(f"  total_usd: {global_totals['usdCost']:.6f}")
-    print(f"  total_time_seconds: {global_totals['time_seconds']:.2f}")
-    print(f"  total_num_turns: {global_totals['num_turns']}")
+    if project_totals_list:
+        n_projects = len(project_totals_list)
+        min_vals = {k: min(p[k] for p in project_totals_list) for k in global_totals.keys()}
+        max_vals = {k: max(p[k] for p in project_totals_list) for k in global_totals.keys()}
+        avg_vals = {k: global_totals[k] / n_projects for k in global_totals.keys()}
+
+        print(
+            f"  total_input_tokens: "
+            f"min={min_vals['input_tokens']} "
+            f"avg={avg_vals['input_tokens']:.2f} "
+            f"max={max_vals['input_tokens']} "
+            f"total={global_totals['input_tokens']}"
+        )
+        print(
+            f"  total_output_tokens: "
+            f"min={min_vals['output_tokens']} "
+            f"avg={avg_vals['output_tokens']:.2f} "
+            f"max={max_vals['output_tokens']} "
+            f"total={global_totals['output_tokens']}"
+        )
+        print(
+            f"  total_usd: "
+            f"min={min_vals['usdCost']:.6f} "
+            f"avg={avg_vals['usdCost']:.6f} "
+            f"max={max_vals['usdCost']:.6f} "
+            f"total={global_totals['usdCost']:.6f}"
+        )
+        print(
+            f"  total_time_seconds: "
+            f"min={min_vals['time_seconds']:.2f} "
+            f"avg={avg_vals['time_seconds']:.2f} "
+            f"max={max_vals['time_seconds']:.2f} "
+            f"total={global_totals['time_seconds']:.2f}"
+        )
+        print(
+            f"  total_num_turns: "
+            f"min={min_vals['num_turns']} "
+            f"avg={avg_vals['num_turns']:.2f} "
+            f"max={max_vals['num_turns']} "
+            f"total={global_totals['num_turns']}"
+        )
+    else:
+        print(f"  total_input_tokens: {global_totals['input_tokens']}")
+        print(f"  total_output_tokens: {global_totals['output_tokens']}")
+        print(f"  total_usd: {global_totals['usdCost']:.6f}")
+        print(f"  total_time_seconds: {global_totals['time_seconds']:.2f}")
+        print(f"  total_num_turns: {global_totals['num_turns']}")
 
 
 def _extract_tool_names_from_event(event: dict) -> list[str]:
