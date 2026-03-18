@@ -1,6 +1,6 @@
 # ReCodeAgent: A Multi-Agent Workflow for Language-Agnostic Repository-Level Code Translation
 
-ReCodeAgent is a language-agnostic framework for autonomous repository-level code translation and validation. ReCodeAgent leverages static analysis combined with Large Language Model (LLM) agents to perform high-quality code translation across multiple programming languages efficiently. To simplify the translation task, ReCodeAgent employs a multi-agent pipeline approach with specialized agents (Analyzer, Planner, Translator, Validator) that work together to understand source code structure, plan the translation strategy, implement the translation, and validate functional equivalence.
+ReCodeAgent is a language-agnostic framework for autonomous repository-level code translation and validation. It leverages static analysis combined with Large Language Model (LLM) agents to perform high-quality code translation across multiple programming languages efficiently. To simplify the translation task, ReCodeAgent employs a multi-agent workflow with specialized agents (Analyzer, Planning, Translator, Validator) that work together to understand source code structure, plan the translation strategy, implement the translation, and validate functional equivalence.
 
 ## Docker Container
 
@@ -17,7 +17,7 @@ bash docker_shell.sh <agent_name>.<tool_name>.<project_name>.<source_language>.<
 
 We provide the results of ReCodeAgent from our experiments on [Zenodo](https://zenodo.org):
 
-- `results.zip`: Translations of ReCodeAgent for all projects, agent trajectories and graphectory analysis.
+- `results.zip`: Translations of ReCodeAgent and other ablation agents for all projects, agent trajectories, graphectory analysis, and cost analysis.
 - `results.xlsx`: More detailed results of ReCodeAgent, including per tool and project results.
 
 ## Credentials
@@ -67,17 +67,43 @@ recodeagent/
 
 ### RQ1
 
+Please run the following command to reproduce RQ1 results for a given agent, tool, and project:
+
 ```bash
 bash scripts/start_docker.sh <agent_name> <tool_name> <project_name> <source_language> <target_language>
 ```
 
-After translation and validation is complete, you can run tests in the target PL to reproduce RQ1 results. Please refer to the `results.zip` file we provide for ReCodeAgent translations.
+After translation and validation is complete, you can run tests in the target PL to reproduce RQ1 results. Or alternatively, you can unzip `results.zip` and then refer to the `results/recodeagent_translations/` directory for the translations. For all tools except Oxidizer, we obtain validated developer tests from their artifacts. For Oxidizer, we translate and verify tests which are available in `data/oxidizer_translations/`.
 
 ### RQ2
 
+Please download test name mapping from the provided `results.xlsx` file on Zenodo and place it in `results/recodeagent_translations/data/tool_projects/<tool>/<project>/test_name_mapping.csv`. Then, run the following command to reproduce RQ2 results for a given tool and project.
+
+```bash
+bash scripts/run_test_comparison.sh <project>
+```
+
+The test comparison results will be stored in `results/recodeagent_translations/data/tool_projects/<tool>/<project>/test_comparison_report.json`.
+
 ### RQ3
 
+Please run the following command to reproduce RQ3 results after unziping `results.zip`:
+
+```python
+python src/analysis/ablation.py
+```
+
+The ablation study contains two distinct results: (1) the effectiveness of ReCodeAgent compared to other ablation agents. We produced these results by running RQ1 with different <agent_name> (e.g., noanalyzer, noplanning, novalidator, baseagent-condensed, baseagent-concat) and extracted test pass rates similar to RQ1. (2) the process-centric analysis of agent trajectories using [Graphectory](https://github.com/Intelligent-CAT-Lab/Graphectory) artifacts. We provide the graphectory analysis results in `results/ablation_study/graphectory_analysis/`.
+
 ### RQ4
+
+Please run the following command to reproduce RQ4 results after unziping `results.zip`:
+
+```python
+python src/analysis/cost.py 
+```
+
+The cost analysis is based on the trajectories and reports of ReCodeAgent generated during RQ1. We collected all trajectories and reports from experiments and stored them in `results/trajectories/`.
 
 ## Building on ReCodeAgent
 
@@ -86,7 +112,7 @@ After translation and validation is complete, you can run tests in the target PL
 You can evaluate ReCodeAgent on other projects. Please make sure you have:
 
 - Source projects stored under `data/tool_projects/<tool>/<project>/<source_language>/`
-- Appropriate build systems (Makefile, Maven, npm, Cargo, etc.)
+- Appropriate build systems (Makefile, Maven, npm, Cargo, etc.) installed during `docker build`
 
 ### Extending Supported Languages
 

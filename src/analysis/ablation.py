@@ -31,16 +31,16 @@ plt.rcParams.update(
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CSV_PATH = REPO_ROOT / "ablation-study-effectiveness.csv"
+CSV_PATH = REPO_ROOT / "results" / "ablation_study" / "ablation-study-effectiveness.csv"
+GRAPHECTORY_DIR = REPO_ROOT / "results" / "ablation_study" / "graphectory_analysis"
 PDF_PATH = REPO_ROOT / "ablation.pdf"
-GRAPHECTORY_DIR = REPO_ROOT / "results" / "graphectory_analysis"
 
 TOOL_ORDER = ["oxidizer", "alphatrans", "skel", "swe-agent"]
 TOOL_TITLES = {
     "oxidizer": "Oxidizer",
     "alphatrans": "AlphaTrans",
     "skel": "Skel",
-    "swe-agent": "SWE-agent CRUST",
+    "swe-agent": "SWE-agent",
 }
 AGENT_ORDER = [
     "RecodeAgent",
@@ -275,7 +275,7 @@ def _plot_test_validation(
         "oxidizer": "Oxidizer",
         "alphatrans": "AlphaTrans",
         "skel": "Skel",
-        "swe-agent": "SWE-agent CRUST",
+        "swe-agent": "SWE-agent",
     }
 
     # X axis: Test Validation (%); smooth density (KDE) per ridge

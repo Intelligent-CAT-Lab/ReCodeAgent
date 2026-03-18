@@ -9,7 +9,7 @@
 
 project=$1
 # Set to true to compute embedding similarity (slow, loads model). Default: false
-COMPUTE_SIMILARITY=${COMPUTE_SIMILARITY:-false}
+COMPUTE_SIMILARITY=true
 
 ALPHATRANS_BASE_DIR="results/recodeagent_translations/data/tool_projects/alphatrans"
 OXIDIZER_BASE_DIR="results/recodeagent_translations/data/tool_projects/oxidizer"
