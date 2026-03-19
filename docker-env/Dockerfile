@@ -101,7 +101,9 @@ RUN pip install --no-cache-dir \
     tqdm==4.67.1 \
     pebble==5.1.3 \
     attrs==25.3.0 \
-    pytest==9.0.1
+    pytest==9.0.1 \
+    transformers==5.0.0 \
+    sentence-transformers==5.2.1
 
 # Define ARG parameters for agent_name, tool_name and project_name
 ARG AGENT_NAME=recodeagent
