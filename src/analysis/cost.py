@@ -3,6 +3,11 @@
 Compute cost metrics (USD, input tokens, output tokens, time, turns) from
 trajectory project_details.json files and plot a grouped bar chart by agent.
 Saves the plot as cost.pdf.
+
+Trajectory dirs are expected as ``{COST_TRAJECTORY_AGENT}.{tool}.{project}``
+under results/trajectories (e.g. ``recodeagent.oxidizer.myproj``). Change
+``COST_TRAJECTORY_AGENT`` to analyze a different top-level agent; adjust
+``RECODEAGENT_TOOLS`` if that agent uses different tool name segments.
 """
 
 import json
@@ -18,6 +23,8 @@ matplotlib.use("Agg")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 TRAJECTORIES_DIR = REPO_ROOT / "results" / "trajectories"
+# First segment of trajectory directory names under TRAJECTORIES_DIR.
+COST_TRAJECTORY_AGENT = "recodeagent"
 COST_ITEMS = ["usdCost", "input_tokens", "output_tokens", "time_seconds", "num_turns"]
 COST_LABELS = ["Cost ($)", "Input Tokens", "Output Tokens", "Time (s)", "# Turns"]
 # Left y-axis: token counts; right y-axis: USD, time, turns
@@ -210,9 +217,9 @@ def collect_costs_by_agent():
     for path in sorted(TRAJECTORIES_DIR.iterdir()):
         if not path.is_dir():
             continue
-        # Only include recodeagent trajectories, split by tool (skel, oxidizer, alphatrans, crust)
+        # Only include trajectories for COST_TRAJECTORY_AGENT; second segment is tool
         parts = path.name.split(".", 2)
-        if len(parts) < 2 or parts[0] != "recodeagent":
+        if len(parts) < 2 or parts[0] != COST_TRAJECTORY_AGENT:
             continue
         tool = parts[1]
         if tool not in RECODEAGENT_TOOLS:
@@ -242,7 +249,7 @@ def collect_costs_by_agent():
 
 
 def collect_detailed_costs() -> dict:
-    """Collect detailed per-project, per-tool, per-phase costs for recodeagent tools."""
+    """Collect detailed per-project, per-tool, per-phase costs for COST_TRAJECTORY_AGENT."""
     detailed: dict[str, dict[str, dict[str, dict]]] = {}
 
     if not TRAJECTORIES_DIR.is_dir():
@@ -252,7 +259,7 @@ def collect_detailed_costs() -> dict:
         if not path.is_dir():
             continue
         parts = path.name.split(".", 2)
-        if len(parts) < 2 or parts[0] != "recodeagent":
+        if len(parts) < 2 or parts[0] != COST_TRAJECTORY_AGENT:
             continue
         tool = parts[1]
         if tool not in RECODEAGENT_TOOLS:
@@ -477,7 +484,7 @@ def _accumulate_tool_usage_from_file(jsonl_path: Path, counts: dict) -> None:
 
 
 def collect_tool_usage_recodeagent() -> tuple[dict[str, int], set[str]]:
-    """Collect tool-usage frequencies across all recodeagent tools and projects.
+    """Collect tool-usage frequencies for COST_TRAJECTORY_AGENT trajectories.
     Returns (counts_by_tool_name, set of tool names that are MCP-derived).
     """
     if not TRAJECTORIES_DIR.is_dir():
@@ -489,7 +496,7 @@ def collect_tool_usage_recodeagent() -> tuple[dict[str, int], set[str]]:
         if not path.is_dir():
             continue
         parts = path.name.split(".", 2)
-        if len(parts) < 2 or parts[0] != "recodeagent":
+        if len(parts) < 2 or parts[0] != COST_TRAJECTORY_AGENT:
             continue
 
         workspace_dir = path / "-workspace"
@@ -526,7 +533,7 @@ def collect_tool_usage_recodeagent() -> tuple[dict[str, int], set[str]]:
 
 def plot_and_save(by_agent, tool_usage_counts: dict, mcp_tool_names: set[str] | None = None):
     """Draw grouped bar chart with double y-axis and save to PDF."""
-    # Preserve order: only include recodeagent tools that have data
+    # Preserve order: only include tools in RECODEAGENT_TOOLS that have data
     agents = [t for t in RECODEAGENT_TOOLS if t in by_agent]
     n_agents = len(agents)
     n_left = len(TOKEN_ITEMS)
@@ -606,7 +613,7 @@ def plot_and_save(by_agent, tool_usage_counts: dict, mcp_tool_names: set[str] | 
         ax.axis("off")
         ax2.axis("off")
 
-    # Bottom subplot: tool-usage frequency across all recodeagent trajectories
+    # Bottom subplot: tool-usage frequency across COST_TRAJECTORY_AGENT trajectories
     if tool_usage_counts:
         mcp_set = mcp_tool_names or set()
         sorted_items = sorted(tool_usage_counts.items(), key=lambda kv: kv[1], reverse=True)
