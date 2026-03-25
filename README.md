@@ -15,7 +15,7 @@ bash docker_shell.sh <agent_name>.<tool_name>.<project_name>.<source_language>.<
 
 ## Zenodo
 
-We provide the results of ReCodeAgent from our experiments on [Zenodo](https://zenodo.org):
+We provide the results of ReCodeAgent from our experiments on [Zenodo](https://doi.org/10.5281/zenodo.19214482):
 
 - `results.zip`: Translations of ReCodeAgent and other ablation agents for all projects, agent trajectories, graphectory analysis, and cost analysis.
 - `results.xlsx`: More detailed results of ReCodeAgent, including per tool and project results.
