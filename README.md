@@ -26,8 +26,6 @@ We provide the results of ReCodeAgent from our experiments on [Zenodo](https://d
 
 The main experiments in ReCodeAgent use [Claude Code](https://github.com/anthropics/claude-code) as its LLM agent powered by [Claude Sonnet](https://www.anthropic.com/claude/sonnet) model. We use [AWS Amazon Bedrock](https://aws.amazon.com/bedrock/) as provider to interact with the Claude model. To reproduce our results, you are required to make sure your AWS account has Claude model enabled in your desired region. Please configure your credentials by running `aws configure` and pasting your `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `region`, and `model` information. You might need to install the [`awscli`](https://github.com/aws/aws-cli) package if you haven't already.
 
-This assumes you have enabled access to Claude Sonnet model in your chosen region. Please see [AWS Amazon Bedrock](https://aws.amazon.com/bedrock/) for more information on how to get AWS credentials and enable model access.
-
 ### Alternative LLM Agents
 
 ReCodeAgent can be configured with other LLM agents and models. Please configure your agent in [`src/utils/model_utils.py`](./src/utils/model_utils.py) and [`src/utils/cmd_utils.py`](./src/utils/cmd_utils.py).
