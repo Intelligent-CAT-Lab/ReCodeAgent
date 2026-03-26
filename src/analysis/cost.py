@@ -289,6 +289,11 @@ def print_detailed_costs(detailed: dict) -> None:
         return
 
     global_totals = _init_metrics_dict()
+    # Phase ("agent") level breakdowns. These capture each project's per-phase metrics
+    # before we sum across phases into the existing per-tool and global totals.
+    phase_order = ["analyzer", "planning", "translator", "validator"]
+    global_phase_project_totals: dict[str, list[dict]] = defaultdict(list)
+    per_tool_phase_project_totals: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
     # Per-project totals across all tools
     project_totals_list: list[dict] = []
     # Per-tool aggregates of per-project totals
@@ -321,6 +326,8 @@ def print_detailed_costs(detailed: dict) -> None:
                 print(f"    total_num_turns: {metrics['num_turns']}")
                 _add_metrics(project_totals, metrics)
                 _add_metrics(global_totals, metrics)
+                global_phase_project_totals[phase_label].append(metrics)
+                per_tool_phase_project_totals[tool][phase_label].append(metrics)
             # Per-project totals across all phases
             project_totals_list.append(project_totals)
             # Track per-tool aggregates of project totals
@@ -387,6 +394,64 @@ def print_detailed_costs(detailed: dict) -> None:
             )
             print()
 
+    # Per-tool totals broken down by phase ("agent")
+    if per_tool_phase_project_totals:
+        print("=== PER-TOOL TOTALS BY AGENT ===")
+        metric_keys = tuple(_init_metrics_dict().keys())
+        for tool in RECODEAGENT_TOOLS:
+            phase_lists = per_tool_phase_project_totals.get(tool) or {}
+            if not phase_lists:
+                continue
+            label = TOOL_DISPLAY_LABELS.get(tool, tool)
+            print(f"== {label} (by agent) ==")
+            for phase_label in phase_order:
+                projects = phase_lists.get(phase_label) or []
+                if not projects:
+                    continue
+                n_projects = len(projects)
+                min_vals = {k: min(p[k] for p in projects) for k in metric_keys}
+                max_vals = {k: max(p[k] for p in projects) for k in metric_keys}
+                totals = {k: sum(p[k] for p in projects) for k in metric_keys}
+                avg_vals = {k: totals[k] / n_projects for k in metric_keys}
+
+                print(f"  {phase_label} cost:")
+                print(
+                    f"    total_input_tokens: "
+                    f"min={min_vals['input_tokens']} "
+                    f"avg={avg_vals['input_tokens']:.2f} "
+                    f"max={max_vals['input_tokens']} "
+                    f"total={totals['input_tokens']}"
+                )
+                print(
+                    f"    total_output_tokens: "
+                    f"min={min_vals['output_tokens']} "
+                    f"avg={avg_vals['output_tokens']:.2f} "
+                    f"max={max_vals['output_tokens']} "
+                    f"total={totals['output_tokens']}"
+                )
+                print(
+                    f"    total_usd: "
+                    f"min={min_vals['usdCost']:.6f} "
+                    f"avg={avg_vals['usdCost']:.6f} "
+                    f"max={max_vals['usdCost']:.6f} "
+                    f"total={totals['usdCost']:.6f}"
+                )
+                print(
+                    f"    total_time_seconds: "
+                    f"min={min_vals['time_seconds']:.2f} "
+                    f"avg={avg_vals['time_seconds']:.2f} "
+                    f"max={max_vals['time_seconds']:.2f} "
+                    f"total={totals['time_seconds']:.2f}"
+                )
+                print(
+                    f"    total_num_turns: "
+                    f"min={min_vals['num_turns']} "
+                    f"avg={avg_vals['num_turns']:.2f} "
+                    f"max={max_vals['num_turns']} "
+                    f"total={totals['num_turns']}"
+                )
+            print()
+
     # Global totals across all tools and projects
     print("=== GLOBAL TOTAL ===")
     if project_totals_list:
@@ -436,6 +501,58 @@ def print_detailed_costs(detailed: dict) -> None:
         print(f"  total_usd: {global_totals['usdCost']:.6f}")
         print(f"  total_time_seconds: {global_totals['time_seconds']:.2f}")
         print(f"  total_num_turns: {global_totals['num_turns']}")
+
+    # Global totals broken down by phase ("agent")
+    if global_phase_project_totals:
+        print("=== GLOBAL TOTAL BY AGENT ===")
+        metric_keys = tuple(_init_metrics_dict().keys())
+        for phase_label in phase_order:
+            projects = global_phase_project_totals.get(phase_label) or []
+            if not projects:
+                continue
+            n_projects = len(projects)
+            min_vals = {k: min(p[k] for p in projects) for k in metric_keys}
+            max_vals = {k: max(p[k] for p in projects) for k in metric_keys}
+            totals = {k: sum(p[k] for p in projects) for k in metric_keys}
+            avg_vals = {k: totals[k] / n_projects for k in metric_keys}
+
+            print(f"  {phase_label} cost:")
+            print(
+                f"    total_input_tokens: "
+                f"min={min_vals['input_tokens']} "
+                f"avg={avg_vals['input_tokens']:.2f} "
+                f"max={max_vals['input_tokens']} "
+                f"total={totals['input_tokens']}"
+            )
+            print(
+                f"    total_output_tokens: "
+                f"min={min_vals['output_tokens']} "
+                f"avg={avg_vals['output_tokens']:.2f} "
+                f"max={max_vals['output_tokens']} "
+                f"total={totals['output_tokens']}"
+            )
+            print(
+                f"    total_usd: "
+                f"min={min_vals['usdCost']:.6f} "
+                f"avg={avg_vals['usdCost']:.6f} "
+                f"max={max_vals['usdCost']:.6f} "
+                f"total={totals['usdCost']:.6f}"
+            )
+            print(
+                f"    total_time_seconds: "
+                f"min={min_vals['time_seconds']:.2f} "
+                f"avg={avg_vals['time_seconds']:.2f} "
+                f"max={max_vals['time_seconds']:.2f} "
+                f"total={totals['time_seconds']:.2f}"
+            )
+            print(
+                f"    total_num_turns: "
+                f"min={min_vals['num_turns']} "
+                f"avg={avg_vals['num_turns']:.2f} "
+                f"max={max_vals['num_turns']} "
+                f"total={totals['num_turns']}"
+            )
+        print()
 
 
 def _extract_tool_names_from_event(event: dict) -> list[str]:
