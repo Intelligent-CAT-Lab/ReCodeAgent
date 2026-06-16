@@ -1,0 +1,9 @@
+/TEST_OUTPUT/workspace/src/consumer.rs
+Diagnostics in File: 1
+ERROR at L9:C33: expected 1 argument, found 0 (Source: rust-analyzer, Code: E0107)
+
+ 7|pub fn consumer_function() {
+ 8|    // Use the helper function
+ 9|    let result = helper_function();
+10|    println!("Helper result: {}", result);
+11|

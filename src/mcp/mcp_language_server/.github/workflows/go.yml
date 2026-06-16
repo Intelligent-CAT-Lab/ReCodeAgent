@@ -1,0 +1,169 @@
+name: CI Workflow
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit Tests and Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          check-latest: true
+          cache: true
+
+      - name: Build
+        run: go build -o mcp-language-server
+
+      - name: Install just
+        run: curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
+      - name: Install gopls
+        run: go install golang.org/x/tools/gopls@latest
+
+      - name: Run unit tests
+        run: go test ./internal/...
+
+      - name: Run code quality checks
+        run: just check
+
+  go-integration-tests:
+    name: Go Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          check-latest: true
+          cache: true
+
+      - name: Install gopls
+        run: go install golang.org/x/tools/gopls@latest
+
+      - name: Run Go integration tests
+        run: go test ./integrationtests/tests/go/...
+
+  python-integration-tests:
+    name: Python Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          check-latest: true
+          cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install pyright
+        run: npm install -g pyright
+
+      - name: Run Python integration tests
+        run: go test ./integrationtests/tests/python/...
+
+  rust-integration-tests:
+    name: Rust Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          check-latest: true
+          cache: true
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rust-src
+          override: true
+
+      - name: Install rust-analyzer
+        run: rustup component add rust-analyzer
+
+      - run: rustc --version
+      - run: rust-analyzer --version
+
+      - name: Run Rust integration tests
+        run: go test ./integrationtests/tests/rust/...
+
+  typescript-integration-tests:
+    name: TypeScript Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          check-latest: true
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install typescript-language-server
+        run: npm install -g typescript typescript-language-server
+
+      - name: Run TypeScript integration tests
+        run: go test ./integrationtests/tests/typescript/...
+
+  clangd-integration-tests:
+    name: Clangd Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          check-latest: true
+          cache: true
+
+      - name: Install LLVM, Clang and bear
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-16 llvm-16 clangd-16 bear
+
+      - name: Verify Clangd Installation
+        run: |
+          sudo ln -s /usr/bin/clangd-16 /usr/bin/clangd
+          clangd-16 --version
+          clangd --version
+      
+      - name: Create compile commands
+        run: |
+          cd integrationtests/workspaces/clangd
+          bear -- make
+          cd ../../../..
+
+      - name: Run Clangd definition tests
+        run: go test ./integrationtests/tests/clangd/definition...
+
+      - name: Run Clangd diagnostics tests
+        run: go test ./integrationtests/tests/clangd/diagnostics...

@@ -1,0 +1,9 @@
+---
+
+Symbol: TEST_CONSTANT
+/TEST_OUTPUT/workspace/main.py
+Kind: Constant
+Range: L79:C1 - L79:C14
+
+79|TEST_CONSTANT: str = "test constant"
+

@@ -1,0 +1,70 @@
+---
+
+/TEST_OUTPUT/workspace/src/another_consumer.rs
+References in File: 2
+At: L4:C22, L13:C13
+
+ 1|// Another consumer module for testing references
+ 2|use crate::helper::helper_function;
+ 3|use crate::types::{
+ 4|    SharedInterface, SharedStruct, SharedType, SHARED_CONSTANT,
+ 5|};
+ 6|
+ 7|pub fn another_consumer_function() {
+ 8|    // Use the helper function
+ 9|    let result = helper_function();
+10|    println!("Helper result from another consumer: {}", result);
+11|
+12|    // Use shared struct
+13|    let s = SharedStruct::new("another test");
+14|    println!("Struct in another consumer: {}", s.name);
+15|
+16|    // Use shared interface
+17|    let _iface: &dyn SharedInterface = &s;
+18|    
+
+---
+
+/TEST_OUTPUT/workspace/src/consumer.rs
+References in File: 2
+At: L4:C22, L13:C13
+
+ 1|// Consumer module for testing references
+ 2|use crate::helper::helper_function;
+ 3|use crate::types::{
+ 4|    SharedInterface, SharedStruct, SharedType, SHARED_CONSTANT,
+ 5|};
+ 6|
+ 7|pub fn consumer_function() {
+ 8|    // Use the helper function
+ 9|    let result = helper_function();
+10|    println!("Helper result: {}", result);
+11|
+12|    // Use shared struct
+13|    let s = SharedStruct::new("test");
+14|    println!("Struct method: {}", s.method());
+15|
+16|    // Use shared interface
+17|    let iface: &dyn SharedInterface = &s;
+18|    println!("Interface method: {}", iface.get_name());
+
+---
+
+/TEST_OUTPUT/workspace/src/types.rs
+References in File: 4
+At: L54:C6, L56:C9, L70:C26, L55:C31
+
+54|impl SharedStruct {
+55|    pub fn new(name: &str) -> Self {
+56|        SharedStruct {
+57|            name: String::from(name),
+58|        }
+59|    }
+60|
+61|    pub fn method(&self) -> String {
+...
+70|impl SharedInterface for SharedStruct {
+71|    fn get_name(&self) -> String {
+72|        self.name.clone()
+73|    }
+74|}

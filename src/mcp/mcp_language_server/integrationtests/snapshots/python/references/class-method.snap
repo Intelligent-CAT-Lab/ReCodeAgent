@@ -1,0 +1,39 @@
+---
+
+/TEST_OUTPUT/workspace/another_consumer.py
+References in File: 1
+At: L40:C19
+
+31|def another_consumer_function() -> None:
+...
+35|    
+36|    # Use shared class with a different type parameter
+37|    shared = SharedClass[float]("another example", 3.14)
+38|    
+39|    # Use methods from shared class
+40|    name = shared.get_name()
+41|    value = shared.get_value()
+42|    print(f"Name: {name}, Value: {value}")
+43|    
+44|    # Use our own implementation
+45|    impl = AnotherImplementation()
+
+---
+
+/TEST_OUTPUT/workspace/consumer.py
+References in File: 1
+At: L47:C41
+
+34|def consumer_function() -> None:
+...
+42|    for item in items:
+43|        print(f"Processing {item}")
+44|
+45|    # Use the shared class
+46|    shared = SharedClass[str]("consumer", SHARED_CONSTANT)
+47|    print(f"Using shared class: {shared.get_name()} - {shared.get_value()}")
+48|
+49|    # Use our implementation of the shared interface
+50|    impl = MyImplementation()
+51|    result = impl.process(items)
+52|    print(f"Processed items: {result}")

@@ -1,0 +1,19 @@
+---
+
+/TEST_OUTPUT/workspace/consumer.py
+References in File: 1
+At: L51:C19
+
+34|def consumer_function() -> None:
+...
+46|    shared = SharedClass[str]("consumer", SHARED_CONSTANT)
+47|    print(f"Using shared class: {shared.get_name()} - {shared.get_value()}")
+48|
+49|    # Use our implementation of the shared interface
+50|    impl = MyImplementation()
+51|    result = impl.process(items)
+52|    print(f"Processed items: {result}")
+53|
+54|    # Use the enum
+55|    color = Color.RED
+56|    print(f"Selected color: {color}")

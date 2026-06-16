@@ -1,0 +1,35 @@
+---
+
+/TEST_OUTPUT/workspace/another_consumer.go
+References in File: 1
+At: L37:C14
+
+6|func AnotherConsumer() {
+...
+32|	// Custom type implements SharedInterface through embedding
+33|	var iface SharedInterface = custom
+34|	iface.Process()
+35|
+36|	// Use shared type as a slice type
+37|	values := []SharedType{1, 2, 3}
+38|	for _, v := range values {
+39|		fmt.Println("Value:", v)
+40|	}
+41|}
+
+---
+
+/TEST_OUTPUT/workspace/consumer.go
+References in File: 1
+At: L27:C8
+
+6|func ConsumerFunction() {
+...
+22|	// Use shared interface
+23|	var iface SharedInterface = s
+24|	fmt.Println(iface.GetName())
+25|
+26|	// Use shared type
+27|	var t SharedType = 100
+28|	fmt.Println(t)
+29|}

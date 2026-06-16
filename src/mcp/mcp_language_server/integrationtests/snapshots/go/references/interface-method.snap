@@ -1,0 +1,39 @@
+---
+
+/TEST_OUTPUT/workspace/another_consumer.go
+References in File: 1
+At: L19:C15
+
+6|func AnotherConsumer() {
+...
+14|		Value:     99.9,
+15|		Constants: []string{SharedConstant, "extra"},
+16|	}
+17|
+18|	// Use the struct methods
+19|	if name := s.GetName(); name != "" {
+20|		fmt.Println("Got name:", name)
+21|	}
+22|
+23|	// Implement the interface with a custom type
+24|	type CustomImplementor struct {
+
+---
+
+/TEST_OUTPUT/workspace/consumer.go
+References in File: 1
+At: L24:C20
+
+6|func ConsumerFunction() {
+...
+19|	fmt.Println(s.Method())
+20|	s.Process()
+21|
+22|	// Use shared interface
+23|	var iface SharedInterface = s
+24|	fmt.Println(iface.GetName())
+25|
+26|	// Use shared type
+27|	var t SharedType = 100
+28|	fmt.Println(t)
+29|}

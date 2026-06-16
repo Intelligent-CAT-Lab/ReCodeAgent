@@ -1,0 +1,9 @@
+---
+
+/TEST_OUTPUT/workspace/main.go
+References in File: 1
+At: L13:C14
+
+12|func main() {
+13|	fmt.Println(FooBar())
+14|}

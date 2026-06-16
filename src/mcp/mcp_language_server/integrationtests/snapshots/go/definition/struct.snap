@@ -1,0 +1,13 @@
+---
+
+Symbol: TestStruct
+/TEST_OUTPUT/workspace/clean.go
+Kind: Struct
+Container Name: github.com/isaacphi/mcp-language-server/integrationtests/test-output/go/workspace
+Range: L6:C1 - L9:C2
+
+ 6|type TestStruct struct {
+ 7|	Name string
+ 8|	Age  int
+ 9|}
+

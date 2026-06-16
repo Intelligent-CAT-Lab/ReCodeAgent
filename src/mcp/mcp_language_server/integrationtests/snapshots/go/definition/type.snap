@@ -1,0 +1,10 @@
+---
+
+Symbol: TestType
+/TEST_OUTPUT/workspace/clean.go
+Kind: Class
+Container Name: github.com/isaacphi/mcp-language-server/integrationtests/test-output/go/workspace
+Range: L22:C1 - L22:C21
+
+22|type TestType string
+

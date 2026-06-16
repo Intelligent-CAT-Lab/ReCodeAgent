@@ -1,0 +1,39 @@
+---
+
+/TEST_OUTPUT/workspace/another_consumer.go
+References in File: 1
+At: L15:C23
+
+6|func AnotherConsumer() {
+...
+10|	// Create another SharedStruct instance
+11|	s := &SharedStruct{
+12|		ID:        2,
+13|		Name:      "another test",
+14|		Value:     99.9,
+15|		Constants: []string{SharedConstant, "extra"},
+16|	}
+17|
+18|	// Use the struct methods
+19|	if name := s.GetName(); name != "" {
+20|		fmt.Println("Got name:", name)
+
+---
+
+/TEST_OUTPUT/workspace/consumer.go
+References in File: 1
+At: L15:C23
+
+6|func ConsumerFunction() {
+...
+10|	// Use shared struct
+11|	s := &SharedStruct{
+12|		ID:        1,
+13|		Name:      "test",
+14|		Value:     42.0,
+15|		Constants: []string{SharedConstant},
+16|	}
+17|
+18|	// Call methods on the struct
+19|	fmt.Println(s.Method())
+20|	s.Process()

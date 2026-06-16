@@ -1,0 +1,9 @@
+---
+
+Symbol: TestType
+/TEST_OUTPUT/workspace/main.ts
+Kind: Variable
+Range: L27:C1 - L27:C40
+
+27|export type TestType = string | number;
+

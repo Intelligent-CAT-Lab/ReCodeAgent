@@ -1,0 +1,85 @@
+---
+
+/TEST_OUTPUT/workspace/another_consumer.py
+References in File: 3
+At: L6:C5, L28:C16, L50:C14
+
+ 1|"""Another module that uses helpers and shared components."""
+ 2|
+ 3|from helper import (
+ 4|    SHARED_CONSTANT,
+ 5|    SharedClass,
+ 6|    helper_function,
+ 7|    Color,
+ 8|)
+ 9|
+10|
+11|class AnotherImplementation:
+...
+23|        """
+24|        # Get the value from shared class
+25|        value = self.shared.get_value()
+26|        
+27|        # Process it using the helper function
+28|        return helper_function(value)
+...
+31|def another_consumer_function() -> None:
+...
+45|    impl = AnotherImplementation()
+46|    result = impl.do_something()
+47|    print(f"Implementation result: {result}")
+48|    
+49|    # Use helper function
+50|    output = helper_function("another direct call")
+51|    print(f"Helper output: {output}")
+52|    
+53|    # Use enum-like class with a different color
+54|    color = Color.GREEN
+55|    print(f"Selected color: {color}")
+
+---
+
+/TEST_OUTPUT/workspace/consumer.py
+References in File: 2
+At: L4:C5, L37:C15
+
+ 1|"""Consumer module that uses the helper module."""
+ 2|
+ 3|from helper import (
+ 4|    helper_function,
+ 5|    get_items,
+ 6|    SharedClass,
+ 7|    SharedInterface,
+ 8|    SHARED_CONSTANT,
+ 9|    Color,
+...
+34|def consumer_function() -> None:
+35|    """Function that consumes the helper functions."""
+36|    # Use the helper function
+37|    message = helper_function("World")
+38|    print(message)
+39|
+40|    # Get and process items from the helper
+41|    items = get_items()
+42|    for item in items:
+
+---
+
+/TEST_OUTPUT/workspace/consumer_clean.py
+References in File: 2
+At: L3:C20, L9:C15
+
+ 1|"""Consumer module that uses the helper module."""
+ 2|
+ 3|from helper import helper_function, get_items
+ 4|
+ 5|
+ 6|def consumer_function() -> None:
+ 7|    """Function that consumes the helper functions."""
+ 8|    # Use the helper function
+ 9|    message = helper_function("World")
+10|    print(message)
+11|
+12|    # Get and process items from the helper
+13|    items = get_items()
+14|    for item in items:

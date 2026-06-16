@@ -1,0 +1,39 @@
+/TEST_OUTPUT/workspace/go.mod:
+
+[1] Location: Lines 1-1
+    Title: Reset go.mod diagnostics
+    Command: gopls.reset_go_mod_diagnostics
+    Arguments:
+/TEST_OUTPUT/workspace/go.mod","DiagnosticSource":""}
+
+[2] Location: Lines 1-1
+    Title: Run go mod tidy
+    Command: gopls.tidy
+    Arguments:
+/TEST_OUTPUT/workspace/go.mod"]}
+
+[3] Location: Lines 1-1
+    Title: Create vendor directory
+    Command: gopls.vendor
+    Arguments:
+/TEST_OUTPUT/workspace/go.mod"}
+
+[4] Location: Lines 5-5
+    Title: Check for upgrades
+    Command: gopls.check_upgrades
+    Arguments:
+/TEST_OUTPUT/workspace/go.mod","Modules":["github.com/stretchr/testify"]}
+
+[5] Location: Lines 5-5
+    Title: Upgrade transitive dependencies
+    Command: gopls.upgrade_dependency
+    Arguments:
+/TEST_OUTPUT/workspace/go.mod","GoCmdArgs":["-d","-u","-t","./..."],"AddRequire":false}
+
+[6] Location: Lines 5-5
+    Title: Upgrade direct dependencies
+    Command: gopls.upgrade_dependency
+    Arguments:
+/TEST_OUTPUT/workspace/go.mod","GoCmdArgs":["-d","github.com/stretchr/testify"],"AddRequire":false}
+
+Found 6 code lens items.

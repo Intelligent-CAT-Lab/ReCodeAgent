@@ -1,0 +1,10 @@
+/TEST_OUTPUT/workspace/consumer_clean.py
+Diagnostics in File: 1
+ERROR at L9:C15: Argument missing for parameter "age" (Source: Pyright, Code: reportCallIssue)
+
+ 6|def consumer_function() -> None:
+ 7|    """Function that consumes the helper functions."""
+ 8|    # Use the helper function
+ 9|    message = helper_function("World")
+10|    print(message)
+11|

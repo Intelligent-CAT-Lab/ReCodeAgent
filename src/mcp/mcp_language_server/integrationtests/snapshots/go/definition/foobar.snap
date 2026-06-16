@@ -1,0 +1,14 @@
+---
+
+Symbol: FooBar
+/TEST_OUTPUT/workspace/main.go
+Kind: Function
+Container Name: github.com/isaacphi/mcp-language-server/integrationtests/test-output/go/workspace
+Range: L6:C1 - L10:C2
+
+ 6|func FooBar() string {
+ 7|	return "Hello, World!"
+ 8|	fmt.Println("Unreachable code") // This is unreachable code
+ 9|	return 3
+10|}
+

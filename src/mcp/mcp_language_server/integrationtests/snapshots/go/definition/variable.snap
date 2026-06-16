@@ -1,0 +1,10 @@
+---
+
+Symbol: TestVariable
+/TEST_OUTPUT/workspace/clean.go
+Kind: Variable
+Container Name: github.com/isaacphi/mcp-language-server/integrationtests/test-output/go/workspace
+Range: L28:C1 - L28:C22
+
+28|var TestVariable = 42
+

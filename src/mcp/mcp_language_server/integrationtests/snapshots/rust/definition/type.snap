@@ -1,0 +1,10 @@
+---
+
+Symbol: TestType
+/TEST_OUTPUT/workspace/src/types.rs
+Kind: TypeParameter
+Range: L9:C1 - L10:C28
+
+ 9|// A simple type alias
+10|pub type TestType = String;
+

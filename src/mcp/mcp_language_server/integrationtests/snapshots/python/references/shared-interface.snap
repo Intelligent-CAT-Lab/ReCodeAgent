@@ -1,0 +1,23 @@
+---
+
+/TEST_OUTPUT/workspace/consumer.py
+References in File: 2
+At: L7:C5, L13:C24
+
+ 2|
+ 3|from helper import (
+ 4|    helper_function,
+ 5|    get_items,
+ 6|    SharedClass,
+ 7|    SharedInterface,
+ 8|    SHARED_CONSTANT,
+ 9|    Color,
+10|)
+11|
+12|
+13|class MyImplementation(SharedInterface):
+14|    """An implementation of the SharedInterface."""
+15|
+16|    def process(self, data: list[str]) -> dict[str, int]:
+17|        """Process the given data by counting occurrences.
+18|

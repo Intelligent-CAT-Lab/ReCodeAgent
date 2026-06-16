@@ -1,0 +1,18 @@
+---
+
+/TEST_OUTPUT/workspace/consumer.ts
+References in File: 1
+At: L18:C12
+
+12|export function ConsumerFunction(): void {
+13|  console.log("Consumer calling:", SharedFunction());
+14|  
+15|  // Using SharedClass
+16|  const instance = new SharedClass("test instance");
+17|  console.log(instance.getName());
+18|  instance.helperMethod();
+19|  
+20|  // Using SharedInterface
+21|  const iface: SharedInterface = instance;
+22|  console.log(iface.getName());
+23|  console.log(iface.getValue());

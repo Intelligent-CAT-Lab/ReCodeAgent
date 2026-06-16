@@ -1,0 +1,12 @@
+---
+
+Symbol: TestFunction
+/TEST_OUTPUT/workspace/clean.go
+Kind: Function
+Container Name: github.com/isaacphi/mcp-language-server/integrationtests/test-output/go/workspace
+Range: L31:C1 - L33:C2
+
+31|func TestFunction() {
+32|	fmt.Println("This is a test function")
+33|}
+

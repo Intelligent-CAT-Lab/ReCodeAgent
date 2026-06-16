@@ -1,0 +1,6 @@
+test_workspace::types
+
+pub trait TestInterface
+
+
+Is dyn-compatible

@@ -1,0 +1,20 @@
+# Third-Party Code Attributions
+
+This project includes code derived from the following third-party sources:
+
+## Go Tools LSP Protocol Generator
+
+The code in `cmd/generate/` includes modified code from the Go Tools project's LSP protocol implementation.
+
+- **Source**: https://go.googlesource.com/tools
+- **License**: BSD 3-Clause
+- **Copyright**: Copyright 2009 The Go Authors
+- **Used for**: LSP (Language Server Protocol) message type generation and protocol implementation
+- **Location**: cmd/generate_protocol/ and internal/protocol/
+- **Modifications**: Adapted for use in MCP Language Server with customizations for our specific protocol needs
+
+The original BSD 3-Clause license for this code can be found at: `cmd/generate_protocol/LICENSE`
+
+---
+
+Note: The remainder of this project is licensed under the BSD 3-Clause License, as specified in the root LICENSE file.
