@@ -24,7 +24,27 @@ We provide the results of ReCodeAgent from our experiments on [Zenodo](https://d
 
 ### Claude Code
 
-The main experiments in ReCodeAgent use [Claude Code](https://github.com/anthropics/claude-code) as its LLM agent powered by [Claude Sonnet](https://www.anthropic.com/claude/sonnet) model. We use [AWS Amazon Bedrock](https://aws.amazon.com/bedrock/) as provider to interact with the Claude model. To reproduce our results, you are required to make sure your AWS account has Claude model enabled in your desired region. Please configure your credentials by running `aws configure` and pasting your `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `region`, and `model` information. You might need to install the [`awscli`](https://github.com/aws/aws-cli) package if you haven't already.
+The main experiments in ReCodeAgent use [Claude Code](https://github.com/anthropic/claude-code) as its LLM agent powered by [Claude Sonnet](https://www.anthropic.com/claude/sonnet) model. We use [AWS Amazon Bedrock](https://aws.amazon.com/bedrock/) as provider to interact with the Claude model. To reproduce our results, you are required to make sure your AWS account has Claude model enabled in your desired region. Please configure your credentials by running `aws configure` and pasting your `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `region`, and `model` information. You might need to install the [`awscli`](https://github.com/aws/aws-cli) package if you haven't already.
+
+### OpenRouter (Open-Source and Other Models)
+
+To use ReCodeAgent with open-source models or other closed-source models (not limited to Claude via Bedrock), you can integrate [OpenRouter](https://openrouter.ai/) by updating the `env` block in [`.claude/settings.local.json`](./.claude/settings.local.json):
+
+```json
+"env": {
+  "OPENROUTER_API_KEY": "<api-key>",
+  "ANTHROPIC_MODEL": "<model-id>",
+  "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+  "ANTHROPIC_AUTH_TOKEN": "<api-key>",
+  "ANTHROPIC_API_KEY": "",
+  "ANTHROPIC_DEFAULT_OPUS_MODEL": "<model-id>",
+  "ANTHROPIC_DEFAULT_SONNET_MODEL": "<model-id>",
+  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "<model-id>",
+  "CLAUDE_CODE_SUBAGENT_MODEL": "<model-id>"
+}
+```
+
+Replace `<api-key>` with your OpenRouter API key and `<model-id>` with the OpenRouter model identifier (for example, `anthropic/claude-sonnet-4` or an open-source model slug from the OpenRouter catalog). Remove any Bedrock-specific variables (such as `CLAUDE_CODE_USE_BEDROCK`) when switching to OpenRouter.
 
 ### Alternative LLM Agents
 
