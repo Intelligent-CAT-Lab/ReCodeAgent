@@ -91,6 +91,10 @@ def _parse_number(value: str) -> float:
         return 0.0
 
 
+def _cap_validation_percent(value: float) -> float:
+    return max(0.0, min(100.0, value))
+
+
 def _read_rows() -> Iterable[Mapping[str, str]]:
     with open(CSV_PATH, newline="") as csv_file:
         return list(csv.DictReader(csv_file))
@@ -123,7 +127,7 @@ def _collect_per_project_rates(
             data[tool] = {agent: [] for agent in AGENT_ORDER}
 
         for agent, percent_col in agent_tp_percent_columns.items():
-            percent = _parse_number(row.get(percent_col))
+            percent = _cap_validation_percent(_parse_number(row.get(percent_col)))
             data[tool][agent].append(percent)
 
     return data
@@ -161,7 +165,7 @@ def _aggregate_rates(
         counts_for_tool: dict[str, dict[str, float]] = {}
         for agent, tp_col in agent_tp_columns.items():
             tp_total = sum(_parse_number(row.get(tp_col)) for row in group)
-            tp_rate = 0.0 if math.isclose(total_tests, 0) else 100 * tp_total / total_tests
+            tp_rate = _cap_validation_percent(0.0 if math.isclose(total_tests, 0) else 100 * tp_total / total_tests)
             counts_for_tool[agent] = {
                 "tp_rate": tp_rate,
                 "tp_total": tp_total,
@@ -278,9 +282,10 @@ def _plot_test_validation(
         "swe-agent": "SWE-agent",
     }
 
-    # X axis: Test Validation (%); smooth density (KDE) per ridge
+    # X axis display range vs. distribution support for test validation (%)
     x_min, x_max = -5.0, 105.0
-    x_grid = np.linspace(x_min, x_max, 200)
+    val_min, val_max = 0.0, 100.0
+    x_grid = np.linspace(val_min, val_max, 200)
     ridge_scale = 0.85  # height of each ridge (so they don't overlap)
 
     for ax, tool in zip(axes_top, tools):
@@ -294,7 +299,7 @@ def _plot_test_validation(
         agents_reversed = list(reversed(agents))
 
         for k, agent in enumerate(agents_reversed):
-            values = np.asarray(data_for_tool[agent])
+            values = np.clip(np.asarray(data_for_tool[agent]), val_min, val_max)
             y_base = k
 
             if len(values) == 0:
@@ -308,15 +313,14 @@ def _plot_test_validation(
                     linewidth=0.5,
                 )
             else:
-                # Kernel density estimate; clip to x range for support
-                values_clip = np.clip(values, x_min, x_max)
-                bw = "scott" if len(values_clip) > 1 else 15.0  # wide band if n=1
+                # Kernel density estimate
+                bw = "scott" if len(values) > 1 else 15.0  # wide band if n=1
                 try:
-                    kde = stats.gaussian_kde(values_clip, bw_method=bw)
+                    kde = stats.gaussian_kde(values, bw_method=bw)
                     density = kde(x_grid)
                 except np.linalg.LinAlgError:
                     density = np.zeros_like(x_grid)
-                    density[np.argmin(np.abs(x_grid - np.median(values_clip)))] = 1.0
+                    density[np.argmin(np.abs(x_grid - np.median(values)))] = 1.0
                 # Scale so ridge height is comparable across agents (normalize by max)
                 d_max = density.max() if density.max() > 0 else 1.0
                 density_scaled = (density / d_max) * ridge_scale
