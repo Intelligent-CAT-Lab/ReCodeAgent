@@ -78,8 +78,91 @@ def format_message_content(content):
         return escape_html(str(content))
 
 
-def generate_html(messages, output_file="conversation.html"):
-    """Generate HTML file from conversation messages."""
+def find_subagent_trajectories(json_file_path):
+    """Find subagent trajectory files for a main session trajectory."""
+    trajectory_path = Path(json_file_path)
+    session_id = trajectory_path.stem
+    subagents_dir = trajectory_path.parent / session_id / "subagents"
+
+    if not subagents_dir.is_dir():
+        return []
+
+    subagent_files = sorted(subagents_dir.glob("*.jsonl"))
+    trajectories = []
+    for subagent_file in subagent_files:
+        trajectories.append(
+            {
+                "title": f"Subagent: {subagent_file.stem}",
+                "path": str(subagent_file),
+            }
+        )
+    return trajectories
+
+
+def render_messages_html(messages):
+    """Render conversation messages into HTML fragments."""
+    message_html = ""
+    for msg in messages:
+        message_type = msg.get("type", "unknown")
+        timestamp = format_timestamp(msg.get("timestamp", ""))
+        uuid = msg.get("uuid", "")[:8]  # Short UUID for display
+
+        # Determine message class based on type
+        if message_type == "user":
+            msg_class = "user"
+            type_display = "👤 User"
+        elif message_type == "assistant":
+            msg_class = "assistant"
+            type_display = "🤖 Assistant"
+        else:
+            msg_class = "external"
+            type_display = f"🔧 {message_type.title()}"
+
+        # Get message content
+        if "message" in msg and isinstance(msg["message"], dict):
+            content = msg["message"].get("content", "")
+            role = msg["message"].get("role", "")
+            if role:
+                type_display += f" ({role})"
+        else:
+            content = msg.get("content", "")
+
+        formatted_content = format_message_content(content)
+
+        # Build metadata
+        metadata_items = []
+        if uuid:
+            metadata_items.append(f"<div class='metadata-item'>🔗 ID: {uuid}</div>")
+        if msg.get("sessionId"):
+            session_id = msg["sessionId"][:8]
+            metadata_items.append(f"<div class='metadata-item'>📝 Session: {session_id}</div>")
+        if msg.get("agentId"):
+            metadata_items.append(f"<div class='metadata-item'>🧩 Agent: {msg['agentId']}</div>")
+        if msg.get("slug"):
+            metadata_items.append(f"<div class='metadata-item'>🏷️ Slug: {msg['slug']}</div>")
+        if msg.get("version"):
+            metadata_items.append(f"<div class='metadata-item'>⚙️ Version: {msg['version']}</div>")
+
+        metadata_html = ""
+        if metadata_items:
+            metadata_html = f"<div class='metadata'>{''.join(metadata_items)}</div>"
+
+        message_html += f"""
+        <div class="message {msg_class}">
+            <div class="message-header">
+                <div class="message-type">{type_display}</div>
+                <div class="timestamp">{timestamp}</div>
+            </div>
+            <div class="message-content">{formatted_content}</div>
+            {metadata_html}
+        </div>
+        """
+
+    return message_html
+
+
+def generate_html(trajectories, output_file="conversation.html"):
+    """Generate HTML file from one or more conversation trajectories."""
 
     # Create CSS as a separate string to avoid format conflicts
     css_styles = """
@@ -227,6 +310,77 @@ def generate_html(messages, output_file="conversation.html"):
             font-size: 0.9em;
             color: #666;
         }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .toc h2 {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .toc ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toc a {
+            display: inline-block;
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 0.95em;
+        }
+
+        .toc a:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .trajectory-section {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .trajectory-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            background: #f1f3f5;
+            padding: 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .section-header.main {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .section-header.subagent {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .section-header h2 {
+            font-size: 1.5em;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .section-header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
         
         @media (max-width: 768px) {
             body {
@@ -263,94 +417,92 @@ def generate_html(messages, output_file="conversation.html"):
         }
     """
 
+    total_messages = sum(len(trajectory["messages"]) for trajectory in trajectories)
+    subagent_count = sum(1 for trajectory in trajectories if trajectory.get("is_subagent"))
+
+    toc_items = []
+    sections_html = ""
+    for index, trajectory in enumerate(trajectories):
+        section_id = f"trajectory-{index}"
+        title = trajectory["title"]
+        message_count = len(trajectory["messages"])
+        source_path = trajectory.get("path", "")
+        is_subagent = trajectory.get("is_subagent", False)
+
+        toc_items.append(
+            f'<li><a href="#{section_id}">{html.escape(title)} ({message_count})</a></li>'
+        )
+
+        section_class = "subagent" if is_subagent else "main"
+        subtitle = html.escape(source_path) if source_path else ""
+        sections_html += f"""
+        <section class="trajectory-section" id="{section_id}">
+            <div class="section-header {section_class}">
+                <h2>{html.escape(title)}</h2>
+                <p>{message_count} messages{f" · {subtitle}" if subtitle else ""}</p>
+            </div>
+            <div class="conversation">
+                {render_messages_html(trajectory["messages"])}
+            </div>
+        </section>
+        """
+
+    toc_html = ""
+    if len(trajectories) > 1:
+        toc_html = f"""
+        <div class="toc">
+            <h2>Trajectories</h2>
+            <ul>
+                {"".join(toc_items)}
+            </ul>
+        </div>
+        """
+
+    page_title = trajectories[0]["title"] if trajectories else "Conversation History"
+    header_subtitle = "AI Assistant Conversation Log"
+    if subagent_count:
+        header_subtitle += f" · {subagent_count} subagent trajectory"
+        if subagent_count != 1:
+            header_subtitle += "ies"
+
     # HTML template with placeholders for dynamic content
     html_template = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversation History</title>
+    <title>{page_title}</title>
     <style>{css_styles}</style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>💬 Conversation History</h1>
-            <p>AI Assistant Conversation Log</p>
+            <p>{header_subtitle}</p>
         </div>
-        
-        <div class="conversation">
-            {messages}
-        </div>
+
+        {toc_html}
+
+        {sections_html}
         
         <div class="stats">
-            <strong>Total Messages:</strong> {total_messages} | 
+            <strong>Total Messages:</strong> {total_messages} |
+            <strong>Trajectories:</strong> {trajectory_count} |
             <strong>Generated:</strong> {generation_time}
         </div>
     </div>
 </body>
 </html>"""
 
-    # Generate message HTML
-    message_html = ""
-    for msg in messages:
-        message_type = msg.get("type", "unknown")
-        user_type = msg.get("userType", "unknown")
-        timestamp = format_timestamp(msg.get("timestamp", ""))
-        uuid = msg.get("uuid", "")[:8]  # Short UUID for display
-
-        # Determine message class based on type
-        if message_type == "user":
-            msg_class = "user"
-            type_display = "👤 User"
-        elif message_type == "assistant":
-            msg_class = "assistant"
-            type_display = "🤖 Assistant"
-        else:
-            msg_class = "external"
-            type_display = f"🔧 {message_type.title()}"
-
-        # Get message content
-        if "message" in msg and isinstance(msg["message"], dict):
-            content = msg["message"].get("content", "")
-            role = msg["message"].get("role", "")
-            if role:
-                type_display += f" ({role})"
-        else:
-            content = msg.get("content", "")
-
-        formatted_content = format_message_content(content)
-
-        # Build metadata
-        metadata_items = []
-        if uuid:
-            metadata_items.append(f"<div class='metadata-item'>🔗 ID: {uuid}</div>")
-        if msg.get("sessionId"):
-            session_id = msg["sessionId"][:8]
-            metadata_items.append(f"<div class='metadata-item'>📝 Session: {session_id}</div>")
-        if msg.get("version"):
-            metadata_items.append(f"<div class='metadata-item'>⚙️ Version: {msg['version']}</div>")
-
-        metadata_html = ""
-        if metadata_items:
-            metadata_html = f"<div class='metadata'>{''.join(metadata_items)}</div>"
-
-        message_html += f"""
-        <div class="message {msg_class}">
-            <div class="message-header">
-                <div class="message-type">{type_display}</div>
-                <div class="timestamp">{timestamp}</div>
-            </div>
-            <div class="message-content">{formatted_content}</div>
-            {metadata_html}
-        </div>
-        """
-
     # Fill in the template
     final_html = html_template.format(
         css_styles=css_styles,
-        messages=message_html,
-        total_messages=len(messages),
+        page_title=html.escape(page_title),
+        header_subtitle=header_subtitle,
+        toc_html=toc_html,
+        sections_html=sections_html,
+        total_messages=total_messages,
+        trajectory_count=len(trajectories),
         generation_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     )
 
@@ -361,23 +513,66 @@ def generate_html(messages, output_file="conversation.html"):
     return output_file
 
 
+def load_trajectory(json_file_path, title=None, is_subagent=False):
+    """Load a trajectory file and return its metadata."""
+    trajectory_path = Path(json_file_path)
+    messages = parse_conversation(json_file_path)
+    return {
+        "title": title or f"Main Session: {trajectory_path.stem}",
+        "path": str(trajectory_path),
+        "messages": messages,
+        "is_subagent": is_subagent,
+    }
+
+
 def main():
     """Main function to run the converter."""
 
-    json_file_path = sys.argv[1]
+    if len(sys.argv) < 2:
+        print("Usage: python visualize_trajectory.py <trajectory.jsonl> [output.html]")
+        return
 
-    if not Path(json_file_path).exists():
+    json_file_path = sys.argv[1]
+    trajectory_path = Path(json_file_path)
+
+    if not trajectory_path.exists():
         print(f"Error: File '{json_file_path}' not found.")
         return
 
     try:
-        print(f"📖 Reading conversation from: {json_file_path}")
-        messages = parse_conversation(json_file_path)
-        print(f"✅ Parsed {len(messages)} messages")
+        trajectories = []
 
-        output_file = generate_html(messages)
-        print(f"🎉 HTML file generated: {output_file}")
-        print(f"🌐 Open '{output_file}' in your web browser to view the conversation")
+        print(f"📖 Reading main conversation from: {json_file_path}")
+        main_trajectory = load_trajectory(json_file_path)
+        trajectories.append(main_trajectory)
+        print(f"✅ Parsed {len(main_trajectory['messages'])} main messages")
+
+        subagent_specs = find_subagent_trajectories(json_file_path)
+        if subagent_specs:
+            print(f"🔍 Found {len(subagent_specs)} subagent trajectories")
+            for subagent_spec in subagent_specs:
+                print(f"   📖 Reading subagent: {subagent_spec['path']}")
+                subagent_trajectory = load_trajectory(
+                    subagent_spec["path"],
+                    title=subagent_spec["title"],
+                    is_subagent=True,
+                )
+                trajectories.append(subagent_trajectory)
+                print(
+                    f"   ✅ Parsed {len(subagent_trajectory['messages'])} messages "
+                    f"for {subagent_spec['title']}"
+                )
+        else:
+            print("ℹ️ No subagent trajectories found for this session")
+
+        if len(sys.argv) > 2:
+            output_file = sys.argv[2]
+        else:
+            output_file = str(trajectory_path.with_suffix(".html"))
+
+        output_path = generate_html(trajectories, output_file=output_file)
+        print(f"🎉 HTML file generated: {output_path}")
+        print(f"🌐 Open '{output_path}' in your web browser to view the conversation")
 
     except Exception as e:
         print(f"❌ Error: {e}")
