@@ -429,9 +429,7 @@ def generate_html(trajectories, output_file="conversation.html"):
         source_path = trajectory.get("path", "")
         is_subagent = trajectory.get("is_subagent", False)
 
-        toc_items.append(
-            f'<li><a href="#{section_id}">{html.escape(title)} ({message_count})</a></li>'
-        )
+        toc_items.append(f'<li><a href="#{section_id}">{html.escape(title)} ({message_count})</a></li>')
 
         section_class = "subagent" if is_subagent else "main"
         subtitle = html.escape(source_path) if source_path else ""
@@ -558,10 +556,7 @@ def main():
                     is_subagent=True,
                 )
                 trajectories.append(subagent_trajectory)
-                print(
-                    f"   ✅ Parsed {len(subagent_trajectory['messages'])} messages "
-                    f"for {subagent_spec['title']}"
-                )
+                print(f"   ✅ Parsed {len(subagent_trajectory['messages'])} messages " f"for {subagent_spec['title']}")
         else:
             print("ℹ️ No subagent trajectories found for this session")
 
