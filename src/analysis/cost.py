@@ -36,7 +36,11 @@ OUTPUT_PDF = REPO_ROOT / "cost.pdf"
 
 # Consistent font styling (similar spirit to ablation.py)
 FONT_SIZE = 12
-plt.rcParams.update({"font.size": FONT_SIZE})
+plt.rcParams.update({
+    "font.size": FONT_SIZE,
+    "pdf.fonttype": 42,  # Use TrueType fonts (Type 1-like, vector) instead of Type 3 (bitmap)
+    "ps.fonttype": 42,   # Same for PostScript output
+})
 
 # Recodeagent tools (second segment in trajectory dir name); order for x-axis
 # Order on x-axis: Oxidizer, AlphaTrans, Skel, CRUST

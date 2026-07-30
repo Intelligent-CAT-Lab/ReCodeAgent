@@ -26,6 +26,8 @@ plt.rcParams.update(
             "serif",
         ],
         "font.size": 12,
+        "pdf.fonttype": 42,  # Use TrueType fonts (Type 1-like, vector) instead of Type 3 (bitmap)
+        "ps.fonttype": 42,   # Same for PostScript output
     }
 )
 
