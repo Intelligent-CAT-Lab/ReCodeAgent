@@ -1,8 +1,10 @@
 # ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories
 
+## Getting Started
+
 ReCodeAgent is a language-agnostic framework for autonomous repository-level code translation and validation. It leverages static analysis combined with Large Language Model (LLM) agents to perform high-quality code translation across multiple programming languages efficiently. To simplify the translation task, ReCodeAgent employs a multi-agent workflow with specialized agents (Analyzer, Planning, Translator, Validator) that work together to understand source code structure, plan the translation strategy, implement the translation, and validate functional equivalence.
 
-## Docker Container
+### Docker Container
 
 For re-running and evaluating ReCodeAgent on more projects, we recommend using our [`Dockerfile`](./docker-env/Dockerfile) to build a docker image. All required dependencies are installed during `docker build`, making it easier for users to interact with ReCodeAgent.
 
@@ -13,20 +15,20 @@ bash scripts/start_docker.sh <agent_name> <tool_name> <project_name> <source_lan
 bash docker_shell.sh <agent_name>.<tool_name>.<project_name>.<source_language>.<target_language>
 ```
 
-## Zenodo
+### Zenodo
 
 We provide the results of ReCodeAgent from our experiments on [Zenodo](https://doi.org/10.5281/zenodo.19214481):
 
 - `results.zip`: Translations of ReCodeAgent and other ablation agents for all projects, agent trajectories, graphectory analysis, and cost analysis.
 - `results.xlsx`: More detailed results of ReCodeAgent, including per tool and project results.
 
-## Credentials
+### Credentials
 
-### Claude Code
+#### Claude Code
 
 The main experiments in ReCodeAgent use [Claude Code](https://github.com/anthropic/claude-code) as its LLM agent powered by [Claude Sonnet](https://www.anthropic.com/claude/sonnet) model. We use [AWS Amazon Bedrock](https://aws.amazon.com/bedrock/) as provider to interact with the Claude model. To reproduce our results, you are required to make sure your AWS account has Claude model enabled in your desired region. Please configure your credentials by running `aws configure` and pasting your `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `region`, and `model` information. You might need to install the [`awscli`](https://github.com/aws/aws-cli) package if you haven't already.
 
-### OpenRouter (Open-Source and Other Models)
+#### OpenRouter (Open-Source and Other Models)
 
 To use ReCodeAgent with open-source models or other closed-source models (not limited to Claude via Bedrock), you can integrate [OpenRouter](https://openrouter.ai/) by updating the `env` block in [`.claude/settings.local.json`](./.claude/settings.local.json):
 
@@ -46,11 +48,11 @@ To use ReCodeAgent with open-source models or other closed-source models (not li
 
 Replace `<api-key>` with your OpenRouter API key and `<model-id>` with the OpenRouter model identifier (for example, `anthropic/claude-sonnet-4` or an open-source model slug from the OpenRouter catalog). Remove any Bedrock-specific variables (such as `CLAUDE_CODE_USE_BEDROCK`) when switching to OpenRouter.
 
-### Alternative LLM Agents
+#### Alternative LLM Agents
 
 ReCodeAgent can be configured with other LLM agents and models. Please configure your agent in [`src/utils/model_utils.py`](./src/utils/model_utils.py) and [`src/utils/cmd_utils.py`](./src/utils/cmd_utils.py).
 
-## Project Structure
+### Project Structure
 
 ReCodeAgent supports multiple translation tools and language pairs:
 
@@ -81,7 +83,7 @@ recodeagent/
 └── README.md
 ```
 
-## Reproducing Results
+## Step-by-Step Instructions
 
 ### RQ1
 
