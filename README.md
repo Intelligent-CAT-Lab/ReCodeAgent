@@ -1,5 +1,18 @@
 # ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories
 
+[<img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_evaluated_functional_v1_1.png" alt="ACM Artifacts Evaluated - Functional v1.1" width="114" height="113"/>][paper]
+[<img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_available_v1_1.png" alt="ACM Artifacts Available v1.1" width="114" height="113"/>][paper]
+
+Artifact repository for the paper [ ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories_](http://arxiv.org/abs/2604.07341), accepted at _ASE 2026_, Munich, Germany.
+Authors are [Ali Reza Ibrahimzada][ali], [Brandon Paulsen][brandon], [Daniel Kroening][daniel], and [Reyhaneh Jabbarvand][reyhaneh].
+
+[brandon]: https://www.amazon.science/author/brandon-paulsen
+[daniel]: https://www.kroening.com/
+[ali]: https://alirezai.cs.illinois.edu/
+[reyhaneh]: https://reyhaneh.cs.illinois.edu/index.htm
+
+[paper]: http://arxiv.org/abs/2604.07341
+
 ## Getting Started
 
 ReCodeAgent is a language-agnostic framework for autonomous repository-level code translation and validation. It leverages static analysis combined with Large Language Model (LLM) agents to perform high-quality code translation across multiple programming languages efficiently. To simplify the translation task, ReCodeAgent employs a multi-agent workflow with specialized agents (Analyzer, Planning, Translator, Validator) that work together to understand source code structure, plan the translation strategy, implement the translation, and validate functional equivalence.
