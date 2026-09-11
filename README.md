@@ -3,7 +3,7 @@
 [<img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_evaluated_functional_v1_1.png" alt="ACM Artifacts Evaluated - Functional v1.1" width="114" height="113"/>][paper]
 [<img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_available_v1_1.png" alt="ACM Artifacts Available v1.1" width="114" height="113"/>][paper]
 
-Artifact repository for the paper [ ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories_](http://arxiv.org/abs/2604.07341), accepted at _ASE 2026_, Munich, Germany.
+Artifact repository for the paper [_ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories_](http://arxiv.org/abs/2604.07341), accepted at _ASE 2026_, Munich, Germany.
 Authors are [Ali Reza Ibrahimzada][ali], [Brandon Paulsen][brandon], [Daniel Kroening][daniel], and [Reyhaneh Jabbarvand][reyhaneh].
 
 [brandon]: https://www.amazon.science/author/brandon-paulsen
