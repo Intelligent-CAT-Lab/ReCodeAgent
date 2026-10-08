@@ -175,23 +175,23 @@ To add more MCP servers:
 
 If you find ReCodeAgent useful in your research, please cite our paper:
 
-```bib
+```bibtex
 @inproceedings{10.1145/3832783.3837486,
-  author = {Ibrahimzada, Ali Reza and Paulsen, Brandon and Kroening, Daniel and Jabbarvand, Reyhaneh},
-  title = {ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories},
-  year = {2026},
-  isbn = {9798400728822},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/3832783.3837486},
-  doi = {10.1145/3832783.3837486},
-  abstract = {Most repository-level code translation and validation techniques have been evaluated on a single source-target programming language (PL) pair, owing to the complex engineering effort required to adapt new PL pairs. Programming agents can enable PL-agnosticism in repository-level code translation and validation: they can synthesize code across many PLs and autonomously use existing tools specific to each PL’s analysis. However, state-of-the-art has yet to offer a fully autonomous agentic approach for repository-level code translation and validation of large-scale programs. This paper proposes ReCodeAgent, an autonomous multi-agent approach for language-agnostic repository-level code translation and validation. Users only need to provide the project in the source PL and specify the target PL for ReCodeAgent to automatically translate and validate the entire repository. ReCodeAgent is the first technique to achieve high translation success rates across many PLs. We compare the effectiveness of ReCodeAgent with four alternative neuro-symbolic and agentic approaches to translate 118 real-world projects, with 1,975 LoC and 43 translation units for each project, on average. The projects cover 6 PLs and 4 PL pairs. Our results demonstrate that ReCodeAgent consistently outperforms prior techniques on translation correctness, improving test pass rate by 60.8\% on ground-truth tests, with an average cost of $15.3. We also perform process-centric analysis of ReCodeAgent trajectories to confirm its procedural efficiency. Finally, we investigate how the design choices (a multi-agent vs. single-agent architecture) influence ReCodeAgent performance: on average, the test pass rate drops by 40.4\%, and trajectories become 28\% longer and persistently inefficient.},
-  booktitle = {Proceedings of the 41st IEEE/ACM International Conference on Automated Software Engineering},
-  pages = {2409–2421},
-  numpages = {13},
-  keywords = {Code Translation and Validation, Programming Agents},
-  location = {Munich, Germany},
-  series = {ASE '26}
+    author = {Ibrahimzada, Ali Reza and Paulsen, Brandon and Kroening, Daniel and Jabbarvand, Reyhaneh},
+    title = {ReCodeAgent: A Multi-agent Workflow for Language-Agnostic Translation and Validation of Large-Scale Repositories},
+    year = {2026},
+    isbn = {9798400728822},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3832783.3837486},
+    doi = {10.1145/3832783.3837486},
+    abstract = {Most repository-level code translation and validation techniques have been evaluated on a single source-target programming language (PL) pair, owing to the complex engineering effort required to adapt new PL pairs. Programming agents can enable PL-agnosticism in repository-level code translation and validation: they can synthesize code across many PLs and autonomously use existing tools specific to each PL’s analysis. However, state-of-the-art has yet to offer a fully autonomous agentic approach for repository-level code translation and validation of large-scale programs. This paper proposes ReCodeAgent, an autonomous multi-agent approach for language-agnostic repository-level code translation and validation. Users only need to provide the project in the source PL and specify the target PL for ReCodeAgent to automatically translate and validate the entire repository. ReCodeAgent is the first technique to achieve high translation success rates across many PLs. We compare the effectiveness of ReCodeAgent with four alternative neuro-symbolic and agentic approaches to translate 118 real-world projects, with 1,975 LoC and 43 translation units for each project, on average. The projects cover 6 PLs and 4 PL pairs. Our results demonstrate that ReCodeAgent consistently outperforms prior techniques on translation correctness, improving test pass rate by 60.8\% on ground-truth tests, with an average cost of $15.3. We also perform process-centric analysis of ReCodeAgent trajectories to confirm its procedural efficiency. Finally, we investigate how the design choices (a multi-agent vs. single-agent architecture) influence ReCodeAgent performance: on average, the test pass rate drops by 40.4\%, and trajectories become 28\% longer and persistently inefficient.},
+    booktitle = {Proceedings of the 41st IEEE/ACM International Conference on Automated Software Engineering},
+    pages = {2409–2421},
+    numpages = {13},
+    keywords = {Code Translation and Validation, Programming Agents},
+    location = {Munich, Germany},
+    series = {ASE '26}
 }
 ```
 
